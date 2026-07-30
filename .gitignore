@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv*/
+env_*/
+
+# Test / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Third-party clones (fetched by the runbook, never vendored)
+third_party/
+
+# Model weights and data -- never commit these
+checkpoints/
+*.pth
+*.ckpt
+*.safetensors
+assets/*.usd
+assets/*.usda
+assets/*.usdc
+data/
+datasets/
+runs/
+logs/
+wandb/
+*.lmdb/
+*.npz
+*.h5
+*.hdf5
+*.bag
+collection_manifest.json
+
+# OS
+.DS_Store

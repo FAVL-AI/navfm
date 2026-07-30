@@ -1,0 +1,53 @@
+# Isaac Sim collection: ROSMASTER M3 PRO, indoor scenes, ViNT-compatible.
+#
+# Rate choice: 12 Hz. Three constraints meet here.
+#   * The physical Orbbec DaBai DCW2 caps at 15 fps at every resolution, so
+#     anything above 15 Hz would be a fidelity claim we cannot honour on hardware.
+#   * The reference deployment stack runs its policy at 4 Hz
+#     (deployment/config/robot.yaml frame_rate), and 12 = 3 * 4, so
+#     waypoint_spacing=3 reproduces the deployment cadence exactly with no
+#     resampling artefacts.
+#   * At cruise_v = 0.35 m/s, 12 Hz gives ~0.029 m per frame, and with
+#     waypoint_spacing=3 an effective metric spacing of ~0.088 m -- close to
+#     go_stanford (0.12 m), which is the closest platform in the pretraining mix
+#     (TurtleBot2, indoor office, 0.5 m/s). Keeping our normalised action scale
+#     near a platform the model has seen is what makes the pretrained prior useful.
+#
+# Run:
+#   python -m navfm.isaac.collect --config configs/collect/m3pro_indoor.yaml \
+#       --out /data/isaac_m3pro --robot-usd assets/m3pro.usd --episodes 600
+
+scenes:
+  # Paths are resolved against the Isaac Sim asset root; see docs/ISAAC_COLLECTION.md
+  # for how to point these at a local Assets Pack.
+  - ${ASSETS}/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd
+  - ${ASSETS}/Isaac/Environments/Hospital/hospital.usd
+  - ${ASSETS}/Isaac/Environments/Office/office.usd
+  - ${ASSETS}/Isaac/Environments/Simple_Room/simple_room.usd
+
+episodes: 600
+max_steps: 1800          # 150 s at 12 Hz -- generous; the goal check ends most sooner
+target_model: vint
+
+min_path_m: 4.0
+max_path_m: 30.0
+cruise_v: 0.35
+lookahead_m: 0.45
+goal_tol_m: 0.20
+
+# NONHOLONOMIC by default. The M3 PRO is mecanum and *can* strafe, but the
+# pretrained action prior has near-zero mass on pure-lateral motion. Collecting
+# holonomic demonstrations moves the label distribution off that prior's support.
+# Switch to "holonomic" only for the H2 ablation in docs/EXPERIMENTS.md.
+demonstrator: nonholonomic
+
+perturb_fraction: 0.35   # recovery coverage the optimal planner alone cannot give
+perturb_sigma_m: 0.25
+wander_fraction: 0.20    # undirected episodes for NoMaD's unconditioned branch
+
+grid_resolution: 0.10
+min_clearance_m: 0.35    # footprint 0.24 m + margin
+max_stationary_fraction: 0.5
+stall_patience: 40
+
+seed: 0

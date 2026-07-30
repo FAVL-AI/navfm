@@ -1,0 +1,47 @@
+# ViNT fine-tuning on Isaac Sim data -- RTX 4080 SUPER (16 GB), single GPU.
+#
+# Optimisation follows the ViNT paper's own fine-tuning recipe (Section on
+# adaptation, arXiv:2306.14846): "LR 1e-4, 5 epochs, AdamW, no warmup, no cosine
+# scheduler", full fine-tuning of the encoders. We keep the LR and the absence
+# of warmup, and raise the epoch count because our target domain (simulation)
+# is further from the pretraining distribution than CARLA was.
+#
+# Memory: effective batch 256 == the paper's regime, reached as 64 x 4
+# accumulation steps. BatchNorm is frozen -- at a micro-batch of 64 split across
+# 6 context frames the per-batch statistics are noisy enough to drift the
+# pretrained EfficientNet features within a few hundred steps, which shows up as
+# a *rise* in validation loss during the first epoch.
+
+model_type: vint
+checkpoint: checkpoints/vint.pth
+
+epochs: 20
+micro_batch_size: 64
+effective_batch_size: 256
+lr: 1.0e-4
+weight_decay: 1.0e-3
+optimizer: adamw
+scheduler: cosine
+warmup_epochs: 0
+grad_clip: 1.0
+amp_dtype: bf16
+
+freeze: none         # the paper's Table 8 ablation: frozen encoder 0.32 vs full 0.82
+freeze_bn: true
+ema_decay: null      # ViNT does not use EMA; NoMaD does
+
+datasets: [isaac_m3pro]
+# Replaying a slice of the real pretraining data is the standard guard against
+# catastrophic forgetting. go_stanford is the cheapest option: 745 MB, already
+# in GNM format on Hugging Face, and it is the closest platform to ours
+# (TurtleBot2, indoor, 0.5 m/s). Set replay_ratio: 0.0 for the no-replay arm.
+replay_datasets: [go_stanford]
+replay_ratio: 0.25
+num_workers: 8
+
+seed: 0
+log_dir: runs
+run_name: vint_ft_isaac_m3pro
+eval_every: 1
+save_every: 1
+deterministic: true
