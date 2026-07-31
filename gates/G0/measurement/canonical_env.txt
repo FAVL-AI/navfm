@@ -1,0 +1,18 @@
+ENVIRONMENT IDENTITY
+===================
+
+python_version      3.11.15
+torch_version       2.11.0+cu128
+cuda_version        12.8
+pip_freeze_digest   494d2e161eaada2b8e74a8c300ee6699a3b01bf8c3e1426b1d63652568435b59
+distribution_count  274
+os                  Linux-6.8.0-124-generic-x86_64-with-glibc2.35
+architecture        x86_64
+pythonpath          /opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages
+sys_prefix          <prefix>
+sys_base_prefix     <base_prefix>
+pythonhome          
+enable_user_site    False
+module_locations    {'torch': '<prefix>/lib/python3.11/site-packages/torch/__init__.py', 'torchvision': '<prefix>/lib/python3.11/site-packages/torchvision/__init__.py', 'navfm': '<repo>/src/navfm/__init__.py', 'vint_train.training.train_utils': '<repo>/third_party/visualnav-transformer/train/vint_train/training/train_utils.py', 'cv2': '<prefix>/lib/python3.11/site-packages/cv2/__init__.py', 'matplotlib': '<prefix>/lib/python3.11/site-packages/matplotlib/__init__.py', 'diffusers': '<prefix>/lib/python3.11/site-packages/diffusers/__init__.py'}
+environment_id      6b4aafb619d1e57acf0c43eb4ff5455b058b17f219691e1058715ed9036c22ba
+
