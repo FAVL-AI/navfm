@@ -40,3 +40,4 @@ collection_manifest.json
 
 # OS
 .DS_Store
+dataset_dist_*.pkl
