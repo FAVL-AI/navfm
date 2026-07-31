@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import math
 import random
@@ -58,7 +59,9 @@ from typing import Any
 import numpy as np
 
 from navfm import upstream
-from navfm.eval.offline import cell_and_seed, evaluate, git_describe
+from navfm.eval.offline import REFERENCE_KEYS, cell_and_seed, evaluate, git_describe
+from navfm.provenance import environment_identity
+from navfm.runid import compare, identity_digest, run_identity
 from navfm.train.finetune import (
     FinetuneConfig,
     amp_context,
@@ -126,6 +129,22 @@ def overfit_subset(dataset: Any, n_trajectories: int) -> Any:
         raise RuntimeError("--overfit-n selected zero samples; is the split empty?")
     print(f"overfit mode: {len(keep)} trajectories, {len(chosen)} samples")
     return torch.utils.data.Subset(dataset, chosen)
+
+
+def _split_digest(splits_root: Path, dataset_names: Sequence[str]) -> str | None:
+    """Digest the split files this run reads, or None if none are readable.
+
+    Identity must cover *which trajectories* a run saw. Two runs over the same
+    dataset name and different split files are different experiments, and the
+    dataset name alone cannot tell them apart.
+    """
+    parts: list[str] = []
+    for name in sorted(set(dataset_names)):
+        for split in ("train", "test"):
+            path = Path(splits_root) / name / split / "traj_names.txt"
+            if path.is_file():
+                parts.append(f"{name}/{split}:{hashlib.sha256(path.read_bytes()).hexdigest()}")
+    return hashlib.sha256("|".join(parts).encode()).hexdigest() if parts else None
 
 
 def _cycle(loader: Any) -> Iterator[Any]:
@@ -262,7 +281,14 @@ def save_weights(path: Path, model: Any) -> None:
 
 
 def save_resume_state(
-    path: Path, *, model, optimizer, scheduler, epoch: int, cfg: FinetuneConfig
+    path: Path,
+    *,
+    model,
+    optimizer,
+    scheduler,
+    epoch: int,
+    cfg: FinetuneConfig,
+    identity: dict[str, Any] | None = None,
 ) -> None:
     """``latest.pth``: everything needed to continue the run as if uninterrupted.
 
@@ -279,6 +305,7 @@ def save_resume_state(
             "model": model.state_dict(),
             "optimizer": optimizer.state_dict(),
             "scheduler": scheduler.state_dict() if scheduler is not None else None,
+            "identity": identity,
             "epoch": epoch,
             "config": cfg.to_dict(),
             "rng": {
@@ -292,7 +319,13 @@ def save_resume_state(
 
 
 def load_checkpoint_for_resume(
-    path: Path, *, model, optimizer, scheduler, epochs: int | None = None
+    path: Path,
+    *,
+    model,
+    optimizer,
+    scheduler,
+    epochs: int | None = None,
+    identity: dict[str, Any] | None = None,
 ) -> int:
     """Restore a run and return the epoch to continue *from*.
 
@@ -306,6 +339,24 @@ def load_checkpoint_for_resume(
     import torch
 
     state = torch.load(path, map_location="cpu", weights_only=False)
+
+    # A resume must continue the SAME experiment. latest.pth will happily
+    # restore into a run pointed at another dataset, batch size, checkpoint or
+    # environment, and the result is one runs/ directory describing a
+    # population that was never one experiment.
+    prior_identity = state.get("identity")
+    if identity is not None and prior_identity is not None:
+        mismatches = compare(prior_identity, identity)
+        if mismatches:
+            detail = "\n".join(f"    {m}" for m in mismatches)
+            raise SystemExit(
+                f"refusing to resume {path.name}: the requested run is not the run that "
+                f"was interrupted.\n{detail}\n"
+                f"  to continue the original run:  match the fields above\n"
+                f"  to run a variant deliberately: start a new --run-name, which records "
+                f"its lineage back to this one rather than overwriting it"
+            )
+
     saved_epochs = (state.get("config") or {}).get("epochs")
     if epochs is not None and saved_epochs is not None and epochs != saved_epochs:
         raise SystemExit(
@@ -368,6 +419,14 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--resume", action="store_true", help="continue from runs/<run_name>/latest.pth")
     p.add_argument(
         "--trust-checkpoint", action="store_true", help="required for vint.pth / gnm.pth"
+    )
+    p.add_argument(
+        "--evidence-class",
+        default="registered_experiment",
+        help=(
+            "what kind of evidence this run produces; part of the run identity, so "
+            "resuming under a different class is refused"
+        ),
     )
     p.add_argument(
         "--allow-partial-load",
@@ -536,13 +595,38 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     run_dir = Path(cfg.log_dir) / cfg.run_name
     run_dir.mkdir(parents=True, exist_ok=True)
+
+    # The identity a resume must match. Built before the resume so the guard
+    # runs before any state is restored.
+    identity = run_identity(
+        checkpoint_sha256=checkpoint_sha,
+        dataset_split_digest=_split_digest(splits_root, [*cfg.datasets, eval_name]),
+        evaluator_commit=git_describe(),
+        config_digest=hashlib.sha256(
+            json.dumps(cfg.to_dict(), sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        metric_set_version=hashlib.sha256(",".join(sorted(REFERENCE_KEYS)).encode()).hexdigest()[
+            :16
+        ],
+        seed_set=[cfg.seed],
+        batch_size=cfg.effective_batch_size,
+        environment_id=environment_identity().environment_id,
+        evidence_class=args.evidence_class,
+        architecture=cfg.model_type,
+    )
+
     start_epoch = 0
     latest = run_dir / "latest.pth"
     if args.resume:
         if not latest.is_file():
             raise SystemExit(f"--resume given but {latest} does not exist")
         start_epoch = load_checkpoint_for_resume(
-            latest, model=model, optimizer=optimizer, scheduler=scheduler, epochs=cfg.epochs
+            latest,
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            epochs=cfg.epochs,
+            identity=identity,
         )
         print(f"resumed from {latest}; continuing at epoch {start_epoch}")
 
@@ -566,6 +650,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         "checkpoint": cfg.checkpoint,
         "checkpoint_sha256": checkpoint_sha,
         "checkpoint_load": load_census,
+        "run_identity": identity,
+        "run_identity_digest": identity_digest(identity),
         "checkpoint_missing_keys": missing,
         "checkpoint_unexpected_keys": unexpected,
         "overfit_n": args.overfit_n,
@@ -652,7 +738,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             # Bare weights: `--checkpoint runs/<run>/epoch_N.pth` needs no trust flag.
             save_weights(run_dir / f"epoch_{epoch}.pth", model)
         save_resume_state(
-            latest, model=model, optimizer=optimizer, scheduler=scheduler, epoch=epoch, cfg=cfg
+            latest,
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            epoch=epoch,
+            cfg=cfg,
+            identity=identity,
         )
 
         tl = train_metrics.get("total_loss", float("nan"))
