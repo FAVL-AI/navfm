@@ -49,7 +49,7 @@ from typing import Any
 
 import numpy as np
 
-from navfm import upstream
+from navfm import prereg, upstream
 from navfm.eval import metrics as M
 from navfm.evidence import EvidenceClass, evidence_block
 
@@ -358,6 +358,17 @@ def build_argparser() -> argparse.ArgumentParser:
     )
     p.add_argument("--expected-sha256", default=None, help="pin the checkpoint hash")
     p.add_argument(
+        "--preregistration-commit",
+        default=None,
+        metavar="SHA",
+        help=(
+            "bind this run to the commit that fixed its protocol. Five checks run before "
+            "any evaluation work; any failure aborts as 'gate execution invalid'. Required "
+            "for gate runs -- retrospective git log inspection is the fallback record, not "
+            "the control."
+        ),
+    )
+    p.add_argument(
         "--evidence-class",
         default=None,
         help=(
@@ -490,6 +501,29 @@ def main(argv: Sequence[str] | None = None) -> int:
             "         This is a plumbing smoke test, not a reproduction number.",
             file=sys.stderr,
         )
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    run_name = args.run_name or f"eval_{args.model}_{args.dataset}_{args.split}_{stamp}"
+
+    # The commit-order control. Runs before any dataset is opened and any batch
+    # is scored, because a binding verified afterwards is a description, not a
+    # control. Every check is recorded, pass or fail.
+    prereg_checks: list[dict[str, Any]] = []
+    protocol_sha256: str | None = None
+    if args.preregistration_commit:
+        repo_root = Path(__file__).resolve().parents[3]
+        checks, protocol_sha256 = prereg.verify(
+            args.preregistration_commit,
+            repo_root=repo_root,
+            output_dir=Path(args.log_dir) / run_name,
+        )
+        prereg_checks = [c.as_dict() for c in checks]
+        for c in checks:
+            print(f"  prereg {c.name:<32} {'PASS' if c.passed else 'FAIL'}  {c.detail}")
+        try:
+            prereg.enforce(checks)
+        except prereg.GateExecutionInvalid as exc:
+            raise SystemExit(str(exc)) from exc
+
     model.to(device)
 
     # What kind of evidence is this? Declared, or defaulted to the most
@@ -547,10 +581,30 @@ def main(argv: Sequence[str] | None = None) -> int:
         progress=not args.no_progress,
     )
 
-    stamp = time.strftime("%Y%m%d-%H%M%S")
-    run_name = args.run_name or f"eval_{args.model}_{args.dataset}_{args.split}_{stamp}"
     run_dir = run_directory(args.log_dir, run_name)
     cell, seed = cell_and_seed(run_name)
+
+    # Archive the protocol beside the numbers it governs, and mark this gate as
+    # initialised under that protocol so a later run under a different one is
+    # refused by check 5 rather than silently accepted.
+    if args.preregistration_commit and protocol_sha256:
+        blob = prereg.protocol_blob(
+            Path(__file__).resolve().parents[3], args.preregistration_commit
+        )
+        if blob is not None:
+            (run_dir / prereg.PROTOCOL_PATH).write_bytes(blob)
+        (run_dir / "preregistration.json").write_text(
+            json.dumps(
+                {
+                    "commit": args.preregistration_commit,
+                    "protocol_sha256": protocol_sha256,
+                    "checks": prereg_checks,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
+        )
 
     record = {
         **result,
@@ -586,6 +640,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         "dataset_options": opts,
         "model_config": cfg,
         "checkpoint_load": load_census,
+        "preregistration_commit": args.preregistration_commit,
+        "preregistration_protocol_sha256": protocol_sha256,
+        "preregistration_checks": prereg_checks,
         "checkpoint_missing_keys": missing,
         "checkpoint_unexpected_keys": unexpected,
         "checkpoint_sha256": checkpoint_sha,
