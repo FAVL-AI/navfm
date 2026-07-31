@@ -51,6 +51,7 @@ import numpy as np
 
 from navfm import upstream
 from navfm.eval import metrics as M
+from navfm.evidence import EvidenceClass, evidence_block
 
 __all__ = [
     "MetricAccumulator",
@@ -357,6 +358,22 @@ def build_argparser() -> argparse.ArgumentParser:
     )
     p.add_argument("--expected-sha256", default=None, help="pin the checkpoint hash")
     p.add_argument(
+        "--evidence-class",
+        default=None,
+        help=(
+            "what kind of evidence this run produces: pipeline_smoke_test, "
+            "random_init_control, checkpoint_sanity, baseline_evaluation, "
+            "registered_experiment, diagnostic_unregistered. Defaults to "
+            "random_init_control without a checkpoint and checkpoint_sanity with one; "
+            "a run that belongs in a results table must say so explicitly."
+        ),
+    )
+    p.add_argument(
+        "--data-source",
+        default=None,
+        help="provenance of the corpus, e.g. 'go_stanford_reconstruction' or 'synthetic_noise'",
+    )
+    p.add_argument(
         "--allow-partial-load",
         action="store_true",
         help="permit a checkpoint that fills <90%% of the model; recorded in the manifest",
@@ -475,6 +492,29 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
     model.to(device)
 
+    # What kind of evidence is this? Declared, or defaulted to the most
+    # conservative class consistent with the arguments -- never to a class that
+    # would grant table access. Promotion to a scientific class is an explicit
+    # act by the caller.
+    if args.evidence_class is not None:
+        try:
+            evidence = EvidenceClass.parse(args.evidence_class)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+    else:
+        evidence = (
+            EvidenceClass.RANDOM_INIT_CONTROL
+            if args.checkpoint is None
+            else EvidenceClass.CHECKPOINT_SANITY
+        )
+    if evidence.requires_checkpoint_hash and checkpoint_sha is None:
+        raise SystemExit(
+            f"evidence class '{evidence.value}' makes a claim about a model, so the run "
+            f"must identify which bytes produced it -- but no checkpoint was given. "
+            f"Either pass --checkpoint, or declare a class that makes no model claim "
+            f"(random_init_control, pipeline_smoke_test)."
+        )
+
     dataset = upstream.build_dataset(
         dataset_name=args.dataset,
         data_folder=data_folder,
@@ -526,6 +566,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "checkpoint": args.checkpoint,
         "checkpoint_sha256": checkpoint_sha,
         "random_init": args.checkpoint is None,
+        **evidence_block(
+            evidence,
+            model_initialization="random" if args.checkpoint is None else "checkpoint",
+            data_source=args.data_source or args.dataset,
+        ),
         "device": device,
         "kind": "eval",
         "run_name": run_name,

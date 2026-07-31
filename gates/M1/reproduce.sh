@@ -80,7 +80,8 @@ echo
 echo "### 4. offline eval, random init (plumbing only, NOT a result)"
 "$PY" -m navfm.eval.offline --model vint --dataset recon --split test --batch-size 32 \
     --data-folder "$WORK/data/recon" --split-folder "$WORK/splits/recon/test" \
-    --device cpu --no-progress --run-name e0.2_randominit_control
+    --device cpu --no-progress --run-name e0.2_randominit_control \
+    --evidence-class pipeline_smoke_test --data-source synthetic_noise
 
 echo
 echo "### 5. fine-tune: 3 seeds of one matrix cell, 2 epochs each"
@@ -99,7 +100,8 @@ echo "###    with NO --trust-checkpoint (finding F5 does not apply to our files)
     --checkpoint "$WORK/runs/e2_nonholo_diff_seed0/epoch_1.pth" \
     --dataset recon --split test --batch-size 32 \
     --data-folder "$WORK/data/recon" --split-folder "$WORK/splits/recon/test" \
-    --device cpu --no-progress --run-name e0.2_finetuned_roundtrip
+    --device cpu --no-progress --run-name e0.2_finetuned_roundtrip \
+    --evidence-class pipeline_smoke_test --data-source synthetic_noise
 
 echo
 echo "### 7. the synthetic-number stamping, asserted rather than claimed"
