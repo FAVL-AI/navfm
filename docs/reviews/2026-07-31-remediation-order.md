@@ -117,3 +117,47 @@ On *Fixing*: commit; freeze audit against the exact amendment SHA with all
 checks passing and archived; verify no prior G0.c results; hash `vint.pth`
 immediately before scoring; execute only the preregistered commands; classify
 from the frozen rule; produce `gates/G0/G0c_report.md`.
+
+---
+
+## Addendum — accepted checkpoint review, 2026-07-31
+
+Received after the order above; same review thread.
+
+**1. The evaluation-pair manifest is a first-class artefact**, not an
+implementation detail. It carries: schema version; SHA-256 digest; generation
+command; population seed; dataset digest; split digest; trajectory count;
+observation–goal pair count. **The freeze audit gains a check** comparing
+expected against observed manifest digest — the population is verified
+directly, never reconstructed indirectly from seeds.
+
+**2. The archived `_sample_goal` patch becomes part of the protocol identity.**
+The experiment identity, and the freeze audit, record: upstream commit; patch
+SHA; patch content digest; patch application status — **verified at runtime**,
+so a future upstream change or an unpatched clone cannot silently alter the
+sampling semantics the amendment froze.
+
+**3. Disposition for the audit-integrity failure record**, near-verbatim:
+
+> Audit-integrity defect introduced during construction of the freeze audit.
+> The implementation asserted successful verification without comparing the
+> preregistered and observed environment identities. Detected during
+> adversarial protocol review. Corrected by explicit digest comparison and
+> regression tests.
+
+Authorship acknowledged — the repository documents engineering provenance, not
+blame. Full record structure as for earlier failures: root cause, threatened
+claim, detection mechanism, corrective action, regression test.
+
+**Hard boundary, restated.** No branching into unrelated work until RNG domains
+are independent, the evaluation population is frozen and digest-verified,
+environment identity is genuinely compared, and the revised amendment holds a
+*Fixing* verdict. Only then does `vint.pth` load.
+
+### Consequence for the freeze audit
+
+The audit grows from fourteen checks to **sixteen**: `manifest_digest_matches`
+and `upstream_patch_identity_verified`. Both must be added before the audit can
+be described as enforcing the amendment's Layer A, and the amendment's
+artefact-binding table must bind the manifest and the patch identity alongside
+the existing nine.
