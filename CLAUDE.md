@@ -66,6 +66,40 @@ deep reference; `paper/draft.md` is the paper.
    quirks (documented as findings F1–F11 in `paper/draft.md` §3) as fixed
    facts to reproduce or consciously patch — each patch recorded.
 
+## Adversarial review policy (when to red-team, and when not to)
+
+Do NOT run adversarial review on routine work — the oracles are stronger:
+format/label questions are settled by the upstream compatibility proof, sync
+questions by the smoke test's physical assertions, result integrity by gates
+and script-generated tables. Arguing where an oracle exists is wasted budget.
+
+Red-team review IS mandatory, before commit, at these five triggers — each is
+a place where no oracle exists and the failure mode is a plausible
+misreading that our own tests would co-sign:
+
+1. Any semantic change to `schema.py`, `kinematics.py`, `writer.py`, or
+   `eval/metrics.py`. Reviewer instruction: refute the change against the
+   UPSTREAM SOURCE at `third_party/visualnav-transformer` (or the pinned-line
+   references in docs/METHODOLOGY.md), never against this repo's tests.
+2. The training-loss implementation in `train/run.py` (first commit and any
+   later change). A wrong objective trains beautifully. Verify the exact
+   weighting `alpha*1e-2*dist + (1-alpha)*action_reduce(mse)`, the mask
+   semantics, and BN-freeze taking effect, line-by-line against
+   `train_utils._compute_losses`.
+3. Any amendment to PREREGISTRATION.md: is it fixing the protocol, or
+   rescuing a hypothesis? State the answer in the amendment.
+4. Once, immediately before Phase 4 launches: attack the experiment design —
+   seed handling, scene leakage between arms, any variable other than the
+   manipulated one that differs across cells.
+5. Phase 6.3, the paper: claim by claim, "which runs/ directory backs this
+   sentence?" Anything unbacked is cut or marked as discussion.
+
+Mechanics: spawn an independent subagent with ONLY the artefact under review
+plus the relevant upstream files — not this session's reasoning, which is the
+thing under test. Instruct it to refute, not to summarise; default to
+"refuted" when uncertain. Archive verdicts under gates/redteam/<trigger>-<date>.md.
+A finding survives only if the refutation fails against source evidence.
+
 ## Known landmines (all documented in docs/REPRODUCTION.md — check there first)
 
 `diffusers==0.11.1` needs `huggingface_hub==0.25.2` · torch ≥ 2.6 needs
