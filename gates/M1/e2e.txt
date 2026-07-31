@@ -1,3 +1,7 @@
+workdir: /tmp/navfm-m1
+python : Python 3.13.13, torch 2.12.0+cpu
+upstream: dca7981
+
 ### 1. synthetic GNM-format corpus, written through navfm.writer
 wrote 6 trajectories x 60 frames to /tmp/navfm-m1/data/recon
 SYNTHETIC DATA -- images are noise; nothing learned from this means anything.
@@ -29,16 +33,16 @@ WARNING: no --checkpoint given; evaluating a RANDOMLY INITIALISED model.
 
   metric                            strict (reference)           plain
   --------------------------------------------------------------------
-  dist_loss                                 143.767031      143.767031
-  action_loss                                 3.023714        3.094362
-  action_waypts_cos_sim                       0.789140        0.807578
-  multi_action_waypts_cos_sim                 0.585798        0.599485
-  action_orien_cos_sim                       -0.214147       -0.219151
-  multi_action_orien_cos_sim                 -0.214147       -0.219151
-  total_loss                                  2.230692        2.266016
+  dist_loss                                 145.157177      145.157177
+  action_loss                                 3.612949        3.688591
+  action_waypts_cos_sim                      -0.258191       -0.263597
+  multi_action_waypts_cos_sim                -0.413387       -0.422042
+  action_orien_cos_sim                       -0.360195       -0.367736
+  multi_action_orien_cos_sim                 -0.360195       -0.367736
+  total_loss                                  2.532260        2.570081
   --------------------------------------------------------------------
-  ADE                                         2.811484       0.7029 m
-  FDE                                         4.889094       1.2223 m
+  ADE                                         3.131247       0.7828 m
+  FDE                                         5.183206       1.2958 m
 
   *** RANDOM INITIALISATION -- no checkpoint was loaded.            ***
   *** These numbers measure the plumbing, not a model. Not a result. ***
@@ -56,7 +60,7 @@ overfit mode: 2 trajectories, 94 samples
 
 e2_nonholo_diff_seed0: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
 
-epoch   0  train_total 1.793794  eval_total 1.203376  lr 1.00e-04  6.3s
+epoch   0  train_total 1.793794  eval_total 1.203376  lr 1.00e-04  6.8s
 epoch   1  train_total 1.046056  eval_total 0.820074  lr 5.00e-05  5.0s
 
 -> runs/e2_nonholo_diff_seed0
@@ -68,8 +72,8 @@ overfit mode: 2 trajectories, 94 samples
 
 e2_nonholo_diff_seed1: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
 
-epoch   0  train_total 1.834089  eval_total 1.344697  lr 1.00e-04  7.0s
-epoch   1  train_total 1.114340  eval_total 0.956491  lr 5.00e-05  5.0s
+epoch   0  train_total 1.834089  eval_total 1.344697  lr 1.00e-04  6.9s
+epoch   1  train_total 1.114340  eval_total 0.956491  lr 5.00e-05  5.2s
 
 -> runs/e2_nonholo_diff_seed1
 /home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
@@ -80,8 +84,8 @@ overfit mode: 2 trajectories, 94 samples
 
 e2_nonholo_diff_seed2: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
 
-epoch   0  train_total 2.039417  eval_total 2.092712  lr 1.00e-04  6.7s
-epoch   1  train_total 1.720463  eval_total 1.901429  lr 5.00e-05  5.3s
+epoch   0  train_total 2.039417  eval_total 2.092712  lr 1.00e-04  6.6s
+epoch   1  train_total 1.720463  eval_total 1.901429  lr 5.00e-05  5.4s
 
 -> runs/e2_nonholo_diff_seed2
 
@@ -98,13 +102,13 @@ loaded epoch_1.pth: 799 tensors, 0 missing, 0 unexpected
 
   metric                            strict (reference)           plain
   --------------------------------------------------------------------
-  dist_loss                                 106.605953      106.605953
-  action_loss                                 0.681314        0.695680
-  action_waypts_cos_sim                       0.862694        0.880885
-  multi_action_waypts_cos_sim                 0.906110        0.925217
-  action_orien_cos_sim                        0.501596        0.512173
-  multi_action_orien_cos_sim                  0.501596        0.512173
-  total_loss                                  0.873687        0.880870
+  dist_loss                                 114.568261      114.568261
+  action_loss                                 0.681695        0.695680
+  action_waypts_cos_sim                       0.863177        0.880885
+  multi_action_waypts_cos_sim                 0.906618        0.925217
+  action_orien_cos_sim                        0.501876        0.512173
+  multi_action_orien_cos_sim                  0.501876        0.512173
+  total_loss                                  0.913689        0.920681
   --------------------------------------------------------------------
   ADE                                         1.301957       0.3255 m
   FDE                                         1.126271       0.2816 m
@@ -112,7 +116,12 @@ loaded epoch_1.pth: 799 tensors, 0 missing, 0 unexpected
   -> runs/e0.2_finetuned_roundtrip
 
 
-### 7. tables -- the missing-seed guard first
+### 7. the synthetic-number stamping, asserted rather than claimed
+e0.2_randominit_control  "random_init": true,  "checkpoint": null
+e0.2_finetuned_roundtrip "random_init": false, sha256 89594f2722ef0c6b...
+(both copied next to the workdir root; gates/M1/ archives them)
+
+### 8. tables -- the missing-seed guard first
 refusing to write tables: 1 cell(s) are missing seeds.
 Averaging the seeds that happen to have finished is how a pre-registered
 matrix quietly becomes a selection of favourable runs.
@@ -123,7 +132,7 @@ Run the missing seeds, or pass --allow-incomplete to emit tables with
 every short cell marked inline (still exits non-zero).
 (exit 2 as required; no tables written)
 
-### 8. tables, complete matrix
+### 9. tables, complete matrix
 wrote /tmp/navfm-m1/tables/table3.md  (2 cells)
 wrote /tmp/navfm-m1/tables/table4.md  (1 cells)
 

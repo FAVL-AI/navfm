@@ -20,12 +20,22 @@ evidence about any model. Gate G0 is Session 2's work and its evidence goes in
 | File | What it is |
 |---|---|
 | `reproduce.sh` | regenerates everything below from a clean checkout, CPU only |
-| `e2e.txt` | its output: corpus → split → validate → eval → 3-seed fine-tune → round trip → tables |
+| `e2e.txt` | its output: corpus → split → validate → eval → 3-seed fine-tune → round trip → stamping assertions → tables |
 | `verify.txt` | `ruff` + `mypy` + full suite + the upstream-marked suite |
+| `metrics_randominit_control.json` | the uncheckpointed eval's own record — `"random_init": true` |
+| `metrics_finetuned_roundtrip.json` | the checkpointed eval's — `"random_init": false`, with the SHA-256 of the bytes scored |
 
 ```bash
-bash gates/M1/reproduce.sh          # needs the reference clone and CPU torch
+PYTHON=~/.venv-train/bin/python bash gates/M1/reproduce.sh
 ```
+
+The script does **not** guess an interpreter. Picking the wrong environment
+silently would produce numbers from the wrong torch, so it refuses to start
+unless `$PYTHON` can import `navfm` and resolve the reference clone, and names
+the fix in each case. It also refuses to delete a workdir it did not create —
+it `rm -rf`s that path, and a mistyped argument must not be how you lose a
+directory. `verify.txt` records the interpreter and torch version actually
+used; `e2e.txt` opens with the same line.
 
 ## What the evidence shows
 
@@ -51,10 +61,17 @@ bash gates/M1/reproduce.sh          # needs the reference clone and CPU torch
 Every model in that log is randomly initialised or trained from scratch on
 **synthetic noise images**. The losses show that gradients flow and that the
 plumbing is connected. They say nothing about ViNT, about navigation, or about
-this project's hypotheses, and the artefacts say so themselves: the evaluator
-prints a two-line `RANDOM INITIALISATION — not a result` banner, `metrics.json`
-carries `"random_init": true`, and `make_tables.py` stamps `RANDOM INIT — not a
-result` on any cell built from such a run.
+this project's hypotheses.
+
+The artefacts say so themselves, and step 7 of `reproduce.sh` *asserts* it
+rather than leaving it to this file to claim: the evaluator prints a two-line
+`RANDOM INITIALISATION — not a result` banner, `metrics.json` carries
+`"random_init": true` with a null checkpoint (archived here as
+`metrics_randominit_control.json`), a checkpointed run carries
+`"random_init": false` and the SHA-256 of the bytes it scored (archived as
+`metrics_finetuned_roundtrip.json`), and `make_tables.py` stamps
+`RANDOM INIT — not a result` on any cell built from such a run. If any of that
+regresses, the gate script fails rather than the README going quietly stale.
 
 The first real number is **gate G0.c**: released `vint.pth` on a GO Stanford
 test split at batch 400, expected in the neighbourhood of the checkpoint's own
