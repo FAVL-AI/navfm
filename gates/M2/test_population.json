@@ -1,0 +1,872 @@
+{
+  "collected": {
+    "tests/test_check_test_population.py::TestCli::test_exit_codes": [],
+    "tests/test_check_test_population.py::TestConditions::test_a_collection_error_fails_even_if_everything_else_passed": [],
+    "tests/test_check_test_population.py::TestConditions::test_a_deselected_required_test_fails": [],
+    "tests/test_check_test_population.py::TestConditions::test_a_failing_required_test_fails": [],
+    "tests/test_check_test_population.py::TestConditions::test_collected_but_never_run_is_not_fine": [],
+    "tests/test_check_test_population.py::TestConditions::test_healthy_report_passes": [],
+    "tests/test_check_test_population.py::TestConditions::test_swapped_node_ids_fail_even_at_the_right_count": [],
+    "tests/test_check_test_population.py::TestPin::test_manifest_round_trips": [],
+    "tests/test_check_test_population.py::TestPin::test_the_repository_manifest_matches_the_repository": [],
+    "tests/test_check_test_population.py::TestPin::test_upstream_drift_is_a_violation": [],
+    "tests/test_check_test_population.py::TestTheFailureThisExistsFor::test_exit_status_zero_does_not_rescue_a_contracted_population": [],
+    "tests/test_check_test_population.py::TestTheFailureThisExistsFor::test_the_f_m2_1_shape_is_refused": [],
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_census_carries_what_the_run_record_needs": [],
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_empty_model_does_not_divide_by_zero": [],
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_threshold_is_tunable_but_defaults_strict": [],
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_unexpected_keys_alone_do_not_refuse": [],
+    "tests/test_checkpoint_load_audit.py::TestOverride::test_explicit_override_permits_a_partial_load": [],
+    "tests/test_checkpoint_load_audit.py::TestOverride::test_the_override_is_recorded_so_the_manifest_shows_the_decision": [],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_a_checkpoint_that_matched_nothing_is_refused": [],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_a_full_load_is_the_ordinary_case": [],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[0]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[10]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[1]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[5]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[100]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[11]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[25]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[50]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[99]": [
+      "parametrize"
+    ],
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_the_refusal_message_names_the_consequence_not_just_the_symptom": [],
+    "tests/test_eval_offline.py::test_averaging_is_unweighted_over_batches_not_over_samples": [],
+    "tests/test_eval_offline.py::test_batch_size_changes_the_metric": [],
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e0.2_vint_go_stanford-e0.2_vint_go_stanford-None]": [
+      "parametrize"
+    ],
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e2_holo_holo_seed12-e2_holo_holo-12]": [
+      "parametrize"
+    ],
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e2_nonholo_diff_seed0-e2_nonholo_diff-0]": [
+      "parametrize"
+    ],
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e3_0p25h_pretrained_replay_seed1-e3_0p25h_pretrained_replay-1]": [
+      "parametrize"
+    ],
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[eval_vint_go_stanford_test_20260731-120000-None-None]": [
+      "parametrize"
+    ],
+    "tests/test_eval_offline.py::test_empty_dataloader_is_an_error_with_the_likely_cause": [],
+    "tests/test_eval_offline.py::test_learn_angle_false_omits_orientation_columns": [],
+    "tests/test_eval_offline.py::test_metres_conversion_uses_spacing_times_waypoint_spacing": [],
+    "tests/test_eval_offline.py::test_nan_batches_are_dropped_and_counted": [],
+    "tests/test_eval_offline.py::test_single_batch_reproduces_reference_losses_exactly": [],
+    "tests/test_eval_offline.py::test_write_run_record_emits_the_three_files": [],
+    "tests/test_kinematics_and_control.py::test_compute_actions_is_frame_invariant": [],
+    "tests/test_kinematics_and_control.py::test_compute_actions_matches_reference_semantics": [],
+    "tests/test_kinematics_and_control.py::test_compute_actions_respects_waypoint_spacing": [],
+    "tests/test_kinematics_and_control.py::test_compute_actions_right_pads_by_repeating_the_last_element": [],
+    "tests/test_kinematics_and_control.py::test_compute_actions_yaw_column_is_not_normalised": [],
+    "tests/test_kinematics_and_control.py::test_holonomic_step_strafes_without_rotating": [],
+    "tests/test_kinematics_and_control.py::test_holonomic_tracking_uses_lateral_velocity_where_differential_cannot": [],
+    "tests/test_kinematics_and_control.py::test_limits_clamp_is_symmetric_and_disables_lateral_for_diff_drive": [],
+    "tests/test_kinematics_and_control.py::test_mean_step_distance_and_arc_length": [],
+    "tests/test_kinematics_and_control.py::test_pure_pursuit_holonomic_reaches_the_goal_too": [],
+    "tests/test_kinematics_and_control.py::test_pure_pursuit_reaches_the_goal_in_closed_loop": [],
+    "tests/test_kinematics_and_control.py::test_reference_pd_twist_matches_upstream_formula": [],
+    "tests/test_kinematics_and_control.py::test_resample_path_gives_uniform_spacing": [],
+    "tests/test_kinematics_and_control.py::test_to_local_coords_is_a_rotation_into_the_body_frame": [],
+    "tests/test_kinematics_and_control.py::test_to_local_coords_preserves_distance": [],
+    "tests/test_kinematics_and_control.py::test_unicycle_step_traces_an_exact_circle": [],
+    "tests/test_kinematics_and_control.py::test_unwrap_yaw_removes_branch_cuts": [],
+    "tests/test_kinematics_and_control.py::test_yaw_from_quat_wxyz_roundtrip": [],
+    "tests/test_kinematics_and_control.py::test_yaw_rotmat_is_orthonormal": [],
+    "tests/test_make_tables.py::test_a_complete_cell_passes": [],
+    "tests/test_make_tables.py::test_a_training_run_contributes_its_last_epoch": [],
+    "tests/test_make_tables.py::test_ad_hoc_eval_directories_are_not_results": [],
+    "tests/test_make_tables.py::test_allow_incomplete_marks_the_cell_and_still_fails": [],
+    "tests/test_make_tables.py::test_duplicate_cell_and_seed_is_refused": [],
+    "tests/test_make_tables.py::test_e0_needs_only_one_run": [],
+    "tests/test_make_tables.py::test_missing_seeds_are_a_hard_failure": [],
+    "tests/test_make_tables.py::test_only_one_orientation_cosine_is_tabulated": [],
+    "tests/test_make_tables.py::test_random_init_runs_are_labelled_in_the_table": [],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e0.2_vint_go_stanford-e0.2_vint_go_stanford-None]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e1_vint_diff_seed0-e1_vint_diff-0]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e2_nonholo_holo_seed1-e2_nonholo_holo-1]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e3_0p25h_pretrained_replay_seed2-e3_0p25h_pretrained_replay-2]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e4_derived_published_seed0-e4_derived_published-0]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e5_lightmat_noise_seed10-e5_lightmat_noise-10]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e6_corridor_ft_seed0-e6_corridor_ft-0]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[eval_vint_recon_test_20260731-120000-None-None]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[scratch_dir-None-None]": [
+      "parametrize"
+    ],
+    "tests/test_make_tables.py::test_tables_are_deterministic": [],
+    "tests/test_make_tables.py::test_the_batch_size_appears_in_every_table": [],
+    "tests/test_planning_stats_splits.py::test_astar_does_not_cut_corners_between_obstacles": [],
+    "tests/test_planning_stats_splits.py::test_astar_finds_the_doorway": [],
+    "tests/test_planning_stats_splits.py::test_astar_raises_rather_than_returning_empty": [],
+    "tests/test_planning_stats_splits.py::test_astar_rejects_occupied_endpoints": [],
+    "tests/test_planning_stats_splits.py::test_estimate_action_stats_is_self_consistent": [],
+    "tests/test_planning_stats_splits.py::test_estimate_metric_waypoint_spacing_recovers_the_true_step": [],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-12]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-2]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-3]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-4]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-5]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-8]": [
+      "parametrize"
+    ],
+    "tests/test_planning_stats_splits.py::test_grouped_split_is_deterministic": [],
+    "tests/test_planning_stats_splits.py::test_grouped_split_rejects_a_single_group": [],
+    "tests/test_planning_stats_splits.py::test_inflate_grows_obstacles_by_the_footprint": [],
+    "tests/test_planning_stats_splits.py::test_perturb_path_keeps_endpoints_and_stays_free": [],
+    "tests/test_planning_stats_splits.py::test_sample_episode_pair_respects_length_bounds": [],
+    "tests/test_planning_stats_splits.py::test_sample_free_pose_respects_clearance": [],
+    "tests/test_planning_stats_splits.py::test_scene_grouping_prevents_leakage": [],
+    "tests/test_planning_stats_splits.py::test_scene_of_parses_collector_names": [],
+    "tests/test_planning_stats_splits.py::test_smooth_path_shortens_and_stays_free": [],
+    "tests/test_planning_stats_splits.py::test_split_is_stable_under_reordering_and_growth": [],
+    "tests/test_planning_stats_splits.py::test_stable_fraction_is_deterministic_and_uniform": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_a_module_moving_tree_moves_the_identity": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_cwd_is_recorded_but_not_hashed": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_interpreter_env_vars_move_the_identity[PYTHONHOME]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_load_bearing_modules_are_located": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_locations_are_normalised_not_absolute": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_raw_locations_archived_beside_normalised": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_sys_path_recorded_in_full": [],
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_user_site_enablement_moves_the_identity": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_distribution_digest_is_order_independent": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_distribution_set_moves_the_identity": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[architecture-fake64]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[cuda_version-0.0]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[os-Fake-OS]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[python_version-0.0.0]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[torch_version-0.0.0+fake]": [
+      "parametrize"
+    ],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_identity_id_is_a_sha256": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_identity_is_stable_within_one_environment": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_pythonpath_moves_the_identity": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_torch_absent_is_recorded_not_fatal": [],
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_unset_and_empty_pythonpath_agree": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_clean_worktree_reports_clean": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_dirty_worktree_is_declared_and_names_the_file": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_first_entry_is_not_shifted_by_stripped_output": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_identity_excludes_what_varies_per_run": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_non_git_directory_is_unknown_not_clean": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_path_containing_a_space_survives": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_records_repository_and_upstream_commits": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_untracked_file_also_counts_as_dirty": [],
+    "tests/test_provenance.py::TestExecutionFingerprint::test_upstream_absent_is_none_not_an_error": [],
+    "tests/test_provenance.py::TestRendering::test_absent_values_render_visibly": [],
+    "tests/test_provenance.py::TestRendering::test_cli_emits_a_fingerprint_block": [],
+    "tests/test_provenance.py::TestRendering::test_json_output_round_trips": [],
+    "tests/test_provenance.py::TestRendering::test_rendered_block_carries_every_b2_field": [],
+    "tests/test_schema_and_writer.py::test_center_crop_to_aspect_is_idempotent_and_correct": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_accepts_valid": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_image_count_mismatch": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_missing_keys_and_bad_shapes": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_non_finite": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_wrapped_yaw": [],
+    "tests/test_schema_and_writer.py::test_check_traj_data_tolerates_column_yaw_like_the_loader": [],
+    "tests/test_schema_and_writer.py::test_image_names_must_be_unpadded_and_contiguous": [],
+    "tests/test_schema_and_writer.py::test_min_length_matches_reference_index_arithmetic": [],
+    "tests/test_schema_and_writer.py::test_validator_detects_partial_directories": [],
+    "tests/test_schema_and_writer.py::test_validator_flags_desynced_images": [],
+    "tests/test_schema_and_writer.py::test_validator_warns_on_short_trajectory": [],
+    "tests/test_schema_and_writer.py::test_waypoint_spacing_and_end_slack_scale_the_requirement": [],
+    "tests/test_schema_and_writer.py::test_writer_is_atomic_on_exception": [],
+    "tests/test_schema_and_writer.py::test_writer_rejects_bad_pose": [],
+    "tests/test_schema_and_writer.py::test_writer_roundtrip_produces_loader_compatible_output": [],
+    "tests/test_schema_and_writer.py::test_writer_unwraps_yaw": [],
+    "tests/test_train_run.py::test_a_configured_replay_ratio_never_rounds_away_to_zero": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_a_configured_replay_ratio_never_starves_the_target": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_accumulation_is_not_a_sum": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_train_run.py::test_accumulation_matches_one_full_batch": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_train_run.py::test_batchnorm_stays_frozen_across_epochs": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_train_run.py::test_checkpoint_round_trip_restores_optimizer_and_rng": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_epoch_checkpoints_load_without_trusting_anything": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_overfit_subset_asking_for_more_than_exists_keeps_everything": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_overfit_subset_rejects_a_dataset_without_the_index": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_overfit_subset_selects_whole_trajectories": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_partial_accumulation_window_is_dropped_not_applied": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[256-0.25-expect3]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[4-0.25-expect4]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[4-1.0-expect5]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.0-expect0]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.25-expect1]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.5-expect2]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_batches_are_merged_into_the_micro_batch": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_train_run.py::test_replay_ratio_out_of_range_is_rejected[-0.1]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_replay_ratio_out_of_range_is_rejected[1.5]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_train_run.py::test_resume_refuses_a_changed_epoch_count": [
+      "torch"
+    ],
+    "tests/test_train_run.py::test_resume_state_carries_no_custom_classes": [
+      "torch"
+    ],
+    "tests/test_upstream_compat.py::test_nomad_spec_also_loads": [
+      "upstream"
+    ],
+    "tests/test_upstream_compat.py::test_our_action_labels_match_the_reference_dataset": [
+      "upstream"
+    ],
+    "tests/test_upstream_compat.py::test_our_to_local_coords_matches_upstream_bitwise": [
+      "upstream"
+    ],
+    "tests/test_upstream_compat.py::test_reference_loader_accepts_our_dataset": [
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_cosine_similarity_can_leave_the_unit_interval": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_learn_angle_false_drops_the_orientation_keys": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.1]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.5]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.85]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-1.0]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.1]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.5]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.85]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-1.0]": [
+      "parametrize",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_the_plain_reduction_differs_from_the_reference_by_the_documented_factor": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_losses.py::test_the_two_orientation_metrics_are_the_same_number": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_build_model_rejects_unknown_types": [],
+    "tests/test_upstream_module.py::test_build_vint_matches_the_published_shapes": [
+      "skipif",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_metric_waypoint_spacing_reads_the_reference_constants": [
+      "skipif",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_missing_upstream_raises_with_the_clone_command": [],
+    "tests/test_upstream_module.py::test_model_config_layers_vint_over_defaults": [
+      "skipif",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame": [
+      "skipif",
+      "torch",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default": [
+      "skipif",
+      "upstream"
+    ],
+    "tests/test_upstream_module.py::test_upstream_root_honours_the_env_var": []
+  },
+  "collection_errors": [],
+  "deselected": [],
+  "exitstatus": 0,
+  "outcomes": {
+    "tests/test_check_test_population.py::TestCli::test_exit_codes": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_a_collection_error_fails_even_if_everything_else_passed": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_a_deselected_required_test_fails": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_a_failing_required_test_fails": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_collected_but_never_run_is_not_fine": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_healthy_report_passes": "passed",
+    "tests/test_check_test_population.py::TestConditions::test_swapped_node_ids_fail_even_at_the_right_count": "passed",
+    "tests/test_check_test_population.py::TestPin::test_manifest_round_trips": "passed",
+    "tests/test_check_test_population.py::TestPin::test_the_repository_manifest_matches_the_repository": "passed",
+    "tests/test_check_test_population.py::TestPin::test_upstream_drift_is_a_violation": "passed",
+    "tests/test_check_test_population.py::TestTheFailureThisExistsFor::test_exit_status_zero_does_not_rescue_a_contracted_population": "passed",
+    "tests/test_check_test_population.py::TestTheFailureThisExistsFor::test_the_f_m2_1_shape_is_refused": "passed",
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_census_carries_what_the_run_record_needs": "passed",
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_empty_model_does_not_divide_by_zero": "passed",
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_threshold_is_tunable_but_defaults_strict": "passed",
+    "tests/test_checkpoint_load_audit.py::TestCensus::test_unexpected_keys_alone_do_not_refuse": "passed",
+    "tests/test_checkpoint_load_audit.py::TestOverride::test_explicit_override_permits_a_partial_load": "passed",
+    "tests/test_checkpoint_load_audit.py::TestOverride::test_the_override_is_recorded_so_the_manifest_shows_the_decision": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_a_checkpoint_that_matched_nothing_is_refused": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_a_full_load_is_the_ordinary_case": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[0]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[10]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[1]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_accepts_at_or_above_the_threshold[5]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[100]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[11]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[25]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[50]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_refuses_below_the_threshold[99]": "passed",
+    "tests/test_checkpoint_load_audit.py::TestRefusal::test_the_refusal_message_names_the_consequence_not_just_the_symptom": "passed",
+    "tests/test_eval_offline.py::test_averaging_is_unweighted_over_batches_not_over_samples": "passed",
+    "tests/test_eval_offline.py::test_batch_size_changes_the_metric": "passed",
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e0.2_vint_go_stanford-e0.2_vint_go_stanford-None]": "passed",
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e2_holo_holo_seed12-e2_holo_holo-12]": "passed",
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e2_nonholo_diff_seed0-e2_nonholo_diff-0]": "passed",
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[e3_0p25h_pretrained_replay_seed1-e3_0p25h_pretrained_replay-1]": "passed",
+    "tests/test_eval_offline.py::test_cell_and_seed_parse[eval_vint_go_stanford_test_20260731-120000-None-None]": "passed",
+    "tests/test_eval_offline.py::test_empty_dataloader_is_an_error_with_the_likely_cause": "passed",
+    "tests/test_eval_offline.py::test_learn_angle_false_omits_orientation_columns": "passed",
+    "tests/test_eval_offline.py::test_metres_conversion_uses_spacing_times_waypoint_spacing": "passed",
+    "tests/test_eval_offline.py::test_nan_batches_are_dropped_and_counted": "passed",
+    "tests/test_eval_offline.py::test_single_batch_reproduces_reference_losses_exactly": "passed",
+    "tests/test_eval_offline.py::test_write_run_record_emits_the_three_files": "passed",
+    "tests/test_kinematics_and_control.py::test_compute_actions_is_frame_invariant": "passed",
+    "tests/test_kinematics_and_control.py::test_compute_actions_matches_reference_semantics": "passed",
+    "tests/test_kinematics_and_control.py::test_compute_actions_respects_waypoint_spacing": "passed",
+    "tests/test_kinematics_and_control.py::test_compute_actions_right_pads_by_repeating_the_last_element": "passed",
+    "tests/test_kinematics_and_control.py::test_compute_actions_yaw_column_is_not_normalised": "passed",
+    "tests/test_kinematics_and_control.py::test_holonomic_step_strafes_without_rotating": "passed",
+    "tests/test_kinematics_and_control.py::test_holonomic_tracking_uses_lateral_velocity_where_differential_cannot": "passed",
+    "tests/test_kinematics_and_control.py::test_limits_clamp_is_symmetric_and_disables_lateral_for_diff_drive": "passed",
+    "tests/test_kinematics_and_control.py::test_mean_step_distance_and_arc_length": "passed",
+    "tests/test_kinematics_and_control.py::test_pure_pursuit_holonomic_reaches_the_goal_too": "passed",
+    "tests/test_kinematics_and_control.py::test_pure_pursuit_reaches_the_goal_in_closed_loop": "passed",
+    "tests/test_kinematics_and_control.py::test_reference_pd_twist_matches_upstream_formula": "passed",
+    "tests/test_kinematics_and_control.py::test_resample_path_gives_uniform_spacing": "passed",
+    "tests/test_kinematics_and_control.py::test_to_local_coords_is_a_rotation_into_the_body_frame": "passed",
+    "tests/test_kinematics_and_control.py::test_to_local_coords_preserves_distance": "passed",
+    "tests/test_kinematics_and_control.py::test_unicycle_step_traces_an_exact_circle": "passed",
+    "tests/test_kinematics_and_control.py::test_unwrap_yaw_removes_branch_cuts": "passed",
+    "tests/test_kinematics_and_control.py::test_yaw_from_quat_wxyz_roundtrip": "passed",
+    "tests/test_kinematics_and_control.py::test_yaw_rotmat_is_orthonormal": "passed",
+    "tests/test_make_tables.py::test_a_complete_cell_passes": "passed",
+    "tests/test_make_tables.py::test_a_training_run_contributes_its_last_epoch": "passed",
+    "tests/test_make_tables.py::test_ad_hoc_eval_directories_are_not_results": "passed",
+    "tests/test_make_tables.py::test_allow_incomplete_marks_the_cell_and_still_fails": "passed",
+    "tests/test_make_tables.py::test_duplicate_cell_and_seed_is_refused": "passed",
+    "tests/test_make_tables.py::test_e0_needs_only_one_run": "passed",
+    "tests/test_make_tables.py::test_missing_seeds_are_a_hard_failure": "passed",
+    "tests/test_make_tables.py::test_only_one_orientation_cosine_is_tabulated": "passed",
+    "tests/test_make_tables.py::test_random_init_runs_are_labelled_in_the_table": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e0.2_vint_go_stanford-e0.2_vint_go_stanford-None]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e1_vint_diff_seed0-e1_vint_diff-0]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e2_nonholo_holo_seed1-e2_nonholo_holo-1]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e3_0p25h_pretrained_replay_seed2-e3_0p25h_pretrained_replay-2]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e4_derived_published_seed0-e4_derived_published-0]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e5_lightmat_noise_seed10-e5_lightmat_noise-10]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[e6_corridor_ft_seed0-e6_corridor_ft-0]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[eval_vint_recon_test_20260731-120000-None-None]": "passed",
+    "tests/test_make_tables.py::test_run_name_grammar_matches_the_documented_convention[scratch_dir-None-None]": "passed",
+    "tests/test_make_tables.py::test_tables_are_deterministic": "passed",
+    "tests/test_make_tables.py::test_the_batch_size_appears_in_every_table": "passed",
+    "tests/test_planning_stats_splits.py::test_astar_does_not_cut_corners_between_obstacles": "passed",
+    "tests/test_planning_stats_splits.py::test_astar_finds_the_doorway": "passed",
+    "tests/test_planning_stats_splits.py::test_astar_raises_rather_than_returning_empty": "passed",
+    "tests/test_planning_stats_splits.py::test_astar_rejects_occupied_endpoints": "passed",
+    "tests/test_planning_stats_splits.py::test_estimate_action_stats_is_self_consistent": "passed",
+    "tests/test_planning_stats_splits.py::test_estimate_metric_waypoint_spacing_recovers_the_true_step": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.5-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.7-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.8-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[-0.9-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.5-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.7-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.8-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[a-0.9-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.5-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.7-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.8-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-12]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-2]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-3]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-4]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-5]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_always_yields_a_non_empty_test_set[b-0.9-8]": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_is_deterministic": "passed",
+    "tests/test_planning_stats_splits.py::test_grouped_split_rejects_a_single_group": "passed",
+    "tests/test_planning_stats_splits.py::test_inflate_grows_obstacles_by_the_footprint": "passed",
+    "tests/test_planning_stats_splits.py::test_perturb_path_keeps_endpoints_and_stays_free": "passed",
+    "tests/test_planning_stats_splits.py::test_sample_episode_pair_respects_length_bounds": "passed",
+    "tests/test_planning_stats_splits.py::test_sample_free_pose_respects_clearance": "passed",
+    "tests/test_planning_stats_splits.py::test_scene_grouping_prevents_leakage": "passed",
+    "tests/test_planning_stats_splits.py::test_scene_of_parses_collector_names": "passed",
+    "tests/test_planning_stats_splits.py::test_smooth_path_shortens_and_stays_free": "passed",
+    "tests/test_planning_stats_splits.py::test_split_is_stable_under_reordering_and_growth": "passed",
+    "tests/test_planning_stats_splits.py::test_stable_fraction_is_deterministic_and_uniform": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_a_module_moving_tree_moves_the_identity": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_cwd_is_recorded_but_not_hashed": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_interpreter_env_vars_move_the_identity[PYTHONHOME]": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_load_bearing_modules_are_located": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_locations_are_normalised_not_absolute": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_raw_locations_archived_beside_normalised": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_sys_path_recorded_in_full": "passed",
+    "tests/test_provenance.py::TestEffectiveImportSurface::test_user_site_enablement_moves_the_identity": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_distribution_digest_is_order_independent": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_distribution_set_moves_the_identity": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[architecture-fake64]": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[cuda_version-0.0]": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[os-Fake-OS]": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[python_version-0.0.0]": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_every_declared_field_moves_the_identity[torch_version-0.0.0+fake]": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_identity_id_is_a_sha256": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_identity_is_stable_within_one_environment": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_pythonpath_moves_the_identity": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_torch_absent_is_recorded_not_fatal": "passed",
+    "tests/test_provenance.py::TestEnvironmentIdentity::test_unset_and_empty_pythonpath_agree": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_clean_worktree_reports_clean": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_dirty_worktree_is_declared_and_names_the_file": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_first_entry_is_not_shifted_by_stripped_output": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_identity_excludes_what_varies_per_run": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_non_git_directory_is_unknown_not_clean": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_path_containing_a_space_survives": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_records_repository_and_upstream_commits": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_untracked_file_also_counts_as_dirty": "passed",
+    "tests/test_provenance.py::TestExecutionFingerprint::test_upstream_absent_is_none_not_an_error": "passed",
+    "tests/test_provenance.py::TestRendering::test_absent_values_render_visibly": "passed",
+    "tests/test_provenance.py::TestRendering::test_cli_emits_a_fingerprint_block": "passed",
+    "tests/test_provenance.py::TestRendering::test_json_output_round_trips": "passed",
+    "tests/test_provenance.py::TestRendering::test_rendered_block_carries_every_b2_field": "passed",
+    "tests/test_schema_and_writer.py::test_center_crop_to_aspect_is_idempotent_and_correct": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_accepts_valid": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_image_count_mismatch": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_missing_keys_and_bad_shapes": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_non_finite": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_flags_wrapped_yaw": "passed",
+    "tests/test_schema_and_writer.py::test_check_traj_data_tolerates_column_yaw_like_the_loader": "passed",
+    "tests/test_schema_and_writer.py::test_image_names_must_be_unpadded_and_contiguous": "passed",
+    "tests/test_schema_and_writer.py::test_min_length_matches_reference_index_arithmetic": "passed",
+    "tests/test_schema_and_writer.py::test_validator_detects_partial_directories": "passed",
+    "tests/test_schema_and_writer.py::test_validator_flags_desynced_images": "passed",
+    "tests/test_schema_and_writer.py::test_validator_warns_on_short_trajectory": "passed",
+    "tests/test_schema_and_writer.py::test_waypoint_spacing_and_end_slack_scale_the_requirement": "passed",
+    "tests/test_schema_and_writer.py::test_writer_is_atomic_on_exception": "passed",
+    "tests/test_schema_and_writer.py::test_writer_rejects_bad_pose": "passed",
+    "tests/test_schema_and_writer.py::test_writer_roundtrip_produces_loader_compatible_output": "passed",
+    "tests/test_schema_and_writer.py::test_writer_unwraps_yaw": "passed",
+    "tests/test_train_run.py::test_a_configured_replay_ratio_never_rounds_away_to_zero": "passed",
+    "tests/test_train_run.py::test_a_configured_replay_ratio_never_starves_the_target": "passed",
+    "tests/test_train_run.py::test_accumulation_is_not_a_sum": "passed",
+    "tests/test_train_run.py::test_accumulation_matches_one_full_batch": "passed",
+    "tests/test_train_run.py::test_batchnorm_stays_frozen_across_epochs": "passed",
+    "tests/test_train_run.py::test_checkpoint_round_trip_restores_optimizer_and_rng": "passed",
+    "tests/test_train_run.py::test_epoch_checkpoints_load_without_trusting_anything": "passed",
+    "tests/test_train_run.py::test_overfit_subset_asking_for_more_than_exists_keeps_everything": "passed",
+    "tests/test_train_run.py::test_overfit_subset_rejects_a_dataset_without_the_index": "passed",
+    "tests/test_train_run.py::test_overfit_subset_selects_whole_trajectories": "passed",
+    "tests/test_train_run.py::test_partial_accumulation_window_is_dropped_not_applied": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[256-0.25-expect3]": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[4-0.25-expect4]": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[4-1.0-expect5]": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.0-expect0]": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.25-expect1]": "passed",
+    "tests/test_train_run.py::test_replay_batch_sizes[64-0.5-expect2]": "passed",
+    "tests/test_train_run.py::test_replay_batches_are_merged_into_the_micro_batch": "passed",
+    "tests/test_train_run.py::test_replay_ratio_out_of_range_is_rejected[-0.1]": "passed",
+    "tests/test_train_run.py::test_replay_ratio_out_of_range_is_rejected[1.5]": "passed",
+    "tests/test_train_run.py::test_resume_refuses_a_changed_epoch_count": "passed",
+    "tests/test_train_run.py::test_resume_state_carries_no_custom_classes": "passed",
+    "tests/test_upstream_compat.py::test_nomad_spec_also_loads": "passed",
+    "tests/test_upstream_compat.py::test_our_action_labels_match_the_reference_dataset": "passed",
+    "tests/test_upstream_compat.py::test_our_to_local_coords_matches_upstream_bitwise": "passed",
+    "tests/test_upstream_compat.py::test_reference_loader_accepts_our_dataset": "passed",
+    "tests/test_upstream_losses.py::test_cosine_similarity_can_leave_the_unit_interval": "passed",
+    "tests/test_upstream_losses.py::test_learn_angle_false_drops_the_orientation_keys": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.1]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.5]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-0.85]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.25-1.0]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.1]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.5]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-0.85]": "passed",
+    "tests/test_upstream_losses.py::test_reference_losses_match_compute_losses[0.5-1.0]": "passed",
+    "tests/test_upstream_losses.py::test_the_plain_reduction_differs_from_the_reference_by_the_documented_factor": "passed",
+    "tests/test_upstream_losses.py::test_the_two_orientation_metrics_are_the_same_number": "passed",
+    "tests/test_upstream_module.py::test_build_model_rejects_unknown_types": "passed",
+    "tests/test_upstream_module.py::test_build_vint_matches_the_published_shapes": "passed",
+    "tests/test_upstream_module.py::test_metric_waypoint_spacing_reads_the_reference_constants": "passed",
+    "tests/test_upstream_module.py::test_missing_upstream_raises_with_the_clone_command": "passed",
+    "tests/test_upstream_module.py::test_model_config_layers_vint_over_defaults": "passed",
+    "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame": "passed",
+    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default": "passed",
+    "tests/test_upstream_module.py::test_upstream_root_honours_the_env_var": "passed"
+  },
+  "skip_reasons": {}
+}

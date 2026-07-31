@@ -1,0 +1,20 @@
+EXECUTION FINGERPRINT
+=====================
+
+UTC timestamp         2026-07-31T08:41:52+00:00
+Hostname              favl
+Interpreter           /home/favl/.venv-train/bin/python
+Repository commit     c9b1ff57c0f7e80fb25f771301d37e55bc46ef16
+Working tree          modified (1): gates/M2/
+Upstream commit       dca79815b704e5aa9c6bdc3082351f9e3b2848c2
+Python version        3.11.15
+Torch version         2.11.0+cu128
+CUDA version          12.8
+OS                    Linux-6.8.0-124-generic-x86_64-with-glibc2.35
+Architecture          x86_64
+PYTHONPATH            
+Environment identity  4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625
+
+Emitted before any experiment work. The environment identity is a digest
+over python, torch, cuda, the installed-distribution set, OS and
+architecture -- not over the path this interpreter happens to live at.

@@ -1,0 +1,50 @@
+{
+  "utc_timestamp": "2026-07-31T08:41:54+00:00",
+  "hostname": "favl",
+  "interpreter": "/home/favl/.venv-train/bin/python",
+  "repository_commit": "c9b1ff57c0f7e80fb25f771301d37e55bc46ef16",
+  "repository_worktree": "modified (1): gates/M2/",
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "python_version": "3.11.15",
+  "torch_version": "2.11.0+cu128",
+  "cuda_version": "12.8",
+  "os": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+  "architecture": "x86_64",
+  "pythonpath": "",
+  "sys_prefix": "<prefix>",
+  "sys_base_prefix": "<base_prefix>",
+  "pythonhome": "",
+  "enable_user_site": false,
+  "user_site": "/home/favl/.local/lib/python3.11/site-packages",
+  "module_locations": {
+    "torch": "<prefix>/lib/python3.11/site-packages/torch/__init__.py",
+    "torchvision": "<prefix>/lib/python3.11/site-packages/torchvision/__init__.py",
+    "navfm": "<repo>/src/navfm/__init__.py",
+    "vint_train.training.train_utils": "<repo>/third_party/visualnav-transformer/train/vint_train/training/train_utils.py",
+    "cv2": "<prefix>/lib/python3.11/site-packages/cv2/__init__.py",
+    "matplotlib": "<prefix>/lib/python3.11/site-packages/matplotlib/__init__.py",
+    "diffusers": "<prefix>/lib/python3.11/site-packages/diffusers/__init__.py"
+  },
+  "sys_executable": "/home/favl/.venv-train/bin/python",
+  "sys_version": "3.11.15 (main, May 10 2026, 19:28:18) [Clang 22.1.3 ]",
+  "sys_path": [
+    "/home/favl/projects/navfm",
+    "/home/favl/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python311.zip",
+    "/home/favl/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11",
+    "/home/favl/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/lib/python3.11/lib-dynload",
+    "/home/favl/.venv-train/lib/python3.11/site-packages",
+    "/home/favl/projects/navfm/src",
+    "/home/favl/.venv-train/lib/python3.11/site-packages/setuptools/_vendor"
+  ],
+  "cwd": "/home/favl/projects/navfm",
+  "module_locations_raw": {
+    "torch": "/home/favl/.venv-train/lib/python3.11/site-packages/torch/__init__.py",
+    "torchvision": "/home/favl/.venv-train/lib/python3.11/site-packages/torchvision/__init__.py",
+    "navfm": "/home/favl/projects/navfm/src/navfm/__init__.py",
+    "vint_train.training.train_utils": "/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/training/train_utils.py",
+    "cv2": "/home/favl/.venv-train/lib/python3.11/site-packages/cv2/__init__.py",
+    "matplotlib": "/home/favl/.venv-train/lib/python3.11/site-packages/matplotlib/__init__.py",
+    "diffusers": "/home/favl/.venv-train/lib/python3.11/site-packages/diffusers/__init__.py"
+  },
+  "environment_id": "4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625"
+}

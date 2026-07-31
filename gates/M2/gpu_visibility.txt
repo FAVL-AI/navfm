@@ -1,0 +1,10 @@
+=== GPU visibility ===
+name, driver_version, memory.total [MiB], compute_cap
+NVIDIA GeForce RTX 4080 SUPER, 580.159.03, 16376 MiB, 8.9
+
+torch           2.11.0+cu128
+torch cuda      12.8
+cuda available  True
+device count    1
+device 0        NVIDIA GeForce RTX 4080 SUPER
+capability      (8, 9)

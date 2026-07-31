@@ -1,0 +1,10 @@
+=== uv installer and managed-interpreter provenance ===
+uv 0.11.14 (x86_64-unknown-linux-gnu)
+uv binary: /home/favl/.local/bin/uv
+
+interpreter: /home/favl/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/bin/python3.11
+home = /home/favl/.local/share/uv/python/cpython-3.11-linux-x86_64-gnu/bin
+implementation = CPython
+uv = 0.11.14
+version_info = 3.11.15
+include-system-site-packages = false
