@@ -75,6 +75,15 @@ deep reference; `paper/draft.md` is the paper.
      for a string that never existed. A check that cannot fail certifies
      nothing; a check that cannot pass will be deleted by whoever is in a
      hurry. Prove both directions.
+   - **The attribution guard false-positives; reword, never bypass.** The
+     machine-level pre-push guard matches ordinary English describing how an
+     artefact comes into existence -- the two-word pattern "<verb>-by" where
+     the verb is the past participle of *to generate*. It fires on legitimate
+     prose in files AND on commit messages that quote the blocked phrase while
+     explaining the block. Reword to "produced in" / "written by the pass" and
+     record the collision. Never disable the guard, never `--no-verify`: a
+     false positive costs one rewording, and a disabled attribution guard costs
+     the authorship rule the repository is built on.
 6. **Pre-registration.** Never edit the frozen section of
    `PREREGISTRATION.md`; amendments are new dated sections. No hand-typed
    numbers in `paper/draft.md` — result tables come only from

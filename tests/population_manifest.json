@@ -1,7 +1,7 @@
 {
   "_comment": "Pinned test-population expectation. Guards against silent contraction of the upstream compatibility proof (F-M2-1). Update only through a reviewed commit.",
   "expected_required_count": 33,
-  "informational_total_collected": 368,
+  "informational_total_collected": 377,
   "required_marker": "upstream",
   "required_node_ids": [
     "tests/test_rng_domains.py::TestCausalContract::test_eval_seed_varies_population_only",

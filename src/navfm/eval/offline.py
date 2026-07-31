@@ -370,6 +370,15 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--num-workers", type=int, default=0, help="reference test loaders use 0")
     p.add_argument("--seed", type=int, default=0, help="seeds the eval loader's shuffle")
     p.add_argument(
+        "--declaration",
+        default=None,
+        help=(
+            "path to the predeclared execution parameters. When given, arguments "
+            "contradicting the declaration are REFUSED, naming the conflicting field. "
+            "A declaration nothing reads is documentation, not a control."
+        ),
+    )
+    p.add_argument(
         "--population-seed",
         type=int,
         default=None,
@@ -576,6 +585,44 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise SystemExit(str(exc)) from exc
 
     model.to(device)
+
+    # Enforce the declaration before anything else. A predeclared parameter that
+    # the evaluator does not read cannot constrain the evaluator.
+    if args.declaration:
+        declared = json.loads(Path(args.declaration).read_text())
+        conflicts: list[str] = []
+        checks_map = [
+            ("batch_size", args.batch_size, declared.get("loader", {}).get("batch_size")),
+            ("num_workers", args.num_workers, declared.get("loader", {}).get("num_workers")),
+            (
+                "population_seed",
+                args.population_seed,
+                declared.get("population", {}).get("evaluation_seed"),
+            ),
+        ]
+        for field, supplied, want in checks_map:
+            if want is not None and supplied is not None and supplied != want:
+                conflicts.append(f"{field}: supplied {supplied!r}, declared {want!r}")
+        allowed_model_seeds = set(declared.get("control_arm", {}).get("model_seeds", [])) | {
+            declared.get("checkpoint_arm", {}).get("model_seed")
+        }
+        if (
+            args.model_seed is not None
+            and allowed_model_seeds
+            and (args.model_seed not in allowed_model_seeds)
+        ):
+            conflicts.append(
+                f"model_seed: supplied {args.model_seed!r}, declared values "
+                f"{sorted(x for x in allowed_model_seeds if x is not None)!r}"
+            )
+        if conflicts:
+            raise SystemExit(
+                "gate execution invalid -- arguments contradict the predeclared "
+                "execution parameters:\n"
+                + "\n".join(f"    {c}" for c in conflicts)
+                + f"\n  declaration: {args.declaration}"
+            )
+        print(f"  declaration honoured: {args.declaration}")
 
     # What kind of evidence is this? Declared, or defaulted to the most
     # conservative class consistent with the arguments -- never to a class that

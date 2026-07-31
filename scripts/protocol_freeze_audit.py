@@ -51,6 +51,7 @@ SHA256SUMS = REPO / "gates" / "G0" / "SHA256SUMS"
 PROTOCOL = REPO / "PREREGISTRATION.md"
 DECLARATION = REPO / "gates" / "G0" / "evaluation_declaration.json"
 PAIR_MANIFEST = REPO / "gates" / "G0" / "evaluation_pairs.json"
+PAIRS_ARTEFACT = REPO / "gates" / "G0" / "evaluation_pairs.tsv"
 PATCH_DIFF = REPO / "gates" / "G0" / "patch.diff"
 UPSTREAM = REPO / "third_party" / "visualnav-transformer"
 
@@ -347,25 +348,54 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
             Check("artefacts_resolve_at_amendment_commit", False, "commit does not resolve")
         )
 
-    # 15: the evaluation population, verified directly.
+    # 15: the evaluation population, RECOMPUTED from the pairs artefact.
+    # The manifest's own sha256 and pair_count are claims; this check derives
+    # both independently from the pairs file and compares. Reading the fields
+    # out of the manifest and testing truthiness -- the prior implementation --
+    # could not falsify anything.
     try:
         pinned = json.loads(PAIR_MANIFEST.read_text())
-        digest = pinned.get("sha256")
-        count = pinned.get("pair_count")
-        ok = bool(digest) and bool(count)
-        checks.append(
-            Check(
-                "evaluation_pair_manifest_digest",
-                ok,
-                f"population digest {str(digest)[:16]}, {count} pairs"
-                if ok
-                else "manifest present but missing sha256 or pair_count",
-            )
-        )
     except (OSError, ValueError) as exc:
         checks.append(
             Check("evaluation_pair_manifest_digest", False, f"no pinned pair manifest: {exc}")
         )
+    else:
+        try:
+            rows = [
+                tuple(line.split("\t"))
+                for line in PAIRS_ARTEFACT.read_text().splitlines()
+                if line.strip()
+            ]
+        except OSError as exc:
+            checks.append(
+                Check(
+                    "evaluation_pair_manifest_digest",
+                    False,
+                    f"manifest present but the pairs artefact it summarises is absent: {exc} "
+                    f"-- a digest with nothing to verify against is not evidence",
+                )
+            )
+        else:
+            payload = "\n".join("|".join(r) for r in rows)
+            recomputed = hashlib.sha256(payload.encode()).hexdigest()
+            problems15 = []
+            if recomputed != pinned.get("sha256"):
+                problems15.append(
+                    f"recomputed digest {recomputed[:16]} != manifest {str(pinned.get('sha256'))[:16]}"
+                )
+            if len(rows) != pinned.get("pair_count"):
+                problems15.append(
+                    f"recomputed pair count {len(rows)} != manifest {pinned.get('pair_count')}"
+                )
+            checks.append(
+                Check(
+                    "evaluation_pair_manifest_digest",
+                    not problems15,
+                    "; ".join(problems15)
+                    if problems15
+                    else f"{len(rows)} pairs, digest {recomputed[:16]} recomputed and matching",
+                )
+            )
 
     # 16: the patch set is part of the protocol identity.
     problems_patch: list[str] = []
@@ -415,14 +445,22 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
             "absent" if not run_dir.exists() else f"{run_dir} already exists",
         )
     )
-    stray = sorted(run_dir.glob("**/metrics.json")) if run_dir.exists() else []
+    # Scan EVERY location an evaluator output could exist, not just inside a
+    # directory check 13 already requires to be absent -- that made this check
+    # vacuous. Any evidence class counts: a smoke run in runs/ predating the
+    # gate is still evaluator output produced before the audit.
+    stray: list[str] = []
+    for root in (REPO / "runs", REPO / "gates" / "G0", run_dir, Path.cwd() / "runs"):
+        if root.exists():
+            stray += [str(p) for p in sorted(root.glob("**/metrics.json"))]
+    stray = sorted(set(stray))
     checks.append(
         Check(
             "no_pre_audit_evaluator_output",
             not stray,
-            "none"
+            "no evaluator output anywhere in runs/, gates/G0/ or the run directory"
             if not stray
-            else f"{len(stray)} evaluator output(s) predate this audit: {[str(p) for p in stray[:3]]}",
+            else f"{len(stray)} evaluator output(s) predate this audit: {stray[:3]}",
         )
     )
     return checks
