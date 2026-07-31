@@ -1,0 +1,170 @@
+diff --git a/deployment/src/utils.py b/deployment/src/utils.py
+index e388d25..b7819f5 100644
+--- a/deployment/src/utils.py
++++ b/deployment/src/utils.py
+@@ -95,7 +95,7 @@ def load_model(
+     else:
+         raise ValueError(f"Invalid model type: {model_type}")
+     
+-    checkpoint = torch.load(model_path, map_location=device)
++    checkpoint = torch.load(model_path, map_location=device, weights_only=False)  # navfm-patch:torch_load_weights_only_deploy
+     if model_type == "nomad":
+         state_dict = checkpoint
+         model.load_state_dict(state_dict, strict=False)
+diff --git a/train/config/gnm.yaml b/train/config/gnm.yaml
+index d45c0be..1a680aa 100644
+--- a/train/config/gnm.yaml
++++ b/train/config/gnm.yaml
+@@ -63,13 +63,16 @@ datasets:
+     end_slack: 0
+     goals_per_obs: 2 # increase dataset size
+     negative_mining: True
+-  cory_hall:
+-    data_folder: /home/<username>/vint_dataset/cory_hall/
+-    train: /home/<username>/data_splits/cory_hall/train/
+-    test: /home/<username>/data_splits/cory_hall/test/
+-    end_slack: 3 # because many trajectories end in collisions
+-    goals_per_obs: 1
+-    negative_mining: True
++  # # navfm-patch:cory_hall -- active in the shipped config but with no public
++  # download link. Public mirror: huggingface.co/datasets/lerobot/berkeley_gnm_cory_hall
++  # (LeRobot parquet; needs conversion). Uncomment once converted.
++#  cory_hall:
++#    data_folder: /home/<username>/vint_dataset/cory_hall/
++#    train: /home/<username>/data_splits/cory_hall/train/
++#    test: /home/<username>/data_splits/cory_hall/test/
++#    end_slack: 3 # because many trajectories end in collisions
++#    goals_per_obs: 1
++#    negative_mining: True
+   tartan_drive:
+     data_folder: /home/<username>/vint_dataset/tartan_drive/
+     train: /home/<username>/data_splits/tartan_drive/train/
+diff --git a/train/config/nomad.yaml b/train/config/nomad.yaml
+index b2de4d9..eab1528 100644
+--- a/train/config/nomad.yaml
++++ b/train/config/nomad.yaml
+@@ -75,13 +75,16 @@ datasets:
+     end_slack: 0
+     goals_per_obs: 2 # increase dataset size
+     negative_mining: True
+-  cory_hall:
+-    data_folder: /home/<username>/nomad_dataset/cory_hall/
+-    train: /home/<username>/data_splits/cory_hall/train/
+-    test: /home/<username>/data_splits/cory_hall/test/
+-    end_slack: 3 # because many trajectories end in collisions
+-    goals_per_obs: 1
+-    negative_mining: True
++  # # navfm-patch:cory_hall -- active in the shipped config but with no public
++  # download link. Public mirror: huggingface.co/datasets/lerobot/berkeley_gnm_cory_hall
++  # (LeRobot parquet; needs conversion). Uncomment once converted.
++#  cory_hall:
++#    data_folder: /home/<username>/nomad_dataset/cory_hall/
++#    train: /home/<username>/data_splits/cory_hall/train/
++#    test: /home/<username>/data_splits/cory_hall/test/
++#    end_slack: 3 # because many trajectories end in collisions
++#    goals_per_obs: 1
++#    negative_mining: True
+   tartan_drive:
+     data_folder: /home/<username>/nomad_dataset/tartan_drive/
+     train: /home/<username>/data_splits/tartan_drive/train/
+diff --git a/train/config/vint.yaml b/train/config/vint.yaml
+index 8f40d91..8325b88 100644
+--- a/train/config/vint.yaml
++++ b/train/config/vint.yaml
+@@ -70,13 +70,16 @@ datasets:
+     end_slack: 0
+     goals_per_obs: 2 # increase dataset size
+     negative_mining: True
+-  cory_hall:
+-    data_folder: /home/<username>/vint_dataset/cory_hall/
+-    train: /home/<username>/data_splits/cory_hall/train/
+-    test: /home/<username>/data_splits/cory_hall/test/
+-    end_slack: 3 # because many trajectories end in collisions
+-    goals_per_obs: 1
+-    negative_mining: True
++  # # navfm-patch:cory_hall -- active in the shipped config but with no public
++  # download link. Public mirror: huggingface.co/datasets/lerobot/berkeley_gnm_cory_hall
++  # (LeRobot parquet; needs conversion). Uncomment once converted.
++#  cory_hall:
++#    data_folder: /home/<username>/vint_dataset/cory_hall/
++#    train: /home/<username>/data_splits/cory_hall/train/
++#    test: /home/<username>/data_splits/cory_hall/test/
++#    end_slack: 3 # because many trajectories end in collisions
++#    goals_per_obs: 1
++#    negative_mining: True
+   tartan_drive:
+     data_folder: /home/<username>/vint_dataset/tartan_drive/
+     train: /home/<username>/data_splits/tartan_drive/train/
+diff --git a/train/train.py b/train/train.py
+index 4759ad9..45a9b57 100644
+--- a/train/train.py
++++ b/train/train.py
+@@ -284,7 +284,7 @@ def main(config):
+         load_project_folder = os.path.join("logs", config["load_run"])
+         print("Loading model from ", load_project_folder)
+         latest_path = os.path.join(load_project_folder, "latest.pth")
+-        latest_checkpoint = torch.load(latest_path) #f"cuda:{}" if torch.cuda.is_available() else "cpu")
++        latest_checkpoint = torch.load(latest_path, weights_only=False)  # navfm-patch:torch_load_weights_only #f"cuda:{}" if torch.cuda.is_available() else "cpu")
+         load_model(model, config["model_type"], latest_checkpoint)
+         if "epoch" in latest_checkpoint:
+             current_epoch = latest_checkpoint["epoch"] + 1
+diff --git a/train/vint_train/data/vint_dataset.py b/train/vint_train/data/vint_dataset.py
+index 87b101c..7241b9e 100644
+--- a/train/vint_train/data/vint_dataset.py
++++ b/train/vint_train/data/vint_dataset.py
+@@ -18,6 +18,21 @@ from vint_train.data.data_utils import (
+     to_local_coords,
+ )
+ 
++# # navfm-patch:sampling_rng_isolation -- goal sampling drew from the GLOBAL
++# numpy stream, so seeding a model also changed which (observation, goal)
++# pairs were scored: model identity and evaluation population were coupled
++# through one RNG. They are separate experimental factors and now use
++# separate streams. This RandomState is navfm-controlled and is seeded by
++# navfm_seed_sampling() from a declared population seed; global np.random
++# no longer influences which pairs are drawn.
++_NAVFM_SAMPLING_RNG = np.random.RandomState()
++
++
++def navfm_seed_sampling(seed):
++    """Seed the evaluation-population stream. Independent of model init."""
++    _NAVFM_SAMPLING_RNG.seed(seed)
++
++
+ class ViNT_Dataset(Dataset):
+     def __init__(
+         self,
+@@ -192,7 +207,7 @@ class ViNT_Dataset(Dataset):
+         Sample a goal from the future in the same trajectory.
+         Returns: (trajectory_name, goal_time, goal_is_negative)
+         """
+-        goal_offset = np.random.randint(0, max_goal_dist + 1)
++        goal_offset = _NAVFM_SAMPLING_RNG.randint(0, max_goal_dist + 1)  # navfm-patch:sampling_rng_goal_offset
+         if goal_offset == 0:
+             trajectory_name, goal_time = self._sample_negative()
+             return trajectory_name, goal_time, True
+@@ -204,7 +219,7 @@ class ViNT_Dataset(Dataset):
+         """
+         Sample a goal from a (likely) different trajectory.
+         """
+-        return self.goals_index[np.random.randint(0, len(self.goals_index))]
++        return self.goals_index[_NAVFM_SAMPLING_RNG.randint(0, len(self.goals_index))]  # navfm-patch:sampling_rng_negative
+ 
+     def _load_index(self) -> None:
+         """
+diff --git a/train/vint_train/training/train_eval_loop.py b/train/vint_train/training/train_eval_loop.py
+index 176d043..70feb7e 100644
+--- a/train/vint_train/training/train_eval_loop.py
++++ b/train/vint_train/training/train_eval_loop.py
+@@ -267,8 +267,9 @@ def train_eval_loop_nomad(
+             "lr": optimizer.param_groups[0]["lr"],
+         }, commit=False)
+ 
+-        if lr_scheduler is not None:
+-            lr_scheduler.step()
++        # # navfm-patch:double_scheduler_step -- upstream steps the scheduler twice
++        # per epoch, so CosineAnnealingLR(T_max=epochs) completes at epochs/2
++        # and then climbs back up. Stepping is done above; this call is removed.
+ 
+         # log average eval loss
+         wandb.log({}, commit=False)

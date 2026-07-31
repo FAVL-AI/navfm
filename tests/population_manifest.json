@@ -1,9 +1,16 @@
 {
   "_comment": "Pinned test-population expectation. Guards against silent contraction of the upstream compatibility proof (F-M2-1). Update only through a reviewed commit.",
-  "expected_required_count": 26,
-  "informational_total_collected": 343,
+  "expected_required_count": 33,
+  "informational_total_collected": 360,
   "required_marker": "upstream",
   "required_node_ids": [
+    "tests/test_rng_domains.py::TestCausalContract::test_eval_seed_varies_population_only",
+    "tests/test_rng_domains.py::TestCausalContract::test_model_seed_varies_weights_only",
+    "tests/test_rng_domains.py::TestRngDomains::test_global_numpy_does_not_reach_the_sampling_stream",
+    "tests/test_rng_domains.py::TestRngDomains::test_identical_population_across_all_four_arms",
+    "tests/test_rng_domains.py::TestRngDomains::test_model_seeding_does_not_reach_the_sampling_stream",
+    "tests/test_rng_domains.py::TestRngDomains::test_population_is_reproducible_from_its_seed_alone",
+    "tests/test_rng_domains.py::TestRngDomains::test_sampling_stream_is_not_reset_by_drawing_from_it",
     "tests/test_train_run.py::test_accumulation_is_not_a_sum",
     "tests/test_train_run.py::test_accumulation_matches_one_full_batch",
     "tests/test_train_run.py::test_batchnorm_stays_frozen_across_epochs",
@@ -31,7 +38,7 @@
     "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame",
     "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default"
   ],
-  "required_node_ids_sha256": "ba3e311c0852002c0fca5f0c31bcce0cb42533ab33b6e38b76cbe56e3da55f38",
+  "required_node_ids_sha256": "517ff7c4d9a91e932db2b60a6515a2df67d5c7421e1eff01b58bf7dbd9dd6815",
   "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
   "upstream_path": "third_party/visualnav-transformer"
 }

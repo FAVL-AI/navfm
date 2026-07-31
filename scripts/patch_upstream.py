@@ -82,6 +82,51 @@ PATCHES: list[Patch] = [
         description="same, at the deployment load site",
     ),
     Patch(
+        name="sampling_rng_isolation",
+        relative_path="train/vint_train/data/vint_dataset.py",
+        find="class ViNT_Dataset(Dataset):",
+        replace=(
+            f"# {MARKER}sampling_rng_isolation -- goal sampling drew from the GLOBAL\n"
+            "# numpy stream, so seeding a model also changed which (observation, goal)\n"
+            "# pairs were scored: model identity and evaluation population were coupled\n"
+            "# through one RNG. They are separate experimental factors and now use\n"
+            "# separate streams. This RandomState is navfm-controlled and is seeded by\n"
+            "# navfm_seed_sampling() from a declared population seed; global np.random\n"
+            "# no longer influences which pairs are drawn.\n"
+            "_NAVFM_SAMPLING_RNG = np.random.RandomState()\n"
+            "\n"
+            "\n"
+            "def navfm_seed_sampling(seed):\n"
+            '    """Seed the evaluation-population stream. Independent of model init."""\n'
+            "    _NAVFM_SAMPLING_RNG.seed(seed)\n"
+            "\n"
+            "\n"
+            "class ViNT_Dataset(Dataset):"
+        ),
+        description=(
+            "goal sampling drew from global np.random, coupling model seed to the "
+            "evaluation population"
+        ),
+    ),
+    Patch(
+        name="sampling_rng_goal_offset",
+        relative_path="train/vint_train/data/vint_dataset.py",
+        find="        goal_offset = np.random.randint(0, max_goal_dist + 1)",
+        replace=(
+            f"        goal_offset = _NAVFM_SAMPLING_RNG.randint(0, max_goal_dist + 1)  {MARKER}sampling_rng_goal_offset"
+        ),
+        description="goal offset draws from the isolated sampling stream",
+    ),
+    Patch(
+        name="sampling_rng_negative",
+        relative_path="train/vint_train/data/vint_dataset.py",
+        find="        return self.goals_index[np.random.randint(0, len(self.goals_index))]",
+        replace=(
+            f"        return self.goals_index[_NAVFM_SAMPLING_RNG.randint(0, len(self.goals_index))]  {MARKER}sampling_rng_negative"
+        ),
+        description="negative-goal draws from the isolated sampling stream",
+    ),
+    Patch(
         name="double_scheduler_step",
         relative_path="train/vint_train/training/train_eval_loop.py",
         find="        if lr_scheduler is not None:\n            lr_scheduler.step()\n",
