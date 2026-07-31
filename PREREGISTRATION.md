@@ -163,10 +163,12 @@ recorded here because the corrections are the evidence:
    over seeds). What v1 lacked is the **model**: nothing said how the
    interaction term itself is estimated from episode-level outcomes. That gap,
    and only that gap, is what this amendment closes.
-2. That draft reported the primary endpoint "with a 95 % CI", dropping the
-   frozen "percentile-bootstrap" qualifier while routing bootstrap machinery
-   to the continuous metrics alone. That would have *reopened* a degree of
-   freedom the frozen section had already closed — the inverse of an
+2. **Prevented amendment-induced loss of estimator specificity.** That draft
+   reported the primary endpoint "with a 95 % CI", dropping the frozen
+   "percentile-bootstrap" qualifier while routing bootstrap machinery to the
+   continuous metrics alone. The amendment would itself have made the
+   estimator *less* specified than the protocol it amends, reopening a degree
+   of freedom the frozen section had already closed — the inverse of an
    amendment's purpose. Corrected above; the frozen interval procedure stands.
 3. That draft claimed "no E-cell has run" without qualification, which a
    committed artefact in `gates/M1/` contradicts on its face. Corrected above
@@ -175,10 +177,13 @@ recorded here because the corrections are the evidence:
 The second round then refuted the *revision*, and four of its findings changed
 this text: a "trajectory efficiency" secondary that was algebraically SPL's
 own per-episode term and conditioned on a post-treatment outcome (removed); a
-displacement metric that has no intervener in simulation and would have
-reported path length under another name (removed from E2); a training-seed
-random intercept estimated from three levels, which is not identifiable
-(removed, with seed variation left where v1 already carried it); and the
+**construct-validity correction** to the displacement metric, which has no
+intervener in simulation — the computation succeeds, but the metric name does
+not describe the quantity produced, since `navfm.eval.metrics` substitutes the
+executed path length when the field is absent (removed from E2); a
+training-seed random intercept estimated from three levels, which is not
+identifiable (removed, with seed variation left where v1 already carried it);
+and the
 absence of any statement reconciling a non-collapsible log-odds interaction
 with a frozen prediction stated as a cell ordering (both now reported from the
 same fit). Its remaining findings concern design constants that do not yet
