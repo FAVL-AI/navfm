@@ -1,0 +1,48 @@
+# CPU smoke config -- proves the training path runs; measures nothing.
+#
+# Pair it with scripts/make_synthetic_dataset.py to exercise the whole
+# runs-to-tables path on a laptop, before Phase 0 has downloaded vint.pth or
+# GO Stanford:
+#
+#   python scripts/make_synthetic_dataset.py /tmp/nav/recon
+#   python -m navfm.splits /tmp/nav/recon --name recon --out /tmp/nav/splits --group-by scene
+#   python -m navfm.train.run --config configs/train/smoke_cpu.yaml \
+#       --data-root /tmp/nav --splits-root /tmp/nav/splits --eval-batch-size 32
+#
+# `recon` is borrowed as the dataset name only because it is already registered
+# in the reference data_config.yaml, so this never mutates the upstream clone.
+#
+# Nothing here is a research setting. Micro-batch 4 with an effective batch of 8
+# is two accumulation steps, chosen so a CPU epoch takes seconds; the shipped
+# 64 x 4 = 256 in vint_finetune_4080s.yaml is the regime that reproduces the
+# paper. No `checkpoint:`, so this trains from scratch and its loss curve says
+# only that gradients flow.
+
+model_type: vint
+
+epochs: 2
+micro_batch_size: 4
+effective_batch_size: 8
+lr: 1.0e-4
+weight_decay: 1.0e-3
+optimizer: adamw
+scheduler: cosine
+warmup_epochs: 0
+grad_clip: 1.0
+amp_dtype: none      # bf16 autocast is a no-op off-GPU; be explicit
+
+freeze: none
+freeze_bn: true
+ema_decay: null
+
+datasets: [recon]
+replay_datasets: []
+replay_ratio: 0.0
+num_workers: 0
+
+seed: 0
+log_dir: runs
+run_name: smoke_vint_cpu
+eval_every: 1
+save_every: 1
+deterministic: true
