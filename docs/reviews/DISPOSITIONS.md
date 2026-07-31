@@ -102,6 +102,17 @@ than in the archives themselves so the archives stay unannotated:
 | R11 | M2 priority order, seven steps | accepted verbatim | governs M2 (B ordering) |
 | R12 | Record M1 as "Complete with one explicit caveat", with the two-sentence declared/canonical wording | accepted verbatim | `3f89090` |
 
+## Historical wording correction
+
+Recorded here rather than inside Amendment 1, so that a committed
+pre-registration amendment is not edited after the fact:
+
+> Historical wording correction: Commit 8005f45 referred prospectively to
+> Amendment 1 one commit before the amendment was created. No evaluation or
+> data collection occurred during that interval. The wording was corrected
+> without rewriting history; Amendment 1 remains prior to all registered
+> execution.
+
 ## Note on Amendment 1
 
 Amendment 1 (`459c65c`) is not itself a review recommendation — it discharges

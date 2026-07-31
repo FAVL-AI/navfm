@@ -555,8 +555,8 @@ resamples at the level at which observations are exchangeable, preserving the
 scene/configuration pairing. All effects are reported with 95 % CIs. The
 **interaction term remains the primary endpoint**; no collapsing of the
 factorial to pairwise contrasts is reported, whether or not the interaction
-reaches any particular width. This plan is fixed in `PREREGISTRATION.md`
-Amendment 1.
+reaches any particular width. This plan is governed by PREREGISTRATION.md,
+including Amendment 1 adopted before the first registered evaluation run.
 
 **E3 — Data efficiency.** {0, 0.25, 1, 4, 16} h × {pretrained, scratch} ×
 {25 % GO Stanford replay, none}. ViNT's own adaptation evidence is a single
