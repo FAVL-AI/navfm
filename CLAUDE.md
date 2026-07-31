@@ -67,6 +67,14 @@ deep reference; `paper/draft.md` is the paper.
      archive (F-M1-1).
    - **Gate scripts delete only paths they created**, verified by a marker
      file. "Delete what the caller asked" is not a deletion rule (F-M1-3).
+   - **A verification must fail when its subject is absent.** Run it once
+     against a deliberately broken state before trusting it against a good
+     one. This genus has appeared four times (F-M2-1, F-M2-4): tests that
+     skip silently, a check constructed `passed=True`, a verification command
+     whose grep pattern matched nothing pytest prints, and a marker search
+     for a string that never existed. A check that cannot fail certifies
+     nothing; a check that cannot pass will be deleted by whoever is in a
+     hurry. Prove both directions.
 6. **Pre-registration.** Never edit the frozen section of
    `PREREGISTRATION.md`; amendments are new dated sections. No hand-typed
    numbers in `paper/draft.md` — result tables come only from

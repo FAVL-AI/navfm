@@ -33,6 +33,10 @@ REPO = Path(__file__).resolve().parents[1]
 SPLIT_DIR = REPO / "gates" / "G0" / "splits"
 SHA256SUMS = REPO / "gates" / "G0" / "SHA256SUMS"
 PROTOCOL = REPO / "PREREGISTRATION.md"
+DECLARATION = REPO / "gates" / "G0" / "evaluation_declaration.json"
+PAIR_MANIFEST = REPO / "gates" / "G0" / "evaluation_pairs.json"
+PATCH_DIFF = REPO / "gates" / "G0" / "patch.diff"
+UPSTREAM = REPO / "third_party" / "visualnav-transformer"
 
 
 class Check:
@@ -54,6 +58,38 @@ def _git(*args: str) -> tuple[int, str]:
         ["git", "-C", str(REPO), *args], capture_output=True, text=True, check=False, timeout=60
     )
     return p.returncode, (p.stdout or p.stderr).strip()
+
+
+def _git_at(root: Path, *args: str) -> tuple[int, str]:
+    p = subprocess.run(
+        ["git", "-C", str(root), *args], capture_output=True, text=True, check=False, timeout=60
+    )
+    return p.returncode, (p.stdout or p.stderr).strip()
+
+
+def _identity_diff(expected_id: str) -> str:
+    """Name the fields that differ, so a mismatch is diagnosable, not just fatal."""
+    try:
+        sys.path.insert(0, str(REPO / "src"))
+        from navfm.provenance import environment_identity
+
+        observed = environment_identity()
+        fields = [
+            f
+            for f in (
+                "python_version",
+                "torch_version",
+                "cuda_version",
+                "pythonpath",
+                "sys_prefix",
+                "pythonhome",
+                "pip_freeze_digest",
+            )
+            if getattr(observed, f, None) is not None
+        ]
+        return ", ".join(f"{f}={getattr(observed, f)!r}" for f in fields[:4])
+    except Exception:
+        return ""
 
 
 def _sha256_file(path: Path) -> str | None:
@@ -225,10 +261,35 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
         sys.path.insert(0, str(REPO / "src"))
         from navfm.provenance import execution_fingerprint
 
-        fp = execution_fingerprint(REPO, REPO / "third_party" / "visualnav-transformer")
-        checks.append(
-            Check("environment_identity_recorded", True, f"environment_id {fp.environment_id}")
-        )
+        fp = execution_fingerprint(REPO, UPSTREAM)
+        expected = ""
+        try:
+            expected = json.loads(DECLARATION.read_text())["environment"]["identity"]
+        except (OSError, ValueError, KeyError):
+            expected = ""
+        if not expected:
+            checks.append(
+                Check(
+                    "environment_identity_recorded",
+                    False,
+                    "no preregistered identity in the declaration to compare against",
+                )
+            )
+        elif fp.environment_id == expected:
+            checks.append(
+                Check("environment_identity_recorded", True, f"matches preregistered {expected}")
+            )
+        else:
+            differing = _identity_diff(expected)
+            checks.append(
+                Check(
+                    "environment_identity_recorded",
+                    False,
+                    f"expected {expected} observed {fp.environment_id}"
+                    + (f" -- differing fields: {differing}" if differing else "")
+                    + " -- the instrument is not the one the protocol froze",
+                )
+            )
         checks.append(
             Check(
                 "worktree_state_declared",
@@ -269,6 +330,66 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
         checks.append(
             Check("artefacts_resolve_at_amendment_commit", False, "commit does not resolve")
         )
+
+    # 15: the evaluation population, verified directly.
+    try:
+        pinned = json.loads(PAIR_MANIFEST.read_text())
+        digest = pinned.get("sha256")
+        count = pinned.get("pair_count")
+        ok = bool(digest) and bool(count)
+        checks.append(
+            Check(
+                "evaluation_pair_manifest_digest",
+                ok,
+                f"population digest {str(digest)[:16]}, {count} pairs"
+                if ok
+                else "manifest present but missing sha256 or pair_count",
+            )
+        )
+    except (OSError, ValueError) as exc:
+        checks.append(
+            Check("evaluation_pair_manifest_digest", False, f"no pinned pair manifest: {exc}")
+        )
+
+    # 16: the patch set is part of the protocol identity.
+    problems_patch: list[str] = []
+    code_u, upstream_sha = _git_at(UPSTREAM, "rev-parse", "HEAD")
+    declared_upstream = ""
+    try:
+        declared_upstream = json.loads(DECLARATION.read_text())["upstream"]["commit"]
+    except (OSError, ValueError, KeyError):
+        problems_patch.append("declaration names no upstream commit")
+    if code_u != 0:
+        problems_patch.append("cannot read the upstream clone's HEAD")
+    elif declared_upstream and upstream_sha != declared_upstream:
+        problems_patch.append(
+            f"upstream HEAD {upstream_sha[:12]} != declared {declared_upstream[:12]}"
+        )
+    patch_digest = _sha256_file(PATCH_DIFF)
+    if patch_digest is None:
+        problems_patch.append("no archived patch diff")
+    script_digest = _sha256_file(REPO / "scripts" / "patch_upstream.py")
+    applied = 0
+    dataset = UPSTREAM / "train" / "vint_train" / "data" / "vint_dataset.py"
+    try:
+        applied = dataset.read_text().count("# navfm-patch:")
+    except OSError:
+        problems_patch.append("cannot read the patched dataset module")
+    if applied < 4:
+        problems_patch.append(
+            f"only {applied} sampling patch markers present in vint_dataset.py -- the clone "
+            f"is unpatched or partially patched, so sampling semantics are not the frozen ones"
+        )
+    checks.append(
+        Check(
+            "upstream_patch_identity_verified",
+            not problems_patch,
+            "; ".join(problems_patch)
+            if problems_patch
+            else f"upstream {upstream_sha[:12]}, patch script {str(script_digest)[:16]}, "
+            f"diff {str(patch_digest)[:16]}, {applied} markers applied",
+        )
+    )
 
     # 12-13: nothing was produced before the audit.
     checks.append(

@@ -23,7 +23,11 @@
     "repeat_criterion": "exact equality of parsed numerical and lineage records, not bit-identical serialized output"
   },
   "control_arm": {
-    "model_seeds": [0, 1, 2],
+    "model_seeds": [
+      0,
+      1,
+      2
+    ],
     "evaluation_seed": 0,
     "note": "three distinct initialisations on ONE population; the evaluation seed is deliberately identical to the checkpoint arm's"
   },
@@ -40,5 +44,16 @@
     "reduction": "strict",
     "primary": "strict/total_loss",
     "reported": "both strict and plain, always"
+  },
+  "environment": {
+    "identity": "4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625",
+    "basis": "navfm.provenance effective-import fingerprint: python, torch, cuda, distribution digest, os, arch, PYTHONPATH, prefixes, PYTHONHOME, user-site enablement, and normalised locations of the seven load-bearing modules",
+    "enforcement": "the freeze audit recomputes this at gate time and FAILS on mismatch, listing the differing fields"
+  },
+  "upstream": {
+    "commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+    "patch_script": "scripts/patch_upstream.py",
+    "archived_diff": "gates/G0/patch.diff",
+    "enforcement": "the freeze audit verifies commit, patch content digest and application status at gate time, so an unpatched clone or an upstream change cannot silently alter the sampling semantics this amendment freezes"
   }
 }
