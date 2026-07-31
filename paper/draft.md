@@ -1,5 +1,10 @@
 # Holonomic Execution of Nonholonomic Priors: A Forensically Validated Simulation Pipeline for Adapting Visual Navigation Foundation Models
 
+<!-- Alternative title under consideration, should the causal question rather
+     than the pipeline become the paper's lead:
+     "When Demonstration and Execution Kinematics Disagree: A Forensically
+     Validated Transfer Study of Visual Navigation Policies" -->
+
 **Frank Asante Van Laarhoven**
 
 *Draft v0.1 — pre-registered experimental design. Every empirical slot is
@@ -19,20 +24,25 @@ differential-drive and Ackermann platforms, and their published adaptation
 results rest on a data format that has never been specified, an implementation
 whose configuration files disagree with its papers, and normalisation
 constants whose derivation was never published. We present, first, a forensic
-audit of the reference implementation that surfaces eleven discrepancies
+audit of the reference implementation that surfaces twelve discrepancies
 material to reproduction — including a latent yaw-wrapping defect in the
 original preprocessing pipeline, two dataset-composition configuration keys
 that are dead code, and evaluation metrics that vary with batch size by up to
 0.46 in cosine similarity. Second, we contribute the first written,
 machine-checkable specification of the GNM trajectory format, together with a
 simulation-to-format pipeline in NVIDIA Isaac Sim whose compatibility is
-*proven* — generated data is loaded through the unmodified reference
-`ViNT_Dataset` class and our action-label computation is verified against the
-reference implementation to 10⁻¹⁰. Third, we use this pipeline to ask a
-question the original works could not: when a *holonomic* (mecanum) robot
-executes a policy whose action prior is almost entirely nonholonomic, should
-the adaptation data be collected under the robot's true kinematics or under
-the prior's? We pre-register a 2×2 factorial over demonstration and execution
+established by an executable *compatibility proof* — generated data is loaded
+through the unmodified reference `ViNT_Dataset` class and our action-label
+computation is verified against the reference implementation to 10⁻¹⁰. Third,
+we use this pipeline to ask a causal question the original works could not:
+**whether, and how, a policy degrades when the kinematic regime under which
+its demonstrations were generated disagrees with the regime under which it is
+executed — holding observations, goal definitions, and evaluation
+environments constant.** The concrete instance is a *holonomic* (mecanum)
+robot executing a policy whose action prior is almost entirely nonholonomic,
+where the adaptation data may be collected either under the robot's true
+kinematics or under the prior's. We pre-register a 2×2 factorial over
+demonstration and execution
 kinematics, a data-efficiency curve over {0, 0.25, 1, 4, 16} hours of
 simulated data, and a physical-robot transfer study on a Yahboom ROSMASTER
 M3 PRO. `[E2/E3/E6 — PENDING]`. All code, data, checkpoints hashes, and the
@@ -44,8 +54,9 @@ complete audit trail are released.
 
 A useful reproduction is an adversarial act. It assumes the published system
 diverges from its description, goes looking for the divergences, and only then
-builds on what survives. This paper applies that posture to the most-cited
-line of visual navigation foundation models — GNM [1], ViNT [2] and NoMaD [3]
+builds on what survives. This paper applies that posture to the most widely
+used line of open visual navigation foundation models — GNM [1], ViNT [2] and
+NoMaD [3]
 — because we want to *use* them, on a robot they were never trained for, with
 data from a simulator they were never fed from, and every unexamined
 assumption between their papers and their released code is a place our
@@ -92,10 +103,11 @@ the reference trainer computes — which returns us to the audit.
 
 **Contributions.**
 
-1. **A forensic audit of the reference implementation** (§3): eleven
+1. **A forensic audit of the reference implementation** (§3): twelve
    discrepancies between papers, configurations and code that are material to
-   reproduction, each verified against source at a pinned commit and, where
-   possible, empirically; including a latent label-corruption defect
+   reproduction, classified by defect class (§3.0), each verified against
+   source at a pinned commit and, where possible, empirically; including a
+   latent label-corruption defect
    (yaw wrapping) that affects the *original* datasets, not merely new ones.
 2. **The first written specification of the GNM trajectory format** (§4.1),
    encoded as machine-checkable constraints, with a validator, an atomic
@@ -114,9 +126,16 @@ the reference trainer computes — which returns us to the audit.
    issues, and physical transfer trials on the M3 PRO. `[PENDING]`.
 
 We claim no new architecture. The contribution is an audited foundation —
-specification, proof of compatibility, provenance for every constant — of the
+specification, a compatibility proof, provenance for every constant — of the
 kind this line of work has not previously had, plus the first controlled
-answer to the holonomy question it makes askable.
+answer to the causal question it makes askable: **whether, and by what
+mechanism, a policy degrades when its demonstration kinematics and its
+execution kinematics disagree, with observations, goals, and environments
+held constant.** That question is causal, not correlational, which is why it
+requires a manipulated factorial (§5) rather than a comparison of
+conveniently available corpora — and why it could not be asked at all until
+the format, the labels, and the metrics had been specified well enough for
+the manipulation to be the only thing that differs between arms.
 
 ---
 
@@ -158,12 +177,55 @@ claim either verified in source, verified empirically, or marked unverified.
 
 ## 3. A forensic audit of the reference implementation
 
+This section is not a bug list. It is **a systematic methodology for
+determining whether an open embodied-AI implementation supports the claims
+made from it** — applied here to one implementation, but constructed so that
+the procedure transfers: pin the artefact, read the behaviour rather than the
+description, and record every place where the two diverge, together with what
+that divergence costs a downstream claim. The findings below are the output of
+that procedure, not its motivation.
+
+The methodology rests on one operating rule, which also governs how this
+repository archives its own evidence: **a claim that cannot be demonstrated
+from the archived evidence is equivalent to an unsupported claim.** It applies
+symmetrically. It is why we treat an undocumented constant as a defect rather
+than a detail, and equally why our own gates archive their outputs instead of
+asserting their properties.
+
 All findings refer to `robodhruv/visualnav-transformer` at commit `dca7981`
 (2024-09-14, repository HEAD at time of writing), papers [1–3], and the three
 released checkpoints, whose exact byte sizes and formats we verified by
 download (Appendix A). Findings are numbered F1–F12 and each carries its
 consequence for reproduction. The full evidence trail, with file and line
 references, is in the released `docs/METHODOLOGY.md`.
+
+### 3.0 Defect taxonomy
+
+Each finding is assigned the class of defect it primarily represents. Several
+span more than one class — F10 is an implementation defect with a provenance
+consequence, F4 a documentation claim contradicted by code — and the table
+records the primary class, with the consequence naming what it costs.
+
+| Finding | Class | Consequence for a downstream claim |
+|---|---|---|
+| F1 yaw wrapping | implementation | latent label corruption in the *original* training corpora, not merely in new data |
+| F2 dead configuration keys | configuration | shipped mixture annotations are inert; the released models were not trained as the configuration describes |
+| F3 paper/config divergence | reporting | published and shipped hyperparameters disagree; the reproduced regime must be chosen and declared, not inherited |
+| F4 encoders not pretrained | reporting | a configuration comment asserts ImageNet pretraining the code does not perform |
+| F5 checkpoint format triad | provenance | loading executes arbitrary code and fails under modern `torch`; one released file cannot enter the repository's own resume path |
+| F6 non-standard metrics | measurement | reported metrics are batch-size dependent, so a number quoted without its batch size is uninterpretable |
+| F7 no-op goal masking | implementation | NoMaD's distance loss is not masked as described |
+| F8 double scheduler stepping | implementation | the learning-rate schedule advances twice per epoch, halving the intended horizon |
+| F9 dataset-availability drift | configuration | a dataset active in all three shipped configurations is unobtainable in its cited form |
+| F10 unsplittable splits | provenance | the original evaluation splits cannot be reconstructed, so no published number has a recoverable holdout |
+| F11 undocumented constants | provenance | normalisation constants have no published derivation; under `clip_sample=True` an under-scaled range truncates motion rather than compressing it |
+| F12 metric redundancy | measurement | two metric names encode one statistic; the dimensionality of the evaluation is overstated |
+
+The distribution is itself a finding. Only four of the twelve are
+implementation defects of the kind a careful reader of the code would catch.
+The remainder are defects of specification, configuration, measurement,
+provenance, and reporting — visible only when the artefact, its description,
+and its outputs are checked against one another.
 
 **F1 — The yaw-wrapping defect.** `ViNT_Dataset._compute_actions` computes
 relative heading as `yaw[1:] − yaw[0]` with no angular wrapping. A trajectory
@@ -249,19 +311,41 @@ answered. Because the NoMaD scheduler runs with `clip_sample=True`, an
 under-scaled range does not merely compress fast motion — it *truncates* it.
 §4.4 gives derivation procedures and E4 measures the consequence.
 
-**F12 — Two of the logged metrics are the same number.** ViNT and GNM each
-log `action_orien_cos_sim` and `multi_action_orien_cos_sim` as distinct
-quantities. They are provably identical. Both architectures L2-normalise the
+**F12 — Metric redundancy induced by representation normalisation.** ViNT and
+GNM each log `action_orien_cos_sim` and `multi_action_orien_cos_sim` as
+distinct quantities. They are algebraically identical, and the redundancy is
+induced by the representation rather than by a coding error — which is why it
+survives every check that compares an implementation against the reference
+logs.
+
+*The equivalence and its conditions.* Both architectures L2-normalise the
 predicted heading columns before returning (`vint.py:135–137`,
 `gnm.py:85–87`), and the corresponding label columns are unit-norm by
-construction in `calculate_sin_cos`; for unit vectors the mean per-waypoint
-cosine `(1/T)Σₖ pₖ·lₖ` and the flattened cosine `(Σₖ pₖ·lₖ)/(√T·√T)` are the
-same expression. The redundancy does not hold for the `xy` pair, whose columns
-are cumulative sums of unbounded deltas. Consequence: a reproduction that
-reports both as independent evidence double-counts one measurement, and a
-reimplementation that accidentally computes one in place of the other passes
-every check that compares against the reference logs. We report one, and pin
-the identity with a test executed against the reference function itself.
+construction in `calculate_sin_cos`. The identity holds exactly when both
+sides carry unit-norm heading columns, which under this representation they
+always do. For unit vectors, `Σₖ‖pₖ‖² = Σₖ‖lₖ‖² = T`, so the flattened cosine
+`(Σₖ pₖ·lₖ)/(√T·√T)` reduces to the mean per-waypoint cosine `(1/T)Σₖ pₖ·lₖ`.
+They are one expression written two ways.
+
+*Why the `xy` pair differs.* The `xy` columns are cumulative sums of unbounded
+deltas and are not independently normalised per timestep, so the denominator
+does not collapse and the two reductions remain distinct measurements there.
+The redundancy is a property of the heading representation specifically, not
+of the metric family.
+
+*Executable confirmation.* Pinned by
+`tests/test_upstream_losses.py::test_the_two_orientation_metrics_are_the_same_number`,
+which asserts the identity against `train_utils._compute_losses` — the
+reference function itself — rather than against our port, across four mask
+rates and two `alpha` values.
+
+*Reporting implication.* Two metric names encode one statistic, so a table
+carrying both overstates the dimensionality of its evaluation, and a
+multiple-metric comparison built on both double-counts a single piece of
+evidence. We report one. Whether any published result used the two values as
+though they were independent is `[UNVERIFIED]` — the released artefacts do not
+record which logged metrics entered the papers' tables, and we do not assert
+it either way.
 
 The dependency stack has additionally rotted in ways that block naive
 reproduction (Python 3.8.5 EOL, CUDA 10, a `diffusers==0.11.1` pin whose
@@ -306,7 +390,7 @@ reversible patch set.
                                                  reference-exact metrics + ADE/FDE m)   scenes) and real M3 PRO (E6)
 ```
 
-### 4.1 The format, specified and proven
+### 4.1 The format, specified and checked against the reference loader
 
 We reduce the loader's implicit preconditions to nine explicit constraints
 (layout, pickled-dictionary schema, image-count equality, unpadded integer
@@ -421,7 +505,7 @@ safe); every offline metric states batch size (400) and reduction variant
 floors calibrate every table.
 
 **E0 — Pipeline validation (gates, partially complete).** The compatibility
-proof passes in CI `[DONE]`. Offline evaluation of released `vint.pth` on a
+proof passes in CI `[SHIPPED]`. Offline evaluation of released `vint.pth` on a
 GO Stanford holdout — to our knowledge the first published reproduction
 number for this model family — `[E0.2 — PENDING]`.
 
@@ -431,13 +515,48 @@ execution. `[PENDING]`
 
 **E2 — The kinematics 2×2 (primary).** Demonstration ∈ {nonholonomic,
 holonomic} × execution ∈ {differential, holonomic}, equal data volume, seeds
-and scenes. Pre-registered prediction: execution main effect positive,
-demonstration main effect negative, ordering (nonholo-demo, holo-exec) >
-(nonholo, diff) > (holo, holo) > (holo, diff). The manipulated variable is
-checked *before training* via the collected sets' lateral-energy ratio
-(collection gate G2.d); the mechanism claim stands or falls with the
-interaction term, which we commit to reporting with its CI regardless of
-sign. `[PENDING]`
+and scenes. The design tests four hypotheses:
+
+- **H1 (primary).** A policy trained on trajectories generated under one
+  kinematic regime exhibits systematic degradation when executed under a
+  different regime, even when visual observations, goal definitions, and
+  evaluation environments are held constant.
+- **H2.** That degradation is not fully explained by path length or action
+  discretisation, and manifests differently across success, collision,
+  trajectory-efficiency, and stopping metrics.
+- **H3.** Demonstration-side and execution-side changes are asymmetric: the
+  regime under which data was generated and the regime under which the policy
+  runs do not contribute interchangeably.
+- **H4.** Some apparent transfer improvements disappear or reverse under fixed
+  batching, seed control, and evidence-valid evaluation — that is, part of the
+  reported benefit of adaptation is an artefact of evaluation protocol rather
+  than of the adaptation.
+
+The pre-registered ordering prediction is unchanged from `PREREGISTRATION.md`
+v1 and remains binding: execution main effect positive, demonstration main
+effect negative, ordering (nonholo-demo, holo-exec) > (nonholo, diff) >
+(holo, holo) > (holo, diff). The manipulated variable is checked *before
+training* via the collected sets' lateral-energy ratio (collection gate
+G2.d); the mechanism claim stands or falls with the interaction term, which we
+commit to reporting with its CI regardless of sign. `[PENDING]`
+
+**Analysis plan (fixed before any data exist).** The design is factorial and
+is analysed as one, not decomposed into pairwise comparisons. Closed-loop
+success is modelled by **mixed-effects logistic regression**, with
+demonstration regime, execution regime, and their interaction as fixed
+effects, and scene and start–goal configuration as random effects. Those two
+are random by necessity rather than convention: the same scenes and the same
+start–goal pairs recur across conditions by design, so they are repeated
+measures, not independent nuisance observations, and treating them as fixed
+would understate the standard errors of exactly the term the paper turns on.
+Continuous metrics (SPL, trajectory efficiency, displacement before
+intervention) use a **hierarchical or pairing-respecting bootstrap** that
+resamples at the level at which observations are exchangeable, preserving the
+scene/configuration pairing. All effects are reported with 95 % CIs. The
+**interaction term remains the primary endpoint**; no collapsing of the
+factorial to pairwise contrasts is reported, whether or not the interaction
+reaches any particular width. This plan is fixed in `PREREGISTRATION.md`
+Amendment 1.
 
 **E3 — Data efficiency.** {0, 0.25, 1, 4, 16} h × {pretrained, scratch} ×
 {25 % GO Stanford replay, none}. ViNT's own adaptation evidence is a single

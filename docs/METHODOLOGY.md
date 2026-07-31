@@ -559,9 +559,9 @@ project are:
 
 **C1 — A validated, open sim→GNM-format data pipeline.** The reference format
 has never been specified in writing; it exists only as the behaviour of one
-loader. This repo encodes it as machine-checkable constraints and proves
-compatibility by loading generated data through the actual upstream class
-(`tests/test_upstream_compat.py`). That is a reusable artefact, and the
+loader. This repo encodes it as machine-checkable constraints and establishes
+compatibility with an executable *compatibility proof* — generated data loaded
+through the actual upstream class (`tests/test_upstream_compat.py`). That is a reusable artefact, and the
 "constraint 5" yaw bug is a genuine finding about the original datasets.
 
 **C2 — Holonomic execution of a nonholonomically-trained navigation prior.**

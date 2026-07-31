@@ -176,7 +176,7 @@ Non-negotiables for the write-up:
 
 What makes it more than a reproduction:
 
-1. the format specification and validator, proven against the reference loader
+1. the format specification and validator, checked against the reference loader
    (and the yaw-unwrapping bug it exposes in the original preprocessing);
 2. the holonomic demonstration/execution 2×2 — a question the original papers
    could not ask, because they had no holonomic platform;

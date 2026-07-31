@@ -10,12 +10,14 @@ foundation model.
 Three things this repo does that were not previously possible:
 
 1. **Specifies the GNM on-disk format** — which has never been written down,
-   only implemented — as machine-checkable constraints, and **proves**
-   compatibility by loading generated data through the actual reference
-   `ViNT_Dataset` (`tests/test_upstream_compat.py`).
+   only implemented — as machine-checkable constraints, and establishes
+   compatibility with an executable **compatibility proof**: generated data is
+   loaded through the actual reference `ViNT_Dataset`
+   (`tests/test_upstream_compat.py`).
 2. **Collects new data in Isaac Sim** with a documented synchronisation
-   contract, so every `t.jpg` provably corresponds to `position[t]` and
-   `yaw[t]` at the same simulated instant.
+   contract, so every `t.jpg` corresponds to `position[t]` and `yaw[t]` at the
+   same simulated instant — a correspondence that is independently checkable,
+   not assumed.
 3. **Derives the normalisation constants** (`metric_waypoint_spacing`,
    `action_stats`) that the reference repo hard-codes with no published
    derivation and three unanswered questions about.
@@ -43,7 +45,7 @@ Then, in order:
 python -m navfm.isaac.collect --config configs/collect/m3pro_indoor.yaml \
     --out /data/isaac_m3pro --robot-usd assets/m3pro.usd --episodes 600
 
-# 2. prove it will load, and derive the constants
+# 2. check it will load, and derive the constants
 python -m navfm.validate /data/isaac_m3pro --model vint --decode-images --workers 8
 python -m navfm.stats    /data/isaac_m3pro --name isaac_m3pro --len-traj-pred 5 --context-size 5
 
