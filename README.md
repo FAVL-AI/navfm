@@ -4,6 +4,9 @@ Reproducible research infrastructure for the GNM / ViNT / NoMaD visual
 navigation foundation models, with Isaac Sim data collection for a Yahboom
 ROSMASTER M3 PRO and single-GPU fine-tuning.
 
+`navfm` is the project namespace; it does not denote a newly trained
+foundation model.
+
 Three things this repo does that were not previously possible:
 
 1. **Specifies the GNM on-disk format** — which has never been written down,
