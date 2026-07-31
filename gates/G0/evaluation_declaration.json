@@ -1,0 +1,44 @@
+{
+  "_comment": [
+    "Predeclared execution parameters for gate G0.c. The amendment binds to this",
+    "file; the evaluator consumes it. Declaration and enforcement land together so",
+    "they cannot drift apart across commits.",
+    "",
+    "Every value here is a free parameter that would otherwise be chosen at",
+    "execution time. The prior adjudication found that L -- the quantity deciding",
+    "Condition 7 -- depended on an undeclared seed. This closes that."
+  ],
+  "declaration_version": "g0c_execution_v1",
+  "population": {
+    "evaluation_seed": 0,
+    "seeding_method": "vint_train.data.vint_dataset.navfm_seed_sampling, called immediately before dataloader iteration in every arm",
+    "rationale": "goal sampling uses a navfm-controlled RandomState isolated from the global numpy stream (patch sampling_rng_isolation), so the population is a function of this seed alone and is identical across all arms",
+    "manifest": "gates/G0/evaluation_pairs.json",
+    "verification": "every arm compares its realised pairs, in draw order, against the pinned manifest digest at runtime"
+  },
+  "checkpoint_arm": {
+    "model_seed": 0,
+    "evaluation_seed": 0,
+    "repeats": 2,
+    "repeat_criterion": "exact equality of parsed numerical and lineage records, not bit-identical serialized output"
+  },
+  "control_arm": {
+    "model_seeds": [0, 1, 2],
+    "evaluation_seed": 0,
+    "note": "three distinct initialisations on ONE population; the evaluation seed is deliberately identical to the checkpoint arm's"
+  },
+  "loader": {
+    "batch_size": 400,
+    "num_workers": 0,
+    "worker_seeding": "not applicable at num_workers=0; declared because PyTorch reseeds torch and random per worker but not numpy, which would reintroduce population variance",
+    "shuffle": true,
+    "ordering": "torch.Generator().manual_seed(seed) passed to the DataLoader; ordering is a function of the declared seed alone",
+    "drop_last": false,
+    "drop_last_rationale": "upstream keeps the short trailing batch and it counts equally in the unweighted per-batch mean (F6)"
+  },
+  "metrics": {
+    "reduction": "strict",
+    "primary": "strict/total_loss",
+    "reported": "both strict and plain, always"
+  }
+}

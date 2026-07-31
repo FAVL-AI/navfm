@@ -370,6 +370,21 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--num-workers", type=int, default=0, help="reference test loaders use 0")
     p.add_argument("--seed", type=int, default=0, help="seeds the eval loader's shuffle")
     p.add_argument(
+        "--population-seed",
+        type=int,
+        default=None,
+        help=(
+            "seeds the evaluation population -- which (observation, goal) pairs are "
+            "drawn. Isolated from model initialisation; identical in every arm. "
+            "Declared in gates/G0/evaluation_declaration.json for gate runs."
+        ),
+    )
+    p.add_argument(
+        "--pair-manifest",
+        default=None,
+        help="verify the realised population against this pinned manifest at runtime",
+    )
+    p.add_argument(
         "--model-seed",
         type=int,
         default=None,
@@ -605,6 +620,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         generator=generator,
     )
 
+    # Seed the population immediately before iteration, in every arm. The
+    # sampling stream is navfm-controlled and isolated from model init, so the
+    # population is a function of this seed alone.
+    realised_pairs: list[tuple[str, int, str, int]] = []
+    if args.population_seed is not None:
+        from vint_train.data import vint_dataset as _vd
+
+        if not hasattr(_vd, "navfm_seed_sampling"):
+            raise SystemExit(
+                "--population-seed requires the patched reference clone: run "
+                "scripts/patch_upstream.py third_party/visualnav-transformer"
+            )
+        _vd.navfm_seed_sampling(args.population_seed)
+
     started = time.time()
     result = evaluate(
         model,
@@ -616,6 +645,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         limit_batches=args.limit_batches,
         progress=not args.no_progress,
     )
+
+    if args.population_seed is not None:
+        from vint_train.data import vint_dataset as _vd
+
+        realised_pairs = [tuple(x) for x in _vd._NAVFM_REALISED_PAIRS]  # type: ignore[misc]
+        if args.pair_manifest:
+            from navfm import evalpairs
+
+            problems = evalpairs.verify(evalpairs.load(Path(args.pair_manifest)), realised_pairs)
+            if problems:
+                raise SystemExit(
+                    "gate execution invalid -- this arm scored a different evaluation "
+                    "population from the one pinned pre-execution:\n"
+                    + "\n".join(f"    {p}" for p in problems)
+                )
+            print(f"  population verified against {args.pair_manifest}")
 
     run_dir = run_directory(args.log_dir, run_name)
     cell, seed = cell_and_seed(run_name)
@@ -686,6 +731,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         "upstream_commit": upstream.upstream_commit(),
         "seed": args.seed,
         "model_seed": model_seed,
+        "population_seed": args.population_seed,
+        "realised_pair_count": len(realised_pairs),
+        "realised_population_sha256": (
+            __import__("navfm.evalpairs", fromlist=["pairs_digest"]).pairs_digest(realised_pairs)
+            if realised_pairs
+            else None
+        ),
         "num_workers": args.num_workers,
     }
     write_run_record(run_dir, metrics=record, config=config)

@@ -95,10 +95,16 @@ PATCHES: list[Patch] = [
             "# no longer influences which pairs are drawn.\n"
             "_NAVFM_SAMPLING_RNG = np.random.RandomState()\n"
             "\n"
+            "#: Every (obs_traj, obs_t, goal_traj, goal_t) actually drawn, in draw order.\n"
+            "#: Read by navfm.evalpairs to verify the realised population against the\n"
+            "#: pinned manifest -- observed, not reconstructed from a seed.\n"
+            "_NAVFM_REALISED_PAIRS = []\n"
+            "\n"
             "\n"
             "def navfm_seed_sampling(seed):\n"
             '    """Seed the evaluation-population stream. Independent of model init."""\n'
             "    _NAVFM_SAMPLING_RNG.seed(seed)\n"
+            "    _NAVFM_REALISED_PAIRS.clear()\n"
             "\n"
             "\n"
             "class ViNT_Dataset(Dataset):"
@@ -107,6 +113,20 @@ PATCHES: list[Patch] = [
             "goal sampling drew from global np.random, coupling model seed to the "
             "evaluation population"
         ),
+    ),
+    Patch(
+        name="sampling_rng_record_pairs",
+        relative_path="train/vint_train/data/vint_dataset.py",
+        find=(
+            "        f_goal, goal_time, goal_is_negative = self._sample_goal("
+            "f_curr, curr_time, max_goal_dist)"
+        ),
+        replace=(
+            "        f_goal, goal_time, goal_is_negative = self._sample_goal("
+            "f_curr, curr_time, max_goal_dist)\n"
+            f"        _NAVFM_REALISED_PAIRS.append((f_curr, int(curr_time), f_goal, int(goal_time)))  {MARKER}sampling_rng_record_pairs"
+        ),
+        description="record the realised (obs, goal) population for manifest verification",
     ),
     Patch(
         name="sampling_rng_goal_offset",

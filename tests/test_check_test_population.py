@@ -156,8 +156,11 @@ class TestPin:
         """The committed pin must describe this repo, or it pins nothing."""
         manifest = json.loads(ctp.MANIFEST.read_text())
         assert manifest["required_marker"] == "upstream"
-        assert manifest["expected_required_count"] == 26
-        assert len(manifest["required_node_ids"]) == 26
+        # A second guard beside the manifest itself: re-pinning is a reviewed act,
+        # so it must update this number too. 26 pre-existing upstream-marked tests
+        # + 7 RNG-domain tests that require the patched clone.
+        assert manifest["expected_required_count"] == 33
+        assert len(manifest["required_node_ids"]) == 33
         assert (
             ctp.node_id_digest(manifest["required_node_ids"])
             == manifest["required_node_ids_sha256"]

@@ -109,10 +109,10 @@ index 4759ad9..45a9b57 100644
          if "epoch" in latest_checkpoint:
              current_epoch = latest_checkpoint["epoch"] + 1
 diff --git a/train/vint_train/data/vint_dataset.py b/train/vint_train/data/vint_dataset.py
-index 87b101c..7241b9e 100644
+index 87b101c..77d516f 100644
 --- a/train/vint_train/data/vint_dataset.py
 +++ b/train/vint_train/data/vint_dataset.py
-@@ -18,6 +18,21 @@ from vint_train.data.data_utils import (
+@@ -18,6 +18,27 @@ from vint_train.data.data_utils import (
      to_local_coords,
  )
  
@@ -125,16 +125,22 @@ index 87b101c..7241b9e 100644
 +# no longer influences which pairs are drawn.
 +_NAVFM_SAMPLING_RNG = np.random.RandomState()
 +
++#: Every (obs_traj, obs_t, goal_traj, goal_t) actually drawn, in draw order.
++#: Read by navfm.evalpairs to verify the realised population against the
++#: pinned manifest -- observed, not reconstructed from a seed.
++_NAVFM_REALISED_PAIRS = []
++
 +
 +def navfm_seed_sampling(seed):
 +    """Seed the evaluation-population stream. Independent of model init."""
 +    _NAVFM_SAMPLING_RNG.seed(seed)
++    _NAVFM_REALISED_PAIRS.clear()
 +
 +
  class ViNT_Dataset(Dataset):
      def __init__(
          self,
-@@ -192,7 +207,7 @@ class ViNT_Dataset(Dataset):
+@@ -192,7 +213,7 @@ class ViNT_Dataset(Dataset):
          Sample a goal from the future in the same trajectory.
          Returns: (trajectory_name, goal_time, goal_is_negative)
          """
@@ -143,7 +149,7 @@ index 87b101c..7241b9e 100644
          if goal_offset == 0:
              trajectory_name, goal_time = self._sample_negative()
              return trajectory_name, goal_time, True
-@@ -204,7 +219,7 @@ class ViNT_Dataset(Dataset):
+@@ -204,7 +225,7 @@ class ViNT_Dataset(Dataset):
          """
          Sample a goal from a (likely) different trajectory.
          """
@@ -152,6 +158,14 @@ index 87b101c..7241b9e 100644
  
      def _load_index(self) -> None:
          """
+@@ -299,6 +320,7 @@ class ViNT_Dataset(Dataset):
+         """
+         f_curr, curr_time, max_goal_dist = self.index_to_data[i]
+         f_goal, goal_time, goal_is_negative = self._sample_goal(f_curr, curr_time, max_goal_dist)
++        _NAVFM_REALISED_PAIRS.append((f_curr, int(curr_time), f_goal, int(goal_time)))  # navfm-patch:sampling_rng_record_pairs
+ 
+         # Load images
+         context = []
 diff --git a/train/vint_train/training/train_eval_loop.py b/train/vint_train/training/train_eval_loop.py
 index 176d043..70feb7e 100644
 --- a/train/vint_train/training/train_eval_loop.py
