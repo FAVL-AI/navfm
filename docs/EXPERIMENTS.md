@@ -83,6 +83,56 @@ Same data volume, same seeds, same scenes in every cell. Report the interaction
 term, not just the four means. Include the lateral-energy ratio of each training
 set (`navfm.stats` reports it) as the mechanistic explanation.
 
+#### E2 hypotheses
+
+Scoped to E2, and written `E2-H1 … E2-H4` wherever ambiguity with the
+document-level hypotheses H1–H5 above is possible. E2 is the experiment that
+tests document-level **H2**; the four below are what H2 decomposes into.
+Stated verbatim in `paper/draft.md` §5 and pinned by `PREREGISTRATION.md`
+Amendment 1.
+
+- **E2-H1 (primary).** A policy trained on trajectories generated under one
+  kinematic regime exhibits systematic degradation when executed under a
+  different regime, even when visual observations, goal definitions, and
+  evaluation environments are held constant.
+- **E2-H2.** That degradation is not fully explained by path length or action
+  discretisation, and manifests differently across success, collision,
+  trajectory-efficiency, and stopping metrics.
+- **E2-H3.** Demonstration-side and execution-side changes are asymmetric.
+- **E2-H4.** Some apparent transfer improvements disappear or reverse under
+  fixed batching, seed control, and evidence-valid evaluation.
+
+#### Analysis plan
+
+Fixed in `PREREGISTRATION.md` Amendment 1 before any E2 observation exists;
+that file is authoritative and this is a summary of it. Success is modelled by
+mixed-effects logistic regression — demonstration regime, execution regime and
+their interaction as fixed effects; random intercepts for scene and for
+start–goal configuration nested within scene, because both recur across arms
+by design and are repeated measures rather than independent observations.
+Training seed is deliberately *not* a random effect: three levels do not
+identify a variance component, and seed variation is carried by the frozen
+"mean ± CI over seeds" per-cell summary instead.
+
+The primary endpoint is the interaction term with a **95 % percentile-bootstrap
+CI**, as frozen in v1 — 10 000 resamples of scenes with their episodes,
+refitting each time. Because a logistic interaction is non-collapsible, the
+four model-predicted cell probabilities are reported alongside it, and the
+frozen ordering prediction is adjudicated against those; if coefficient and
+ordering disagree, both are reported and the disagreement is the result.
+
+Secondaries are **SPL and collisions per episode**, with Holm-corrected
+p-values across the two plus uncorrected percentile CIs, both labelled.
+Trajectory efficiency is *not* reported separately — it is algebraically SPL's
+own per-episode term — and maximum displacement before intervention is an E6
+metric, not an E2 one. No collapsing of the factorial into pairwise contrasts
+is reported.
+
+Four items remain open by design and **block collection gate G2** until a
+further dated amendment fixes them: estimation software and tolerance, the
+held-out scene count, the exact per-cell episode count, and the estimator
+implementation itself.
+
 ### E3 — H3, the data-efficiency curve
 
 Fine-tune on `{0, 0.25, 1, 4, 16}` hours of Isaac data × `{with, without}`
@@ -147,6 +197,54 @@ Non-negotiables for the write-up:
   scene/episode sampling seed so cells see identical scenarios.
 
 ---
+
+## Negative results are outcomes, not setbacks
+
+A negative, null, or inconclusive result in any pre-registered cell is a
+reportable outcome and is reported with the same prominence as a positive one.
+That is not magnanimity; it is what makes the programme's research questions
+answerable. RQ1 asks under what conditions a performance claim can be
+independently reconstructed and considered evidentially valid — a cell that
+fails to reconstruct is *direct evidence* about those conditions. RQ2 asks how
+demonstration/execution/evaluation mismatch affects the validity of transfer
+claims — an absent or reversed effect answers it as informatively as a present
+one. RQ3 asks whether calibrated evidence supports better decisions than
+uncalibrated policy output — "it does not" is a finding.
+
+The frozen pre-registration already commits to reporting all cells regardless
+of sign, including a negative E6. This section states why that commitment
+costs nothing: under RQ1–RQ3 the sign of the effect is not the deliverable,
+the validity of the inference is.
+
+## Failure record convention (`gates/failures/`)
+
+Every failure that threatens a claim gets a record, whether it was caught by a
+test, a gate, a review, or a person reading the archive months later. The
+purpose is not blame-keeping. It is that **claim correction yield** — the
+number and materiality of conclusions changed, narrowed, or rejected once the
+controls are applied — is one of the programme's five KPIs, and a KPI with no
+ledger is a slogan.
+
+One file per failure, `gates/failures/F-<scope>-<n>.md`, with these nine
+fields, all of them required:
+
+| Field | What it records |
+|---|---|
+| 1. What failed | the specific behaviour, not a category |
+| 2. How detected | test, gate, review, manual inspection — and whether it was found by the control that was supposed to find it |
+| 3. Claim threatened | the sentence, table, or README statement that would have been wrong |
+| 4. Source | exactly one of: data / code / configuration / protocol / environment / measurement |
+| 5. Correction | what changed, with the commit |
+| 6. Pre-registered? | was the affected analysis or protocol pre-registered at the time of failure |
+| 7. Results changed? | did any reported number, table, or conclusion move — and if none existed yet, say so |
+| 8. Residual uncertainty | what is still not known after the correction |
+| 9. Gate blocked or reopened | which gate, if any, was blocked, failed, or had to be re-run |
+
+Field 7 is the one that feeds the KPI, and it is answered honestly even when
+the honest answer is "no results existed yet, so nothing moved" — a defect
+caught before it could contaminate a number is the cheapest possible
+correction, and the ledger should show that the controls are catching things
+early rather than only recording expensive failures.
 
 ## Threats to validity, and the mitigation for each
 
