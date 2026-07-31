@@ -219,13 +219,13 @@ def check_seeds(cells: dict[str, Cell], n: int) -> list[str]:
             continue
         have = {s for s in cell.records if s is not None}
         if missing := sorted(want - have):
-            problems.append(
-                f"{name}: has seeds {sorted(have) or '[]'}, missing {missing}"
-            )
+            problems.append(f"{name}: has seeds {sorted(have) or '[]'}, missing {missing}")
     return problems
 
 
-def fmt(mean: float | None, lo: float | None = None, hi: float | None = None, digits: int = 4) -> str:
+def fmt(
+    mean: float | None, lo: float | None = None, hi: float | None = None, digits: int = 4
+) -> str:
     if mean is None:
         return "--"
     if lo is None or hi is None or lo != lo:
@@ -350,7 +350,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     for name, cell in cells.items():
         exp = cell.records[cell.seeds[0]].experiment
         if exp not in TABLES:
-            print(f"warning: cell {name!r} has no table mapping for {exp!r}; skipped", file=sys.stderr)
+            print(
+                f"warning: cell {name!r} has no table mapping for {exp!r}; skipped", file=sys.stderr
+            )
             continue
         number, title = TABLES[exp]
         by_table.setdefault(number, (title, {}))[1][name] = cell
@@ -362,8 +364,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.tables and number not in args.tables:
             continue
         text = render_table(
-            number, title, group_cells,
-            n_boot=args.n_boot, seed=args.seed, incomplete=incomplete, require=args.require_seeds,
+            number,
+            title,
+            group_cells,
+            n_boot=args.n_boot,
+            seed=args.seed,
+            incomplete=incomplete,
+            require=args.require_seeds,
         )
         path = out_dir / f"table{number}.md"
         path.write_text(text)

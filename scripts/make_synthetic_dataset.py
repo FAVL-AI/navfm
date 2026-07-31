@@ -83,7 +83,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("out", help="output directory")
     p.add_argument("--trajectories", type=int, default=6)
     p.add_argument("--length", type=int, default=60, help="frames per trajectory")
-    p.add_argument("--scenes", type=int, default=2, help="distinct scene prefixes, for --group-by scene")
+    p.add_argument(
+        "--scenes", type=int, default=2, help="distinct scene prefixes, for --group-by scene"
+    )
     p.add_argument("--spacing", type=float, default=0.25, help="metres of arc length per step")
     p.add_argument("--seed", type=int, default=7)
     args = p.parse_args(argv)

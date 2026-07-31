@@ -145,9 +145,7 @@ def apply_patches(root: Path, *, revert: bool, dry_run: bool) -> int:
 
 def comment_out_cory_hall(root: Path, *, dry_run: bool) -> None:
     """Comment out the ``cory_hall`` dataset block in the three training configs."""
-    pattern = re.compile(
-        r"(^  cory_hall:\n(?:^    .*\n)+)", re.MULTILINE
-    )
+    pattern = re.compile(r"(^  cory_hall:\n(?:^    .*\n)+)", re.MULTILINE)
     for name in ("gnm.yaml", "vint.yaml", "nomad.yaml"):
         path = root / "train" / "config" / name
         if not path.is_file():
@@ -157,12 +155,14 @@ def comment_out_cory_hall(root: Path, *, dry_run: bool) -> None:
             continue
 
         def _comment(m: re.Match[str]) -> str:
-            body = "".join("#" + line if line.strip() else line for line in m.group(1).splitlines(keepends=True))
+            body = "".join(
+                "#" + line if line.strip() else line
+                for line in m.group(1).splitlines(keepends=True)
+            )
             return (
                 f"  # {MARKER}cory_hall -- active in the shipped config but with no public\n"
                 "  # download link. Public mirror: huggingface.co/datasets/lerobot/berkeley_gnm_cory_hall\n"
-                "  # (LeRobot parquet; needs conversion). Uncomment once converted.\n"
-                + body
+                "  # (LeRobot parquet; needs conversion). Uncomment once converted.\n" + body
             )
 
         new = pattern.sub(_comment, text)
@@ -173,7 +173,9 @@ def comment_out_cory_hall(root: Path, *, dry_run: bool) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("root", help="path to a visualnav-transformer clone")
     p.add_argument("--revert", action="store_true")
     p.add_argument("--dry-run", action="store_true")

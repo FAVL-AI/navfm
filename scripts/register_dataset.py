@@ -39,7 +39,9 @@ def index_table(config: dict) -> dict[str, int]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     p.add_argument("root", help="path to a visualnav-transformer clone")
     p.add_argument("--name", required=True)
     p.add_argument("--spacing", type=float, required=True, help="metric_waypoint_spacing, metres")
@@ -70,7 +72,9 @@ def main(argv: list[str] | None = None) -> int:
         camera_height=args.camera_height,
         camera_x_offset=args.camera_x_offset,
         camera_matrix=camera_matrix,
-        dist_coeffs={"k1": 0.0, "k2": 0.0, "p1": 0.0, "p2": 0.0, "k3": 0.0} if camera_matrix else None,
+        dist_coeffs={"k1": 0.0, "k2": 0.0, "p1": 0.0, "p2": 0.0, "k3": 0.0}
+        if camera_matrix
+        else None,
     )
 
     if args.name in config:
