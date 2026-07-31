@@ -79,7 +79,7 @@ export ISAACSIM_ASSET_ROOT=~/isaacsim_assets/Assets/Isaac/6.0
 |---|---|---|
 | G0.a | `make verify` + upstream compat suite | 129 tests pass on your machine, not just mine |
 | G0.b | `sha256sum checkpoints/*.pth` | hashes recorded; loads via `navfm.models.loader` with `trust_checkpoint=True` |
-| G0.c | **E0.2**: evaluate `vint.pth` on the GO Stanford test split, batch 400 | a number in the neighbourhood of the checkpoint's recorded `avg_total_test_loss = 0.17398` (same order of magnitude — the recorded value spans the full training mixture). This is the first reproduction number anyone has published for these models; write it down the moment you have it |
+| G0.c | **E0.2**: evaluate `vint.pth` on the GO Stanford test split **reconstruction**, batch 400 | a classification under the pre-registered G0.c decision rule. The checkpoint's recorded `avg_total_test_loss = 0.17398` is a provenance anchor, **not** a target: F10 makes the original split unrecoverable, so the reconstruction is not the upstream split and the two quantities are not equivalent. See the G0.c amendment in `PREREGISTRATION.md` |
 | G0.d | Isaac Sim opens `simple_room.usd` headless and renders one frame | `isaacsim` CLI runs; assets resolve locally |
 
 **Expected failures, in order:** `HfFolder` import error (pin hub 0.25.2);

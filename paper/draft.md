@@ -506,7 +506,8 @@ floors calibrate every table.
 
 **E0 — Pipeline validation (gates, partially complete).** The compatibility
 proof passes in CI `[SHIPPED]`. Offline evaluation of released `vint.pth` on a
-GO Stanford holdout — to our knowledge the first published reproduction
+GO Stanford holdout *reconstruction* — ours, not the upstream split, which
+F10 makes unrecoverable — to our knowledge the first published reproduction
 number for this model family — `[E0.2 — PENDING]`.
 
 **E1 — Zero-shot baselines.** Released ViNT, GNM, NoMaD on held-out Isaac

@@ -166,12 +166,17 @@ NoMaD only). ViNT/GNM log `dist_loss`, `action_loss`,
 `action_waypts_cos_sim`, `multi_action_waypts_cos_sim`,
 `action_orien_cos_sim`, `multi_action_orien_cos_sim`.
 
-**Acceptance criterion for "the pipeline is correct":** the released `vint.pth`
-evaluated on a GO Stanford test split should reproduce a total test loss in the
-neighbourhood of the checkpoint's own recorded `avg_total_test_loss = 0.17398`
-— that value was computed over the full training mixture, so it will not match
-exactly on a single dataset, but an order-of-magnitude disagreement means
-something is wrong with your normalisation constants.
+**Acceptance criterion for "the pipeline is correct":** a classification under
+the pre-registered G0.c decision rule, not a numerical target. The released
+`vint.pth` is evaluated on a GO Stanford test split **reconstruction** — ours,
+built by `navfm.splits`, and never the upstream split, which finding F10 makes
+unrecoverable. The checkpoint's own `avg_total_test_loss = 0.17398` was
+computed over the full five-dataset training mixture under splits that cannot
+be reconstructed, so it is retained as a **provenance anchor** and is not a
+reproduction target: a tolerance around it would put false precision on
+non-equivalent quantities. An order-of-magnitude disagreement remains worth
+investigating as a signal about normalisation constants, but it is a
+diagnostic, not a criterion.
 
 ---
 

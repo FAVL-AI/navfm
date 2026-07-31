@@ -48,7 +48,7 @@ RGB-only, geometry-output models — more than dynamics randomisation does.
 | Run | What | Success criterion |
 |---|---|---|
 | E0.1 | Load navfm-written data through upstream `ViNT_Dataset` | `tests/test_upstream_compat.py` passes (**done**) |
-| E0.2 | Evaluate released `vint.pth` on GO Stanford test split, batch 400 | total test loss within an order of magnitude of the checkpoint's recorded 0.17398 |
+| E0.2 | Evaluate released `vint.pth` on the GO Stanford test split **reconstruction**, batch 400 | a classification under the pre-registered G0.c decision rule; 0.17398 is a provenance anchor, not a pass/fail threshold |
 | E0.3 | Fine-tune ViNT on GO Stanford train for 1 epoch | loss decreases; no BatchNorm-drift rise in epoch 1 |
 | E0.4 | Collect 20 Isaac episodes, validate, register, split | `navfm.validate` PASS, acceptance rate > 70 % |
 

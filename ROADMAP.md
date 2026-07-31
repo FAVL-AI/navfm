@@ -72,6 +72,21 @@ definition of why gates archive their outputs rather than assert their
 properties, and why a documentation claim whose proof lived only in a
 gitignored directory was not evidence (finding F-M1-2, `gates/failures/`).
 
+**Experimental equivalence.** A green exit status and a package-level
+environment fingerprint are insufficient evidence of experimental equivalence.
+Evidence completeness and effective import resolution must be verified
+explicitly.
+
+That is not a general caution; it is what two measured failures established.
+F-M2-1: a suite exited 0 and reported "228 passed" while the 26-test
+compatibility proof had silently contracted to 9 — the exit status could not
+distinguish a healthy run from a proof two thirds gone, and only the population
+could. F-M2-2: the environment identity was byte-identical across a clean shell
+and one whose imports were resolving from a different Python's site-packages —
+the fingerprint could not distinguish two instruments, because nothing it
+hashed had moved. Both are now mechanically checked (`scripts/check_test_population.py`,
+`navfm.provenance`), and both are recorded in `gates/failures/`.
+
 ## Programme structure: papers, not modules
 
 The programme is a sequence of mutually reinforcing papers sharing one
