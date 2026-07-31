@@ -1,0 +1,6 @@
+4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95  ./gnm.pth
+70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333  ./nomad.pth
+155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f  ./vint.pth
+
+# GO Stanford source archive (acquisition 2026-07-31, huggingface.co/datasets/franciszzj/GoStanford2)
+1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4  ./go_stanford.zip

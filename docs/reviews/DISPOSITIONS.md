@@ -18,7 +18,7 @@ implemented it.
 | `2026-07-31-m1-review.md` | M1 verification: the three evidence-pipeline defects, the declared/canonical environment boundary, M2 priority order. |
 | `2026-07-31-m2-review.md` | M2 canonical-environment milestone: F-M2-1 and F-M2-2, environment-identity semantics, acceptance-package requirements, remaining hardening order. |
 
-Both are archived verbatim with a metadata header only, per programme-review
+All three are archived verbatim with a metadata header only, per programme-review
 recommendation P32. Two notes about the source texts, recorded here rather
 than in the archives themselves so the archives stay unannotated:
 
@@ -126,6 +126,40 @@ than in the archives themselves so the archives stay unannotated:
 | M2-17 | The new GO Stanford split is named a **reconstruction**, never the upstream split, because F10 makes the original unrecoverable | accepted verbatim | pending — delta 5 |
 | M2-18 | Record the methodological claim: a green exit status and a package-level environment fingerprint are insufficient evidence of experimental equivalence; evidence completeness and effective import resolution must be verified explicitly | accepted verbatim | pending |
 | M2-19 | Record the M2 STATUS block, preserving the historical "247 tests passing" line; later counts recorded separately, never by editing the quote | accepted verbatim | `0b72a5c` |
+
+## Provenance of the archived reviews
+
+Recorded once, covering every review archived here and every block quoted from
+them anywhere in this repository.
+
+All review texts archived in `docs/reviews/` originate from the programme's
+**external methodological review channel**, received via the principal
+investigator on their recorded dates. None is an institutional, venue, or
+anonymous peer review, and no metadata or citation in this repository should be
+read as implying one. The metadata header on each file says exactly what the
+source is.
+
+**"Verbatim" in this repository means:** the quoted text exists in the archived
+source document. It does not mean the quoting document reproduces the whole
+source, and it does not license paraphrase inside a block marked verbatim.
+Where a block is quoted, programme additions sit beside it and are attributed as
+programme additions — as in `gates/failures/F-M2-3.md` and `gates/M2/README.md`.
+
+## Supersessions
+
+Two rulings were superseded after the reasoning was examined. Both are recorded
+because a superseded ruling that leaves no trace looks like a ruling that was
+never made.
+
+| Superseded | Replaced by | Reasoning |
+|---|---|---|
+| Split allocation of "~11 scenes (6 no* + 5 sim*, or 5 + 6)" | **Trajectory-share allocation**: ~20 % of each naming family's *trajectories*, scene-grouped. Result: 15 scenes (8 no* + 7 sim*), 760 trajectories (20.6 %) | The "~11" figure is arithmetic derived from 20 % of 53 *scenes*, not a protocol choice. Scene sizes range 18–350, so a scene-count target makes the held-out data fraction whatever the drawn scenes happen to sum to. The manifest now states the criterion explicitly and commits the exact integers; scene counts are recorded as a consequence, not a target |
+| Allocation under "a fixed recorded seed" | **No seed.** Deterministic BLAKE2b hash ordering of `scene_key_v1` | Accepted with refinement against the review's literal wording. Hash ordering is strictly stronger than a seeded draw: it is a pure function of the scene identifiers, reproducible without transmitting any state, and consistent with the F10 remedy already used in `navfm.splits`. The manifest records "seed: not applicable" rather than omitting the field |
+
+An earlier scoped-deviation ruling for an ungrouped split was also retracted:
+reconnaissance established that a defensible scene key exists
+(`scene_key_v1`), so the frozen scene-grouping bullet is satisfied directly and
+no deviation is needed.
 
 ## Historical wording correction
 
