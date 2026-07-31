@@ -1,7 +1,7 @@
 {
   "_comment": "Pinned test-population expectation. Guards against silent contraction of the upstream compatibility proof (F-M2-1). Update only through a reviewed commit.",
   "expected_required_count": 26,
-  "informational_total_collected": 267,
+  "informational_total_collected": 343,
   "required_marker": "upstream",
   "required_node_ids": [
     "tests/test_train_run.py::test_accumulation_is_not_a_sum",

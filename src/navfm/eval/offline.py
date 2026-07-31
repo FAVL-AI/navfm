@@ -274,6 +274,25 @@ def git_describe(repo: str | Path = ".") -> str:
     return f"{sha}-dirty" if dirty else sha
 
 
+def seed_model_rng(seed: int) -> None:
+    """Seed every RNG stream model construction can draw from.
+
+    Called before ``build_model``. A control arm whose initialisation cannot be
+    replayed is not a control: its score is one draw from an unrecorded
+    distribution, and Layer B's repeatability requirement is unsatisfiable for
+    it.
+    """
+    import random
+
+    import torch
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
 def run_directory(log_dir: str | Path, name: str) -> Path:
     d = Path(log_dir) / name
     d.mkdir(parents=True, exist_ok=True)
@@ -350,6 +369,16 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--device", default=None, help="cuda | cpu (default: cuda when available)")
     p.add_argument("--num-workers", type=int, default=0, help="reference test loaders use 0")
     p.add_argument("--seed", type=int, default=0, help="seeds the eval loader's shuffle")
+    p.add_argument(
+        "--model-seed",
+        type=int,
+        default=None,
+        help=(
+            "seeds model construction, so a random-init control is reproducible and "
+            "replayable. Defaults to --seed. Three independent control arms are three "
+            "different --model-seed values, not three dataloader shuffles."
+        ),
+    )
     p.add_argument(
         "--trust-checkpoint",
         action="store_true",
@@ -461,6 +490,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     data_folder, split_folder = _resolve_paths(args)
 
+    # Seed BEFORE construction. Without this the random-init control's weights
+    # come from the ambient, unrecorded global RNG: the control arm is then
+    # unrepeatable, its draw is not in the manifest, and every directional
+    # comparison against it rests on one draw nobody can reproduce. The
+    # dataloader generator below is a different seed for a different purpose.
+    model_seed = args.model_seed if args.model_seed is not None else args.seed
+    seed_model_rng(model_seed)
     model = upstream.build_model(args.model, cfg)
     missing: list[str] = []
     unexpected: list[str] = []
@@ -649,6 +685,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "upstream_root": str(upstream.upstream_root()),
         "upstream_commit": upstream.upstream_commit(),
         "seed": args.seed,
+        "model_seed": model_seed,
         "num_workers": args.num_workers,
     }
     write_run_record(run_dir, metrics=record, config=config)
