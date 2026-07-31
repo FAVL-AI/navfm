@@ -28,18 +28,32 @@ than in the archives themselves so the archives stay unannotated:
 * The M1 review's "Commit b673fa5" recommendation names a SHA that does not
   exist in this repository's history (row R8).
 
+## Session commits
+
+| Task | Commit | Subject |
+|---|---|---|
+| — | `76712df` | Add programme roadmap (as supplied, before amendment) |
+| 1 | `a6c4f51` | Archive both external reviews verbatim, with a disposition for every recommendation |
+| 2 | `2fcd80e` | Amend the roadmap: research questions, thesis claim, terminology, acceptance criteria, KPIs |
+| 3 | `9af40e4` | Disclaim the namespace in the README |
+| 4 | `8005f45` | Amend the paper: causal question, E2 hypotheses, analysis plan, defect taxonomy |
+| 5 | `3f89090` | Bound the oracle substitution, and record M1's status as the review requires |
+| 6 | `459c65c` | Pre-register the E2 analysis plan as Amendment 1, after two adversarial rounds |
+| 7 | `52b026d` | Mirror the E2 hypotheses and analysis plan; define the failure-record convention |
+| A2 | `ec98d9c` | Open `gates/failures/` with the three M1 verification defects |
+
 ## Programme review — `2026-07-31-programme-review.md`
 
 | # | Recommendation | Disposition | Commit |
 |---|---|---|---|
-| P1 | M1 is technically complete, methodologically credible, scientifically non-evidentiary until G0.c | accepted verbatim | TBD (Task 5) |
+| P1 | M1 is technically complete, methodologically credible, scientifically non-evidentiary until G0.c | accepted verbatim | `3f89090` |
 | P2 | Archived gate must carry environment identity, command invocation, source hashes, expected output signatures | deferred | M2, B2 |
-| P3 | Missing seeds must never degrade into partial aggregation with silently narrower uncertainty | accepted verbatim — already implemented at M1 (`make_tables.py` exits 2, writes nothing) | c82e406 (pre-review) |
+| P3 | Missing seeds must never degrade into partial aggregation with silently narrower uncertainty | accepted verbatim — already implemented at M1 (`make_tables.py` exits 2, writes nothing) | `c82e406` (pre-review) |
 | P4 | "Resume" must mean the same experimental identity; reject differences in checkpoint hash, dataset/manifest hash, config, evaluator version, seed set, batch size, architecture, metric implementation version; document as an evaluator invariant | deferred | M2, Task 1a |
-| P5 | Keep the conformance-oracle / validity-review distinction explicit | accepted verbatim | TBD (Task 5) |
-| P6 | Classify F12 as metric redundancy, not primarily a software bug | accepted with refinement — title normalised to "Metric redundancy induced by representation normalisation" | TBD (Task 4) |
-| P7 | Add the concise formal statement of F12 to the paper | accepted verbatim | TBD (Task 4) |
-| P8 | Refusing a scheduler-horizon change on resume is the correct default | accepted verbatim — already implemented at M1 | c82e406 (pre-review) |
+| P5 | Keep the conformance-oracle / validity-review distinction explicit | accepted verbatim | `3f89090` |
+| P6 | Classify F12 as metric redundancy, not primarily a software bug | accepted with refinement — title normalised to "Metric redundancy induced by representation normalisation" | `8005f45` |
+| P7 | Add the concise formal statement of F12 to the paper | accepted verbatim | `8005f45` |
+| P8 | Refusing a scheduler-horizon change on resume is the correct default | accepted verbatim — already implemented at M1 | `c82e406` (pre-review) |
 | P9 | The two scheduler remedies are distinct experimental interventions; redefining the horizon must mint a new experiment identity | deferred | M2, Task 1e |
 | P10 | Machine-readable result class (`evidence_class`, `scientific_result`, `model_initialization`, `data_source`) | deferred | M2, Task 1b |
 | P11 | `make_tables.py` must refuse such outputs in any scientific results table | deferred | M2, Task 1c |
@@ -48,42 +62,55 @@ than in the archives themselves so the archives stay unannotated:
 | P14 | Evaluator must refuse resumption when the prior manifest differs from the requested identity | deferred | M2, Task 1a |
 | P15 | Table lineage: retain a machine-readable source beside the rendered Markdown | deferred | M2, Task 1d |
 | P16 | Test that paper-result generation rejects `random_init=true` absent an explicit smoke-test mode | deferred | M2, Task 1c |
-| P17 | Do not record the red-team decision as "review was unnecessary"; use the precise wording | accepted verbatim | TBD (Task 5) |
-| P18 | Six points at which red-team review becomes mandatory | accepted with refinement — folded into the existing five triggers rather than added as a parallel list, to keep one trigger set | TBD (Task 5) |
-| P19 | The `M1 STATUS: TECHNICALLY COMPLETE` block | accepted with refinement — adopted as the status record in `gates/M1/README.md`, wording preserved | TBD (Task 5) |
+| P17 | Do not record the red-team decision as "review was unnecessary"; use the precise wording | accepted verbatim | `3f89090` |
+| P18 | Six points at which red-team review becomes mandatory | accepted with refinement — folded into the trigger list rather than added as a parallel one; the set grew from five triggers to six | `3f89090` |
+| P19 | The `M1 STATUS: TECHNICALLY COMPLETE` block | accepted with refinement — adopted as the status record in `gates/M1/README.md`, wording preserved | `3f89090` |
 | P20 | Keep the next work narrowly focused on G0.c; no Paper 3, safety arbitration, collection, or roadmap expansion | accepted verbatim | governs M2 (B4); no artefact this session |
 | P21 | G0.c must answer the five stated questions | deferred | M2, G0.c amendment |
 | P22 | The gate returns exactly one of three outcomes | deferred | M2, G0.c amendment |
 | P23 | "Not reconstructable" is not an engineering failure | deferred | M2, G0.c amendment |
 | P24 | G0.c cannot produce an adverse scientific outcome but can fail operationally or procedurally | deferred | M2, G0.c amendment |
-| P25 | `avg_total_test_loss = 0.17398` is a provenance anchor, not a reproduction target | deferred | M2, G0.c amendment |
+| P25 | `avg_total_test_loss = 0.17398` is a provenance anchor, not a reproduction target | deferred for the amendment itself — but the contradicting claim in `gates/M1/README.md` was corrected now rather than left standing | `3f89090`; amendment M2 |
 | P26 | Four-layer decision rule: procedural validity, instrument consistency, behavioural sanity, historical-anchor interpretation | deferred | M2, G0.c amendment |
 | P27 | Classification semantics table | deferred | M2, G0.c amendment |
 | P28 | Declare "Reconstructed but not reproduced" as the expected classification | deferred | M2, G0.c amendment |
-| P29 | Oracle-substitution clause, review wording almost exactly | accepted verbatim | TBD (Task 5) |
-| P30 | Retain the integration-seam requirement separately from the oracle clause | accepted verbatim | TBD (Task 5) |
-| P31 | F12 taxonomy entry recording seven items | accepted with refinement — six recorded; the seventh (whether historical results used both values as if independent) is recorded as UNVERIFIED, since it cannot be established from the pinned artefacts | TBD (Task 4) |
-| P32 | Archive the review verbatim with metadata only; maintain a separate disposition document; do not annotate the source | accepted verbatim | TBD (Task 1) |
+| P29 | Oracle-substitution clause, review wording almost exactly | accepted verbatim | `3f89090` |
+| P30 | Retain the integration-seam requirement separately from the oracle clause | accepted verbatim | `3f89090` |
+| P31 | F12 taxonomy entry recording seven items | accepted with refinement — six recorded; the seventh (whether historical results used both values as if independent) is recorded as UNVERIFIED, since the released artefacts do not record which logged metrics entered the papers' tables | `8005f45` |
+| P32 | Archive the review verbatim with metadata only; maintain a separate disposition document; do not annotate the source | accepted verbatim | `a6c4f51` |
 | P33 | Pre-registration must state all six listed things explicitly | deferred | M2, G0.c amendment |
 | P34 | Gate report records the five-line commit-order block | deferred | M2, Task 4 |
 | P35 | Machine-enforced `--preregistration-commit` with the five verification checks | deferred | M2, Task 2 |
-| P36 | The paper must not say the gate "cannot fail" without the procedural qualification; use the classificatory-gate framing | accepted with refinement — scope confirmed against the current draft before edit | TBD (Task 4) |
-| P37 | Replace "most-cited" with "widely used" / "influential open visual-navigation implementations" until a documented bibliometric basis exists | accepted verbatim | TBD (Task 4) |
+| P36 | The paper must not say the gate "cannot fail" without the procedural qualification | accepted — **no change required**: verified that no such claim exists anywhere in `paper/` or `docs/`. Recorded so the absence is evidence rather than an omission | `8005f45` (verification recorded in message) |
+| P37 | Replace "most-cited" with "widely used" / "influential open visual-navigation implementations" until a documented bibliometric basis exists | accepted verbatim — two occurrences, one per file | `2fcd80e` (ROADMAP), `8005f45` (paper) |
 | P38 | Proceed in the stated eight-step order | accepted verbatim | governs this session and M2 |
 
 ## M1 verification review — `2026-07-31-m1-review.md`
 
 | # | Recommendation | Disposition | Commit |
 |---|---|---|---|
-| R1 | State explicitly that the fixes improve the validity of future claims, not the model; the contribution is "we removed three independent threats to reproducible scientific evidence" | accepted verbatim | TBD (Task 2, Task 4) |
-| R2 | Classify F-M1-1 as Specification–Execution Mismatch; preserve the invariants "never infer execution state" and "never silently change interpreters" | accepted verbatim | TBD (Task 5, A2) |
-| R3 | Promote "A claim that cannot be demonstrated from the archived evidence is equivalent to an unsupported claim" into the methodology chapter | accepted verbatim | TBD (Task 2, Task 4) |
-| R4 | Marker ownership: delete only what the gate created | accepted verbatim | TBD (Task 5, A2) |
-| R5 | M1 proves the gate executes in the *declared* environment, not the *canonical* one; the latter belongs to M2 | accepted verbatim | TBD (Task 5) |
+| R1 | State explicitly that the fixes improve the validity of future claims, not the model; the contribution is "we removed three independent threats to reproducible scientific evidence" | accepted verbatim — roadmap only; verified that M1 is not referenced anywhere in `paper/draft.md`, so there is no paper site to amend | `2fcd80e` |
+| R2 | Classify F-M1-1 as Specification–Execution Mismatch; preserve the invariants "never infer execution state" and "never silently change interpreters" | accepted verbatim | `3f89090` (standing rule), `ec98d9c` (record) |
+| R3 | Promote "A claim that cannot be demonstrated from the archived evidence is equivalent to an unsupported claim" into the methodology chapter | accepted verbatim | `2fcd80e` (roadmap terminology), `8005f45` (paper §3) |
+| R4 | Marker ownership: delete only what the gate created | accepted verbatim | `3f89090` (standing rule), `ec98d9c` (record) |
+| R5 | M1 proves the gate executes in the *declared* environment, not the *canonical* one; the latter belongs to M2 | accepted verbatim | `3f89090` |
 | R6 | Define the canonical environment as the identity archived in the gate manifest, not as `~/.venv-train` | deferred | M2, B1 |
 | R7 | M2's first Phase 0 gate must answer "can a fresh canonical environment regenerate the M1 archive without modification?" | deferred | M2, B3 |
-| R8 | Refer to the freeze commit as "M1 Freeze (commit b673fa5)" | **accepted with refinement** — `b673fa5` is a pre-`filter-branch` SHA, is not an ancestor of `HEAD`, and resolves only in this machine's reflog. The freeze commit is `c82e406`, which is what the annotated tag `m1-freeze` points at. The thesis must cite `c82e406` / `m1-freeze`. | TBD (Task 5) |
+| R8 | Refer to the freeze commit as "M1 Freeze (commit b673fa5)" | **accepted with refinement** — `b673fa5` is a pre-`filter-branch` SHA, is not an ancestor of `HEAD` (`git merge-base --is-ancestor` → not in history), and resolves only in one machine's reflog. The freeze commit is `c82e406`, which `git rev-parse m1-freeze^{}` confirms the annotated tag points at. The thesis must cite `c82e406` / `m1-freeze`. | `a6c4f51` (recorded), `3f89090` (corrected in the archive) |
 | R9 | Every gate archive begins with an execution fingerprint, before any experiment work | deferred | M2, B2 |
-| R10 | Record the epistemological significance: the pipeline produced findings before it produced results | accepted with refinement — recorded in the roadmap, where the programme argument lives, rather than as a paper claim | TBD (Task 2) |
+| R10 | Record the epistemological significance: the pipeline produced findings before it produced results | accepted with refinement — recorded in the roadmap, where the programme argument lives, rather than as a paper claim | `2fcd80e` |
 | R11 | M2 priority order, seven steps | accepted verbatim | governs M2 (B ordering) |
-| R12 | Record M1 as "Complete with one explicit caveat", with the two-sentence declared/canonical wording | accepted verbatim | TBD (Task 5) |
+| R12 | Record M1 as "Complete with one explicit caveat", with the two-sentence declared/canonical wording | accepted verbatim | `3f89090` |
+
+## Note on Amendment 1
+
+Amendment 1 (`459c65c`) is not itself a review recommendation — it discharges
+red-team trigger 3 from the standing-instructions file. It is listed here
+because two adversarial rounds against it are archived alongside these reviews
+under `gates/redteam/`, and because the first round caught a defect of the same
+class the programme review is concerned with: a draft that silently dropped the
+frozen "percentile-bootstrap" qualifier from the primary endpoint would have
+*reopened* a degree of freedom the pre-registration had closed. Both rounds
+classified the amendment *fixing* rather than rescuing; both refuted the draft
+they were given on other grounds; the corrections are recorded in the amendment
+itself.
