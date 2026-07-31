@@ -168,7 +168,9 @@ _FREEZE_PATTERNS = {
 def apply_freeze(model: Any, strategy: str) -> dict[str, Any]:
     """Freeze parameters by name prefix. Returns a parameter-count breakdown."""
     if strategy not in _FREEZE_PATTERNS:
-        raise ValueError(f"unknown freeze strategy {strategy!r}; expected one of {sorted(_FREEZE_PATTERNS)}")
+        raise ValueError(
+            f"unknown freeze strategy {strategy!r}; expected one of {sorted(_FREEZE_PATTERNS)}"
+        )
     patterns = _FREEZE_PATTERNS[strategy]
     frozen = trainable = 0
     for name, param in model.named_parameters():
@@ -275,9 +277,12 @@ def suggest_micro_batch(
     b = 1
     while True:
         nxt = b * 2
-        if estimate_activation_memory_gb(
-            micro_batch=nxt, context_size=context_size, height=height, width=width
-        ) > budget:
+        if (
+            estimate_activation_memory_gb(
+                micro_batch=nxt, context_size=context_size, height=height, width=width
+            )
+            > budget
+        ):
             return b
         b = nxt
         if b >= 1024:

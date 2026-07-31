@@ -70,9 +70,7 @@ def test_averaging_is_unweighted_over_batches_not_over_samples():
     acc.update(**small)
     got = acc.result()["strict"]["action_loss"]
 
-    per_batch = [
-        M.reference_losses(**b, strict=True)["action_loss"] for b in (big, small)
-    ]
+    per_batch = [M.reference_losses(**b, strict=True)["action_loss"] for b in (big, small)]
     assert got == pytest.approx(float(np.mean(per_batch)), rel=1e-12)
 
     sample_weighted = (100 * per_batch[0] + 2 * per_batch[1]) / 102

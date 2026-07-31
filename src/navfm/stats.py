@@ -190,9 +190,7 @@ def estimate_action_stats(
         "std": [float(d[:, 0].std()), float(d[:, 1].std())],
         "published": PUBLISHED_ACTION_STATS,
         "frac_clipped_by_published": float(clipped.mean()),
-        "lateral_energy_ratio": float(
-            np.abs(d[:, 1]).mean() / max(np.abs(d[:, 0]).mean(), 1e-9)
-        ),
+        "lateral_energy_ratio": float(np.abs(d[:, 1]).mean() / max(np.abs(d[:, 0]).mean(), 1e-9)),
     }
 
 

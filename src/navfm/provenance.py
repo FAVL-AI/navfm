@@ -48,6 +48,7 @@ import hashlib
 import json
 import os
 import platform
+import site
 import socket
 import subprocess
 import sys
@@ -81,6 +82,29 @@ _IDENTITY_FIELDS = (
     # An identity blind to that would call two different instruments the same
     # one (F-M2-2).
     "pythonpath",
+    # The rest of the effective-import surface. Two environments agreeing on
+    # every version and disagreeing on where those versions are imported FROM
+    # are not the same instrument.
+    "sys_prefix",
+    "sys_base_prefix",
+    "pythonhome",
+    "enable_user_site",
+    "module_locations",
+)
+
+
+#: Modules whose *resolved location* defines this instrument. If any of these
+#: is imported from somewhere other than where the canonical environment puts
+#: it, the environment is not the one the archive claims -- which is precisely
+#: how a sourced ROS 2 tree took over a 3.11 venv (F-M2-2).
+_LOAD_BEARING_MODULES = (
+    "torch",
+    "torchvision",
+    "navfm",
+    "vint_train.training.train_utils",
+    "cv2",
+    "matplotlib",
+    "diffusers",
 )
 
 
@@ -96,6 +120,11 @@ class EnvironmentIdentity:
     os: str
     architecture: str
     pythonpath: str
+    sys_prefix: str
+    sys_base_prefix: str
+    pythonhome: str
+    enable_user_site: bool
+    module_locations: dict[str, str | None]
     environment_id: str
 
 
@@ -115,6 +144,18 @@ class ExecutionFingerprint:
     os: str
     architecture: str
     pythonpath: str
+    sys_prefix: str
+    sys_base_prefix: str
+    pythonhome: str
+    enable_user_site: bool
+    user_site: str | None
+    module_locations: dict[str, str | None]
+    # Recorded, never hashed: these locate the instrument without defining it.
+    sys_executable: str
+    sys_version: str
+    sys_path: list[str]
+    cwd: str
+    module_locations_raw: dict[str, str | None]
     environment_id: str
 
 
@@ -159,6 +200,55 @@ def _torch_versions() -> tuple[str | None, str | None]:
     return str(torch.__version__), (str(torch.version.cuda) if torch.version.cuda else None)
 
 
+def _normalize_path(raw: str | None, repo_root: Path) -> str | None:
+    """Map a path to a machine-independent token.
+
+    Machine-specific roots become tokens so the identity survives a move
+    between machines; system roots (``/opt/ros/...``, ``/usr/lib/...``) are
+    left literal, because they mean the same thing everywhere and their
+    appearance here is exactly the signal worth catching.
+    """
+    if raw is None:
+        return None
+    path = Path(raw).resolve()
+    for root, token in (
+        (Path(sys.prefix).resolve(), "<prefix>"),
+        (Path(sys.base_prefix).resolve(), "<base_prefix>"),
+        (repo_root.resolve(), "<repo>"),
+        (Path.home().resolve(), "~"),
+    ):
+        try:
+            rel = path.relative_to(root)
+        except ValueError:
+            continue
+        return token if str(rel) == "." else f"{token}/{rel}"
+    return str(path)
+
+
+def _module_locations(repo_root: Path) -> tuple[dict[str, str | None], dict[str, str | None]]:
+    """Resolved ``__file__`` of every load-bearing module: (normalised, raw).
+
+    Importing is the point. Asking where a module *would* resolve without
+    importing it answers a different question from the one that matters, which
+    is where it actually came from in this process.
+    """
+    import importlib
+
+    normalised: dict[str, str | None] = {}
+    raw_locations: dict[str, str | None] = {}
+    for name in _LOAD_BEARING_MODULES:
+        try:
+            module = importlib.import_module(name)
+        except Exception:  # absence and breakage are both "not here"
+            normalised[name] = None
+            raw_locations[name] = None
+            continue
+        raw = getattr(module, "__file__", None)
+        raw_locations[name] = str(raw) if raw else None
+        normalised[name] = _normalize_path(raw_locations[name], repo_root)
+    return normalised, raw_locations
+
+
 def _worktree_status(root: Path) -> str:
     """``clean``, or a declaration of exactly what was modified.
 
@@ -188,8 +278,16 @@ def _worktree_status(root: Path) -> str:
     return f"modified ({len(entries)}): {listed}{suffix}"
 
 
-def environment_identity() -> EnvironmentIdentity:
+def environment_identity(repo_root: Path | str | None = None) -> EnvironmentIdentity:
     """Compute the identity of the environment this interpreter is running in."""
+    repo = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[2]
+    # Order matters. Importing the load-bearing modules mutates sys.path --
+    # editable installs drop .pth hooks that append entries -- so a
+    # distribution scan taken BEFORE those imports differs from one taken
+    # after, and two consecutive calls would report two different identities.
+    # Resolve the imports first, then scan, so the identity is stable from the
+    # first call rather than from the second.
+    module_locations, _raw = _module_locations(repo)
     torch_version, cuda_version = _torch_versions()
     dists = _installed_distributions()
     payload: dict[str, object] = {
@@ -200,6 +298,11 @@ def environment_identity() -> EnvironmentIdentity:
         "os": platform.platform(),
         "architecture": platform.machine(),
         "pythonpath": os.environ.get("PYTHONPATH", ""),
+        "sys_prefix": _normalize_path(sys.prefix, repo) or "",
+        "sys_base_prefix": _normalize_path(sys.base_prefix, repo) or "",
+        "pythonhome": os.environ.get("PYTHONHOME", ""),
+        "enable_user_site": bool(site.ENABLE_USER_SITE),
+        "module_locations": module_locations,
     }
     canonical = json.dumps(
         {k: payload[k] for k in _IDENTITY_FIELDS}, sort_keys=True, separators=(",", ":")
@@ -213,6 +316,11 @@ def environment_identity() -> EnvironmentIdentity:
         os=str(payload["os"]),
         architecture=str(payload["architecture"]),
         pythonpath=str(payload["pythonpath"]),
+        sys_prefix=str(payload["sys_prefix"]),
+        sys_base_prefix=str(payload["sys_base_prefix"]),
+        pythonhome=str(payload["pythonhome"]),
+        enable_user_site=bool(payload["enable_user_site"]),
+        module_locations=module_locations,
         environment_id=hashlib.sha256(canonical.encode()).hexdigest(),
     )
 
@@ -223,7 +331,12 @@ def execution_fingerprint(
 ) -> ExecutionFingerprint:
     """Full fingerprint. Emit this *before* any experiment work begins."""
     repo = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[2]
-    identity = environment_identity()
+    identity = environment_identity(repo)
+    _normalised, raw_locations = _module_locations(repo)
+    try:
+        user_site: str | None = site.getusersitepackages()
+    except Exception:  # some embedded builds have no user site
+        user_site = None
 
     upstream_commit: str | None = None
     if upstream_root is not None:
@@ -242,6 +355,17 @@ def execution_fingerprint(
         os=identity.os,
         architecture=identity.architecture,
         pythonpath=identity.pythonpath,
+        sys_prefix=identity.sys_prefix,
+        sys_base_prefix=identity.sys_base_prefix,
+        pythonhome=identity.pythonhome,
+        enable_user_site=identity.enable_user_site,
+        user_site=user_site,
+        module_locations=identity.module_locations,
+        sys_executable=sys.executable,
+        sys_version=sys.version.replace("\n", " "),
+        sys_path=list(sys.path),
+        cwd=os.getcwd(),
+        module_locations_raw=raw_locations,
         environment_id=identity.environment_id,
     )
 

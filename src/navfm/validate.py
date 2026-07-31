@@ -120,7 +120,9 @@ def validate_trajectory(
         return report
 
     if not isinstance(traj_data, dict):
-        report.errors.append(f"{TRAJ_DATA_FILENAME} must contain a dict, got {type(traj_data).__name__}")
+        report.errors.append(
+            f"{TRAJ_DATA_FILENAME} must contain a dict, got {type(traj_data).__name__}"
+        )
         return report
 
     image_names = [p.name for p in traj_dir.iterdir() if p.suffix == IMAGE_EXTENSION]

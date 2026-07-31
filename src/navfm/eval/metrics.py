@@ -55,9 +55,7 @@ __all__ = [
 REFERENCE_EPS = 1e-2
 
 
-def action_reduce(
-    unreduced: np.ndarray, mask: np.ndarray, *, strict: bool = True
-) -> float:
+def action_reduce(unreduced: np.ndarray, mask: np.ndarray, *, strict: bool = True) -> float:
     """Port of ``train_utils.action_reduce``.
 
     ``unreduced`` has shape ``(B, ...)``; every non-batch dimension is averaged
@@ -76,7 +74,9 @@ def action_reduce(
     return float((x * m).sum() / denom) if denom > 0 else float("nan")
 
 
-def action_mse(pred: np.ndarray, target: np.ndarray, mask: np.ndarray, *, strict: bool = True) -> float:
+def action_mse(
+    pred: np.ndarray, target: np.ndarray, mask: np.ndarray, *, strict: bool = True
+) -> float:
     """Reference ``action_loss``: elementwise MSE then ``action_reduce``."""
     pred = np.asarray(pred, dtype=np.float64)
     target = np.asarray(target, dtype=np.float64)
@@ -90,7 +90,15 @@ def distance_mse(pred: np.ndarray, target: np.ndarray) -> float:
     rescaled, which is why the training objective multiplies this term by
     ``1e-2`` before combining. Report it in the same units to stay comparable.
     """
-    return float(np.mean((np.asarray(pred, dtype=np.float64).reshape(-1) - np.asarray(target, dtype=np.float64).reshape(-1)) ** 2))
+    return float(
+        np.mean(
+            (
+                np.asarray(pred, dtype=np.float64).reshape(-1)
+                - np.asarray(target, dtype=np.float64).reshape(-1)
+            )
+            ** 2
+        )
+    )
 
 
 def _cosine(a: np.ndarray, b: np.ndarray, axis: int = -1) -> np.ndarray:
@@ -209,7 +217,9 @@ def reference_losses(
         out["multi_action_orien_cos_sim"] = multi_orientation_cosine_similarity(
             action_pred, action_label, action_mask, strict=strict
         )
-    out["total_loss"] = alpha * REFERENCE_EPS * out["dist_loss"] + (1.0 - alpha) * out["action_loss"]
+    out["total_loss"] = (
+        alpha * REFERENCE_EPS * out["dist_loss"] + (1.0 - alpha) * out["action_loss"]
+    )
     return out
 
 

@@ -390,7 +390,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--seed", type=int, default=None)
     p.add_argument("--occupancy-npz", default=None)
     p.add_argument("--no-randomization", action="store_true")
-    p.add_argument("--headed", action="store_true", help="run with the UI (slow, and 6.0 has a known crash when changing step rates in the UI)")
+    p.add_argument(
+        "--headed",
+        action="store_true",
+        help="run with the UI (slow, and 6.0 has a known crash when changing step rates in the UI)",
+    )
     args = p.parse_args(argv)
 
     cfg = CollectConfig.from_yaml(args.config) if args.config else CollectConfig()

@@ -123,7 +123,9 @@ def test_allow_incomplete_marks_the_cell_and_still_fails(tmp_path):
 def test_a_complete_cell_passes(tmp_path):
     for seed in range(3):
         write_eval(tmp_path, f"e2_nonholo_diff_seed{seed}", total_loss=0.2 + 0.01 * seed)
-    rc = make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "out"), "--n-boot", "200"])
+    rc = make_tables.main(
+        ["--runs", str(tmp_path), "--out", str(tmp_path / "out"), "--n-boot", "200"]
+    )
     assert rc == 0
     text = (tmp_path / "out" / "table4.md").read_text()
     assert "e2_nonholo_diff" in text

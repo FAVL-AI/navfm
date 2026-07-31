@@ -213,8 +213,11 @@ def test_estimate_action_stats_is_self_consistent(tmp_path):
     _write_dataset(tmp_path, step=0.2)
     spacing = estimate_metric_waypoint_spacing(tmp_path)["metric_waypoint_spacing"]
     stats = estimate_action_stats(
-        tmp_path, len_traj_pred=8, context_size=3,
-        metric_waypoint_spacing=spacing, stride=1,
+        tmp_path,
+        len_traj_pred=8,
+        context_size=3,
+        metric_waypoint_spacing=spacing,
+        stride=1,
     )
     # Forward motion of exactly one nominal step per frame -> dx delta ~ 1.0.
     assert stats["mean"][0] == pytest.approx(1.0, rel=0.1)

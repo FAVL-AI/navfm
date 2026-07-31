@@ -173,7 +173,9 @@ def test_our_to_local_coords_matches_upstream_bitwise():
         )
 
 
-def test_our_action_labels_match_the_reference_dataset(synthetic_dataset, splits, tmp_path, monkeypatch):
+def test_our_action_labels_match_the_reference_dataset(
+    synthetic_dataset, splits, tmp_path, monkeypatch
+):
     """The decisive check: identical action labels for identical inputs."""
     import pickle
 

@@ -70,7 +70,9 @@ def test_yaw_rotmat_is_orthonormal():
 
 def test_yaw_from_quat_wxyz_roundtrip():
     yaws = np.linspace(-np.pi + 1e-6, np.pi - 1e-6, 17)
-    quats = np.stack([np.cos(yaws / 2), np.zeros_like(yaws), np.zeros_like(yaws), np.sin(yaws / 2)], axis=1)
+    quats = np.stack(
+        [np.cos(yaws / 2), np.zeros_like(yaws), np.zeros_like(yaws), np.sin(yaws / 2)], axis=1
+    )
     np.testing.assert_allclose(yaw_from_quat_wxyz(quats), yaws, atol=1e-10)
     assert np.isscalar(float(yaw_from_quat_wxyz(quats[0])))
 
@@ -114,7 +116,9 @@ def test_compute_actions_right_pads_by_repeating_the_last_element():
     n = 12
     pos = np.stack([np.arange(n) * 0.1, np.zeros(n)], axis=1)
     yaw = np.zeros(n)
-    a = compute_actions(pos, yaw, 9, len_traj_pred=5, metric_waypoint_spacing=0.1, learn_angle=False)
+    a = compute_actions(
+        pos, yaw, 9, len_traj_pred=5, metric_waypoint_spacing=0.1, learn_angle=False
+    )
     assert a.shape == (5, 2)
     # Positions 10, 11 exist; the remaining three repeat index 11.
     np.testing.assert_allclose(a[2:, 0], a[2, 0], atol=1e-12)
@@ -125,7 +129,12 @@ def test_compute_actions_respects_waypoint_spacing():
     pos = np.stack([np.arange(n) * 0.1, np.zeros(n)], axis=1)
     yaw = np.zeros(n)
     a = compute_actions(
-        pos, yaw, 10, len_traj_pred=5, waypoint_spacing=3, metric_waypoint_spacing=0.1,
+        pos,
+        yaw,
+        10,
+        len_traj_pred=5,
+        waypoint_spacing=3,
+        metric_waypoint_spacing=0.1,
         learn_angle=False,
     )
     # Divisor is metric_waypoint_spacing * waypoint_spacing = 0.3, and the raw
@@ -212,8 +221,9 @@ def test_holonomic_step_strafes_without_rotating():
 
 def test_pure_pursuit_reaches_the_goal_in_closed_loop():
     path = resample_path(np.array([[0.0, 0.0], [4.0, 0.0], [4.0, 3.0]]), 0.2)
-    tracker = PurePursuit(path, limits=M3PRO_LIMITS, mode=DemonstratorMode.NONHOLONOMIC,
-                          cruise_v=0.4, goal_tol=0.25)
+    tracker = PurePursuit(
+        path, limits=M3PRO_LIMITS, mode=DemonstratorMode.NONHOLONOMIC, cruise_v=0.4, goal_tol=0.25
+    )
     pos, yaw, dt = np.zeros(2), 0.0, 1 / 12
     for _ in range(4000):
         vx, _vy, wz, done = tracker.step(pos, yaw)
@@ -226,8 +236,9 @@ def test_pure_pursuit_reaches_the_goal_in_closed_loop():
 
 def test_pure_pursuit_holonomic_reaches_the_goal_too():
     path = resample_path(np.array([[0.0, 0.0], [0.0, 3.0], [3.0, 3.0]]), 0.2)
-    tracker = PurePursuit(path, limits=M3PRO_LIMITS, mode=DemonstratorMode.HOLONOMIC,
-                          cruise_v=0.35, goal_tol=0.25)
+    tracker = PurePursuit(
+        path, limits=M3PRO_LIMITS, mode=DemonstratorMode.HOLONOMIC, cruise_v=0.35, goal_tol=0.25
+    )
     pos, yaw, dt = np.zeros(2), 0.0, 1 / 12
     for _ in range(4000):
         vx, vy, wz, done = tracker.step(pos, yaw)

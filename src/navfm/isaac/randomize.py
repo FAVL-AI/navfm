@@ -103,12 +103,8 @@ class SceneRandomizer:
         rep.utils.send_og_event(event_name="navfm_randomize_lights")
         return {
             "enabled": True,
-            "camera_pos_jitter_m": float(
-                self.rng.normal(0.0, self.config.camera_pos_jitter_m)
-            ),
-            "camera_rot_jitter_deg": float(
-                self.rng.normal(0.0, self.config.camera_rot_jitter_deg)
-            ),
+            "camera_pos_jitter_m": float(self.rng.normal(0.0, self.config.camera_pos_jitter_m)),
+            "camera_rot_jitter_deg": float(self.rng.normal(0.0, self.config.camera_rot_jitter_deg)),
         }
 
 

@@ -185,9 +185,7 @@ class DatasetSpec:
             raise ValueError("metric_waypoint_spacing must be a positive finite float")
 
     def to_data_config_entry(self) -> dict[str, Any]:
-        entry: dict[str, Any] = {
-            "metric_waypoint_spacing": float(self.metric_waypoint_spacing)
-        }
+        entry: dict[str, Any] = {"metric_waypoint_spacing": float(self.metric_waypoint_spacing)}
         if self.camera_height is not None or self.camera_matrix is not None:
             metrics: dict[str, Any] = {}
             if self.camera_height is not None:
@@ -241,7 +239,9 @@ def check_traj_data(
     if yaw.ndim == 2 and yaw.shape[1] == 1:
         yaw = yaw[:, 0]  # tolerated: the loader squeezes this shape
     if yaw.ndim != 1:
-        problems.append(f"yaw must have shape (T,) or (T, 1), got {np.asarray(traj_data['yaw']).shape}")
+        problems.append(
+            f"yaw must have shape (T,) or (T, 1), got {np.asarray(traj_data['yaw']).shape}"
+        )
     if not np.issubdtype(yaw.dtype, np.floating):
         problems.append(f"yaw dtype must be floating, got {yaw.dtype}")
     if yaw.size and not np.all(np.isfinite(yaw)):

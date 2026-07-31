@@ -133,12 +133,20 @@ def test_the_plain_reduction_differs_from_the_reference_by_the_documented_factor
     p = float(mask.mean())
 
     strict = metrics.reference_losses(
-        dist_pred=args[0], dist_label=args[1], action_pred=args[2],
-        action_label=args[3], action_mask=args[4], strict=True,
+        dist_pred=args[0],
+        dist_label=args[1],
+        action_pred=args[2],
+        action_label=args[3],
+        action_mask=args[4],
+        strict=True,
     )
     plain = metrics.reference_losses(
-        dist_pred=args[0], dist_label=args[1], action_pred=args[2],
-        action_label=args[3], action_mask=args[4], strict=False,
+        dist_pred=args[0],
+        dist_label=args[1],
+        action_pred=args[2],
+        action_label=args[3],
+        action_mask=args[4],
+        strict=False,
     )
     theirs = _upstream(*args, alpha=0.5, learn_angle=True)
 
@@ -195,4 +203,6 @@ def test_cosine_similarity_can_leave_the_unit_interval():
     mask = np.ones(9)
     ours = metrics.waypoint_cosine_similarity(action, action, mask, strict=True)
     assert ours == pytest.approx(1.0 / 1.01, rel=1e-12)
-    assert metrics.waypoint_cosine_similarity(action, action, mask, strict=False) == pytest.approx(1.0)
+    assert metrics.waypoint_cosine_similarity(action, action, mask, strict=False) == pytest.approx(
+        1.0
+    )

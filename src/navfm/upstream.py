@@ -149,7 +149,9 @@ def metric_waypoint_spacing(dataset_name: str) -> float:
     cfg = data_config()
     entry = cfg.get(dataset_name)
     if not isinstance(entry, dict) or "metric_waypoint_spacing" not in entry:
-        known = sorted(k for k, v in cfg.items() if isinstance(v, dict) and "metric_waypoint_spacing" in v)
+        known = sorted(
+            k for k, v in cfg.items() if isinstance(v, dict) and "metric_waypoint_spacing" in v
+        )
         raise KeyError(
             f"dataset {dataset_name!r} has no metric_waypoint_spacing in the reference "
             f"data_config.yaml. Register it first:\n"
@@ -169,7 +171,9 @@ def model_config(model_type: str) -> dict[str, Any]:
     (``mha_num_attention_layers: 4`` vs the ``ViNT.__init__`` default of 2).
     """
     if model_type not in MODEL_CONFIGS:
-        raise ValueError(f"unknown model_type {model_type!r}; expected one of {sorted(MODEL_CONFIGS)}")
+        raise ValueError(
+            f"unknown model_type {model_type!r}; expected one of {sorted(MODEL_CONFIGS)}"
+        )
     train_dir = upstream_root() / "train"
     cfg = _load_yaml(train_dir / _DEFAULTS)
     cfg.update(_load_yaml(train_dir / MODEL_CONFIGS[model_type]))
@@ -310,7 +314,9 @@ def reference_transform() -> Any:
     )
 
 
-def apply_reference_transform(obs_image: Any, goal_image: Any, transform: Any, device: Any) -> tuple[Any, Any]:
+def apply_reference_transform(
+    obs_image: Any, goal_image: Any, transform: Any, device: Any
+) -> tuple[Any, Any]:
     """Port of the four lines every upstream train/eval loop repeats.
 
     ``obs_image`` arrives as ``(B, 3*(P+1), H, W)``; upstream splits it into

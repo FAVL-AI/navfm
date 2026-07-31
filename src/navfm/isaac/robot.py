@@ -131,7 +131,9 @@ class SimRobot:
 
     # -- construction ----------------------------------------------------
 
-    def spawn(self, position: Sequence[float] | np.ndarray = (0.0, 0.0, 0.0), yaw: float = 0.0) -> None:
+    def spawn(
+        self, position: Sequence[float] | np.ndarray = (0.0, 0.0, 0.0), yaw: float = 0.0
+    ) -> None:
         if not self.config.usd_path:
             raise ValueError(
                 "RobotConfig.usd_path is unset. Convert yahboomcar_description to USD first:\n"
@@ -171,9 +173,7 @@ class SimRobot:
                 tick_rate=0.0,  # autotrigger: render on every stepped frame
                 translations=translation,
             )
-            self._camera = CameraSensor(
-                rtx, resolution=cam.resolution, annotators=["rgb"]
-            )
+            self._camera = CameraSensor(rtx, resolution=cam.resolution, annotators=["rgb"])
             self._is_v6 = True
         except ImportError:  # Isaac Sim 5.x
             from isaacsim.sensors.camera import Camera

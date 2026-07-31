@@ -208,15 +208,24 @@ def test_batchnorm_stays_frozen_across_epochs():
 
     torch.manual_seed(0)
     model = _TinyModel()
-    cfg = FinetuneConfig(micro_batch_size=4, effective_batch_size=4, freeze_bn=True, amp_dtype="none")
+    cfg = FinetuneConfig(
+        micro_batch_size=4, effective_batch_size=4, freeze_bn=True, amp_dtype="none"
+    )
     opt = torch.optim.SGD(model.parameters(), lr=1e-3)
 
     before = model.bn.running_mean.clone()
     for epoch in range(3):
         model.train()  # what the caller does at the top of an epoch
         train_one_epoch(
-            model, opt, [_fake_batch()], cfg=cfg, device="cpu", alpha=0.5,
-            learn_angle=True, progress=False, epoch=epoch,
+            model,
+            opt,
+            [_fake_batch()],
+            cfg=cfg,
+            device="cpu",
+            alpha=0.5,
+            learn_angle=True,
+            progress=False,
+            epoch=epoch,
         )
     torch.testing.assert_close(model.bn.running_mean, before)
     assert not model.bn.weight.requires_grad
@@ -230,12 +239,20 @@ def test_partial_accumulation_window_is_dropped_not_applied():
     from navfm.train.run import train_one_epoch
 
     torch.manual_seed(0)
-    cfg = FinetuneConfig(micro_batch_size=4, effective_batch_size=8, freeze_bn=False, amp_dtype="none")
+    cfg = FinetuneConfig(
+        micro_batch_size=4, effective_batch_size=8, freeze_bn=False, amp_dtype="none"
+    )
     model = _TinyModel()
     opt = torch.optim.SGD(model.parameters(), lr=1e-2)
     out = train_one_epoch(
-        model, opt, [_fake_batch() for _ in range(3)], cfg=cfg, device="cpu",
-        alpha=0.5, learn_angle=True, progress=False,
+        model,
+        opt,
+        [_fake_batch() for _ in range(3)],
+        cfg=cfg,
+        device="cpu",
+        alpha=0.5,
+        learn_angle=True,
+        progress=False,
     )
     assert out["micro_batches"] == 3
     assert out["optimizer_steps"] == 1
@@ -248,7 +265,9 @@ def test_replay_batches_are_merged_into_the_micro_batch():
     from navfm.train.run import _cycle, train_one_epoch
 
     torch.manual_seed(0)
-    cfg = FinetuneConfig(micro_batch_size=6, effective_batch_size=6, freeze_bn=False, amp_dtype="none")
+    cfg = FinetuneConfig(
+        micro_batch_size=6, effective_batch_size=6, freeze_bn=False, amp_dtype="none"
+    )
     seen: list[int] = []
 
     class _Spy(_TinyModel):
@@ -259,8 +278,15 @@ def test_replay_batches_are_merged_into_the_micro_batch():
     model = _Spy()
     opt = torch.optim.SGD(model.parameters(), lr=0.0)
     train_one_epoch(
-        model, opt, [_fake_batch(batch=4)], cfg=cfg, device="cpu", alpha=0.5,
-        learn_angle=True, progress=False, replay_iter=_cycle([_fake_batch(batch=2)]),
+        model,
+        opt,
+        [_fake_batch(batch=4)],
+        cfg=cfg,
+        device="cpu",
+        alpha=0.5,
+        learn_angle=True,
+        progress=False,
+        replay_iter=_cycle([_fake_batch(batch=2)]),
     )
     assert seen == [6], "the model must see target+replay as one batch"
 
@@ -282,7 +308,9 @@ def test_checkpoint_round_trip_restores_optimizer_and_rng(tmp_path):
     model(torch.randn(4, 18, 8, 8), torch.randn(4, 3, 8, 8))[1].sum().backward()
     opt.step()
     sched.step()
-    save_checkpoint(tmp_path / "latest.pth", model=model, optimizer=opt, scheduler=sched, epoch=3, cfg=cfg)
+    save_checkpoint(
+        tmp_path / "latest.pth", model=model, optimizer=opt, scheduler=sched, epoch=3, cfg=cfg
+    )
 
     model2, opt2 = _TinyModel(), None
     opt2 = torch.optim.AdamW(model2.parameters(), lr=1e-3)
@@ -308,16 +336,21 @@ def test_resume_refuses_a_changed_epoch_count(tmp_path):
     model = _TinyModel()
     opt = torch.optim.AdamW(model.parameters(), lr=1e-3)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=2)
-    save_resume_state(tmp_path / "l.pth", model=model, optimizer=opt, scheduler=sched, epoch=1, cfg=cfg)
+    save_resume_state(
+        tmp_path / "l.pth", model=model, optimizer=opt, scheduler=sched, epoch=1, cfg=cfg
+    )
 
     with pytest.raises(SystemExit, match="annealed to zero"):
         load_checkpoint_for_resume(
             tmp_path / "l.pth", model=model, optimizer=opt, scheduler=sched, epochs=20
         )
     # The same epoch count is the normal crash-recovery path and must work.
-    assert load_checkpoint_for_resume(
-        tmp_path / "l.pth", model=model, optimizer=opt, scheduler=sched, epochs=2
-    ) == 2
+    assert (
+        load_checkpoint_for_resume(
+            tmp_path / "l.pth", model=model, optimizer=opt, scheduler=sched, epochs=2
+        )
+        == 2
+    )
 
 
 def test_epoch_checkpoints_load_without_trusting_anything(tmp_path):
@@ -350,10 +383,14 @@ def test_resume_state_carries_no_custom_classes(tmp_path):
     cfg = FinetuneConfig(micro_batch_size=4, effective_batch_size=4)
     model = _TinyModel()
     opt = torch.optim.AdamW(model.parameters(), lr=1e-3)
-    save_resume_state(tmp_path / "latest.pth", model=model, optimizer=opt, scheduler=None, epoch=0, cfg=cfg)
+    save_resume_state(
+        tmp_path / "latest.pth", model=model, optimizer=opt, scheduler=None, epoch=0, cfg=cfg
+    )
 
     state = torch.load(tmp_path / "latest.pth", weights_only=False)
     assert all(isinstance(v, torch.Tensor) for v in state["model"].values())
     assert isinstance(state["config"], dict)
     assert isinstance(state["rng"]["numpy"], tuple | np.ndarray | list)
-    assert not isinstance(state["optimizer"], torch.optim.Optimizer), "must be a state_dict, not an object"
+    assert not isinstance(state["optimizer"], torch.optim.Optimizer), (
+        "must be a state_dict, not an object"
+    )

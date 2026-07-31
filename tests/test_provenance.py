@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from dataclasses import asdict
 from pathlib import Path
 
@@ -246,3 +247,68 @@ class TestRendering:
     def test_cli_emits_a_fingerprint_block(self, capsys: pytest.CaptureFixture[str]) -> None:
         assert provenance.main([]) == 0
         assert "EXECUTION FINGERPRINT" in capsys.readouterr().out
+
+
+class TestEffectiveImportSurface:
+    """The identity must cover *where* the load-bearing modules come from.
+
+    Two environments agreeing on every version while importing those versions
+    from different trees are not the same instrument, and the failure that
+    forced this (F-M2-2) moved no version field at all.
+    """
+
+    def test_load_bearing_modules_are_located(self) -> None:
+        identity = provenance.environment_identity()
+        assert set(identity.module_locations) == set(provenance._LOAD_BEARING_MODULES)
+
+    def test_locations_are_normalised_not_absolute(self) -> None:
+        """Absolute machine-specific paths must not enter the hash."""
+        for location in provenance.environment_identity().module_locations.values():
+            if location is None:
+                continue
+            assert not location.startswith("/home/"), location
+            assert location.startswith(("<prefix>", "<base_prefix>", "<repo>", "~", "/"))
+
+    def test_a_module_moving_tree_moves_the_identity(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        baseline = provenance.environment_identity().environment_id
+        monkeypatch.setattr(
+            provenance,
+            "_module_locations",
+            lambda root: ({"torch": "/opt/ros/humble/lib/python3.10/site-packages/torch"}, {}),
+        )
+        assert provenance.environment_identity().environment_id != baseline
+
+    @pytest.mark.parametrize("var", ["PYTHONHOME"])
+    def test_interpreter_env_vars_move_the_identity(
+        self, monkeypatch: pytest.MonkeyPatch, var: str
+    ) -> None:
+        monkeypatch.delenv(var, raising=False)
+        baseline = provenance.environment_identity().environment_id
+        monkeypatch.setenv(var, "/somewhere/else")
+        assert provenance.environment_identity().environment_id != baseline
+
+    def test_user_site_enablement_moves_the_identity(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        baseline = provenance.environment_identity().environment_id
+        monkeypatch.setattr(
+            provenance.site, "ENABLE_USER_SITE", not provenance.site.ENABLE_USER_SITE
+        )
+        assert provenance.environment_identity().environment_id != baseline
+
+    def test_cwd_is_recorded_but_not_hashed(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """cwd locates the run; it does not define the instrument."""
+        baseline = provenance.environment_identity().environment_id
+        monkeypatch.chdir(tmp_path)
+        assert provenance.environment_identity().environment_id == baseline
+        assert provenance.execution_fingerprint(tmp_path).cwd == str(tmp_path)
+
+    def test_raw_locations_archived_beside_normalised(self, tmp_path: Path) -> None:
+        fingerprint = provenance.execution_fingerprint(tmp_path)
+        assert set(fingerprint.module_locations_raw) == set(provenance._LOAD_BEARING_MODULES)
+        for name, raw in fingerprint.module_locations_raw.items():
+            if raw is not None:
+                assert raw.startswith("/"), f"{name} raw location should be absolute"
+
+    def test_sys_path_recorded_in_full(self, tmp_path: Path) -> None:
+        assert provenance.execution_fingerprint(tmp_path).sys_path == list(sys.path)

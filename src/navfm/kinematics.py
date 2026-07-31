@@ -41,9 +41,7 @@ def yaw_rotmat(yaw: float | np.ndarray) -> np.ndarray:
     return np.array([[c, -s], [s, c]], dtype=np.float64)
 
 
-def to_local_coords(
-    positions: np.ndarray, curr_pos: np.ndarray, curr_yaw: float
-) -> np.ndarray:
+def to_local_coords(positions: np.ndarray, curr_pos: np.ndarray, curr_yaw: float) -> np.ndarray:
     """Express world-frame positions in the body frame at ``(curr_pos, curr_yaw)``.
 
     Upstream writes ``(positions - curr_pos).dot(yaw_rotmat(curr_yaw)[:2, :2])``.
@@ -127,9 +125,7 @@ def compute_actions(
         if yaw_slice.shape[0] == 0:
             raise IndexError(f"curr_time={curr_time} is past the end of the trajectory")
         yaw_slice = np.concatenate([yaw_slice, np.repeat(yaw_slice[-1], pad)])
-        pos_slice = np.concatenate(
-            [pos_slice, np.repeat(pos_slice[-1][None], pad, axis=0)], axis=0
-        )
+        pos_slice = np.concatenate([pos_slice, np.repeat(pos_slice[-1][None], pad, axis=0)], axis=0)
 
     waypoints = to_local_coords(pos_slice, pos_slice[0], yaw_slice[0])
 
