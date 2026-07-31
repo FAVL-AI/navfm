@@ -10,6 +10,7 @@ Public surface:
 ``navfm.kinematics``  SE(2) helpers that bit-match the reference action pipeline
 ``navfm.control``     demonstrator and waypoint-tracking controllers
 ``navfm.planning``    occupancy grid, A*, path smoothing, episode sampling
+``navfm.upstream``    locating and driving the pinned reference implementation
 ``navfm.isaac``       Isaac Sim collection (imports Isaac lazily)
 ``navfm.models``      checkpoint loading for the three released models
 ``navfm.train``       single-GPU fine-tuning

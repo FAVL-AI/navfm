@@ -37,7 +37,10 @@ jobs:
   upstream-compat:
     # The claim that generated data loads through the reference ViNT_Dataset is
     # the central claim of this repo, so it is tested against the real thing,
-    # not a mock. CPU torch only -- no model is instantiated.
+    # not a mock. This job runs every `upstream`-marked test, which now also
+    # covers the model geometry and the loss/metric definitions -- each of those
+    # is a place where our reading of upstream could be wrong, so each is
+    # settled against upstream rather than against our own tests.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,8 +60,15 @@ jobs:
           python -m pip install -U pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[dev]" lmdb tqdm
+          # vint_train.training.train_utils -- the loss oracle -- imports the
+          # whole visualisation stack transitively. headless opencv per
+          # docs/REPRODUCTION.md (the pinned 4.6.0.66 has no wheels past 3.10).
+          pip install efficientnet_pytorch wandb prettytable matplotlib diffusers \
+                      opencv-python-headless
 
       - name: Compatibility proof
         env:
           NAVFM_UPSTREAM: third_party/visualnav-transformer
-        run: python -m pytest tests/test_upstream_compat.py -q
+          MPLBACKEND: Agg
+          WANDB_MODE: disabled
+        run: python -m pytest -m upstream -q
