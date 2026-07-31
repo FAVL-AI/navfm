@@ -199,8 +199,10 @@ scene diversity that makes the transfer claim defensible.
 
 ```
 3.1  python -m navfm.train.run --config configs/train/vint_finetune_4080s.yaml
-     (if the train.run driver isn't wired yet, this is the moment to wire it —
-      finetune.py has every component; the driver is a ~150-line loop)
+     (the driver exists as of milestone M1 and has been exercised end-to-end on
+      CPU against synthetic data — see gates/M1/. It has never seen a GPU, a
+      released checkpoint or a real corpus, so treat the first launch as
+      bring-up: --overfit-n first, then one full run.)
 
 3.2  Watch epoch 1 like a hawk:
        - val loss RISING in epoch 1 → BatchNorm drift → confirm freeze_bn took

@@ -1,0 +1,30 @@
+# make verify + upstream compatibility suite — M1, 2026-07-31T05:24:01Z
+# python: Python 3.13.13, torch 2.12.0+cpu
+# upstream: dca79815b704e5aa9c6bdc3082351f9e3b2848c2
+# note: pyproject addopts already supplies -q; a second -q suppresses the count line.
+
+$ ruff check src tests scripts
+All checks passed!
+
+$ mypy
+Success: no issues found in 24 source files
+
+$ python -m pytest
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+............................................................             [100%]
+=============================== warnings summary ===============================
+tests/test_upstream_module.py::test_build_vint_matches_the_published_shapes
+  Warning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+204 passed, 1 warning in 3.57s
+
+$ NAVFM_UPSTREAM=third_party/visualnav-transformer python -m pytest -m upstream
+..........................                                               [100%]
+=============================== warnings summary ===============================
+tests/test_upstream_module.py::test_build_vint_matches_the_published_shapes
+  Warning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+26 passed, 178 deselected, 1 warning in 3.01s

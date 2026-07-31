@@ -1,0 +1,144 @@
+### 1. synthetic GNM-format corpus, written through navfm.writer
+wrote 6 trajectories x 60 frames to /tmp/navfm-m1/data/recon
+SYNTHETIC DATA -- images are noise; nothing learned from this means anything.
+
+### 2. deterministic scene-grouped split
+groups   : 2 -> train ['scene1'], test ['scene0']
+train    : 3 trajectories -> /tmp/navfm-m1/splits/recon/train/traj_names.txt
+test     : 3 trajectories -> /tmp/navfm-m1/splits/recon/test/traj_names.txt
+
+### 3. validator -- the format claim, on our own output
+dataset : /tmp/navfm-m1/data/recon
+spec    : vint {'context_size': 5, 'len_traj_pred': 5, 'waypoint_spacing': 1, 'end_slack': 0}
+counts  : 6/6 valid, 6 usable, 360 frames, 300 samples
+path    : 88.5 m total
+spacing : metric_waypoint_spacing ~ 0.2499 m (sd 0.0000 across trajectories)
+RESULT  : PASS
+
+### 4. offline eval, random init (plumbing only, NOT a result)
+/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.sa_decoder = nn.TransformerEncoder(self.sa_layer, num_layers=num_layers)
+WARNING: no --checkpoint given; evaluating a RANDOMLY INITIALISED model.
+         This is a plumbing smoke test, not a reproduction number.
+
+
+========================================================================
+  vint  |  recon / test  |  batch 32
+========================================================================
+  samples 141  batches 5   metres/unit 0.2500
+
+  metric                            strict (reference)           plain
+  --------------------------------------------------------------------
+  dist_loss                                 143.767031      143.767031
+  action_loss                                 3.023714        3.094362
+  action_waypts_cos_sim                       0.789140        0.807578
+  multi_action_waypts_cos_sim                 0.585798        0.599485
+  action_orien_cos_sim                       -0.214147       -0.219151
+  multi_action_orien_cos_sim                 -0.214147       -0.219151
+  total_loss                                  2.230692        2.266016
+  --------------------------------------------------------------------
+  ADE                                         2.811484       0.7029 m
+  FDE                                         4.889094       1.2223 m
+
+  *** RANDOM INITIALISATION -- no checkpoint was loaded.            ***
+  *** These numbers measure the plumbing, not a model. Not a result. ***
+
+  -> runs/e0.2_randominit_control
+
+
+### 5. fine-tune: 3 seeds of one matrix cell, 2 epochs each
+/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.sa_decoder = nn.TransformerEncoder(self.sa_layer, num_layers=num_layers)
+no checkpoint in the config: training FROM SCRATCH. This is the E3 scratch arm; if you meant to fine-tune, set `checkpoint:`.
+freeze=none: 29,662,397 trainable / 0 frozen params; 98 BatchNorm modules frozen
+
+overfit mode: 2 trajectories, 94 samples
+
+e2_nonholo_diff_seed0: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
+
+epoch   0  train_total 1.793794  eval_total 1.203376  lr 1.00e-04  6.3s
+epoch   1  train_total 1.046056  eval_total 0.820074  lr 5.00e-05  5.0s
+
+-> runs/e2_nonholo_diff_seed0
+/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.sa_decoder = nn.TransformerEncoder(self.sa_layer, num_layers=num_layers)
+no checkpoint in the config: training FROM SCRATCH. This is the E3 scratch arm; if you meant to fine-tune, set `checkpoint:`.
+freeze=none: 29,662,397 trainable / 0 frozen params; 98 BatchNorm modules frozen
+overfit mode: 2 trajectories, 94 samples
+
+e2_nonholo_diff_seed1: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
+
+epoch   0  train_total 1.834089  eval_total 1.344697  lr 1.00e-04  7.0s
+epoch   1  train_total 1.114340  eval_total 0.956491  lr 5.00e-05  5.0s
+
+-> runs/e2_nonholo_diff_seed1
+/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.sa_decoder = nn.TransformerEncoder(self.sa_layer, num_layers=num_layers)
+no checkpoint in the config: training FROM SCRATCH. This is the E3 scratch arm; if you meant to fine-tune, set `checkpoint:`.
+freeze=none: 29,662,397 trainable / 0 frozen params; 98 BatchNorm modules frozen
+overfit mode: 2 trajectories, 94 samples
+
+e2_nonholo_diff_seed2: 2 epochs, micro 4 x 2 = effective 8, lr 0.0001, cpu
+
+epoch   0  train_total 2.039417  eval_total 2.092712  lr 1.00e-04  6.7s
+epoch   1  train_total 1.720463  eval_total 1.901429  lr 5.00e-05  5.3s
+
+-> runs/e2_nonholo_diff_seed2
+
+### 6. the round trip: a fine-tuned epoch checkpoint back through eval,
+###    with NO --trust-checkpoint (finding F5 does not apply to our files)
+/home/favl/projects/navfm/third_party/visualnav-transformer/train/vint_train/models/vint/self_attention.py:32: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.sa_decoder = nn.TransformerEncoder(self.sa_layer, num_layers=num_layers)
+loaded epoch_1.pth: 799 tensors, 0 missing, 0 unexpected
+
+========================================================================
+  vint  |  recon / test  |  batch 32
+========================================================================
+  samples 141  batches 5   metres/unit 0.2500
+
+  metric                            strict (reference)           plain
+  --------------------------------------------------------------------
+  dist_loss                                 106.605953      106.605953
+  action_loss                                 0.681314        0.695680
+  action_waypts_cos_sim                       0.862694        0.880885
+  multi_action_waypts_cos_sim                 0.906110        0.925217
+  action_orien_cos_sim                        0.501596        0.512173
+  multi_action_orien_cos_sim                  0.501596        0.512173
+  total_loss                                  0.873687        0.880870
+  --------------------------------------------------------------------
+  ADE                                         1.301957       0.3255 m
+  FDE                                         1.126271       0.2816 m
+
+  -> runs/e0.2_finetuned_roundtrip
+
+
+### 7. tables -- the missing-seed guard first
+refusing to write tables: 1 cell(s) are missing seeds.
+Averaging the seeds that happen to have finished is how a pre-registered
+matrix quietly becomes a selection of favourable runs.
+
+  e2_nonholo_diff: has seeds [0, 1], missing [2]
+
+Run the missing seeds, or pass --allow-incomplete to emit tables with
+every short cell marked inline (still exits non-zero).
+(exit 2 as required; no tables written)
+
+### 8. tables, complete matrix
+wrote /tmp/navfm-m1/tables/table3.md  (2 cells)
+wrote /tmp/navfm-m1/tables/table4.md  (1 cells)
+
+### Table 4 — E2 demonstrator x execution (2x2), with interaction term
+
+| cell | seeds | total loss | action loss | dist loss | multi-action cos | orien cos | ADE (m) | FDE (m) |
+|---|---|---|---|---|---|---|---|---|
+| e2_nonholo_diff | 0,1,2 | 1.2260 [0.8201, 1.9014] | 1.1564 [0.5284, 2.2583] | 129.5564 [95.7547, 154.4559] | 0.7978 [0.5759, 0.9096] | 0.5917 [0.5025, 0.7080] | 0.4280 [0.3042, 0.6544] | 0.5359 [0.2678, 1.0584] |
+
+Mean over seeds with a percentile bootstrap 95 % CI (10000 resamples). Evaluation batch size: 32 — the reference metrics are batch-size dependent (upstream issue #51), so a number without its batch size is not comparable. `strict` reduction throughout (the reference `action_reduce`, +1e-2 guard); `plain` values are in each run's `metrics.json`. Only one orientation cosine is shown: the two the reference logs are the same number (finding F12).
+
+Source runs:
+
+- `e2_nonholo_diff` seed 0: `/tmp/navfm-m1/runs/e2_nonholo_diff_seed0/metrics_epoch_1.json`
+- `e2_nonholo_diff` seed 1: `/tmp/navfm-m1/runs/e2_nonholo_diff_seed1/metrics_epoch_1.json`
+- `e2_nonholo_diff` seed 2: `/tmp/navfm-m1/runs/e2_nonholo_diff_seed2/metrics_epoch_1.json`
+
+### M1 DoD: the path from a run directory to a paper table is closed.

@@ -52,6 +52,18 @@ python -m navfm.splits /data/isaac_m3pro --name isaac_m3pro \
 
 # 4. fine-tune ViNT on one 16 GB GPU
 python -m navfm.train.run --config configs/train/vint_finetune_4080s.yaml
+
+# 5. score it, and regenerate the paper's tables from the run logs
+python -m navfm.eval.offline --model vint --checkpoint runs/<run>/epoch_19.pth \
+    --dataset isaac_m3pro --split test --batch-size 400
+python scripts/make_tables.py
+```
+
+No GPU and no downloads? The whole chain runs on CPU against a synthetic
+corpus, which is how it is tested:
+
+```bash
+bash gates/M1/reproduce.sh
 ```
 
 ---

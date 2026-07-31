@@ -112,23 +112,27 @@ unwrapped (the writer does this; never bypass the writer).
 
 ## Current state / what remains
 
-Implemented and tested (125 unit + 4 upstream-compat tests): schema, writer,
+Implemented and tested (178 unit + 26 upstream-marked tests): schema, writer,
 validator, stats, splits, kinematics, control, planning, checkpoint loader,
-metrics, patch/register scripts. Implemented but NEVER EXECUTED (no Isaac Sim
-in the build environment): `navfm/isaac/{app,robot,randomize,collect}.py` —
-expect real API friction on first 5.1 run; fix in the fallback branch.
+metrics, patch/register scripts, and — since milestone M1 — the three
+entrypoints that close the path from a dataset to a paper table:
+`navfm.upstream` (locates and drives the pinned reference clone),
+`navfm.eval.offline`, `navfm.train.run`, `scripts/make_tables.py`. Evidence in
+`gates/M1/`; `bash gates/M1/reproduce.sh` re-runs the whole chain on CPU.
 
-Not yet implemented (the immediate work):
-- `src/navfm/train/run.py` — the fine-tune driver (`python -m navfm.train.run
-  --config …`). All components exist in `train/finetune.py`; the driver is the
-  loop: build ViNT from upstream classes, load `vint.pth` via
-  `navfm.models.loader`, apply freeze/BN policy, accumulation loop with bf16
-  autocast, per-epoch eval, checkpoint + config.json + git SHA into `runs/`.
-- `src/navfm/eval/offline.py` — `python -m navfm.eval.offline --model vint
-  --checkpoint … --dataset … --split test --batch-size 400`: reference-exact
-  metrics (both strict and plain reductions) + ADE/FDE in metres, JSON output
-  into `runs/`.
-- `scripts/make_tables.py` — regenerate paper tables from `runs/` logs.
+Implemented but NEVER EXECUTED (no Isaac Sim in the build environment):
+`navfm/isaac/{app,robot,randomize,collect}.py` — expect real API friction on
+first 5.1 run; fix in the fallback branch.
+
+Executed only against synthetic noise, never against a real model or corpus:
+the M1 entrypoints above. Their loss curves prove gradients flow, nothing more.
+The first real number is gate G0.c (Session 2).
+
+Not yet implemented:
 - `scripts/smoke_isaac.py` — 5.1 smoke: open simple_room, spawn a cube-proxy
   robot if `assets/m3pro.usd` absent, verify the step/pose/rgb sync contract,
   write 20 episodes, run the validator. Gate G0.d/G2-smoke evidence.
+- `src/navfm/isaac/urdf_import.py` — referenced by `robot.py`'s error message.
+- NoMaD offline evaluation: `upstream.build_model` raises for it on purpose.
+  `_compute_losses_nomad` needs a diffusion sampling loop, so E1.3 is its own
+  entrypoint rather than a `--model nomad` flag on `eval.offline`.
