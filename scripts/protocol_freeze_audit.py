@@ -16,6 +16,22 @@ everything that is wrong in one pass.
 
 **Any FAIL ends the gate as "gate execution invalid".** That is not an adverse
 scientific outcome. It is the gate declining to produce one.
+
+## Expected state before the amendment exists
+
+Two checks fail by construction until the G0.c amendment is committed and the
+pre-execution pass has generated the pair manifest, **in that order**:
+
+* ``amendment_committed`` — no G0.c amendment heading exists yet;
+* ``evaluation_pair_manifest_digest`` — the manifest is generated at gate time
+  under the declared population seed. It cannot exist earlier without being
+  fabricated, and a manifest committed in advance would pin a population nobody
+  had drawn.
+
+Sixteen-of-sixteen is therefore reachable only *after* the amendment commit and
+*then* the manifest generation. Two failures at this point is the correct
+pre-amendment state, not a precondition mismatch: do not halt on it, and do not
+manufacture either artefact to make the count green.
 """
 
 from __future__ import annotations
