@@ -2,9 +2,9 @@
 
     python scripts/protocol_freeze_audit.py --amendment-commit <sha> --run-dir runs/g0c
 
-Thirteen machine-verifiable checks, extending the five that
+Fourteen machine-verifiable checks, extending the five that
 `--preregistration-commit` already enforces inside the evaluator. Those five
-establish that a protocol commit exists and precedes execution. These thirteen
+establish that a protocol commit exists and precedes execution. These fourteen
 establish that *everything the protocol names is frozen, recorded, and still
 matches what is on disk* — which is a different question, and the one that
 decides whether a G0.c number means anything.
@@ -239,6 +239,36 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
     except Exception as exc:  # the fingerprint is mandatory; its absence is a FAIL
         checks.append(Check("environment_identity_recorded", False, f"unavailable: {exc}"))
         checks.append(Check("worktree_state_declared", False, f"unavailable: {exc}"))
+
+    # 11b: every artefact the amendment names must resolve AT THE AMENDMENT
+    # COMMIT, not merely in the worktree. A path that exists today but did not
+    # exist when the protocol was frozen was not pinned by that protocol.
+    if resolves:
+        required = (
+            "gates/G0/SHA256SUMS",
+            "gates/G0/splits/split_manifest.json",
+            "gates/G0/splits/train/traj_names.txt",
+            "gates/G0/splits/test/traj_names.txt",
+        )
+        missing_at_commit = []
+        for rel in required:
+            code_ls, _ = _git("cat-file", "-e", f"{resolved}:{rel}")
+            if code_ls != 0:
+                missing_at_commit.append(rel)
+        checks.append(
+            Check(
+                "artefacts_resolve_at_amendment_commit",
+                not missing_at_commit,
+                "all pinned artefacts present at the amendment commit"
+                if not missing_at_commit
+                else f"absent at {resolved[:12]}: {missing_at_commit} -- a path that exists "
+                f"only in the worktree was not pinned by the frozen protocol",
+            )
+        )
+    else:
+        checks.append(
+            Check("artefacts_resolve_at_amendment_commit", False, "commit does not resolve")
+        )
 
     # 12-13: nothing was produced before the audit.
     checks.append(
