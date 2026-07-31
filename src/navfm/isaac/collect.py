@@ -395,7 +395,31 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="run with the UI (slow, and 6.0 has a known crash when changing step rates in the UI)",
     )
+    p.add_argument(
+        "--acknowledge-g2-block",
+        action="store_true",
+        help=argparse.SUPPRESS,  # deliberately undocumented: see the refusal text
+    )
     args = p.parse_args(argv)
+
+    # G2 mechanical block. Runs before Isaac Sim is opened and before a single
+    # frame is written, because a deferral that can be stepped over once the
+    # collector is warm is not a deferral.
+    if not args.acknowledge_g2_block:
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "check_g2_block",
+            Path(__file__).resolve().parents[3] / "scripts" / "check_g2_block.py",
+        )
+        if spec and spec.loader:
+            g2 = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(g2)
+            try:
+                g2.assert_unblocked()
+            except g2.G2Blocked as exc:
+                print(str(exc), file=sys.stderr)
+                return 4
 
     cfg = CollectConfig.from_yaml(args.config) if args.config else CollectConfig()
     if args.episodes is not None:

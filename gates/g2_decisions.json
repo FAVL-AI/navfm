@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "The four E2 analysis decisions PREREGISTRATION.md Amendment 1 defers by name.",
+    "Each blocks collection gate G2 while its status is DEFERRED. Deferral is only",
+    "honest while it is mechanically impossible to proceed past it, which is what",
+    "scripts/check_g2_block.py enforces -- in the collector's setup path and",
+    "standalone.",
+    "",
+    "Moving a status to FIXED requires a value, the dated amendment that fixed it,",
+    "and a reviewed commit. Editing this file alone is not sufficient: the checker",
+    "cross-checks that PREREGISTRATION.md still carries the gate condition, so the",
+    "block cannot be lifted by quietly deleting the clause that imposed it."
+  ],
+  "blocks_gate": "G2",
+  "imposed_by": "PREREGISTRATION.md Amendment 1 (2026-07-31)",
+  "gate_condition_marker": "before the first E2 episode is collected",
+  "decisions": {
+    "estimation_software_and_tolerance": {
+      "status": "DEFERRED",
+      "value": null,
+      "fixed_by_amendment": null,
+      "why_deferred": "different implementations disagree about what converges; the choice must be pinned to a version rather than left to whoever writes the estimator"
+    },
+    "held_out_scene_count": {
+      "status": "DEFERRED",
+      "value": null,
+      "fixed_by_amendment": null,
+      "why_deferred": "the primary interval resamples scenes, so its effective sample size IS the scene count; a percentile bootstrap over a single-digit number of clusters is near-degenerate"
+    },
+    "per_cell_episode_count": {
+      "status": "DEFERRED",
+      "value": null,
+      "fixed_by_amendment": null,
+      "why_deferred": "frozen v1 sets a lower bound of >= 30; the exact number must be fixed before collection so optional stopping is closed"
+    },
+    "estimator_implementation": {
+      "status": "DEFERRED",
+      "value": null,
+      "fixed_by_amendment": null,
+      "why_deferred": "no mixed-model dependency is declared and no such code exists in src/; the plan is a commitment, not yet a capability"
+    }
+  }
+}
