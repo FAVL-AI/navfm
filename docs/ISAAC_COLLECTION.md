@@ -32,7 +32,7 @@ pip install -U pip
 pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
 pip install "isaacsim[all,extscache]==6.0.1.0" --extra-index-url https://pypi.nvidia.com
 export OMNI_KIT_ACCEPT_EULA=YES
-pip install -e /path/to/isaac-navfm      # navfm itself, no torch needed
+pip install -e /path/to/navfm           # navfm itself, no torch needed
 ```
 
 Note it is **not** plain `pip install isaacsim[all]` — the `extscache` extra,

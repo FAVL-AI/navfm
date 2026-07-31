@@ -1,4 +1,4 @@
-# isaac-navfm
+# navfm
 
 Reproducible research infrastructure for the GNM / ViNT / NoMaD visual
 navigation foundation models, with Isaac Sim data collection for a Yahboom

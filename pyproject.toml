@@ -63,7 +63,7 @@ navfm-splits = "navfm.splits:main"
 navfm-collect = "navfm.isaac.collect:main"
 
 [project.urls]
-Repository = "https://github.com/frankvanlaarhoven/isaac-navfm"
+Repository = "https://github.com/FAVL-AI/navfm"
 
 [tool.setuptools.packages.find]
 where = ["src"]

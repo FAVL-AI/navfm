@@ -480,7 +480,7 @@ result.
 
 ## 7. Reproducibility statement
 
-Released: the pipeline and audit (`isaac-navfm`, MIT), the pinned reference
+Released: the pipeline and audit (`navfm`, github.com/FAVL-AI/navfm, MIT), the pinned reference
 commit and reversible patch set with printed diffs, SHA-256 hashes of all
 three released checkpoints as downloaded, the collected datasets with
 embedded per-trajectory generative metadata, scene identifiers/generators,

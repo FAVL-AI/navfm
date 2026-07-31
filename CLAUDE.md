@@ -5,7 +5,7 @@ are the audit discipline the research depends on.
 
 ## What this project is
 
-`isaac-navfm`: reproducible research infrastructure for the GNM / ViNT / NoMaD
+`navfm` (github.com/FAVL-AI/navfm): reproducible research infrastructure for the GNM / ViNT / NoMaD
 visual navigation foundation models — a machine-checked specification of their
 on-disk data format, an Isaac Sim collection pipeline for a Yahboom ROSMASTER
 M3 PRO (mecanum), single-GPU fine-tuning, and a pre-registered experiment
