@@ -189,7 +189,9 @@ def train_one_epoch(
         with contextlib.suppress(ImportError):
             import tqdm
 
-            iterator = tqdm.tqdm(loader, dynamic_ncols=True, desc=f"train epoch {epoch}", leave=False)
+            iterator = tqdm.tqdm(
+                loader, dynamic_ncols=True, desc=f"train epoch {epoch}", leave=False
+            )
 
     for step, target_batch in enumerate(iterator):
         if max_steps is not None and step >= max_steps:
@@ -339,9 +341,13 @@ def build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--config", required=True, help="a navfm.train.finetune.FinetuneConfig YAML")
     p.add_argument("--data-root", default="/data", help="dataset lives at <data-root>/<name>")
     p.add_argument("--splits-root", default=None, help="defaults to the reference data_splits dir")
-    p.add_argument("--eval-dataset", default=None, help="dataset to eval on (default: the first target)")
+    p.add_argument(
+        "--eval-dataset", default=None, help="dataset to eval on (default: the first target)"
+    )
     p.add_argument("--eval-split", default="test", choices=["train", "test"])
-    p.add_argument("--eval-batch-size", type=int, default=400, help="metrics are batch-size dependent")
+    p.add_argument(
+        "--eval-batch-size", type=int, default=400, help="metrics are batch-size dependent"
+    )
     p.add_argument("--eval-limit-batches", type=int, default=None)
     p.add_argument(
         "--overfit-n",
@@ -352,16 +358,29 @@ def build_argparser() -> argparse.ArgumentParser:
     )
     p.add_argument("--epochs", type=int, default=None, help="override the config")
     p.add_argument("--micro-batch-size", type=int, default=None, help="override the config")
-    p.add_argument("--max-steps", type=int, default=None, help="cap micro-batches per epoch (smoke tests)")
+    p.add_argument(
+        "--max-steps", type=int, default=None, help="cap micro-batches per epoch (smoke tests)"
+    )
     p.add_argument("--device", default=None)
-    p.add_argument("--run-name", default=None, help="override the config; also sets the table cell id")
+    p.add_argument(
+        "--run-name", default=None, help="override the config; also sets the table cell id"
+    )
     p.add_argument("--resume", action="store_true", help="continue from runs/<run_name>/latest.pth")
-    p.add_argument("--trust-checkpoint", action="store_true", help="required for vint.pth / gnm.pth")
+    p.add_argument(
+        "--trust-checkpoint", action="store_true", help="required for vint.pth / gnm.pth"
+    )
+    p.add_argument(
+        "--allow-partial-load",
+        action="store_true",
+        help="permit a checkpoint that fills <90%% of the model; recorded in the run manifest",
+    )
     p.add_argument("--no-progress", action="store_true")
     return p
 
 
-def _make_loader(dataset: Any, batch_size: int, *, shuffle: bool, workers: int, seed: int, drop_last: bool):
+def _make_loader(
+    dataset: Any, batch_size: int, *, shuffle: bool, workers: int, seed: int, drop_last: bool
+):
     import torch
 
     if batch_size < 1:
@@ -401,14 +420,29 @@ def main(argv: Sequence[str] | None = None) -> int:
     # ---------------------------------------------------------------- model
     model = upstream.build_model(cfg.model_type, model_cfg)
     missing: list[str] = []
+    load_census: dict[str, object] | None = None
     unexpected: list[str] = []
     if cfg.checkpoint:
         from navfm.models.loader import load_into, sha256
 
         checkpoint_sha: str | None = sha256(cfg.checkpoint)
         missing, unexpected = load_into(
-            model, cfg.checkpoint, trust_checkpoint=args.trust_checkpoint, strict=False, verbose=True
+            model,
+            cfg.checkpoint,
+            trust_checkpoint=args.trust_checkpoint,
+            strict=False,
+            verbose=True,
         )
+        # strict=False cannot fail: a checkpoint matching nothing would train
+        # from random init under this checkpoint's SHA. Refuse before step 1.
+        from navfm.models.loader import CheckpointLoadError, audit_load
+
+        try:
+            load_census = audit_load(
+                model, missing, unexpected, allow_partial=args.allow_partial_load
+            )
+        except CheckpointLoadError as exc:
+            raise SystemExit(str(exc)) from exc
     else:
         checkpoint_sha = None
         print(
@@ -442,7 +476,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
 
     train_sets = [_dataset(n, "train") for n in cfg.datasets]
-    train_set: Any = train_sets[0] if len(train_sets) == 1 else torch.utils.data.ConcatDataset(train_sets)
+    train_set: Any = (
+        train_sets[0] if len(train_sets) == 1 else torch.utils.data.ConcatDataset(train_sets)
+    )
     if args.overfit_n:
         if len(train_sets) > 1:
             raise SystemExit("--overfit-n expects a single target dataset")
@@ -459,12 +495,21 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not cfg.replay_datasets:
             raise SystemExit("replay_ratio > 0 but replay_datasets is empty")
         replay_sets = [_dataset(n, "train") for n in cfg.replay_datasets]
-        replay_set = replay_sets[0] if len(replay_sets) == 1 else torch.utils.data.ConcatDataset(replay_sets)
+        replay_set = (
+            replay_sets[0] if len(replay_sets) == 1 else torch.utils.data.ConcatDataset(replay_sets)
+        )
         replay_loader = _make_loader(
-            replay_set, n_replay, shuffle=True, workers=cfg.num_workers, seed=cfg.seed + 1, drop_last=True
+            replay_set,
+            n_replay,
+            shuffle=True,
+            workers=cfg.num_workers,
+            seed=cfg.seed + 1,
+            drop_last=True,
         )
         replay_iter = _cycle(replay_loader)
-        print(f"replay: {n_replay}/{cfg.micro_batch_size} samples per micro-batch from {cfg.replay_datasets}")
+        print(
+            f"replay: {n_replay}/{cfg.micro_batch_size} samples per micro-batch from {cfg.replay_datasets}"
+        )
 
     train_loader = _make_loader(
         train_set, n_target, shuffle=True, workers=cfg.num_workers, seed=cfg.seed, drop_last=True
@@ -520,6 +565,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "frozen_batchnorm_modules": n_bn,
         "checkpoint": cfg.checkpoint,
         "checkpoint_sha256": checkpoint_sha,
+        "checkpoint_load": load_census,
         "checkpoint_missing_keys": missing,
         "checkpoint_unexpected_keys": unexpected,
         "overfit_n": args.overfit_n,

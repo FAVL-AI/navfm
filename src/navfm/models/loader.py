@@ -42,9 +42,12 @@ from typing import Any
 __all__ = [
     "CHECKPOINTS",
     "CheckpointInfo",
+    "CheckpointLoadError",
+    "audit_load",
     "count_parameters",
     "extract_state_dict",
     "load_checkpoint",
+    "load_into",
     "sha256",
 ]
 
@@ -150,7 +153,10 @@ def _ensure_unpickle_deps() -> None:
     missing: list[str] = []
     for module, hint in (
         ("vint_train", "pip install -e third_party/visualnav-transformer/train"),
-        ("warmup_scheduler", "pip install git+https://github.com/ildoonet/pytorch-gradual-warmup-lr.git"),
+        (
+            "warmup_scheduler",
+            "pip install git+https://github.com/ildoonet/pytorch-gradual-warmup-lr.git",
+        ),
         ("efficientnet_pytorch", "pip install efficientnet_pytorch"),
     ):
         try:
@@ -218,6 +224,54 @@ def load_into(
         for k in unexpected[:10]:
             print(f"  unexpected {k}")
     return missing, unexpected
+
+
+class CheckpointLoadError(RuntimeError):
+    """A checkpoint was named but did not substantially load into the model."""
+
+
+def audit_load(
+    model: Any,
+    missing: list[str],
+    unexpected: list[str],
+    *,
+    allow_partial: bool = False,
+    min_loaded_fraction: float = 0.90,
+) -> dict[str, Any]:
+    """Refuse a checkpoint that did not actually load, and describe what did.
+
+    ``load_state_dict(strict=False)`` cannot fail. A checkpoint whose keys share
+    no prefix with the constructed model loads *zero* tensors, prints a summary
+    nobody reads, and leaves a randomly initialised model behind -- which then
+    produces a number, under a run record naming a checkpoint and its SHA-256.
+
+    That is the same contamination the ``random_init`` stamping exists to
+    prevent, arriving through a door stamping does not watch: stamping asks
+    whether a checkpoint was *named*, and this asks whether it *loaded*.
+
+    Returns the load census for the run record, so the archive carries the
+    evidence rather than the assertion (finding F-M1-2's rule).
+    """
+    n_model = len(model.state_dict())
+    n_missing = len(missing)
+    loaded_fraction = 1.0 if n_model == 0 else (n_model - n_missing) / n_model
+    census: dict[str, Any] = {
+        "model_tensors": n_model,
+        "missing_keys": n_missing,
+        "unexpected_keys": len(unexpected),
+        "loaded_fraction": round(loaded_fraction, 6),
+        "partial_load_allowed": bool(allow_partial),
+    }
+    if loaded_fraction < min_loaded_fraction and not allow_partial:
+        raise CheckpointLoadError(
+            f"checkpoint loaded only {loaded_fraction:.1%} of the model's {n_model} tensors "
+            f"({n_missing} missing, {len(unexpected)} unexpected). Refusing: a run that "
+            f"trains or scores a randomly initialised model while recording a checkpoint "
+            f"hash is indistinguishable from a real result in every downstream table. "
+            f"If the partial load is intended, pass --allow-partial-load, which records "
+            f"the decision in the run manifest."
+        )
+    return census
 
 
 def count_parameters(model: Any) -> dict[str, int]:

@@ -89,7 +89,9 @@ class MetricAccumulator:
       numbers rest on half its batches cannot look like one that did not.
     """
 
-    def __init__(self, *, alpha: float = 0.5, learn_angle: bool = True, metres_per_unit: float = 1.0):
+    def __init__(
+        self, *, alpha: float = 0.5, learn_angle: bool = True, metres_per_unit: float = 1.0
+    ):
         self.alpha = float(alpha)
         self.learn_angle = bool(learn_angle)
         self.metres_per_unit = float(metres_per_unit)
@@ -194,7 +196,15 @@ def evaluate(
             for i, batch in enumerate(_progress(dataloader, limit_batches, progress)):
                 if limit_batches is not None and i >= limit_batches:
                     break
-                (obs_image, goal_image, action_label, dist_label, _goal_pos, _ds_index, action_mask) = batch
+                (
+                    obs_image,
+                    goal_image,
+                    action_label,
+                    dist_label,
+                    _goal_pos,
+                    _ds_index,
+                    action_mask,
+                ) = batch
 
                 obs_image, goal_image = upstream.apply_reference_transform(
                     obs_image, goal_image, transform, device
@@ -246,11 +256,17 @@ def git_describe(repo: str | Path = ".") -> str:
     try:
         sha = subprocess.run(
             ["git", "-C", str(repo), "rev-parse", "HEAD"],
-            capture_output=True, text=True, check=True, timeout=10,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
         ).stdout.strip()
         dirty = subprocess.run(
             ["git", "-C", str(repo), "status", "--porcelain"],
-            capture_output=True, text=True, check=True, timeout=10,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
         ).stdout.strip()
     except Exception:  # pragma: no cover - no git, or not a repo
         return "unknown"
@@ -263,9 +279,7 @@ def run_directory(log_dir: str | Path, name: str) -> Path:
     return d
 
 
-def write_run_record(
-    run_dir: Path, *, metrics: dict[str, Any], config: dict[str, Any]
-) -> None:
+def write_run_record(run_dir: Path, *, metrics: dict[str, Any], config: dict[str, Any]) -> None:
     """``metrics.json`` + ``config.json`` + ``git_sha.txt``, the trio every gate
     and every table depends on."""
     (run_dir / "metrics.json").write_text(json.dumps(metrics, indent=2, sort_keys=True) + "\n")
@@ -310,14 +324,20 @@ def build_argparser() -> argparse.ArgumentParser:
         "--checkpoint",
         default=None,
         help="released or fine-tuned weights. Omit ONLY for a plumbing smoke test: "
-             "the model is then randomly initialised and the run is marked random_init.",
+        "the model is then randomly initialised and the run is marked random_init.",
     )
-    p.add_argument("--dataset", required=True, help="dataset name as registered in data_config.yaml")
+    p.add_argument(
+        "--dataset", required=True, help="dataset name as registered in data_config.yaml"
+    )
     p.add_argument("--split", default="test", choices=["train", "test"])
     p.add_argument("--batch-size", type=int, default=400)
-    p.add_argument("--limit-batches", type=int, default=None, help="stop after N batches (smoke tests)")
+    p.add_argument(
+        "--limit-batches", type=int, default=None, help="stop after N batches (smoke tests)"
+    )
 
-    p.add_argument("--data-folder", default=None, help="explicit dataset root; overrides --data-root")
+    p.add_argument(
+        "--data-folder", default=None, help="explicit dataset root; overrides --data-root"
+    )
     p.add_argument("--data-root", default="/data", help="dataset lives at <data-root>/<dataset>")
     p.add_argument("--split-folder", default=None, help="explicit dir holding traj_names.txt")
     p.add_argument(
@@ -333,9 +353,14 @@ def build_argparser() -> argparse.ArgumentParser:
         "--trust-checkpoint",
         action="store_true",
         help="required for vint.pth/gnm.pth: they contain pickled objects, so loading "
-             "them executes code from the file. Verify the SHA-256 first.",
+        "them executes code from the file. Verify the SHA-256 first.",
     )
     p.add_argument("--expected-sha256", default=None, help="pin the checkpoint hash")
+    p.add_argument(
+        "--allow-partial-load",
+        action="store_true",
+        help="permit a checkpoint that fills <90%% of the model; recorded in the manifest",
+    )
     p.add_argument("--alpha", type=float, default=None, help="override the config's loss split")
     p.add_argument("--log-dir", default="runs")
     p.add_argument("--run-name", default=None, help="output dir name; also sets the table cell id")
@@ -344,7 +369,9 @@ def build_argparser() -> argparse.ArgumentParser:
 
 
 def _resolve_paths(args: argparse.Namespace) -> tuple[Path, Path]:
-    data_folder = Path(args.data_folder) if args.data_folder else Path(args.data_root) / args.dataset
+    data_folder = (
+        Path(args.data_folder) if args.data_folder else Path(args.data_root) / args.dataset
+    )
     if args.split_folder:
         split_folder = Path(args.split_folder)
     else:
@@ -382,7 +409,9 @@ def _summary(record: dict[str, Any]) -> str:
             "",
         ]
     if record.get("dropped_nan_batches"):
-        lines.append(f"  NaN batches dropped (upstream Logger behaviour): {record['dropped_nan_batches']}")
+        lines.append(
+            f"  NaN batches dropped (upstream Logger behaviour): {record['dropped_nan_batches']}"
+        )
         lines.append("")
     lines.append(f"  -> {record['run_dir']}")
     lines.append("")
@@ -407,6 +436,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     model = upstream.build_model(args.model, cfg)
     missing: list[str] = []
     unexpected: list[str] = []
+    load_census: dict[str, object] | None = None
     checkpoint_sha: str | None = None
     if args.checkpoint:
         from navfm.models.loader import load_into, sha256
@@ -426,6 +456,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             strict=False,
             verbose=True,
         )
+        # load_state_dict(strict=False) cannot fail, so a checkpoint that
+        # matched nothing would score a randomly initialised model under this
+        # checkpoint's SHA. Refuse before any batch is scored.
+        from navfm.models.loader import CheckpointLoadError, audit_load
+
+        try:
+            load_census = audit_load(
+                model, missing, unexpected, allow_partial=args.allow_partial_load
+            )
+        except CheckpointLoadError as exc:
+            raise SystemExit(str(exc)) from exc
     else:
         print(
             "WARNING: no --checkpoint given; evaluating a RANDOMLY INITIALISED model.\n"
@@ -499,6 +540,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "split_folder": str(split_folder),
         "dataset_options": opts,
         "model_config": cfg,
+        "checkpoint_load": load_census,
         "checkpoint_missing_keys": missing,
         "checkpoint_unexpected_keys": unexpected,
         "checkpoint_sha256": checkpoint_sha,
