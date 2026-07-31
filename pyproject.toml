@@ -40,6 +40,14 @@ train = [
   "tqdm>=4.66",
   "wandb>=0.17",
   "prettytable>=3.9",
+  # Not used by this package. `vint_train.training.train_utils` imports both at
+  # module level, so without them the upstream compatibility proof -- which is
+  # the specification -- SKIPS rather than fails, and the suite still reports a
+  # green run. Headless opencv deliberately: the pinned opencv-python has no
+  # wheels for Python >= 3.11 and its PyQt5 conflict aborts the process.
+  # See gates/failures/F-M2-1.md.
+  "matplotlib>=3.8",
+  "opencv-python-headless>=4.9",
 ]
 # rosbag/roslz4 have no wheels past cp38; only needed to convert SACSoN /
 # SCAND / TartanDrive bags. Requires liblz4-dev and a C compiler.

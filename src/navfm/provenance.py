@@ -8,7 +8,14 @@ which interpreter was asked for, not what was actually installed behind it.
 This module supplies the stronger claim. The **canonical environment** is not
 a path. It is the environment whose identity is archived in the gate manifest:
 
-    environment_id = sha256(python, torch, cuda, distribution digest, os, arch)
+    environment_id = sha256(python, torch, cuda, distribution digest,
+                            os, arch, PYTHONPATH)
+
+``PYTHONPATH`` is in there because a virtualenv does not isolate you from it.
+Sourcing ROS 2 Humble exports a ``PYTHONPATH`` of Python 3.10 site-packages
+that a 3.11 venv inherits *and prepends*, so imports resolve to another
+interpreter's packages while every other field still matches. An identity blind
+to that would certify two different instruments as the same one.
 
 ``~/.venv-train`` is one implementation of that identity, not its definition,
 which is what makes the identity portable across machines and survivable across
@@ -39,6 +46,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import socket
 import subprocess
@@ -66,6 +74,13 @@ _IDENTITY_FIELDS = (
     "pip_freeze_digest",
     "os",
     "architecture",
+    # PYTHONPATH is part of the identity because it changes which code runs.
+    # A virtualenv does NOT isolate you from it: sourcing ROS 2 Humble exports a
+    # PYTHONPATH of Python 3.10 site-packages, which a 3.11 venv inherits and
+    # prepends, so imports silently resolve to another interpreter's packages.
+    # An identity blind to that would call two different instruments the same
+    # one (F-M2-2).
+    "pythonpath",
 )
 
 
@@ -80,6 +95,7 @@ class EnvironmentIdentity:
     distribution_count: int
     os: str
     architecture: str
+    pythonpath: str
     environment_id: str
 
 
@@ -98,6 +114,7 @@ class ExecutionFingerprint:
     cuda_version: str | None
     os: str
     architecture: str
+    pythonpath: str
     environment_id: str
 
 
@@ -182,6 +199,7 @@ def environment_identity() -> EnvironmentIdentity:
         "pip_freeze_digest": hashlib.sha256("\n".join(dists).encode()).hexdigest(),
         "os": platform.platform(),
         "architecture": platform.machine(),
+        "pythonpath": os.environ.get("PYTHONPATH", ""),
     }
     canonical = json.dumps(
         {k: payload[k] for k in _IDENTITY_FIELDS}, sort_keys=True, separators=(",", ":")
@@ -194,6 +212,7 @@ def environment_identity() -> EnvironmentIdentity:
         distribution_count=len(dists),
         os=str(payload["os"]),
         architecture=str(payload["architecture"]),
+        pythonpath=str(payload["pythonpath"]),
         environment_id=hashlib.sha256(canonical.encode()).hexdigest(),
     )
 
@@ -222,6 +241,7 @@ def execution_fingerprint(
         cuda_version=identity.cuda_version,
         os=identity.os,
         architecture=identity.architecture,
+        pythonpath=identity.pythonpath,
         environment_id=identity.environment_id,
     )
 
@@ -238,6 +258,7 @@ _LABELS: tuple[tuple[str, str], ...] = (
     ("cuda_version", "CUDA version"),
     ("os", "OS"),
     ("architecture", "Architecture"),
+    ("pythonpath", "PYTHONPATH"),
     ("environment_id", "Environment identity"),
 )
 

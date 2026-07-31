@@ -47,6 +47,8 @@ pip install -e third_party/diffusion_policy
 | torch/torchvision skew | `RuntimeError: operator torchvision::nms does not exist` | always install the matched pair from the pytorch index |
 | `EMAModel` | `diffusers > 0.12` changed the signature to `EMAModel(parameters, …)` and dropped `averaged_model` (upstream issue #36) | stay on 0.11.1, or patch |
 | `opencv-python==4.6.0.66` | no wheels for Python ≥ 3.11; PyQt5 conflict causes `Aborted (core dumped)` (issues #27, #43) | `opencv-python-headless`, `MPLBACKEND=Agg` |
+| `matplotlib` + `cv2` absent | `train_utils` imports both at module level, so the 26 upstream-marked tests **skip** instead of failing and the suite still exits 0 reporting a green run — the compatibility proof is 65 % inert and nothing says so | both are now in the `train` extra; verify with `pytest -m upstream` and **check the count is 26**, not merely that it passed (F-M2-1) |
+| ROS 2 Humble sourced in the shell | `/opt/ros/humble/setup.bash` exports a `PYTHONPATH` carrying **Python 3.10** site-packages, which a 3.11 venv inherits and prepends; the first ROS package to shadow a real import wins, and the failure surfaces as an unrelated `ModuleNotFoundError` | run the training env with `PYTHONPATH` unset; a venv does not isolate you from `PYTHONPATH` |
 | `roslz4` | **no wheel newer than cp38** on the rospypi index | only needed for rosbag conversion; needs `liblz4-dev` + a compiler, or use `rosbags` (pure Python) |
 | ROS 1 Noetic | **EOL 2025-05-31** | for deployment use [RobotecAI/visualnav-transformer-ros2](https://github.com/RobotecAI/visualnav-transformer-ros2) (ROS 2 Jazzy/Humble, `uv.lock`, Docker) |
 | `python 3.8.5` | EOL 2024-10-07 | use 3.10/3.11 |

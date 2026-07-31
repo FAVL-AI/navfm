@@ -104,6 +104,21 @@ class TestEnvironmentIdentity:
         monkeypatch.setattr(provenance, "_installed_distributions", lambda: ["a==1", "b==2"])
         assert provenance.environment_identity().pip_freeze_digest == forwards
 
+    def test_pythonpath_moves_the_identity(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """A venv does not isolate you from PYTHONPATH, so the identity must
+        cover it: sourcing ROS 2 Humble prepends Python 3.10 site-packages to a
+        3.11 venv and silently changes which code imports (F-M2-2)."""
+        monkeypatch.delenv("PYTHONPATH", raising=False)
+        clean = provenance.environment_identity().environment_id
+        monkeypatch.setenv("PYTHONPATH", "/opt/ros/humble/lib/python3.10/site-packages")
+        assert provenance.environment_identity().environment_id != clean
+
+    def test_unset_and_empty_pythonpath_agree(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("PYTHONPATH", raising=False)
+        unset = provenance.environment_identity().environment_id
+        monkeypatch.setenv("PYTHONPATH", "")
+        assert provenance.environment_identity().environment_id == unset
+
     def test_torch_absent_is_recorded_not_fatal(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(provenance, "_torch_versions", lambda: (None, None))
         identity = provenance.environment_identity()
@@ -213,6 +228,7 @@ class TestRendering:
             "Hostname",
             "UTC timestamp",
             "Working tree",
+            "PYTHONPATH",
             "Environment identity",
         ):
             assert label in rendered, f"page one omits {label!r}"

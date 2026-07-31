@@ -12,6 +12,8 @@ controls are applied. A KPI without a ledger is a slogan.
 | [F-M1-2](F-M1-2.md) | unevidenced provenance | protocol | no — caught pre-results |
 | [F-M1-3](F-M1-3.md) | unsafe deletion | code | no — never fired |
 | [F-AMEND-1](F-AMEND-1.md) | protocol deviation (push ordering) | protocol | no — no evaluation existed in the interval |
+| [F-M2-1](F-M2-1.md) | documented prerequisites disable the upstream proof | environment | no — found before G0.c ran |
+| [F-M2-2](F-M2-2.md) | sourced ROS overrides the canonical interpreter's imports | environment | no — found before G0.c ran |
 
 The three `F-M1-*` records were found during M1 verification and fixed in
 `c82e406`, the commit tagged `m1-freeze`. Before that commit, the claims they
@@ -20,7 +22,7 @@ threatened were stated in `gates/M1/README.md` as though already true.
 a commit and a push, and it is the first entry detected by operator
 self-report rather than by a control.
 
-Four entries, none of which moved a number, is the expected early shape of
+Six entries, none of which moved a number, is the expected early shape of
 this ledger and not a sign it is idle: no scientific result existed yet, so
 every defect caught was necessarily caught before it could contaminate one.
 That is the cheapest possible correction. The ledger will get more interesting
