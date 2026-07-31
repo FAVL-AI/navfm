@@ -16,6 +16,7 @@ implemented it.
 |---|---|
 | `2026-07-31-programme-review.md` | M1 completion and G0.c readiness. Two rounds from the same reviewer, contiguous in the source: the completion assessment, then the G0.c decision-rule response. |
 | `2026-07-31-m1-review.md` | M1 verification: the three evidence-pipeline defects, the declared/canonical environment boundary, M2 priority order. |
+| `2026-07-31-m2-review.md` | M2 canonical-environment milestone: F-M2-1 and F-M2-2, environment-identity semantics, acceptance-package requirements, remaining hardening order. |
 
 Both are archived verbatim with a metadata header only, per programme-review
 recommendation P32. Two notes about the source texts, recorded here rather
@@ -101,6 +102,30 @@ than in the archives themselves so the archives stay unannotated:
 | R10 | Record the epistemological significance: the pipeline produced findings before it produced results | accepted with refinement — recorded in the roadmap, where the programme argument lives, rather than as a paper claim | `2fcd80e` |
 | R11 | M2 priority order, seven steps | accepted verbatim | governs M2 (B ordering) |
 | R12 | Record M1 as "Complete with one explicit caveat", with the two-sentence declared/canonical wording | accepted verbatim | `3f89090` |
+
+## M2 canonical-environment review — `2026-07-31-m2-review.md`
+
+| # | Recommendation | Disposition | Commit |
+|---|---|---|---|
+| M2-1 | Classify `fb393de` as the canonical-environment establishment point, not the G0.c-ready point | accepted verbatim | `0b72a5c` |
+| M2-2 | Record F-M2-1 as "Evidence-completeness failure caused by silent test-population contraction", threatening compatibility, regression, archived summaries, fresh-environment reproducibility, and any claim the upstream proof passed | accepted verbatim | `c9b1ff5` |
+| M2-3 | Every gate relying on a named test population enforces all three conditions: expected tests collected; none skipped, deselected or collection-failed; all collected required tests passed | accepted verbatim | `c9b1ff5` |
+| M2-4 | Fail unless the exact expected count is present; use a machine-readable report over node ids, marker membership, skip reasons, collection errors and exit status, never the final pytest sentence; pin the count to the upstream commit and a test-manifest hash rather than treating it as timeless | accepted verbatim — pin is 26 required tests, node-id digest `ba3e311c…`, against upstream `dca79815` | `c9b1ff5` |
+| M2-5 | Environment identity must fingerprint the effective execution instrument, not merely the package installation | accepted verbatim | `0c4dfd0` |
+| M2-6 | Add a compact effective-import fingerprint (the ten listed items) and archive resolved source locations for the seven load-bearing modules | accepted verbatim — the ten items are recorded and the seven module locations both recorded (raw) and hashed (normalised). The broader list the review explicitly did *not* require — `LD_LIBRARY_PATH`, `PATH`, `CUDA_HOME`, dynamically loaded shared libraries — is deliberately excluded, per its own caution against indiscriminate hashing producing unstable identifiers | `0c4dfd0` |
+| M2-7 | "Canonical" stays defined by archived identity and build specification, not by `~/.venv-train` | accepted verbatim | `0c4dfd0`, `0b72a5c` |
+| M2-8 | Acceptance package contains the ten listed artefacts | accepted verbatim — all ten archived under `gates/M2/`. The clean-worktree item is recorded as a *declared* modification (`gates/M2/` itself, being written at emission time) rather than asserted clean; the reasoning is in that README | `0b72a5c` |
+| M2-9 | The seven-step ordering stands; no checkpoint evaluation before the amendment is committed | accepted verbatim | governs the remainder of this session |
+| M2-10 | Downloads, checksums, dataset inspection and checkpoint structural inspection may precede the amendment when explicitly classified acquisition/preflight; anything producing a model metric may not | accepted verbatim — acquisition performed and classified as such; no forward pass has run | `0b72a5c` |
+| M2-11 | 1a resume identity rejects mismatch in the nine listed fields; resume continues an identical experiment rather than creating a hybrid | deferred | Task 1a |
+| M2-12 | 1b evidence-class enum, six members, each declaring table eligibility | deferred | Task 1b |
+| M2-13 | 1c contamination barrier refuses the six listed conditions | deferred | Task 1c |
+| M2-14 | 1d every rendered table row carries a machine-readable source record with the eight listed links | deferred | Task 1d |
+| M2-15 | 1e the two scheduler remedies fork experiment lineage and are never represented as equivalent resumes | deferred | Task 1e |
+| M2-16 | Acquisition yields immutable records for the eleven listed items before G0.c | accepted with refinement — six are archived now (source identifier, retrieval date, file size, digest, and for the dataset its size and digest). Archive structure, checkpoint metadata, expected architecture, dataset inventory, split-generation procedure, split digest, and any malformed files require structural inspection and split construction, which are Task 4 preflight | `0b72a5c`; remainder Task 4 |
+| M2-17 | The new GO Stanford split is named a **reconstruction**, never the upstream split, because F10 makes the original unrecoverable | accepted verbatim | pending — delta 5 |
+| M2-18 | Record the methodological claim: a green exit status and a package-level environment fingerprint are insufficient evidence of experimental equivalence; evidence completeness and effective import resolution must be verified explicitly | accepted verbatim | pending |
+| M2-19 | Record the M2 STATUS block, preserving the historical "247 tests passing" line; later counts recorded separately, never by editing the quote | accepted verbatim | `0b72a5c` |
 
 ## Historical wording correction
 

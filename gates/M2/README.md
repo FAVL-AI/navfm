@@ -15,25 +15,33 @@ recorded *beside* it, in the next section, never inside it.
 
 ```text
 M2 STATUS: CANONICAL ENVIRONMENT ESTABLISHED
+
 Established:
-- canonical Python/GPU environment;
-- complete upstream-marked test collection;
-- dependency closure;
-- ROS/PYTHONPATH contamination detection;
-- environment identity includes PYTHONPATH;
-- 247 tests passing;
-- 26 upstream-marked tests passing.
+
+* canonical Python/GPU environment;
+* complete upstream-marked test collection;
+* dependency closure;
+* ROS/PYTHONPATH contamination detection;
+* environment identity includes PYTHONPATH;
+* 247 tests passing;
+* 26 upstream-marked tests passing.
+
 Not yet established:
-- resume identity enforcement;
-- evidence-class barriers;
-- complete table lineage;
-- scheduler lineage separation;
-- preregistration-commit enforcement;
-- G2 mechanical block;
-- G0.c preregistration;
-- checkpoint and GO Stanford acquisition;
-- baseline evidential classification.
+
+* resume identity enforcement;
+* evidence-class barriers;
+* complete table lineage;
+* scheduler lineage separation;
+* preregistration-commit enforcement;
+* G2 mechanical block;
+* G0.c preregistration;
+* checkpoint and GO Stanford acquisition;
+* baseline evidential classification.
 ```
+
+The `247 tests passing` line is historical and is preserved exactly as issued.
+The later counts are recorded in the annotations below, never by editing the
+quote.
 
 ## Annotations, beside the block
 
