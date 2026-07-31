@@ -136,6 +136,15 @@ The `+1e-2` is a divide-by-zero guard that also scales every reported value by
 `p/(p+0.01)`. Reproduced in `navfm.eval.metrics.action_reduce`, with
 `strict=False` to turn it off.
 
+When `learn_angle` is set, `_compute_losses` additionally logs
+`action_orien_cos_sim` and `multi_action_orien_cos_sim`. **These are the same
+number** (finding F12). Both architectures L2-normalise the predicted heading
+columns before returning (`vint.py:135–137`, `gnm.py:85–87`) and the labels are
+unit-norm from `calculate_sin_cos`; for unit vectors, the mean per-waypoint
+cosine `(1/T)Σₖ pₖ·lₖ` equals the flattened cosine `(Σₖ pₖ·lₖ)/(√T·√T)`. The
+`xy` pair is not redundant — those columns are cumulative sums. Both are stored
+in `metrics.json`; report one.
+
 ### 1.5 Training
 
 | | Paper | `train/config/gnm.yaml` |

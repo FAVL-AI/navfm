@@ -42,6 +42,7 @@ __all__ = [
     "build_dataset",
     "build_model",
     "data_config",
+    "dataset_options",
     "default_splits_root",
     "ensure_upstream",
     "metric_waypoint_spacing",
@@ -215,6 +216,25 @@ def build_model(model_type: str, cfg: dict[str, Any] | None = None) -> Any:
         "sampling loop for evaluation (train_utils._compute_losses_nomad), which "
         "is a separate entrypoint -- see docs/EXPERIMENTS.md E1.3."
     )
+
+
+def dataset_options(cfg: dict[str, Any], dataset_name: str) -> dict[str, Any]:
+    """Per-dataset loader options as the shipped training config sets them.
+
+    ``end_slack`` in particular is not cosmetic: ``recon`` uses 3 "because many
+    trajectories end in collisions" while ``go_stanford`` uses 0, and getting it
+    wrong changes which samples exist. Datasets absent from the shipped config
+    (ours) fall back to ``train.py``'s own defaults, which it applies in the
+    same place.
+    """
+    entry = (cfg.get("datasets") or {}).get(dataset_name) or {}
+    return {
+        "end_slack": int(entry.get("end_slack", 0)),
+        "goals_per_obs": int(entry.get("goals_per_obs", 1)),
+        "negative_mining": bool(entry.get("negative_mining", True)),
+        "waypoint_spacing": int(entry.get("waypoint_spacing", 1)),
+        "from_shipped_config": bool(entry),
+    }
 
 
 def default_splits_root() -> Path:

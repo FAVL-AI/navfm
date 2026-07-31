@@ -38,11 +38,15 @@ __all__ = [
     "action_mse",
     "action_reduce",
     "ade",
+    "bootstrap_ci",
     "collisions_per_episode",
     "distance_mse",
     "fde",
     "max_displacement_before_intervention",
     "multi_action_cosine_similarity",
+    "multi_orientation_cosine_similarity",
+    "orientation_cosine_similarity",
+    "reference_losses",
     "spl",
     "success_rate",
     "waypoint_cosine_similarity",
@@ -118,6 +122,95 @@ def multi_action_cosine_similarity(
     p = np.asarray(pred, dtype=np.float64)[..., :2].reshape(pred.shape[0], -1)
     t = np.asarray(target, dtype=np.float64)[..., :2].reshape(target.shape[0], -1)
     return action_reduce(_cosine(p, t, axis=-1), mask, strict=strict)
+
+
+def orientation_cosine_similarity(
+    pred: np.ndarray, target: np.ndarray, mask: np.ndarray, *, strict: bool = True
+) -> float:
+    """``*_action_orien_cos_sim``: per-waypoint cosine over the ``(cos, sin)`` columns.
+
+    Logged by ViNT and GNM whenever ``learn_angle`` is true, and omitted
+    entirely when it is false. Only meaningful because
+    ``calculate_sin_cos`` guarantees those two columns are unit-norm, which
+    makes this the cosine of the *heading error* at each waypoint.
+
+    **Finding F12.** This is numerically identical to
+    :func:`multi_orientation_cosine_similarity` for both released
+    architectures, so upstream logs the same number under two names. Both
+    models L2-normalise their predicted heading columns before returning
+    (``vint.py:135-137``, ``gnm.py:85-87``) and the labels are already
+    unit-norm, and for unit vectors the mean per-waypoint cosine and the
+    flattened cosine are the same quantity -- the ``sqrt(T) * sqrt(T)`` in the
+    flattened denominator is exactly the ``1/T`` of the mean. Proven against
+    the reference in ``tests/test_upstream_losses.py``. Report one of them.
+    """
+    p = np.asarray(pred, dtype=np.float64)[..., 2:]
+    t = np.asarray(target, dtype=np.float64)[..., 2:]
+    return action_reduce(_cosine(p, t, axis=-1), mask, strict=strict)
+
+
+def multi_orientation_cosine_similarity(
+    pred: np.ndarray, target: np.ndarray, mask: np.ndarray, *, strict: bool = True
+) -> float:
+    """``*_multi_action_orien_cos_sim``: cosine over the flattened heading columns.
+
+    Redundant with :func:`orientation_cosine_similarity` in practice; see
+    finding F12 there. Kept because the reference logs it and a reproduction
+    that silently dropped a logged metric would be harder to check.
+    """
+    p = np.asarray(pred, dtype=np.float64)[..., 2:].reshape(np.shape(pred)[0], -1)
+    t = np.asarray(target, dtype=np.float64)[..., 2:].reshape(np.shape(target)[0], -1)
+    return action_reduce(_cosine(p, t, axis=-1), mask, strict=strict)
+
+
+def reference_losses(
+    *,
+    dist_pred: np.ndarray,
+    dist_label: np.ndarray,
+    action_pred: np.ndarray,
+    action_label: np.ndarray,
+    action_mask: np.ndarray,
+    alpha: float = 0.5,
+    learn_angle: bool = True,
+    strict: bool = True,
+) -> dict[str, float]:
+    """The full metric dict ``train_utils._compute_losses`` returns, in numpy.
+
+    Keys, values and the ``total_loss`` weighting match the reference exactly at
+    ``strict=True``; ``tests/test_upstream_losses.py`` asserts that against the
+    reference function itself rather than against our reading of it.
+
+    ``alpha`` is the reference's own name for the split, and the effective
+    weighting is ``alpha * 1e-2 * dist + (1 - alpha) * action`` -- at the
+    configs' ``alpha = 0.5`` that is a distance:action ratio of ``0.01``, i.e.
+    ViNT's published ``lambda``. The ``1e-2`` is *not* folded into alpha
+    upstream and is not folded here either, so a run that sweeps alpha sweeps
+    the same quantity the reference would.
+
+    ``strict=False`` swaps ``action_reduce``'s ``+1e-2``-guarded reduction for a
+    plain masked mean throughout. It changes every action-derived value by
+    ``p / (p + 0.01)`` and changes ``dist_loss`` not at all -- ``dist_loss`` is
+    unmasked in the reference.
+    """
+    out: dict[str, float] = {
+        "dist_loss": distance_mse(dist_pred, dist_label),
+        "action_loss": action_mse(action_pred, action_label, action_mask, strict=strict),
+        "action_waypts_cos_sim": waypoint_cosine_similarity(
+            action_pred, action_label, action_mask, strict=strict
+        ),
+        "multi_action_waypts_cos_sim": multi_action_cosine_similarity(
+            action_pred, action_label, action_mask, strict=strict
+        ),
+    }
+    if learn_angle:
+        out["action_orien_cos_sim"] = orientation_cosine_similarity(
+            action_pred, action_label, action_mask, strict=strict
+        )
+        out["multi_action_orien_cos_sim"] = multi_orientation_cosine_similarity(
+            action_pred, action_label, action_mask, strict=strict
+        )
+    out["total_loss"] = alpha * REFERENCE_EPS * out["dist_loss"] + (1.0 - alpha) * out["action_loss"]
+    return out
 
 
 def ade(pred: np.ndarray, target: np.ndarray, mask: np.ndarray | None = None) -> float:
