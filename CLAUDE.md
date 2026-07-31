@@ -51,10 +51,22 @@ deep reference; `paper/draft.md` is the paper.
    logs, wandb/, third_party/, USD assets, or anything in `.gitignore`.
 4. **Small commits, evidence in the message:** what changed, why, and the
    test/gate output that proves it. Plan first for anything non-trivial.
+   In commit messages, refer to this file as **the standing-instructions
+   file**, never by its filename — the machine-level pre-push attribution
+   guard rejects the literal string. That guard lives on this machine, not in
+   `.git/hooks/`; do not create an in-repo copy of it.
 5. **Gates are sacred.** `docs/WORKFLOW.md` defines gates G0–G6. Archive
    every gate command's output under `gates/G<N>/` (create it; it IS
    committed — text logs only). A phase does not start until the previous
-   gate's outputs are archived.
+   gate's outputs are archived. Two invariants, each bought with a defect
+   recorded in `gates/failures/`:
+   - **Gate scripts never infer execution state** — interpreter, environment,
+     or paths. Preflight, refuse, and name the missing requirement. Helpfully
+     auto-discovering an interpreter weakens reproducibility rather than
+     serving it, because it makes the executed environment unknowable from the
+     archive (F-M1-1).
+   - **Gate scripts delete only paths they created**, verified by a marker
+     file. "Delete what the caller asked" is not a deletion rule (F-M1-3).
 6. **Pre-registration.** Never edit the frozen section of
    `PREREGISTRATION.md`; amendments are new dated sections. No hand-typed
    numbers in `paper/draft.md` — result tables come only from
@@ -73,7 +85,7 @@ format/label questions are settled by the upstream compatibility proof, sync
 questions by the smoke test's physical assertions, result integrity by gates
 and script-generated tables. Arguing where an oracle exists is wasted budget.
 
-Red-team review IS mandatory, before commit, at these five triggers — each is
+Red-team review IS mandatory, before commit, at these six triggers — each is
 a place where no oracle exists and the failure mode is a plausible
 misreading that our own tests would co-sign:
 
@@ -88,17 +100,46 @@ misreading that our own tests would co-sign:
    `train_utils._compute_losses`.
 3. Any amendment to PREREGISTRATION.md: is it fixing the protocol, or
    rescuing a hypothesis? State the answer in the amendment.
-4. Once, immediately before Phase 4 launches: attack the experiment design —
+4. Before a result is accepted as a baseline, and before a protocol is
+   frozen: immediately before Phase 4 launches, attack the experiment design —
    seed handling, scene leakage between arms, any variable other than the
-   manipulated one that differs across cells.
+   manipulated one that differs across cells. The same applies before G0.c is
+   accepted as the reference baseline, before the 2×2 protocol is frozen, and
+   before the first costly physical episode is run: each is a point after
+   which the cost of being wrong stops being a rerun.
 5. Phase 6.3, the paper: claim by claim, "which runs/ directory backs this
-   sentence?" Anything unbacked is cut or marked as discussion.
+   sentence?" Anything unbacked is cut or marked as discussion. The same pass
+   runs once more before submission.
+6. Whenever the evidence itself is of a kind that hides its own weakness:
+   any finding that depends on the *absence* of an effect, and any result
+   whose sample was shaped by exclusions, failed episodes, or resumed runs.
+   Both are cases where a valid-looking table is compatible with an invalid
+   population.
 
 Mechanics: spawn an independent subagent with ONLY the artefact under review
 plus the relevant upstream files — not this session's reasoning, which is the
 thing under test. Instruct it to refute, not to summarise; default to
 "refuted" when uncertain. Archive verdicts under gates/redteam/<trigger>-<date>.md.
 A finding survives only if the refutation fails against source evidence.
+
+**Oracle substitution, and its limit.** Triggers may be addressed through
+executable conformance oracles rather than an independent red-team review.
+These oracles establish consistency with the pinned upstream implementation;
+they do **not** establish that the upstream computation is conceptually or
+scientifically valid. Independent validity review therefore remains pending
+and is required before scientific claims are accepted — conformance is not
+correctness, and an oracle that agrees with a wrong reference agrees wrongly.
+
+Conformance to shared reference functions also does not eliminate failures at
+integration boundaries — serialization, configuration propagation, checkpoint
+restoration, evaluator orchestration, table aggregation. Those seams are
+exactly where a correct component and a correct reference still combine into a
+wrong number, and they require independent adversarial review on their own
+account.
+
+Every oracle substitution is archived under `gates/redteam/` with its
+justification. "We built an oracle instead" is a reviewable decision, not an
+exemption from the trigger.
 
 ## Known landmines (all documented in docs/REPRODUCTION.md — check there first)
 

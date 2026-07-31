@@ -74,8 +74,16 @@ rather than leaving it to this file to claim: the evaluator prints a two-line
 regresses, the gate script fails rather than the README going quietly stale.
 
 The first real number is **gate G0.c**: released `vint.pth` on a GO Stanford
-test split at batch 400, expected in the neighbourhood of the checkpoint's own
-recorded `avg_total_test_loss = 0.17398`. It does not exist yet.
+test split at batch 400. It does not exist yet.
+
+The checkpoint's own recorded `avg_total_test_loss = 0.17398` is **not** the
+target that number is measured against. Per the accepted programme review
+(`docs/reviews/`), it is a provenance anchor only: it was produced over a
+five-dataset mixture whose evaluation composition and original split
+identities cannot be reconstructed (F10), so a tolerance around it would put
+false precision on non-equivalent quantities. The decision rule that replaces
+it — four layers, three possible classifications — is pre-registered before
+G0.c executes, in the M2 session.
 
 ## Finding recorded during M1
 
@@ -87,12 +95,47 @@ Appendix C, `docs/METHODOLOGY.md` §1.4, and pinned by
 which asserts it against `train_utils._compute_losses` rather than against our
 port. Visible in `e2e.txt` as two identical rows.
 
+## Status
+
+```text
+M1 STATUS: TECHNICALLY COMPLETE
+Scope established:
+- end-to-end CPU execution;
+- reference-coupled training loss;
+- offline evaluation;
+- resumable execution;
+- strict seed-complete table generation;
+- reproducible gate script;
+- upstream fidelity tests;
+- audit finding F12;
+- scheduler-resume protection.
+Not established:
+- baseline reproduction;
+- scientific performance;
+- transfer validity;
+- external reproducibility;
+- adversarial validity review.
+Next evidence gate:
+- G0.c.
+```
+
+M1 is **complete with one explicit caveat**: M1 validates the reproducibility
+infrastructure within a *declared* execution environment. M2 extends that
+validation to the *canonical* execution environment before any scientific
+claims are generated. Those are two different propositions, and only the first
+is closed here.
+
+The freeze commit is **`c82e406`**, annotated tag `m1-freeze`. (The accepted
+M1 review names `b673fa5`; that SHA predates this repository's `filter-branch`
+rewrite, is not an ancestor of `HEAD`, and resolves only in one machine's
+reflog. Cite `c82e406`.)
+
 ## Adversarial-review note
 
-`CLAUDE.md` mandates red-team review at two triggers M1 touches: semantic
-changes to `eval/metrics.py` (trigger 1) and the training-loss implementation
-in `train/run.py` (trigger 2). Both triggers exist because *no oracle exists*
-there. M1 built the oracles instead, which the policy prefers:
+The standing-instructions file mandates red-team review at two triggers M1
+touches: semantic changes to `eval/metrics.py` (trigger 1) and the
+training-loss implementation in `train/run.py` (trigger 2). Both exist because
+*no oracle exists* there. M1 built the oracles instead:
 
 * `train/run.py` does not implement the objective. It calls
   `train_utils._compute_losses`, the reference function itself, so there is no
@@ -101,7 +144,24 @@ there. M1 built the oracles instead, which the policy prefers:
   across four mask rates and two `alpha` values, keys included, in
   `tests/test_upstream_losses.py`.
 
-No `gates/redteam/` verdict is filed for M1, deliberately, and this paragraph
-is the record of why. Triggers 3–5 (pre-registration amendments, the Phase 4
-design attack, the paper claim-by-claim pass) are untouched by M1 and still
-stand.
+The correct record of that decision is **not** "red-team review was
+unnecessary". It is:
+
+> Red-team review triggers 1–2 were satisfied by constructing executable
+> conformance oracles that directly test the relevant semantic risks.
+> Independent adversarial validity review remains pending and is required
+> before scientific claims are derived from G0.c or later experimental
+> outputs.
+
+The distinction is load-bearing. A conformance oracle answers *does the
+implementation match the reference?* It does not answer *is the reference
+computation scientifically meaningful?* M1 establishes the first only, and an
+oracle that agrees with a wrong reference agrees wrongly. Conformance also
+does not cover the integration seams — serialization, configuration
+propagation, checkpoint restoration, evaluator orchestration, table
+aggregation — where a correct component and a correct reference still combine
+into a wrong number.
+
+Remaining triggers (pre-registration amendments, the Phase 4 design attack,
+the paper claim-by-claim pass, and the evidence-shape trigger added with this
+review) are untouched by M1 and still stand.
