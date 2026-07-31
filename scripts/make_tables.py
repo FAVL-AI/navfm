@@ -111,6 +111,10 @@ class Record:
     metrics: dict[str, Any]
     random_init: bool = False
     batch_size: int | None = None
+    evidence_class: str | None = None
+    scientific_result: bool = False
+    checkpoint_sha256: str | None = None
+    environment_id: str | None = None
 
     @property
     def experiment(self) -> str:
@@ -185,6 +189,15 @@ def load_records(runs_root: Path) -> list[Record]:
                 metrics=payload,
                 random_init=bool(data.get("random_init")),
                 batch_size=data.get("batch_size") or data.get("eval_batch_size"),
+                evidence_class=data.get("evidence_class"),
+                # Absent declaration is NOT a result. A run predating evidence
+                # classes, or one that declined to declare, must not inherit
+                # table access by silence.
+                scientific_result=bool(data.get("scientific_result", False)),
+                checkpoint_sha256=data.get("checkpoint_sha256"),
+                environment_id=(data.get("environment") or {}).get("environment_id")
+                if isinstance(data.get("environment"), dict)
+                else data.get("environment_id"),
             )
         )
     return out
@@ -246,6 +259,68 @@ def summarise(cell: Cell, column: str, *, n_boot: int, seed: int) -> str:
     return fmt(mean, lo, hi)
 
 
+WATERMARK = (
+    "> **SMOKE-CONTAMINATED TABLE — NOT A SCIENTIFIC RESULT.**\n"
+    "> Emitted with `--include-smoke`. One or more rows come from runs whose own\n"
+    "> record declares `scientific_result: false`. This file must not be cited,\n"
+    "> quoted, or copied into the paper.\n"
+)
+
+
+def contamination_check(
+    records: Sequence[Record],
+    *,
+    include_smoke: bool,
+    allow_mixed_environments: bool,
+) -> list[str]:
+    """Reasons these records may not form a results table.
+
+    The barrier reads each run's own declaration rather than re-deriving what
+    kind of evidence it is. A run that says it is not a scientific result is
+    not one, whatever its numbers look like.
+    """
+    problems: list[str] = []
+
+    if not include_smoke:
+        contaminated = sorted(
+            f"{r.cell} seed {r.seed}: evidence_class={r.evidence_class or '(undeclared)'}"
+            for r in records
+            if not r.scientific_result
+        )
+        if contaminated:
+            problems.append(
+                "non-scientific rows present (declare --include-smoke to emit anyway, "
+                "which watermarks the output):\n" + "\n".join(f"    {c}" for c in contaminated)
+            )
+
+    missing_hash = sorted(
+        f"{r.cell} seed {r.seed}"
+        for r in records
+        if r.scientific_result and not r.checkpoint_sha256 and not r.random_init
+    )
+    if missing_hash:
+        problems.append(
+            "scientific rows with no checkpoint hash -- the bytes that produced the "
+            "number are unidentifiable:\n" + "\n".join(f"    {m}" for m in missing_hash)
+        )
+
+    if not allow_mixed_environments:
+        environments = {r.environment_id for r in records if r.environment_id}
+        undeclared = [r for r in records if not r.environment_id]
+        if len(environments) > 1:
+            problems.append(
+                "rows produced under different environment identities, which are not "
+                "comparable instruments (pass --allow-mixed-environments to override, "
+                "recorded in the table):\n" + "\n".join(f"    {e}" for e in sorted(environments))
+            )
+        if environments and undeclared:
+            problems.append(
+                f"{len(undeclared)} row(s) declare no environment identity while others do; "
+                "the table would mix a known instrument with an unknown one"
+            )
+    return problems
+
+
 def render_table(
     number: int,
     title: str,
@@ -305,6 +380,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     p.add_argument("--n-boot", type=int, default=10_000)
     p.add_argument("--seed", type=int, default=0, help="seeds the bootstrap resampling")
     p.add_argument(
+        "--include-smoke",
+        action="store_true",
+        help="emit tables containing non-scientific rows; watermarks every file it writes",
+    )
+    p.add_argument(
+        "--allow-mixed-environments",
+        action="store_true",
+        help="permit rows from different environment identities; recorded in the table",
+    )
+    p.add_argument(
         "--allow-incomplete",
         action="store_true",
         help="emit tables with short cells marked inline; still exits non-zero",
@@ -325,6 +410,22 @@ def main(argv: Sequence[str] | None = None) -> int:
             file=sys.stderr,
         )
         return 1
+
+    contamination = contamination_check(
+        records,
+        include_smoke=args.include_smoke,
+        allow_mixed_environments=args.allow_mixed_environments,
+    )
+    if contamination:
+        print(
+            "refusing to write results tables: the records do not qualify as scientific "
+            "evidence.\nA table is the last place a non-result can be caught, and the "
+            "first place it becomes citable.\n",
+            file=sys.stderr,
+        )
+        for problem in contamination:
+            print(f"  {problem}\n", file=sys.stderr)
+        return 3
 
     cells = group(records)
     problems = check_seeds(cells, args.require_seeds)
@@ -373,7 +474,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             require=args.require_seeds,
         )
         path = out_dir / f"table{number}.md"
-        path.write_text(text)
+        path.write_text(WATERMARK + "\n" + text if args.include_smoke else text)
         written.append((path, len(group_cells)))
 
     for path, n in written:

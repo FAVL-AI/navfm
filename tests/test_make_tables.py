@@ -37,6 +37,10 @@ def write_eval(root: Path, name: str, **metrics):
         "seed": seed,
         "kind": "eval",
         "batch_size": 400,
+        "evidence_class": "registered_experiment",
+        "scientific_result": True,
+        "checkpoint_sha256": "0" * 64,
+        "environment_id": "e" * 64,
         "strict": {"total_loss": metrics.get("total_loss", 0.2), "action_loss": 0.3},
         "plain": {"total_loss": 0.21},
         "ade_m": metrics.get("ade_m", 0.5),
@@ -58,6 +62,10 @@ def write_train_epochs(root: Path, name: str, losses: list[float]):
                     "cell": cell,
                     "seed": seed,
                     "kind": "train",
+                    "evidence_class": "registered_experiment",
+                    "scientific_result": True,
+                    "checkpoint_sha256": "0" * 64,
+                    "environment_id": "e" * 64,
                     "epoch": epoch,
                     "eval_batch_size": 400,
                     "eval": {"strict": {"total_loss": loss}, "ade_m": loss / 2},
@@ -163,13 +171,41 @@ def test_a_training_run_contributes_its_last_epoch(tmp_path):
     assert record.get("strict.total_loss") == pytest.approx(0.11)
 
 
-def test_random_init_runs_are_labelled_in_the_table(tmp_path):
-    """A plumbing smoke run must not be able to pass as a result even if
-    someone names it like a cell."""
+def _write_random_init_cell(tmp_path):
     for seed in range(3):
-        write_eval(tmp_path, f"e1_vint_diff_seed{seed}", random_init=True)
-    make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "out"), "--n-boot", "100"])
-    assert "RANDOM INIT" in (tmp_path / "out" / "table3.md").read_text()
+        write_eval(
+            tmp_path,
+            f"e1_vint_diff_seed{seed}",
+            random_init=True,
+            evidence_class="random_init_control",
+            scientific_result=False,
+            checkpoint_sha256=None,
+        )
+
+
+def test_random_init_runs_are_refused_outright(tmp_path):
+    """A plumbing smoke run must not be able to pass as a result even if
+    someone names it like a cell. Labelling it in the table was the old, weaker
+    defence: by then the number is already rendered and citable."""
+    _write_random_init_cell(tmp_path)
+    out = tmp_path / "out"
+    assert make_tables.main(["--runs", str(tmp_path), "--out", str(out), "--n-boot", "100"]) == 3
+    assert not out.exists() or not list(out.glob("*.md")), "a refused table was still written"
+
+
+def test_include_smoke_emits_but_watermarks_and_still_labels(tmp_path):
+    """The override exists so smoke output can be inspected, not laundered."""
+    _write_random_init_cell(tmp_path)
+    out = tmp_path / "out"
+    make_tables.main(
+        ["--runs", str(tmp_path), "--out", str(out), "--n-boot", "100", "--include-smoke"]
+    )
+    text = (out / "table3.md").read_text()
+    assert "NOT A SCIENTIFIC RESULT" in text, "smoke output was emitted without a watermark"
+    assert "RANDOM INIT" in text
+    assert text.index("NOT A SCIENTIFIC RESULT") < text.index("RANDOM INIT"), (
+        "the watermark must precede the table, not trail it"
+    )
 
 
 def test_only_one_orientation_cosine_is_tabulated():
@@ -200,3 +236,58 @@ def test_tables_are_deterministic(tmp_path):
     first = (tmp_path / "out" / "table6.md").read_text()
     make_tables.main(args)
     assert (tmp_path / "out" / "table6.md").read_text() == first
+
+
+def test_missing_checkpoint_hash_on_a_scientific_row_is_refused(tmp_path):
+    """A scientific claim must identify which bytes produced it."""
+    for seed in range(3):
+        write_eval(tmp_path, f"e1_vint_diff_seed{seed}", checkpoint_sha256=None)
+    assert make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "o")]) == 3
+
+
+def test_mixed_environment_identities_are_refused(tmp_path):
+    """Two instruments are not one instrument."""
+    for seed in range(3):
+        write_eval(
+            tmp_path,
+            f"e1_vint_diff_seed{seed}",
+            environment_id=("a" * 64) if seed == 0 else ("b" * 64),
+        )
+    assert make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "o")]) == 3
+
+
+def test_mixed_environments_can_be_overridden_explicitly(tmp_path):
+    for seed in range(3):
+        write_eval(
+            tmp_path,
+            f"e1_vint_diff_seed{seed}",
+            environment_id=("a" * 64) if seed == 0 else ("b" * 64),
+        )
+    assert (
+        make_tables.main(
+            ["--runs", str(tmp_path), "--out", str(tmp_path / "o"), "--allow-mixed-environments"]
+        )
+        == 0
+    )
+
+
+def test_undeclared_evidence_does_not_inherit_table_access(tmp_path):
+    """A run predating evidence classes must not be treated as a result by
+    silence -- absent declaration is the conservative case, not the permissive
+    one."""
+    for seed in range(3):
+        d = tmp_path / f"e1_vint_diff_seed{seed}"
+        d.mkdir(parents=True)
+        (d / "metrics.json").write_text(
+            json.dumps(
+                {
+                    "cell": "e1_vint_diff",
+                    "seed": seed,
+                    "kind": "eval",
+                    "batch_size": 400,
+                    "strict": {"total_loss": 0.2},
+                    "plain": {"total_loss": 0.2},
+                }
+            )
+        )
+    assert make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "o")]) == 3
