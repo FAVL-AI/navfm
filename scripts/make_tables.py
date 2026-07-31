@@ -115,6 +115,10 @@ class Record:
     scientific_result: bool = False
     checkpoint_sha256: str | None = None
     environment_id: str | None = None
+    evaluator_commit: str | None = None
+    config_digest: str | None = None
+    dataset_split_digest: str | None = None
+    preregistration_commit: str | None = None
 
     @property
     def experiment(self) -> str:
@@ -195,6 +199,10 @@ def load_records(runs_root: Path) -> list[Record]:
                 # table access by silence.
                 scientific_result=bool(data.get("scientific_result", False)),
                 checkpoint_sha256=data.get("checkpoint_sha256"),
+                evaluator_commit=data.get("git_sha") or data.get("evaluator_commit"),
+                config_digest=(data.get("run_identity") or {}).get("config_digest"),
+                dataset_split_digest=(data.get("run_identity") or {}).get("dataset_split_digest"),
+                preregistration_commit=data.get("preregistration_commit"),
                 environment_id=(data.get("environment") or {}).get("environment_id")
                 if isinstance(data.get("environment"), dict)
                 else data.get("environment_id"),
@@ -265,6 +273,46 @@ WATERMARK = (
     "> record declares `scientific_result: false`. This file must not be cited,\n"
     "> quoted, or copied into the paper.\n"
 )
+
+
+def lineage_rows(number: int, cells: dict[str, Cell]) -> list[dict[str, Any]]:
+    """One machine-readable row per (cell, seed) behind a rendered table.
+
+    Markdown is where a number stops being traceable: a reader sees 0.1834 and
+    has no way back to the bytes, the split, the seed or the instrument. Every
+    rendered row therefore gets a source record carrying the whole chain, so
+    "which runs/ directory backs this sentence?" is answerable mechanically
+    rather than from memory.
+    """
+    rows: list[dict[str, Any]] = []
+    for name, cell in sorted(cells.items()):
+        for seed in cell.seeds:
+            r = cell.records[seed]
+            rows.append(
+                {
+                    "table": number,
+                    "cell": name,
+                    "seed": seed,
+                    "epoch": r.epoch,
+                    "run_dir": str(r.path.parent),
+                    "raw_artefact": str(r.path),
+                    "evidence_class": r.evidence_class,
+                    "scientific_result": r.scientific_result,
+                    "checkpoint_sha256": r.checkpoint_sha256,
+                    "dataset_split_digest": r.dataset_split_digest,
+                    "config_digest": r.config_digest,
+                    "evaluator_commit": r.evaluator_commit,
+                    "environment_id": r.environment_id,
+                    "preregistration_commit": r.preregistration_commit,
+                    "batch_size": r.batch_size,
+                    "metrics": {
+                        column: r.get(column)
+                        for column, _ in OFFLINE_COLUMNS
+                        if r.get(column) is not None
+                    },
+                }
+            )
+    return rows
 
 
 def contamination_check(
@@ -475,10 +523,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         path = out_dir / f"table{number}.md"
         path.write_text(WATERMARK + "\n" + text if args.include_smoke else text)
+
+        rows = lineage_rows(number, group_cells)
+        lineage_path = out_dir / f"table{number}.jsonl"
+        lineage_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in rows))
         written.append((path, len(group_cells)))
 
     for path, n in written:
-        print(f"wrote {path}  ({n} cells)")
+        print(f"wrote {path}  ({n} cells)  + {path.with_suffix('.jsonl').name}")
     if problems:
         print(f"\n{len(problems)} incomplete cell(s) — marked in the tables:", file=sys.stderr)
         for line in problems:

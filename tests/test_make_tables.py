@@ -291,3 +291,46 @@ def test_undeclared_evidence_does_not_inherit_table_access(tmp_path):
             )
         )
     assert make_tables.main(["--runs", str(tmp_path), "--out", str(tmp_path / "o")]) == 3
+
+
+def test_every_rendered_table_gets_a_lineage_source(tmp_path):
+    """Markdown is where a number stops being traceable; the JSONL is the way
+    back to the bytes, the split, the seed and the instrument."""
+    for seed in range(3):
+        write_eval(tmp_path, f"e1_vint_diff_seed{seed}")
+    out = tmp_path / "out"
+    assert make_tables.main(["--runs", str(tmp_path), "--out", str(out), "--n-boot", "100"]) == 0
+
+    lineage = out / "table3.jsonl"
+    assert lineage.is_file(), "a table was rendered with no machine-readable source"
+    rows = [json.loads(line) for line in lineage.read_text().splitlines()]
+    assert len(rows) == 3, "one row per (cell, seed) behind the table"
+
+    for row in rows:
+        for field in (
+            "run_dir",
+            "raw_artefact",
+            "checkpoint_sha256",
+            "seed",
+            "config_digest",
+            "evaluator_commit",
+            "environment_id",
+            "dataset_split_digest",
+            "preregistration_commit",
+            "evidence_class",
+            "batch_size",
+            "metrics",
+        ):
+            assert field in row, f"lineage row omits {field}"
+        assert Path(row["raw_artefact"]).is_file(), "raw artefact path does not resolve"
+        assert row["metrics"], "lineage row carries no metric values"
+
+
+def test_lineage_seeds_match_the_rendered_cell(tmp_path):
+    for seed in range(3):
+        write_eval(tmp_path, f"e1_vint_diff_seed{seed}", total_loss=0.1 * seed)
+    out = tmp_path / "out"
+    make_tables.main(["--runs", str(tmp_path), "--out", str(out), "--n-boot", "100"])
+    rows = [json.loads(line) for line in (out / "table3.jsonl").read_text().splitlines()]
+    assert sorted(r["seed"] for r in rows) == [0, 1, 2]
+    assert {r["cell"] for r in rows} == {"e1_vint_diff"}
