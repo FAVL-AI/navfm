@@ -24,7 +24,7 @@ differential-drive and Ackermann platforms, and their published adaptation
 results rest on a data format that has never been specified, an implementation
 whose configuration files disagree with its papers, and normalisation
 constants whose derivation was never published. We present, first, a forensic
-audit of the reference implementation that surfaces twelve discrepancies
+audit of the reference implementation that surfaces thirteen discrepancies
 material to reproduction — including a latent yaw-wrapping defect in the
 original preprocessing pipeline, two dataset-composition configuration keys
 that are dead code, and evaluation metrics that vary with batch size by up to
@@ -103,7 +103,7 @@ the reference trainer computes — which returns us to the audit.
 
 **Contributions.**
 
-1. **A forensic audit of the reference implementation** (§3): twelve
+1. **A forensic audit of the reference implementation** (§3): thirteen
    discrepancies between papers, configurations and code that are material to
    reproduction, classified by defect class (§3.0), each verified against
    source at a pinned commit and, where possible, empirically; including a
@@ -195,7 +195,7 @@ asserting their properties.
 All findings refer to `robodhruv/visualnav-transformer` at commit `dca7981`
 (2024-09-14, repository HEAD at time of writing), papers [1–3], and the three
 released checkpoints, whose exact byte sizes and formats we verified by
-download (Appendix A). Findings are numbered F1–F12 and each carries its
+download (Appendix A). Findings are numbered F1–F13 and each carries its
 consequence for reproduction. The full evidence trail, with file and line
 references, is in the released `docs/METHODOLOGY.md`.
 
@@ -220,8 +220,9 @@ records the primary class, with the consequence naming what it costs.
 | F10 unsplittable splits | provenance | the original evaluation splits cannot be reconstructed, so no published number has a recoverable holdout |
 | F11 undocumented constants | provenance | normalisation constants have no published derivation; under `clip_sample=True` an under-scaled range truncates motion rather than compressing it |
 | F12 metric redundancy | measurement | two metric names encode one statistic; the dimensionality of the evaluation is overstated |
+| F13 era-bound readability | provenance | the released loader cannot read the released corpus on any modern numpy; reproduction requires a compatibility adaptation, and the era path warned continuously that it was deprecated |
 
-The distribution is itself a finding. Only four of the twelve are
+The distribution is itself a finding. Only four of the thirteen are
 implementation defects of the kind a careful reader of the code would catch.
 The remainder are defects of specification, configuration, measurement,
 provenance, and reporting — visible only when the artefact, its description,
@@ -346,6 +347,40 @@ evidence. We report one. Whether any published result used the two values as
 though they were independent is `[UNVERIFIED]` — the released artefacts do not
 record which logged metrics entered the papers' tables, and we do not assert
 it either way.
+
+**F13 — The reference corpus is readable only under the reference's
+contemporaneous dependency behaviour.** Every one of GO Stanford's 3,696
+`traj_data.pkl` files stores `position` and `yaw` as object-dtype arrays whose
+elements are themselves arrays — uniform across the corpus, both naming
+families, none excepted. `data_utils.yaw_rotmat` declares `yaw: float` and
+builds `np.array([[cos(yaw), -sin(yaw), 0.0], …])`; given a 1-element array the
+rows become ragged. Under numpy < 1.24 that construction succeeded, emitting a
+`VisibleDeprecationWarning`; numpy 1.24 turned it into a `ValueError`. The
+released loader therefore cannot read the released corpus on a modern stack,
+and could on its own.
+
+*Measured, not inferred.* A three-cell decomposition over the full 760-trajectory
+holdout — 44,038 samples, every valid timestep — separates representation from
+numpy version. Coercing object-dtype to float64 at fixed numpy is
+**bit-identical** on actions, `goal_pos` and the distance label: the
+representation effect is exactly zero. The entire residual difference between
+the modern coerced path and the era reference path is carried by the numpy
+version, at max absolute 1.776e-15 against float64 eps 2.220e-16 — reduction and
+dot ordering, below the resolution of every metric reported here. Archive:
+`gates/G0/measurement/`.
+
+The consequence for reproduction is therefore a
+**numerical-semantics-preserving compatibility adaptation, not literal era
+restoration**: a coercion patch reproduces the era's values to within float64
+reduction-ordering noise, which is not the same claim as reproducing them.
+
+*Second finding, independent of the first.* The era-faithful path emitted
+**88,076 `VisibleDeprecationWarning`s** across those 44,038 samples — exactly
+two per sample. The reference implementation, running on its own corpus under
+its own pinned dependency era, warned continuously that the behaviour it relied
+on had been marked for removal. This is dependency fragility and reliance on
+behaviour already marked for removal, and it is a property of the released
+artefact pair rather than of any consumer of it.
 
 The dependency stack has additionally rotted in ways that block naive
 reproduction (Python 3.8.5 EOL, CUDA 10, a `diffusers==0.11.1` pin whose

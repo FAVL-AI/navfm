@@ -161,6 +161,16 @@ reconnaissance established that a defensible scene key exists
 (`scene_key_v1`), so the frozen scene-grouping bullet is satisfied directly and
 no deviation is needed.
 
+## F13 measurement — reviewer's rulings
+
+| Ruling | Disposition | Where |
+|---|---|---|
+| The archived three-cell measurement **suffices**; no re-run required | accepted verbatim | `gates/G0/measurement/`, `bc546fb` |
+| **Row 2** vocabulary confirmed: "numerical-semantics-preserving compatibility adaptation, not literal era restoration" | accepted verbatim — re-verified mechanically against the refined rows: `B-A` bit-identical excludes Row 3, `C-A` not bit-identical excludes Row 1, `C-A` within tolerance with no classificatory change gives Row 2 | `bd5686e`, F13 |
+| The **three-cell design is canonical** for future measurements of this kind | accepted verbatim | recorded here |
+| The **contingent-cell suggestion is superseded** — an upward correction, acknowledged by its author | accepted verbatim. Worth recording why it mattered: cell B was run because the three-cell design required it, and running it is what established that the representation effect is exactly zero. Under the contingent rule it would have been skipped, leaving the 1.776e-15 unattributable between coercion and numpy version — the single question the measurement existed to answer | recorded here |
+| Earlier partial application of the middle-row text | superseded by the consolidated specification; the earlier application at `bd5686e` reached the same row and the same term | cross-referenced |
+
 ## Historical wording correction
 
 Recorded here rather than inside Amendment 1, so that a committed
