@@ -57,13 +57,30 @@ depended on was deprecated. Cells B and C emit zero.
 This is recorded as a finding in its own right, independent of the patch
 decision and of whichever outcome row the comparison lands in.
 
-## Where this lands in the declared mapping
+## Where this lands — CORRECTED, and pending the full mapping
 
-The declared first row: *"C == A bit-identical (or differing only at the level
-of float64 non-associativity with max-abs below any metric's resolution):
-Route 1 is honestly 'restoration'."*
+**Superseded reading (retained for the record).** The three-cell design's first
+row admitted float64 non-associativity below metric resolution into the
+"restoration" outcome, and this document originally reported the result there.
 
-The measurement lands there on its face — the difference is float64
+**Corrected reading.** A later specification supersedes that design where they
+differ, and supplies vocabulary discipline for exactly this case: a result that
+is tolerance-identical **without** bit-identity is a
+**"numerical-semantics-preserving compatibility adaptation, NOT literal era
+restoration."** `C - A` is tolerance-identical at 1.776e-15 and is *not*
+bit-identical, so that is the term this result takes, and the term F13 and the
+G0.c report must use.
+
+The distinction is not pedantry. "Restoration" claims the canonical-coerced
+path reproduces what the reference era computed; it does not — it reproduces it
+to within float64 reduction-ordering noise. The weaker, accurate claim is that
+the numerical semantics the metrics depend on are preserved.
+
+**The full four-row mapping has not been supplied**, so only this row is
+applied. Whether a fourth outcome would classify it differently is unresolved
+here.
+
+The measurement lands in the middle row on its face — the difference is float64
 non-associativity at 1.78e-15, carried entirely by `C − B`, with the
 representation effect exactly nil. **This document does not declare that
 outcome adopted.** Under the standing rule the patch requires trigger-1 red-team
