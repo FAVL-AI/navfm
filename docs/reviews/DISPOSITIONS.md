@@ -173,7 +173,7 @@ than assumed.
 |---|---|
 | §2 three cells, NumPy 1.23.5 for A and B, canonical for C | **conforms** — A and B at 1.23.5 in a labelled throwaway env, C at 2.4.4 canonical |
 | §3 all three contrasts | **conforms** — B−A, C−B, C−A all reported |
-| §4 complete declared holdout | **conforms** — all 760 trajectories, 44,038 samples, every valid timestep, zero exclusions |
+| §4 complete declared holdout | **does NOT conform** — corrected 2026-08-01. 44,038 samples over the measurement's range against upstream's 41,872; neither a subset nor a superset; 210 of 760 trajectories contributed zero samples; no exclusions were reported though §4 requires them. See `gates/failures/F13-subfinding.md` |
 | §4 field coverage | **narrower.** Compared: action labels, goal position, distance label. Not separately compared: source position, source yaw, relative position, sin/cos orientation values, masks. The yaw column enters the compared action array; sin/cos is computed downstream by `calculate_sin_cos` from those actions; masks are not dtype-dependent. The reviewer accepted this scope; it is recorded as a delta rather than claimed as coverage |
 | §5 per-field reporting | **partial.** Reported: bit identity (separately from tolerance), max absolute, max relative, count of unequal values, worst-differing sample, warning counts. Not reported: per-field non-finite counts, exception counts, first-differing (worst-differing was reported instead) |
 | §5 tolerance-equivalent must not be called bit-identical | **conforms** — the two are reported separately, and the Row 2 correction at `bd5686e` exists precisely to enforce this |

@@ -14,6 +14,7 @@ controls are applied. A KPI without a ledger is a slogan.
 | [F-AMEND-1](F-AMEND-1.md) | protocol deviation (push ordering) | protocol | no — no evaluation existed in the interval |
 | [F-M2-1](F-M2-1.md) | documented prerequisites disable the upstream proof | environment | no — found before G0.c ran |
 | [F-M2-2](F-M2-2.md) | sourced ROS overrides the canonical interpreter's imports | environment | no — found before G0.c ran |
+| [F13-subfinding](F13-subfinding.md) | coverage overstatement — measured population was not the registered one | claim accuracy | no — no result existed |
 | [F-M2-4](F-M2-4.md) | **audit-integrity** — two verifications incapable of failing | code / operator habit | no — no result existed |
 | [F-M2-3](F-M2-3.md) | **external corpus limitation, not a pipeline defect** — undocumented second scene-naming family | data (reference corpus) | no — open question, recorded before the split committed |
 
@@ -24,7 +25,7 @@ threatened were stated in `gates/M1/README.md` as though already true.
 a commit and a push, and it is the first entry detected by operator
 self-report rather than by a control.
 
-Eight entries, none of which moved a number, is the expected early shape of
+Nine entries, none of which moved a number, is the expected early shape of
 this ledger and not a sign it is idle: no scientific result existed yet, so
 every defect caught was necessarily caught before it could contaminate one.
 That is the cheapest possible correction. The ledger will get more interesting
