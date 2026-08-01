@@ -16,10 +16,29 @@ reconnaissance under the acquisition ruling. `vint.pth` remains unloaded.
 `C − A` = the claim under test: *canonical-coerced equals era-reference*.
 
 Scope: `_compute_actions` outputs — actions, `goal_pos`, distance label — over
-the **full 760-trajectory holdout**, exhaustively over every valid timestep.
-**44,038 samples**, 660,570 action elements. No sampling, no subset: the
-downstream computation proved cheap enough to run whole, so no subset needed
-declaring.
+the 760-trajectory holdout. **44,038 samples**, 660,570 action elements.
+
+**CORRECTION (2026-08-01).** The original text claimed "exhaustively over every
+valid timestep… no sampling, no subset". That is **false**, established by
+trigger-1 adjudication and re-verified:
+
+* upstream's valid-timestep range is `[context_size·ws, n − end_slack −
+  len_traj_pred·ws)`, giving **41,872** samples over this holdout;
+* the measurement's range gives **44,038** — *neither a subset nor a superset*.
+  It excludes the last valid `curr_time` of every trajectory and includes
+  `t ∈ [0,4]`, which upstream excludes via `begin_time = context_size·ws`;
+* **210 of 760 trajectories contributed zero samples** (n ≤ 6).
+
+§4 requires exclusions and their reasons to be reported; none were. The sample
+set is a large overlapping population, not upstream's population, and the
+bit-identity result is corroboration rather than exhaustive coverage.
+
+Also recorded: `dist` is the constant 5.0 in all three cells (the script forces
+`goal_t = t+5`), so that row of the results table is true of a constant.
+`goal_pos` duplicates `actions[:,4,:2]` and is discarded by the evaluator
+(`offline.py:203` unpacks it as `_goal_pos`). The load-bearing compared
+quantity is therefore the action array's two position columns; its yaw column
+is bit-identical across all cells.
 
 ## Result
 

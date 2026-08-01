@@ -50,7 +50,28 @@ object-array creation*.
 Called from `to_local_coords` (`data_utils.py:51`), reached from
 `ViNT_Dataset._compute_actions` (`vint_dataset.py:278`).
 
-## 3. Era dependency — **YES, and it inverts the situation**
+## CORRECTION (2026-08-01) — §3's headline below is REFUTED
+
+Trigger-1 adjudication established, and I re-verified, that
+`torch.as_tensor` rejects object-dtype arrays **unconditionally** — including
+an object array of plain `np.float64` scalars, and including this corpus's
+actual `position` array. `vint_dataset.py:366` therefore raises `TypeError`
+under numpy 1.23.5 as well.
+
+**The reference path never consumed this corpus under any numpy era.** §3 below
+tested `to_local_coords` in isolation and never reached `__getitem__`, so it
+measured how far the computation gets, not whether the loader works. The era
+path gets six lines further than numpy 2.x and then dies.
+
+The consequence: there is no contemporaneous reference *evaluation behaviour*
+for a coerced path to be a third of. The patch's justification is **not**
+era-fidelity restoration. It is the minimal change that lets the released
+loader consume the released corpus at all — which no numpy era permitted.
+
+The original §3 is retained below unaltered, because a record that quietly
+edits its own refuted claims is not a record.
+
+## 3. Era dependency — **YES, and it inverts the situation** *(REFUTED — see correction above)*
 
 Throwaway environment, numpy **1.23.5** (upstream's pinned era; clearly
 labelled, not canonical, discarded after the test):
