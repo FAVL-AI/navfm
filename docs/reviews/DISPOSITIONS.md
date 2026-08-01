@@ -161,6 +161,28 @@ reconnaissance established that a defensible scene key exists
 (`scene_key_v1`), so the frozen scene-grouping bullet is satisfied directly and
 no deviation is needed.
 
+## F13 measurement — conformance of the archived measurement to the specification
+
+The specification arrived **after** the measurement was executed, under the
+three-cell design it consolidates. The reviewer ruled the archived measurement
+sufficient and no re-run required. Recorded here is where the archive meets the
+specification and where it is narrower, so the acceptance is legible rather
+than assumed.
+
+| Specification clause | Archived measurement |
+|---|---|
+| §2 three cells, NumPy 1.23.5 for A and B, canonical for C | **conforms** — A and B at 1.23.5 in a labelled throwaway env, C at 2.4.4 canonical |
+| §3 all three contrasts | **conforms** — B−A, C−B, C−A all reported |
+| §4 complete declared holdout | **conforms** — all 760 trajectories, 44,038 samples, every valid timestep, zero exclusions |
+| §4 field coverage | **narrower.** Compared: action labels, goal position, distance label. Not separately compared: source position, source yaw, relative position, sin/cos orientation values, masks. The yaw column enters the compared action array; sin/cos is computed downstream by `calculate_sin_cos` from those actions; masks are not dtype-dependent. The reviewer accepted this scope; it is recorded as a delta rather than claimed as coverage |
+| §5 per-field reporting | **partial.** Reported: bit identity (separately from tolerance), max absolute, max relative, count of unequal values, worst-differing sample, warning counts. Not reported: per-field non-finite counts, exception counts, first-differing (worst-differing was reported instead) |
+| §5 tolerance-equivalent must not be called bit-identical | **conforms** — the two are reported separately, and the Row 2 correction at `bd5686e` exists precisely to enforce this |
+| §6 outcome mapping | **Row 2**, re-verified mechanically: B−A bit-identical excludes Row 3; C−A not bit-identical excludes Row 1; C−A within tolerance with no classificatory change gives Row 2 |
+| §7 warning interpretation | **conforms** — 88,076 warnings recorded independently of numerical equivalence, in the specification's wording |
+| §8 serialization to lossless binary before comparison | **conforms** — three `.npz` archives, SHA-256 recorded, comparison reads them rather than rerunning preprocessing |
+| §8 per-archive metadata | **partial** — environment identity, NumPy version, corpus and split digests, trajectory and sample counts, warning counts and archive SHA-256 are recorded; repository/upstream/script commits are recorded by the commit that archived them rather than inside each `.npz` |
+| §9 comparison procedure | **conforms** on key correspondence, refusal on mismatch, serialized-field comparison, separate bit/numeric reporting, and preservation of the cell archives unchanged |
+
 ## F13 measurement — reviewer's rulings
 
 | Ruling | Disposition | Where |
