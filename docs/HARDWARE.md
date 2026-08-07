@@ -99,3 +99,28 @@ source of numbers.
    LiDARs are still valuable: use them to build the ground-truth occupancy map
    for closed-loop collision scoring on the real robot, which is otherwise hard
    to measure objectively.
+
+## Isaac Sim 5.1 — verified invocation (measured 2026-08-07)
+
+Recorded because it was got wrong once: a search for launcher-bundle artefacts
+concluded Isaac Sim was absent when it is pip-installed in a conda environment
+(`gates/failures/F-PILOT-1.md`).
+
+| | |
+|---|---|
+| Interpreter | `~/miniforge3/envs/isaac/bin/python` — Python 3.11.15 |
+| Isaac Sim | 5.1.0.0, 25 `isaacsim-*` packages |
+| Launcher artefacts | **none** — this is a pip install, so there is no `python.sh` or `isaac-sim.sh` |
+| Headless bring-up | `SimulationApp({"headless": True})` → app ready in **68.5 s** (first run; shader/kernel caches warm afterwards) |
+| GPU seen by Warp | RTX 4080 SUPER, 16 GiB, sm_89; CUDA Toolkit 12.8, Warp 1.8.2 |
+
+**The 5.x PRIMARY namespaces are not importable until `SimulationApp` has
+started.** Kit's extension system injects them at startup, so a bare
+`import isaacsim.core.api` at module scope raises `ModuleNotFoundError` and this
+is expected, not a broken install. Verified importable *after* startup:
+`isaacsim.core.api`, `isaacsim.core.prims`, `isaacsim.sensors.camera`,
+`isaacsim.storage.native`. `SimulationContext.initialize_physics()` plus stepping
+verified in the same run.
+
+`import isaacsim` fails in `~/.venv-train` by design — the two environments are
+never merged, and that failure is not evidence about the machine.

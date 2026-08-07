@@ -4,8 +4,8 @@
 
 | | |
 |---|---|
-| Isaac Sim runtime | **unavailable** — see `gates/failures/F-PILOT-1.md` |
-| Pilot collection | **BLOCKED** |
+| Isaac Sim runtime | **available** — 5.1.0.0 at `~/miniforge3/envs/isaac`, bring-up verified |
+| Pilot collection | **unblocked** — collection not yet performed |
 | Harness validation | **executable, and executed** |
 | GO Stanford source dataset | **reference only** |
 
@@ -13,14 +13,21 @@
 collected. The two trajectories Prof. Bo asked for do not exist, and neither
 report here counts as one of them.
 
+> **Correction.** This directory was created while the pilot was believed
+> blocked on a missing Isaac Sim runtime. That belief was wrong: Isaac Sim
+> 5.1.0.0 is installed at `~/miniforge3/envs/isaac` and its headless bring-up is
+> verified. See `gates/failures/F-PILOT-1.md`, where the original finding is
+> retained and refuted. The harness work below is unaffected and stands on its
+> own; only the stated reason for doing it when it was done has changed.
+
 ## What was done, and why
 
-Collection is blocked on a missing Isaac Sim runtime. The evidence machinery
+The evidence machinery
 that will judge the two pilot trajectories does not depend on how the frames are
 produced, so it was built and validated against the existing, verified GO
-Stanford corpus while collection is unavailable. When Isaac Sim becomes
-available the pilot then tests the *data*, rather than debugging the evidence
-system and the data at the same time.
+Stanford corpus before collection was attempted. The pilot therefore tests the
+*data*, rather than debugging the evidence system and the data at the same
+time.
 
 ## The harness
 
