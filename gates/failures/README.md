@@ -46,3 +46,22 @@ a record that is omitted because it caused no damage.
 **These are not model defects.** None of the three changes what any navigation
 model predicts. They change whether a claim about what it predicts can be
 checked, which is the thesis's actual subject.
+
+
+## Attribution-guard false positives (reworded, never bypassed)
+
+The machine-level pre-push guard matches the two-word pattern "<verb>-by" where
+the verb is the past participle of *to generate*. It fires on ordinary English
+describing how an artefact comes into existence. Each collision is reworded and
+recorded; the guard is never disabled and `--no-verify` is never used, because a
+false positive costs one rewording and a disabled attribution guard costs the
+authorship rule the repository is built on.
+
+**The record must not quote the blocked phrase.** Doing so makes the record
+itself unstageable, which happened on the first attempt at this very table. The
+pattern is therefore described, never reproduced.
+
+| Date | File | Pattern that fired | Reworded to |
+|---|---|---|---|
+| 2026-08-07 | `gates/pilot/README.md`, `scripts/wandb_evidence.py` | past participle of *to generate*, followed by "by", describing where evidence comes from | "evidence that the run ... produces" |
+| 2026-08-07 | `gates/failures/README.md` | the row above, when it quoted the phrase verbatim | the phrase described rather than quoted |

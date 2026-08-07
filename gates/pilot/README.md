@@ -179,9 +179,26 @@ Each pilot trajectory is also a versioned W&B dataset Artifact
 `purpose=format-compatibility`, `training_admitted=false`.
 
 Three sanity traces are logged per pilot trajectory — position vs frame, yaw vs
-frame, and the 2-D path. They are geometry, not metrics. **No loss, success
-rate, navigation error or SPL is logged, because no model experiment has been
-performed.**
+frame, and the 2-D path — plus the front-facing RGB observations themselves: 13
+keyframes as a media panel, an `rgb_frame_evidence` table pairing each keyframe
+with its `x`, `y`, `yaw` and digest, and the full 60-frame sequence as a
+scrubbable animation. The images are the actual rendered observations, with no
+overlay or annotation: a decorated image is worse evidence than an undecorated
+one.
+
+**Absent metrics are logged as absent, not omitted.** Every pilot run carries
+`checkpoint_loaded=false`, `training_performed=false`,
+`model_evaluation_performed=false`, and `success_rate_status`,
+`navigation_error_status`, `spl_status`, `ndtw_status`, `sdtw_status` all
+`BLOCKED` with `block_reason = "No model training or evaluation has been
+performed."` A reader six months from now can then tell *the experiment was not
+run* from *logging failed*. Those fields change only from evidence that the
+run which actually loads a checkpoint produces.
+
+A `research_status` table states the same thing in one place, and the
+cross-trajectory distinctness is published rather than asserted:
+`max_position_difference_between_pilots_m = 0.736`, `yaw_sequences_equal =
+false`, `frame_59_digests_equal = false`.
 
 ### One thing not to misread
 
@@ -197,6 +214,13 @@ Two decisions taken while publishing, both deliberate:
 * the GO Stanford **images were not uploaded** as an Artifact. Only the two
   trajectories this project collected are versioned there; redistributing a
   third-party corpus is not something a compatibility demonstration needs.
+* **no package was installed to make the animation work.** `moviepy` and
+  `imageio` are both absent, and adding either would change the canonical
+  environment's `pip_freeze_digest` — which is pinned in `PREREGISTRATION.md`
+  and verified by the freeze audit's `environment_identity_recorded` check. The
+  GIF is assembled with PIL, which is already present. Environment identity
+  re-verified unchanged at `4408691cfeb89860…` and the freeze audit re-run at
+  **16/16** after publishing.
 * the ViNT loader check uses `go_stanford`'s `metric_waypoint_spacing`, because
   the pilot data has no registered dataset entry. That constant scales action
   labels; it does not affect whether the loader **accepts** the data, which is
