@@ -714,3 +714,50 @@ checkpoint execution.
 This amendment does not validate itself. Whether it constitutes fixing rather
 than rescuing is a determination for red-team review under trigger 3, recorded
 in `gates/redteam/`. It is not claimed here.
+
+## Amendment 4 — 2026-08-07 — clarification of criterion lifetime
+
+**Trigger-3 classification: fixing.** This amendment changes no threshold, no
+condition, no decision rule, no population and no classification boundary. It
+corrects one factual description in the committed record.
+
+The earlier statement that the criterion "spans the repository's entire
+pre-freeze history" is imprecise.
+
+The criterion was introduced at commit `92e3004`. The preregistration freeze
+occurred at commit `d4fc321`. The criterion was retired at commit `d6cef79`,
+which occurred 8 hours 28 minutes after the freeze.
+
+Therefore the criterion's committed lifetime began before the freeze and
+continued after the freeze. It should not be described as being bounded by, or
+wholly contained within, the repository's pre-freeze history.
+
+| Event | Commit | Relationship |
+|---|---|---|
+| Criterion introduced | `92e3004` | Start |
+| Preregistration frozen | `d4fc321` | Criterion still active |
+| Criterion retired | `d6cef79` | 8 h 28 m after freeze |
+
+The earlier misattribution of the criterion's introduction had already been
+corrected at `8cb0e18`, in the paragraph immediately following the mandated
+blockquote, under `docs/reviews/2026-07-31-remediation-order.md` §1 and verified
+closed in `gates/redteam/trigger3-g0c-amendment-v3-2026-07-31.md`, committed in
+that same commit. **This amendment does not perform that correction.** It records
+the verified lifetime of the criterion and corrects only the remaining
+description of that lifetime.
+
+### Correction to an interval quoted during review
+
+The previously stated 9.5-hour interval was incorrect. Direct verification gives
+**8 hours 28 minutes** between `d4fc321` and `d6cef79`
+(`d4fc321` = 1785459869, `d6cef79` = 1785490366, via `git show -s --format=%ct`).
+The 9.5-hour figure is the `92e3004 → d6cef79` span, a different pair; the two
+were conflated.
+
+That figure entered through the trigger-3 review archived at
+`gates/redteam/trigger3-amendment4-2026-08-07.md` and was carried into a draft of
+this section without being recomputed. It is recorded because it demonstrates a
+rule this repository depends on:
+
+> A reviewer's statement is evidence to verify, not a fact to copy without
+> recomputation.
