@@ -1,0 +1,8 @@
+$ python scripts/generate_evaluation_pairs.py --data-folder ~/navfm-data/go_stanford/go_stanford --split-folder gates/G0/splits/test --declaration gates/G0/evaluation_declaration.json
+
+dataset built: 41872 samples
+population frozen: 41872 pairs, digest 57a7fbbeba91b92a
+  gates/G0/evaluation_pairs.tsv
+  gates/G0/evaluation_pairs.json
+
+exit=0

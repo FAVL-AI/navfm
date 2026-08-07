@@ -1,0 +1,25 @@
+$ python scripts/protocol_freeze_audit.py --amendment-commit HEAD --run-dir runs/g0c --checkpoint checkpoints/vint.pth
+
+PROTOCOL FREEZE AUDIT
+=====================
+
+amendment_committed                    PASS  5adcb12a6bddbb2281e904659f0d270f34408c04 -- carries a G0.c amendment
+amendment_sha_recorded                 PASS  full SHA 5adcb12a6bddbb2281e904659f0d270f34408c04
+amendment_ancestor_of_head             PASS  in HEAD's history
+preregistration_hash_recorded          PASS  sha256 ba96126022799f89c1a2bf2edb8073540db5470e184094620a5f5ac97be094c2
+scene_key_rule_hash_recorded           PASS  scene_key_v1 rule sha256 bbd0e76ddee9ebcd170e19d90cd548cf17c86ec165fea9bd335d136d9c363a45
+scene_order_algorithm_hash_recorded    PASS  scene_order_v1 algorithm sha256 0422bc546a467f60bf6e7b480453f246cd798c6c7f5ccc9a89716f5724cfcd15
+split_digests_recorded_and_match       PASS  train and test digests match committed files
+sha256sums_recorded                    PASS  gates/G0/SHA256SUMS sha256 9b007714a3418d3930557873e273cb3d94756a3552fb5fec1a18822d6f78ebd4
+checkpoint_digest_reverified           PASS  vint.pth 155fd72de2e98ae0 vs recorded 155fd72de2e98ae0
+environment_identity_recorded          PASS  matches preregistered 4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625
+worktree_state_declared                PASS  working tree: modified (5): PREREGISTRATION.md, gates/G0/evaluation_pairs.json, gates/G0/evaluation_pairs.tsv, gates/G0/freeze_audit.txt, gates/redteam/trigger3-amendment4-2026-08-07.md
+artefacts_resolve_at_amendment_commit  PASS  all pinned artefacts present at the amendment commit
+evaluation_pair_manifest_digest        PASS  41872 pairs, digest 57a7fbbeba91b92a recomputed and matching
+upstream_patch_identity_verified       PASS  upstream dca79815b704, patch script d091961020c52c3b, archived+live diff f77e1a655a12020a, 5 markers applied
+no_existing_g0c_result_directory       PASS  absent
+no_pre_audit_evaluator_output          PASS  no evaluator output anywhere in runs/, gates/G0/ or the run directory
+
+all 16 checks PASS -- the protocol is frozen and G0.c may execute.
+
+exit=0

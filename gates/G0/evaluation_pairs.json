@@ -1,0 +1,10 @@
+{
+  "dataset_digest": "1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4",
+  "generation_command": "python scripts/generate_evaluation_pairs.py --data-folder /home/favl/navfm-data/go_stanford/go_stanford --split-folder gates/G0/splits/test --declaration gates/G0/evaluation_declaration.json",
+  "pair_count": 41872,
+  "population_seed": 0,
+  "schema_version": "evaluation_pairs_v1",
+  "sha256": "57a7fbbeba91b92ab58a3c2889536352758e41af8280e8f0edc2e10abefd1cc0",
+  "split_digest": "697035319aa417ae96689a7482bac6c14ff6c113be563a2537ff40cfd7134eef",
+  "trajectory_count": 760
+}
