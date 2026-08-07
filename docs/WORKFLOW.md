@@ -190,6 +190,45 @@ scene diversity that makes the transfer claim defensible.
 | G2.d | lateral-energy ratio: arm A ≈ ≤ 0.15, arm B substantially higher — this *is* the manipulated variable of H2; if the arms don't separate here, the experiment is dead before training |
 | G2.e | eyeball audit: 10 random images per scene, logged as a contact sheet |
 
+### Supervisor-authorised two-trajectory compatibility pilot
+
+Prof. Bo approved a small pilot to collect a couple of trajectories in order to
+demonstrate that newly collected data are compatible with the agreed ViNT
+processed format.
+
+This pilot is a narrow exception to the normal G2 collection block.
+
+The exception permits collection of no more than two diagnostic trajectories
+before G1 and G2 are otherwise complete.
+
+The purpose is only to test data-format compatibility.
+
+A simple Isaac Sim proxy robot may be used because this pilot does not test
+robot dynamics, robot geometry or navigation performance.
+
+The pilot does not satisfy G1 or G2.
+
+The collected trajectories are not admitted for model training, validation,
+benchmarking or performance claims.
+
+Each trajectory must be converted into the agreed Option 1 format containing
+numbered RGB images and a `traj_data.pkl` file with numerical `position` and
+`yaw` arrays.
+
+The pilot is successful only if both trajectories pass the project validation
+checks and can be read by the unchanged ViNT data path.
+
+Any failure must be reported as Blocked with the reason recorded. The data must
+not be modified merely to make the compatibility test pass.
+
+No additional collection may begin until the two examples have been reviewed and
+the next step has been agreed.
+
+**Scope boundary, stated explicitly so the record cannot be misread later.** The
+cube proxy is acceptable only for this pilot. It does not satisfy G1, does not
+validate the M3 PRO model, does not open general data collection, and the
+resulting trajectories are not admitted for training or evaluation.
+
 ---
 
 ## Phase 3 — Fine-tuning bring-up (~3 days)
