@@ -1,0 +1,29 @@
+Compatibility Harness Report
+============================
+
+Trajectory                   : no10vcF_10_0
+Source                       : GO Stanford reference dataset (as released, unmodified)
+Purpose                      : compatibility-harness validation only -- NOT pilot evidence
+Project-collected trajectory : No
+Pilot evidence               : No
+Frame count                  : 68
+Dataset digest               : 1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4
+
+Required checks (all must pass):
+
+  traj_data_pkl_exists         PASS  /home/favl/navfm-data/go_stanford/go_stanford/no10vcF_10_0/traj_data.pkl
+  numbered_images_exist        PASS  68 images
+  image_numbering_contiguous   PASS  0..67 with no gaps
+  images_readable              PASS  all 68 decode
+  position_numeric             PASS  dtype float64
+  position_shape_T2            PASS  shape (68, 2)
+  yaw_numeric                  PASS  dtype float64
+  yaw_shape_T                  PASS  shape (68,)
+  finite_values                PASS  all position and yaw values finite
+  sequence_consistency         PASS  68 images == 68 poses
+  project_validator            FAIL  TypeError: ufunc 'isfinite' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+  unchanged_vint_data_path     PASS  58 samples; first sample tensors (18, 64, 85), (3, 64, 85), (5, 4), (), (2,), (), ()
+
+Overall: BLOCKED
+Failed required checks: project_validator
+BLOCKED is the correct result for a trajectory that fails any required check. The data must not be modified to make this pass.

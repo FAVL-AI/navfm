@@ -1,0 +1,72 @@
+{
+  "checks": [
+    {
+      "check": "traj_data_pkl_exists",
+      "detail": "/tmp/navfm-harness-validation/no10vcF_10_0_option1/traj_data.pkl",
+      "result": "PASS"
+    },
+    {
+      "check": "numbered_images_exist",
+      "detail": "68 images",
+      "result": "PASS"
+    },
+    {
+      "check": "image_numbering_contiguous",
+      "detail": "0..67 with no gaps",
+      "result": "PASS"
+    },
+    {
+      "check": "images_readable",
+      "detail": "all 68 decode",
+      "result": "PASS"
+    },
+    {
+      "check": "position_numeric",
+      "detail": "dtype float64",
+      "result": "PASS"
+    },
+    {
+      "check": "position_shape_T2",
+      "detail": "shape (68, 2)",
+      "result": "PASS"
+    },
+    {
+      "check": "yaw_numeric",
+      "detail": "dtype float64",
+      "result": "PASS"
+    },
+    {
+      "check": "yaw_shape_T",
+      "detail": "shape (68,)",
+      "result": "PASS"
+    },
+    {
+      "check": "finite_values",
+      "detail": "all position and yaw values finite",
+      "result": "PASS"
+    },
+    {
+      "check": "sequence_consistency",
+      "detail": "68 images == 68 poses",
+      "result": "PASS"
+    },
+    {
+      "check": "project_validator",
+      "detail": "68 frames, 68 images, path 9.79 m",
+      "result": "PASS"
+    },
+    {
+      "check": "unchanged_vint_data_path",
+      "detail": "58 samples; first sample tensors (18, 64, 85), (3, 64, 85), (5, 4), (), (2,), (), ()",
+      "result": "PASS"
+    }
+  ],
+  "collected_by_project": false,
+  "dataset_digest": "1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4",
+  "frame_count": 68,
+  "overall": "PASS",
+  "pilot_evidence": false,
+  "purpose": "compatibility-harness validation only -- NOT pilot evidence",
+  "source": "GO Stanford reference dataset (converted to Option 1 via navfm.trajio trajio_v1)",
+  "trajectory": "no10vcF_10_0_option1"
+}

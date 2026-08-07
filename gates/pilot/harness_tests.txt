@@ -1,0 +1,25 @@
+$ python -m pytest tests/test_compat_harness.py -v
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0 -- /home/favl/.venv-train/bin/python
+rootdir: /home/favl/projects/navfm
+configfile: pyproject.toml
+plugins: cov-7.1.0, anyio-4.14.2
+collecting ... collected 14 items
+
+tests/test_compat_harness.py::TestAValidFixturePasses::test_compliant_trajectory_passes_every_data_check PASSED [  7%]
+tests/test_compat_harness.py::TestAValidFixturePasses::test_provenance_fields_are_carried_into_the_report PASSED [ 14%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_missing_traj_data_pkl PASSED [ 21%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_missing_image PASSED [ 28%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_bad_image_numbering PASSED [ 35%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_wrong_position_shape PASSED [ 42%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_wrong_yaw_shape PASSED [ 50%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_non_finite_values[nan] PASSED [ 57%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_non_finite_values[inf] PASSED [ 64%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_non_finite_values[-inf] PASSED [ 71%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_multi_valued_scalar_cell PASSED [ 78%]
+tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_unreadable_image PASSED [ 85%]
+tests/test_compat_harness.py::TestOverallIsConjunctive::test_a_majority_of_passes_does_not_produce_pass PASSED [ 92%]
+tests/test_compat_harness.py::TestOverallIsConjunctive::test_released_go_stanford_representation_is_refused PASSED [100%]
+
+============================== 14 passed in 1.28s ==============================
