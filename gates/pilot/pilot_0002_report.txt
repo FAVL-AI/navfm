@@ -1,0 +1,26 @@
+Compatibility Harness Report
+============================
+
+Trajectory                   : pilot_0002
+Source                       : Isaac Sim 5.1 simple_room, cube proxy (collected by this project)
+Purpose                      : supervisor-authorised two-trajectory compatibility pilot
+Project-collected trajectory : Yes
+Pilot evidence               : Yes
+Frame count                  : 60
+
+Required checks (all must pass):
+
+  traj_data_pkl_exists         PASS  /home/favl/navfm-data/pilot/pilot_0002/traj_data.pkl
+  numbered_images_exist        PASS  60 images
+  image_numbering_contiguous   PASS  0..59 with no gaps
+  images_readable              PASS  all 60 decode
+  position_numeric             PASS  dtype float64
+  position_shape_T2            PASS  shape (60, 2)
+  yaw_numeric                  PASS  dtype float64
+  yaw_shape_T                  PASS  shape (60,)
+  finite_values                PASS  all position and yaw values finite
+  sequence_consistency         PASS  60 images == 60 poses
+  project_validator            PASS  60 frames, 60 images, path 1.72 m
+  unchanged_vint_data_path     PASS  50 samples; first sample tensors (18, 64, 85), (3, 64, 85), (5, 4), (), (2,), (), ()
+
+Overall: PASS

@@ -1,0 +1,32 @@
+{
+  "pilot_0001": {
+    "arc_length_m": 1.720833333333332,
+    "end_xy_m": [
+      1.731371848726433,
+      0.22122070759749854
+    ],
+    "frames": 60,
+    "image_manifest_sha256": "02ab96b0849a85af982fc94a257a7de600f5f88eed9375f84b36668acd118512",
+    "metadata_json_sha256": "09011c746359bb6fe4e9de5e6789006b43285a672484b5fb55d18a1a4ed5b086",
+    "traj_data_pkl_sha256": "2ea618df0f34846e72fb779931e9388fcf3cfa851c350d8e7d91372894160307",
+    "yaw_end_rad": 0.25000000000000033,
+    "yaw_start_rad": 0.004166666666666667,
+    "yaw_total_deg": 14.085212463632756,
+    "yaw_unwrapped": true
+  },
+  "pilot_0002": {
+    "arc_length_m": 1.720833333333334,
+    "end_xy_m": [
+      0.9987778167702537,
+      0.9576294417888719
+    ],
+    "frames": 60,
+    "image_manifest_sha256": "47ff35030e41ac998ce61266c84ebd9f48893c5ebb6177914151ce143e800e43",
+    "metadata_json_sha256": "967066a20596a1a5c929f9b0d1b7d4a6e95d7d1812dc4895b22635c39f6ae56b",
+    "traj_data_pkl_sha256": "93267d50b0ab7bb57a7e14d2a70cef4d30ae608023c6390716bcd5d8915f5947",
+    "yaw_end_rad": 1.4999999999999996,
+    "yaw_start_rad": 0.0,
+    "yaw_total_deg": 85.94366926962346,
+    "yaw_unwrapped": true
+  }
+}
