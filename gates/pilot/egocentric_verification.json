@@ -1,0 +1,10 @@
+{
+  "camera_parent": "/World/pilot_robot",
+  "structural_pass": true,
+  "extrinsics_constant": true,
+  "mean_abs_dpix_rotate_90deg_in_place": 54.852,
+  "mean_abs_dpix_translate_0p6m": 8.591,
+  "rotation_changes_view": true,
+  "translation_changes_view": true,
+  "egocentric_verdict": "PASS"
+}
