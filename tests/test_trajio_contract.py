@@ -114,6 +114,34 @@ class TestInvalidInputsAreRefused:
         with pytest.raises(TrajectoryContractError, match="finite"):
             normalise_traj_data(source)
 
+    @pytest.mark.parametrize(
+        ("dtype", "values"),
+        [
+            (complex, [[1 + 2j, 2 + 0j], [3 + 0j, 4 + 0j]]),
+            ("U8", [["1.5", "2.5"], ["3.5", "4.5"]]),
+            (bool, [[True, False], [False, True]]),
+            ("S8", [[b"1.5", b"2.5"], [b"3.5", b"4.5"]]),
+        ],
+    )
+    def test_typed_non_numeric_position_refuses_at_the_non_object_branch(
+        self, dtype: object, values: list
+    ) -> None:
+        """The hardening must cover BOTH branches of `_to_float_array`.
+
+        `coerce_scalar` is reached only for object-dtype input. A typed complex
+        array takes the other branch, where a bare `np.asarray(..., dtype=float)`
+        silently dropped the imaginary part -- the truncation conditions 6 and 12
+        forbid, reachable by any dataset whose arrays are typed rather than
+        boxed. These go through `normalise_traj_data`, not `coerce_scalar`,
+        because routing through the latter is what hid the defect.
+        """
+        with pytest.raises(TrajectoryContractError, match="not measurements"):
+            normalise_traj_data({"position": np.array(values, dtype=dtype), "yaw": np.zeros(2)})
+
+    def test_typed_complex_yaw_refuses(self) -> None:
+        with pytest.raises(TrajectoryContractError, match="not measurements"):
+            normalise_traj_data({"position": np.zeros((2, 2)), "yaw": np.array([1 + 1j, 2 + 0j])})
+
     def test_empty_trajectory_is_refused(self) -> None:
         with pytest.raises(TrajectoryContractError, match="empty"):
             normalise_traj_data({"position": np.zeros((0, 2)), "yaw": np.zeros(0)})
@@ -145,6 +173,28 @@ class TestCoerceScalar:
         with pytest.raises(TrajectoryContractError, match="exactly one scalar value"):
             coerce_scalar(value, field="yaw", where="t[0]")
 
+    def test_complex_cell_refuses_rather_than_dropping_the_imaginary_part(self) -> None:
+        """A complex cell holds two reals; float() would keep one and discard one.
+
+        It passes the size gate (size == 1), so only an explicit dtype check
+        catches it. This is the truncation conditions 6 and 12 forbid, arriving
+        through a dtype instead of a shape.
+        """
+        with pytest.raises(TrajectoryContractError, match="complex"):
+            coerce_scalar(np.complex128(1 + 2j), field="yaw", where="t[0]")
+
+    @pytest.mark.parametrize("value", ["1.5", np.str_("1.5"), True, np.bool_(False)])
+    def test_non_numeric_that_parses_as_a_number_refuses(self, value: object) -> None:
+        """float("1.5") succeeds. A string that parses is still not a measurement."""
+        with pytest.raises(TrajectoryContractError, match="non-numeric"):
+            coerce_scalar(np.array([value], dtype=object), field="yaw", where="t[0]")
+
+    def test_ragged_sequence_refuses_with_the_contract_error_type(self) -> None:
+        """Not numpy's bare ValueError: the caller must be able to tell a refusal
+        from a crash."""
+        with pytest.raises(TrajectoryContractError, match="ragged"):
+            coerce_scalar([[1.0, 2.0], [3.0]], field="yaw", where="t[0]")
+
     def test_malformed_nested_value_refuses(self) -> None:
         with pytest.raises(TrajectoryContractError):
             coerce_scalar(np.array(["not-a-number"], dtype=object), field="yaw", where="t[0]")
@@ -171,3 +221,90 @@ class TestAgainstTheRealCorpus:
         expected_yaw = np.array([float(np.ravel(v)[0]) for v in raw["yaw"]], dtype=float)
         out = normalise_traj_data(raw, trajectory=name)
         assert np.array_equal(out["yaw"], expected_yaw)
+
+
+class TestToleranceCounterIsReachable:
+    """The vacuity counters must be reachable for their own subjects.
+
+    A multi-valued or non-finite cell is exactly what gets a trajectory refused,
+    so a counter read after the refusal return could never be non-zero and its
+    "VACUOUSLY" annotation would print unconditionally -- including on a corpus
+    just refused for containing both. Counting the right thing is not enough;
+    the placement is the fix, so the placement is what this pins.
+    """
+
+    def _corpus(self, tmp_path: Path, yaw_cells: list) -> Path:
+        pos = np.empty((len(yaw_cells), 2), dtype=object)
+        for i in range(len(yaw_cells)):
+            for j in range(2):
+                pos[i, j] = np.float64(i + j)
+        yaw = np.empty(len(yaw_cells), dtype=object)
+        for i, cell in enumerate(yaw_cells):
+            yaw[i] = cell
+        (tmp_path / "t0").mkdir(parents=True)
+        with open(tmp_path / "t0" / "traj_data.pkl", "wb") as fh:
+            pickle.dump({"position": pos, "yaw": yaw}, fh)
+        return tmp_path
+
+    def _tally(self, root: Path):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "vt", Path(__file__).resolve().parents[1] / "scripts" / "verify_tolerance.py"
+        )
+        assert spec and spec.loader
+        vt = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(vt)
+        tally = vt.Tally()
+        vt.check_trajectory(root, "t0", tally)
+        return tally
+
+    def test_multi_valued_cell_is_counted_even_though_it_is_refused(self, tmp_path: Path) -> None:
+        root = self._corpus(tmp_path, [np.array([1.0, 2.0]), np.array([1.0])])
+        assert self._tally(root).multi_valued_cells == 1
+
+    def test_non_finite_cell_is_counted_even_though_it_is_refused(self, tmp_path: Path) -> None:
+        root = self._corpus(tmp_path, [np.array([np.nan]), np.array([1.0])])
+        assert self._tally(root).non_finite == 1
+
+    def test_a_clean_corpus_counts_zero_of_both(self, tmp_path: Path) -> None:
+        """The control: the counters must not simply always report a subject."""
+        root = self._corpus(tmp_path, [np.array([0.5]), np.array([1.0])])
+        tally = self._tally(root)
+        assert tally.multi_valued_cells == 0 and tally.non_finite == 0
+
+    def test_negative_zero_is_counted_so_the_clause_has_a_measured_subject(
+        self, tmp_path: Path
+    ) -> None:
+        """Condition 3's subject is the NEGATIVE zero, not the zero.
+
+        Keying the vacuity annotation on the zero count reported 386 subjects
+        for a clause that has none, and a corpus containing a negative zero
+        would have printed a byte-identical line.
+        """
+        pos = np.empty((2, 2), dtype=object)
+        for i in range(2):
+            for j in range(2):
+                pos[i, j] = np.float64(-0.0 if (i, j) == (0, 0) else i + j)
+        yaw = np.empty(2, dtype=object)
+        for i in range(2):
+            yaw[i] = np.array([float(i)])
+        (tmp_path / "t0").mkdir(parents=True)
+        with open(tmp_path / "t0" / "traj_data.pkl", "wb") as fh:
+            pickle.dump({"position": pos, "yaw": yaw}, fh)
+        assert self._tally(tmp_path).negative_zeros == 1
+
+    def test_a_refusable_cell_is_reported_not_raised(self, tmp_path: Path) -> None:
+        """Observing runs before normalisation, so it must not pre-empt a
+        located refusal with a bare numpy traceback."""
+        root = self._corpus(tmp_path, [np.str_("not-a-number"), np.array([1.0])])
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "vt", Path(__file__).resolve().parents[1] / "scripts" / "verify_tolerance.py"
+        )
+        assert spec and spec.loader
+        vt = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(vt)
+        problems = vt.check_trajectory(root, "t0", vt.Tally())
+        assert problems and "REFUSED by the correction" in problems[0]

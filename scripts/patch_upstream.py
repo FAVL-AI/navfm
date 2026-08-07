@@ -15,11 +15,17 @@ Patches applied, each with the failure it fixes:
     ``GradualWarmupScheduler``, so both raise ``UnpicklingError``. Adds an
     explicit ``weights_only=False`` at the two load sites.
 
-``ema_model_signature``
-    ``diffusers`` after 0.12 changed ``EMAModel(model, ...)`` to
-    ``EMAModel(parameters, ...)`` and dropped ``averaged_model``. Upstream issue
-    #36. This patch is applied only when the installed diffusers is newer than
-    0.11.1; on 0.11.1 the original code is correct and is left alone.
+``sampling_rng_isolation`` / ``sampling_rng_goal_offset`` /
+``sampling_rng_negative`` / ``sampling_rng_record_pairs``
+    Goal sampling drew from the GLOBAL numpy stream, so seeding a model also
+    changed which (observation, goal) pairs were scored -- model identity and
+    evaluation population coupled through one RNG. These give sampling its own
+    stream and record the realised population for manifest verification.
+
+``contract_normalisation_call``
+    Routes ``traj_data`` through ``navfm.trajio`` where it enters the loader,
+    the single boundary at which a released corpus is made contract-compliant
+    (finding F13).
 
 ``double_scheduler_step``
     ``train_eval_loop_nomad`` calls ``lr_scheduler.step()`` at both line ~217
@@ -57,7 +63,6 @@ class Patch:
     find: str
     replace: str
     description: str
-    condition: str = "always"
 
 
 PATCHES: list[Patch] = [
@@ -101,6 +106,22 @@ PATCHES: list[Patch] = [
             "_NAVFM_REALISED_PAIRS = []\n"
             "\n"
             "\n"
+            "def navfm_normalise_traj_data(traj_data, trajectory_name):\n"
+            '    """Make a released trajectory satisfy the model-ready contract (F13).\n'
+            "\n"
+            "    The released GO Stanford corpus stores position and yaw as object-dtype\n"
+            "    arrays -- position of 0-d float64 scalars, yaw of 1-element ndarrays --\n"
+            "    which torch.as_tensor rejects under every numpy version regardless of\n"
+            "    what is boxed. navfm.trajio is the single boundary that converts them,\n"
+            "    and it\n"
+            "    ASSERTS rather than repairs: exactly one scalar per cell or refuse,\n"
+            "    correct shape or refuse, finite or refuse, never truncate, never drop.\n"
+            '    """\n'
+            "    from navfm.trajio import normalise_traj_data\n"
+            "\n"
+            "    return normalise_traj_data(traj_data, trajectory=trajectory_name)\n"
+            "\n"
+            "\n"
             "def navfm_seed_sampling(seed):\n"
             '    """Seed the evaluation-population stream. Independent of model init."""\n'
             "    _NAVFM_SAMPLING_RNG.seed(seed)\n"
@@ -113,6 +134,20 @@ PATCHES: list[Patch] = [
             "goal sampling drew from global np.random, coupling model seed to the "
             "evaluation population"
         ),
+    ),
+    Patch(
+        name="contract_normalisation_call",
+        relative_path="train/vint_train/data/vint_dataset.py",
+        find=(
+            "                traj_data = pickle.load(f)\n"
+            "            self.trajectory_cache[trajectory_name] = traj_data"
+        ),
+        replace=(
+            "                traj_data = pickle.load(f)\n"
+            f"            traj_data = navfm_normalise_traj_data(traj_data, trajectory_name)  {MARKER}contract_normalisation_call\n"
+            "            self.trajectory_cache[trajectory_name] = traj_data"
+        ),
+        description="apply contract normalisation where traj_data enters the loader",
     ),
     Patch(
         name="sampling_rng_record_pairs",
@@ -191,6 +226,23 @@ def apply_patches(root: Path, *, revert: bool, dry_run: bool) -> int:
                 continue
             new = text.replace(patch.find, patch.replace, 1)
 
+        if new == text:
+            # str.replace found nothing and returned the input unchanged. Both
+            # branches above then counted an "apply" that wrote no bytes. This
+            # script produces the digest the freeze audit binds as protocol
+            # identity, so a no-op reported as success is the worst outcome
+            # available to it: the operator is told the clone is in a state it
+            # is not in. On revert this happens whenever the patched region has
+            # been edited -- the marker still matches, the replacement text no
+            # longer does.
+            print(
+                f"FAIL  {patch.name}: {'revert' if revert else 'apply'} matched nothing and "
+                f"changed no bytes in {patch.relative_path}; the region has been modified "
+                f"since it was patched"
+            )
+            failed += 1
+            continue
+
         diff = difflib.unified_diff(
             text.splitlines(keepends=True),
             new.splitlines(keepends=True),
@@ -237,6 +289,36 @@ def comment_out_cory_hall(root: Path, *, dry_run: bool) -> None:
                 path.write_text(new)
 
 
+def uncomment_cory_hall(root: Path, *, dry_run: bool) -> None:
+    """Undo :func:`comment_out_cory_hall`, so ``--revert`` really reverts.
+
+    Without this the three configs stayed patched while ``--revert`` printed
+    ``0 failed``, which reads as a complete revert. A revert that silently
+    leaves files patched is worse than one that fails: the next apply skips
+    those patches as "already applied" and the resulting patch.diff --- the
+    artefact the freeze audit digests --- describes a tree nobody built.
+    """
+    header = re.compile(
+        r"^  # " + re.escape(MARKER) + r"cory_hall --[^\n]*\n(?:^  #[^\n]*\n)*", re.MULTILINE
+    )
+    body = re.compile(r"(?:^#(  cory_hall:|    [^\n]*)\n)+", re.MULTILINE)
+    for name in ("gnm.yaml", "vint.yaml", "nomad.yaml"):
+        path = root / "train" / "config" / name
+        if not path.is_file():
+            continue
+        text = path.read_text()
+        if f"{MARKER}cory_hall" not in text:
+            continue
+        new = body.sub(
+            lambda m: "".join(line[1:] + "\n" for line in m.group(0).splitlines()),
+            header.sub("", text),
+        )
+        if new != text:
+            print(f"REVERT cory_hall in {path}")
+            if not dry_run:
+                path.write_text(new)
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -253,8 +335,11 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     rc = apply_patches(root, revert=args.revert, dry_run=args.dry_run)
-    if not args.revert and not args.skip_cory_hall:
-        comment_out_cory_hall(root, dry_run=args.dry_run)
+    if not args.skip_cory_hall:
+        if args.revert:
+            uncomment_cory_hall(root, dry_run=args.dry_run)
+        else:
+            comment_out_cory_hall(root, dry_run=args.dry_run)
     return rc
 
 

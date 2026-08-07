@@ -109,10 +109,10 @@ index 4759ad9..45a9b57 100644
          if "epoch" in latest_checkpoint:
              current_epoch = latest_checkpoint["epoch"] + 1
 diff --git a/train/vint_train/data/vint_dataset.py b/train/vint_train/data/vint_dataset.py
-index 87b101c..77d516f 100644
+index 87b101c..ea300dc 100644
 --- a/train/vint_train/data/vint_dataset.py
 +++ b/train/vint_train/data/vint_dataset.py
-@@ -18,6 +18,27 @@ from vint_train.data.data_utils import (
+@@ -18,6 +18,43 @@ from vint_train.data.data_utils import (
      to_local_coords,
  )
  
@@ -131,6 +131,22 @@ index 87b101c..77d516f 100644
 +_NAVFM_REALISED_PAIRS = []
 +
 +
++def navfm_normalise_traj_data(traj_data, trajectory_name):
++    """Make a released trajectory satisfy the model-ready contract (F13).
++
++    The released GO Stanford corpus stores position and yaw as object-dtype
++    arrays -- position of 0-d float64 scalars, yaw of 1-element ndarrays --
++    which torch.as_tensor rejects under every numpy version regardless of
++    what is boxed. navfm.trajio is the single boundary that converts them,
++    and it
++    ASSERTS rather than repairs: exactly one scalar per cell or refuse,
++    correct shape or refuse, finite or refuse, never truncate, never drop.
++    """
++    from navfm.trajio import normalise_traj_data
++
++    return normalise_traj_data(traj_data, trajectory=trajectory_name)
++
++
 +def navfm_seed_sampling(seed):
 +    """Seed the evaluation-population stream. Independent of model init."""
 +    _NAVFM_SAMPLING_RNG.seed(seed)
@@ -140,7 +156,7 @@ index 87b101c..77d516f 100644
  class ViNT_Dataset(Dataset):
      def __init__(
          self,
-@@ -192,7 +213,7 @@ class ViNT_Dataset(Dataset):
+@@ -192,7 +229,7 @@ class ViNT_Dataset(Dataset):
          Sample a goal from the future in the same trajectory.
          Returns: (trajectory_name, goal_time, goal_is_negative)
          """
@@ -149,7 +165,7 @@ index 87b101c..77d516f 100644
          if goal_offset == 0:
              trajectory_name, goal_time = self._sample_negative()
              return trajectory_name, goal_time, True
-@@ -204,7 +225,7 @@ class ViNT_Dataset(Dataset):
+@@ -204,7 +241,7 @@ class ViNT_Dataset(Dataset):
          """
          Sample a goal from a (likely) different trajectory.
          """
@@ -158,7 +174,15 @@ index 87b101c..77d516f 100644
  
      def _load_index(self) -> None:
          """
-@@ -299,6 +320,7 @@ class ViNT_Dataset(Dataset):
+@@ -279,6 +316,7 @@ class ViNT_Dataset(Dataset):
+         else:
+             with open(os.path.join(self.data_folder, trajectory_name, "traj_data.pkl"), "rb") as f:
+                 traj_data = pickle.load(f)
++            traj_data = navfm_normalise_traj_data(traj_data, trajectory_name)  # navfm-patch:contract_normalisation_call
+             self.trajectory_cache[trajectory_name] = traj_data
+             return traj_data
+ 
+@@ -299,6 +337,7 @@ class ViNT_Dataset(Dataset):
          """
          f_curr, curr_time, max_goal_dist = self.index_to_data[i]
          f_goal, goal_time, goal_is_negative = self._sample_goal(f_curr, curr_time, max_goal_dist)

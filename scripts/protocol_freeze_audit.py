@@ -19,19 +19,25 @@ scientific outcome. It is the gate declining to produce one.
 
 ## Expected state before the amendment exists
 
-Two checks fail by construction until the G0.c amendment is committed and the
+Three checks fail by construction until the G0.c amendment is committed and the
 pre-execution pass has generated the pair manifest, **in that order**:
 
 * ``amendment_committed`` — no G0.c amendment heading exists yet;
+* ``upstream_patch_identity_verified`` — the patch digest is read from the
+  amendment commit's blob, not from the worktree, so it cannot resolve until
+  the amendment carrying the pin is committed. Reading the worktree instead
+  would make this pass earlier at the cost of checking nothing: both sides of
+  the comparison would be files an operator can edit, and one coordinated edit
+  would satisfy it;
 * ``evaluation_pair_manifest_digest`` — the manifest is generated at gate time
   under the declared population seed. It cannot exist earlier without being
   fabricated, and a manifest committed in advance would pin a population nobody
   had drawn.
 
 Sixteen-of-sixteen is therefore reachable only *after* the amendment commit and
-*then* the manifest generation. Two failures at this point is the correct
+*then* the manifest generation. Three failures at this point is the correct
 pre-amendment state, not a precondition mismatch: do not halt on it, and do not
-manufacture either artefact to make the count green.
+manufacture any of the artefacts to make the count green.
 """
 
 from __future__ import annotations
@@ -82,6 +88,21 @@ def _git_at(root: Path, *args: str) -> tuple[int, str]:
         ["git", "-C", str(root), *args], capture_output=True, text=True, check=False, timeout=60
     )
     return p.returncode, (p.stdout or p.stderr).strip()
+
+
+def _git_bytes(*args: str) -> tuple[int, bytes]:
+    """git output as raw bytes -- a diff must be digested exactly as stored."""
+    p = subprocess.run(
+        ["git", "-C", str(REPO), *args], capture_output=True, check=False, timeout=60
+    )
+    return p.returncode, p.stdout
+
+
+def _git_bytes_at(root: Path, *args: str) -> tuple[int, bytes]:
+    p = subprocess.run(
+        ["git", "-C", str(root), *args], capture_output=True, check=False, timeout=60
+    )
+    return p.returncode, p.stdout
 
 
 def _identity_diff(expected_id: str) -> str:
@@ -411,9 +432,62 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
         problems_patch.append(
             f"upstream HEAD {upstream_sha[:12]} != declared {declared_upstream[:12]}"
         )
-    patch_digest = _sha256_file(PATCH_DIFF)
+    # Three distinct things must agree, and reading any of them from the
+    # worktree defeats the purpose: the worktree is what an operator can edit.
+    #   (a) the digest PINNED in the amendment, read from the amendment COMMIT;
+    #   (b) the ARCHIVED gates/G0/patch.diff, read from that same commit;
+    #   (c) the LIVE clone's actual diff -- the code G0.c will really execute.
+    # Comparing only (a) against (b), both from the worktree, is a
+    # self-consistency check that a single coordinated edit satisfies, and it
+    # says nothing at all about (c).
+    prereg_code, prereg_blob = (
+        _git("show", f"{resolved}:PREREGISTRATION.md") if resolves else (1, "")
+    )
+    archived_code, archived_blob = (
+        _git_bytes("show", f"{resolved}:gates/G0/patch.diff") if resolves else (1, b"")
+    )
+    patch_digest = hashlib.sha256(archived_blob).hexdigest() if archived_code == 0 else None
     if patch_digest is None:
-        problems_patch.append("no archived patch diff")
+        problems_patch.append(
+            "gates/G0/patch.diff does not exist at the amendment commit, so the patch set "
+            "is unarchived at the point the protocol was frozen"
+        )
+    pinned: list[str] = []
+    if prereg_code == 0:
+        pinned = re.findall(
+            r"`?([0-9a-f]{64})`?",
+            "\n".join(
+                line
+                for line in prereg_blob.splitlines()
+                if "patch.diff" in line or "patch-set digest" in line
+            ),
+        )
+    if not pinned:
+        problems_patch.append(
+            "PREREGISTRATION.md at the amendment commit pins no patch.diff digest, so the "
+            "patch set is unbound: any patch set would pass this check"
+        )
+    elif len(set(pinned)) != 1:
+        problems_patch.append(
+            f"the amendment commit pins {len(set(pinned))} different patch.diff digests; "
+            f"the binding is ambiguous"
+        )
+    elif patch_digest is not None and pinned[0] != patch_digest:
+        problems_patch.append(
+            f"archived patch.diff {patch_digest[:16]} != amendment-pinned {pinned[0][:16]}"
+        )
+
+    # (c) the live clone. Without this the check certifies a file, not the code.
+    live_code, live_diff = _git_bytes_at(UPSTREAM, "diff")
+    live_digest = hashlib.sha256(live_diff).hexdigest() if live_code == 0 else None
+    if live_digest is None:
+        problems_patch.append("cannot read the upstream clone's working diff")
+    elif pinned and live_digest != pinned[0]:
+        problems_patch.append(
+            f"LIVE CLONE diff {live_digest[:16]} != amendment-pinned {pinned[0][:16]} -- the "
+            f"code this gate would execute is not the frozen patch set. Marker counts and the "
+            f"archived diff cannot detect this: the clone can be edited after patching"
+        )
     script_digest = _sha256_file(REPO / "scripts" / "patch_upstream.py")
     applied = 0
     dataset = UPSTREAM / "train" / "vint_train" / "data" / "vint_dataset.py"
@@ -421,10 +495,24 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
         applied = dataset.read_text().count("# navfm-patch:")
     except OSError:
         problems_patch.append("cannot read the patched dataset module")
-    if applied < 4:
+    if applied < 5:
         problems_patch.append(
-            f"only {applied} sampling patch markers present in vint_dataset.py -- the clone "
-            f"is unpatched or partially patched, so sampling semantics are not the frozen ones"
+            f"only {applied} navfm patch markers present in vint_dataset.py -- the clone "
+            f"is unpatched or partially patched, so sampling semantics are not the frozen "
+            f"ones (expected 5: 4 sampling + contract_normalisation_call)"
+        )
+    # git diff does not see untracked files, and navfm.upstream puts the clone's
+    # train/ on sys.path -- so an untracked module there shadows imports while
+    # leaving the diff digest unchanged. Digesting "the code the gate executes"
+    # has to mean the whole tree, not just its tracked delta.
+    untracked_code, untracked = _git_at(UPSTREAM, "status", "--porcelain")
+    stray = [ln[3:] for ln in untracked.splitlines() if ln.startswith("??")]
+    if untracked_code != 0:
+        problems_patch.append("cannot list the upstream clone's untracked files")
+    elif stray:
+        problems_patch.append(
+            f"{len(stray)} untracked file(s) in the upstream clone ({', '.join(stray[:3])}); "
+            f"these are invisible to the diff digest but importable by the gate"
         )
     checks.append(
         Check(
@@ -433,7 +521,7 @@ def audit(amendment_commit: str, run_dir: Path, checkpoint: Path | None) -> list
             "; ".join(problems_patch)
             if problems_patch
             else f"upstream {upstream_sha[:12]}, patch script {str(script_digest)[:16]}, "
-            f"diff {str(patch_digest)[:16]}, {applied} markers applied",
+            f"archived+live diff {str(patch_digest)[:16]}, {applied} markers applied",
         )
     )
 

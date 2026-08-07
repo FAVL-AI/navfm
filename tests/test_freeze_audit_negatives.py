@@ -20,6 +20,7 @@ difference is to break it on purpose.
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import subprocess
 import sys
@@ -146,15 +147,49 @@ class TestIdentityCheckCanFail:
 
 
 class TestPatchIdentityCheckCanFail:
-    def test_unpatched_clone_is_detected(self) -> None:
-        """The sampling semantics the amendment freezes live in the patch. An
-        unpatched clone silently restores the global-stream coupling."""
-        checks = audit.audit("HEAD", Path("runs/__probe__"), None)
-        by_name = {c.name: c for c in checks}
+    """The check binds three things: the pin in the amendment commit's blob, the
+    archived diff at that commit, and the LIVE clone's diff.
+
+    Asserting that it passes at HEAD would tie this test to commit order rather
+    than to behaviour: the pin lives in the amendment, so before that commit the
+    correct result is FAIL-because-unbound. The earlier version of this test
+    asserted the pass and therefore encoded the pre-amendment state as correct.
+    """
+
+    def _check(self, commit: str = "HEAD") -> audit.Check:
+        by_name = {c.name: c for c in audit.audit(commit, Path("runs/__probe__"), None)}
         assert "upstream_patch_identity_verified" in by_name
-        # Present state is patched; assert the check reads the real marker.
-        assert by_name["upstream_patch_identity_verified"].passed
-        assert "markers applied" in by_name["upstream_patch_identity_verified"].detail
+        return by_name["upstream_patch_identity_verified"]
+
+    def test_an_absent_pin_fails_rather_than_passing_vacuously(self) -> None:
+        """No pin at the named commit must FAIL. If it passed, any patch set
+        would satisfy the check -- the dangerous-default shape again.
+
+        Pinned to `d4fc321`, the frozen-preregistration commit, which predates
+        every patch amendment and therefore carries no digest. Asserting against
+        HEAD would make this test's meaning flip the moment the amendment lands:
+        it would pass for the right reason today and the wrong one tomorrow.
+        """
+        check = self._check("d4fc321")
+        assert not check.passed, (
+            "a commit with no pinned patch digest was certified; the check is "
+            "vacuous and any patch set would satisfy it"
+        )
+        assert "unbound" in check.detail or "unarchived" in check.detail
+
+    def test_the_live_clone_is_inspected_not_just_the_archived_diff(self) -> None:
+        """Marker counts and the archived diff both survive an edit to the code
+        beneath them. Only digesting the live clone detects a tampered body."""
+        source = inspect.getsource(audit.audit)
+        assert "_git_bytes_at(UPSTREAM" in source, "the live clone is never digested"
+        assert "LIVE CLONE" in source
+
+    def test_both_sides_are_read_from_the_commit_not_the_worktree(self) -> None:
+        """Reading either side from the worktree makes this a self-consistency
+        check that one coordinated edit satisfies."""
+        source = inspect.getsource(audit.audit)
+        assert 'f"{resolved}:PREREGISTRATION.md"' in source
+        assert 'f"{resolved}:gates/G0/patch.diff"' in source
 
     def test_audit_reports_sixteen_checks(self) -> None:
         assert len(audit.audit("HEAD", Path("runs/__probe__"), None)) == 16

@@ -1,0 +1,16 @@
+$ python scripts/verify_tolerance.py
+
+trajectories checked : 3696
+converted            : 3696
+population invariant : HOLDS
+scalars compared     : 594378
+maximum ULP distance : 0
+exact zeros seen     : 386
+negative zeros seen  : 0  (zero-sign clause holds VACUOUSLY)
+subnormals seen      : 0  (subnormal clause holds VACUOUSLY)
+multi-valued cells   : 0  (no-truncation clause holds VACUOUSLY)
+non-finite values    : 0  (non-finite clause holds VACUOUSLY)
+
+All scalars within 1 ULP at float32; every semantic invariant holds.
+
+exit=0

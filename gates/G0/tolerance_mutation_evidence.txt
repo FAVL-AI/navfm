@@ -1,0 +1,23 @@
+population: first 60 trajectories of the released corpus
+
+identity (control, must SURVIVE)   SURVIVED  0/60 trajectories flagged
++1 ULP  (at the declared bound)    KILLED    1/60 trajectories flagged
++2 ULP  (past the bound)           KILLED    60/60 trajectories flagged
+temporal order reversed            KILLED    43/60 trajectories flagged
+x/y columns transposed             KILLED    60/60 trajectories flagged
+last sample dropped                KILLED    60/60 trajectories flagged
+shifted one place                  KILLED    43/60 trajectories flagged
+relative perturbation 3e-8         SURVIVED  0/60 trajectories flagged
+relative perturbation 6.5e-8       KILLED    16/60 trajectories flagged
+
+Note on the "+1 ULP" row. The ULP clause admits 1 ULP by declaration, so this
+mutant is expected to survive that clause -- and it does. The single flagged
+trajectory is the ORDERING invariant firing: perturbing one value by one
+representable step made two adjacent yaw samples swap rank, which the argsort
+comparison reports. That is the ordering clause working, not the ULP clause
+failing at its own bound. Recorded here so the row is not misread as evidence
+that the declared tolerance is violated by a 1-ULP change.
+
+The two relative-perturbation rows bracket the bound the amendment discloses:
+3e-8 survives, 6.5e-8 is caught. That is the empirical basis for the disclosed
+"roughly 6e-8" figure, which is why this file exists.
