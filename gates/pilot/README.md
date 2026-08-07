@@ -225,3 +225,32 @@ Two decisions taken while publishing, both deliberate:
   the pilot data has no registered dataset entry. That constant scales action
   labels; it does not affect whether the loader **accepts** the data, which is
   the only claim being made here.
+
+
+## W&B workspace sections
+
+1. **Data Collection Progress** — `data_collection_progress` and
+   `pilot_collection_detail` tables: planned vs collected, frames, per-trajectory
+   scene/robot/movement/yaw. Headline: *"Pilot data collection complete: 2 of 2
+   trajectories collected, validated and accepted by the unchanged ViNT data
+   path. General data collection has not yet started."*
+2. **Front-Facing RGB Images** — `front_rgb_keyframes`, `rgb_frame_evidence`,
+   `front_rgb_sequence`.
+3. **Trajectory Evidence** — `position_vs_frame`, `yaw_vs_frame`, `path_xy`.
+4. **Research Status** — `research_status`, including *Two-trajectory
+   compatibility pilot: COMPLETE* beside *General data collection: NOT OPENED*.
+
+### The camera claim is grounded, not inferred
+
+Pilot runs carry `camera_view="robot_egocentric"`, `camera_mount="front"`,
+`camera_tracking=false`, `viewport_camera=false`, the parent prim, the fixed
+extrinsics, and both measured pixel deltas. Captions read
+`<traj> | frame NNN | robot-mounted front RGB`.
+
+**W&B shows the rendered frames; the archived verification proves where they
+come from.** `egocentric_verification_evidence` points at
+`gates/pilot/egocentric_verification.json @ 57ee22b` for exactly that reason: a
+world camera placed at robot height looking forward produces frames of the same
+visual character, so the mounting cannot be established from the pictures. The
+reference run carries none of these fields — its camera was never verified,
+because it is a converted reference trajectory, not something we rendered.

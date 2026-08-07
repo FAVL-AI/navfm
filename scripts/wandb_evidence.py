@@ -59,6 +59,30 @@ NOT_DONE = {
     "block_reason": "No model training or evaluation has been performed.",
 }
 
+#: Set only on runs whose camera mounting was actually verified. The claim is
+#: grounded in gates/pilot/egocentric_verification.{json,md}, archived at
+#: 57ee22b, not in how the pictures look -- a world camera at robot height
+#: looking forward produces frames of the same visual character.
+EGOCENTRIC = {
+    "camera_view": "robot_egocentric",
+    "camera_mount": "front",
+    "camera_tracking": False,
+    "viewport_camera": False,
+    "camera_parent_prim": "/World/pilot_robot",
+    "camera_extrinsics_robot_frame": "translate (0.10, 0.00, 0.12) m, rotate (90, 0, -90) deg XYZ",
+    "camera_extrinsics_constant_during_capture": True,
+    "egocentric_verification": "PASS",
+    "egocentric_verification_evidence": "gates/pilot/egocentric_verification.json @ 57ee22b",
+    "egocentric_rotate_90_in_place_mean_abs_dpix": 54.852,
+    "egocentric_translate_0p6m_mean_abs_dpix": 8.591,
+}
+
+HEADLINE = (
+    "Pilot data collection complete: 2 of 2 trajectories collected, validated "
+    "and accepted by the unchanged ViNT data path. General data collection has "
+    "not yet started."
+)
+
 CONCLUSION = (
     "Two independently collected Isaac Sim trajectories passed all required "
     "Option 1 compatibility checks and were accepted by the unchanged ViNT data "
@@ -234,7 +258,9 @@ def _keyframes_and_table(wandb, traj_dir: Path, name: str, geom: dict):
         digest = _sha256(p)
         with PILImage.open(p) as im:
             im = im.convert("RGB")
-            media.append(wandb.Image(im, caption=f"{name} | frame {i:03d} | front RGB"))
+            media.append(
+                wandb.Image(im, caption=f"{name} | frame {i:03d} | robot-mounted front RGB")
+            )
             rows.append(
                 [
                     name,
@@ -350,6 +376,7 @@ def main(argv: list[str] | None = None) -> int:
                 "scene": "simple_room" if prov["pilot_evidence"] else "n/a",
                 "authoritative_verdict_source": "local navfm.compat, archived in gates/pilot/",
                 "conclusion": CONCLUSION,
+                **(EGOCENTRIC if prov["pilot_evidence"] else {}),
             },
         )
         run.summary.update(row)
@@ -365,7 +392,8 @@ def main(argv: list[str] | None = None) -> int:
             gif = _gif(traj_dir, report.frame_count, traj_dir / "sequence.gif")
             if gif is not None:
                 payload["front_rgb_sequence"] = wandb.Video(
-                    str(gif), caption=f"{report.trajectory} | all {report.frame_count} frames"
+                    str(gif),
+                    caption=f"{report.trajectory} | all {report.frame_count} frames | robot-mounted front RGB",
                 )
         run.log(payload)
 
@@ -390,6 +418,7 @@ def main(argv: list[str] | None = None) -> int:
                     "frame_count": row["frame_count"],
                     "path_length_m": row["path_length_m"],
                     "overall_compatibility": report.overall,
+                    **EGOCENTRIC,
                 },
             )
             art.add_dir(str(traj_dir))
@@ -409,7 +438,7 @@ def main(argv: list[str] | None = None) -> int:
         name="compatibility-summary",
         job_type="summary",
         reinit=True,
-        config={"conclusion": CONCLUSION},
+        config={"conclusion": CONCLUSION, "headline": HEADLINE},
     )
     summary.log({"compatibility": wandb.Table(columns=VISIBLE + FORENSIC, data=rows)})
 
@@ -422,6 +451,8 @@ def main(argv: list[str] | None = None) -> int:
         ["vint.pth loaded", "NOT STARTED", "Checkpoint intentionally unloaded"],
         ["Model training", "NOT STARTED", "No training run"],
         ["Model evaluation", "NOT STARTED", "No evaluation run"],
+        ["Two-trajectory compatibility pilot", "COMPLETE", "pilot_0001 and pilot_0002, 12/12 each"],
+        ["General data collection", "NOT OPENED", "Requires an agreed plan; G1/G2 not satisfied"],
         ["Success Rate", "BLOCKED", "Evaluation not performed"],
         ["Navigation Error", "BLOCKED", "Evaluation not performed"],
         ["SPL", "BLOCKED", "Evaluation not performed"],
