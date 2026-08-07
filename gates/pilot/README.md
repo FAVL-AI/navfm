@@ -151,3 +151,53 @@ was measured.
 * The trajectories are not admitted for training, validation, benchmarking or
   any performance claim.
 * No model was loaded and no metric was computed. `vint.pth` remains unloaded.
+
+---
+
+## W&B evidence layer (provenance, not verdict)
+
+Project: **`navfm-vint-data-compatibility`** —
+`https://wandb.ai/f-a-v-l/navfm-vint-data-compatibility`
+
+| Run | Subject | `project_collected` | `pilot_evidence` | Overall |
+|---|---|---|---|---|
+| `go-stanford-harness-validation` | GO Stanford, converted | `false` | `false` | PASS |
+| `pilot-trajectory-0001` | our collection | `true` | `true` | PASS |
+| `pilot-trajectory-0002` | our collection | `true` | `true` | PASS |
+| `compatibility-summary` | the three rows as a Table | — | — | — |
+
+**The local report is authoritative.** `scripts/wandb_evidence.py` re-runs
+`navfm.compat` and publishes what it returns; it cannot reach a different
+conclusion and cannot turn a BLOCKED trajectory green. `overall_compatibility`
+is conjunctive — there is no percentage and no partial credit. Ten of eleven
+checks passing with the ViNT loader failing is BLOCKED.
+
+Each pilot trajectory is also a versioned W&B dataset Artifact
+(`pilot-trajectory-0001:v0`, `pilot-trajectory-0002:v0`) carrying the images,
+`traj_data.pkl`, `metadata.json` and `compatibility_report.json`, with metadata
+`source=isaac-sim-5.1`, `robot_representation=cube-proxy`, `scene=simple_room`,
+`purpose=format-compatibility`, `training_admitted=false`.
+
+Three sanity traces are logged per pilot trajectory — position vs frame, yaw vs
+frame, and the 2-D path. They are geometry, not metrics. **No loss, success
+rate, navigation error or SPL is logged, because no model experiment has been
+performed.**
+
+### One thing not to misread
+
+The GO Stanford row is the **converted** trajectory, and it passes. The
+**as-released** GO Stanford trajectory is `BLOCKED` — it is object-dtype and
+does not satisfy Option 1 (F13). That result is in
+`harness_validation_as_released.txt` and is not a W&B row, so read the W&B
+GO Stanford row as *"the harness accepts a correctly-formatted reference
+trajectory"*, never as *"the released corpus is Option 1 compliant"*.
+
+Two decisions taken while publishing, both deliberate:
+
+* the GO Stanford **images were not uploaded** as an Artifact. Only the two
+  trajectories this project collected are versioned there; redistributing a
+  third-party corpus is not something a compatibility demonstration needs.
+* the ViNT loader check uses `go_stanford`'s `metric_waypoint_spacing`, because
+  the pilot data has no registered dataset entry. That constant scales action
+  labels; it does not affect whether the loader **accepts** the data, which is
+  the only claim being made here.
