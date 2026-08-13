@@ -1,0 +1,27 @@
+{
+  "model": "gnm",
+  "loss_source": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::_compute_losses (L36-96)",
+  "alpha": 0.5,
+  "alpha_source": "train/config/gnm.yaml:31",
+  "total_loss_formula": "alpha * 1e-2 * dist_loss + (1 - alpha) * action_loss",
+  "components": {
+    "dist_loss": 20.98782730102539,
+    "action_loss": 0.0,
+    "action_waypts_cos_sim": 0.0,
+    "multi_action_waypts_cos_sim": 0.0,
+    "action_orien_cos_sim": 0.0,
+    "multi_action_orien_cos_sim": 0.0,
+    "total_loss": 0.10493913292884827
+  },
+  "finite": {
+    "dist_loss": true,
+    "action_loss": true,
+    "action_waypts_cos_sim": true,
+    "multi_action_waypts_cos_sim": true,
+    "action_orien_cos_sim": true,
+    "multi_action_orien_cos_sim": true,
+    "total_loss": true
+  },
+  "all_finite": true,
+  "total_is_scalar": true
+}

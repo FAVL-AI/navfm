@@ -1,0 +1,19 @@
+{
+  "model": "nomad",
+  "loss_source": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L613-657",
+  "alpha": 0.0001,
+  "alpha_source": "train/config/nomad.yaml:47",
+  "total_loss_formula": "alpha * dist_loss + (1 - alpha) * diffusion_loss",
+  "components": {
+    "dist_loss": 14.243029594421387,
+    "diffusion_loss": 0.03493993729352951,
+    "total_loss": 0.03636074438691139
+  },
+  "finite": {
+    "dist_loss": true,
+    "diffusion_loss": true,
+    "total_loss": true
+  },
+  "all_finite": true,
+  "total_is_scalar": true
+}

@@ -1,0 +1,23 @@
+{
+  "trajectory_frame_count": 40,
+  "context_size": 5,
+  "action_horizon": 5,
+  "waypoint_spacing": 1,
+  "end_slack": 0,
+  "begin_time": 5,
+  "end_time": 35,
+  "begin_rule": "context_size * waypoint_spacing",
+  "end_rule": "traj_len - end_slack - len_traj_pred * waypoint_spacing",
+  "candidate_population": 40,
+  "accepted_population": 30,
+  "rejected_population": 10,
+  "conservation_holds": true,
+  "predicted_effective": 30,
+  "actual_effective": 30,
+  "predicted_equals_actual": true,
+  "accepted_indices_match_rule": true,
+  "first_accepted": 5,
+  "last_accepted": 34,
+  "no_rejection_branch_in_source": true,
+  "source": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221"
+}

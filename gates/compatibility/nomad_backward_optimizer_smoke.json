@@ -1,0 +1,136 @@
+{
+  "model": "nomad",
+  "gradients": {
+    "parameters_total": 644,
+    "parameters_trainable": 644,
+    "parameters_with_gradient": 628,
+    "parameters_with_nonzero_gradient": 628,
+    "parameters_with_nan_gradient": 0,
+    "parameters_with_inf_gradient": 0,
+    "gradient_global_norm": 2.8813095092773438
+  },
+  "watched_before": [
+    {
+      "name": "vision_encoder.obs_encoder._conv_stem.weight",
+      "shape": [
+        32,
+        3,
+        3,
+        3
+      ],
+      "norm": 3.1640465259552,
+      "digest": "0938f2f8a8ebadc9"
+    },
+    {
+      "name": "vision_encoder.obs_encoder._bn0.weight",
+      "shape": [
+        32
+      ],
+      "norm": 5.2741827964782715,
+      "digest": "792fb61a233fd33c"
+    },
+    {
+      "name": "vision_encoder.obs_encoder._bn0.bias",
+      "shape": [
+        32
+      ],
+      "norm": 0.2622500956058502,
+      "digest": "30a9033c5440409d"
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+      "shape": [
+        32,
+        1,
+        3,
+        3
+      ],
+      "norm": 3.1933834552764893,
+      "digest": "d08390198ed091a5"
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+      "shape": [
+        32
+      ],
+      "norm": 5.342245101928711,
+      "digest": "53f315822495301a"
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+      "shape": [
+        32
+      ],
+      "norm": 0.19306355714797974,
+      "digest": "c308c73fc569e547"
+    }
+  ],
+  "watched_after": [
+    {
+      "name": "vision_encoder.obs_encoder._conv_stem.weight",
+      "norm": 3.164055824279785,
+      "digest": "fc11ae1ae5e8d30c",
+      "changed": true
+    },
+    {
+      "name": "vision_encoder.obs_encoder._bn0.weight",
+      "norm": 5.274189472198486,
+      "digest": "11419e8c8d1615ee",
+      "changed": true
+    },
+    {
+      "name": "vision_encoder.obs_encoder._bn0.bias",
+      "norm": 0.262260764837265,
+      "digest": "6b41266925e00ab2",
+      "changed": true
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+      "norm": 3.1933863162994385,
+      "digest": "085c50832099ba95",
+      "changed": true
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+      "norm": 5.342241287231445,
+      "digest": "644ac14c0cd371b2",
+      "changed": true
+    },
+    {
+      "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+      "norm": 0.1930682212114334,
+      "digest": "36eee5028df6f6ba",
+      "changed": true
+    }
+  ],
+  "parameters_changed_by_step": 628,
+  "parameters_total_trainable": 644,
+  "parameters_unchanged": {
+    "count": 16,
+    "names": [
+      "vision_encoder.obs_encoder._fc.weight",
+      "vision_encoder.obs_encoder._fc.bias",
+      "vision_encoder.goal_encoder._fc.weight",
+      "vision_encoder.goal_encoder._fc.bias",
+      "vision_encoder.sa_layer.self_attn.in_proj_weight",
+      "vision_encoder.sa_layer.self_attn.in_proj_bias",
+      "vision_encoder.sa_layer.self_attn.out_proj.weight",
+      "vision_encoder.sa_layer.self_attn.out_proj.bias",
+      "vision_encoder.sa_layer.linear1.weight",
+      "vision_encoder.sa_layer.linear1.bias",
+      "vision_encoder.sa_layer.linear2.weight",
+      "vision_encoder.sa_layer.linear2.bias",
+      "vision_encoder.sa_layer.norm1.weight",
+      "vision_encoder.sa_layer.norm1.bias",
+      "vision_encoder.sa_layer.norm2.weight",
+      "vision_encoder.sa_layer.norm2.bias"
+    ],
+    "elements": 3351760,
+    "checkpoint_elements": 19050955,
+    "fraction_of_checkpoint": 0.175937,
+    "megabytes_fp32": 13.41
+  },
+  "checkpoint_sha256_before": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+  "checkpoint_sha256_after": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+  "checkpoint_unchanged": true
+}

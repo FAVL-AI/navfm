@@ -1,0 +1,199 @@
+{
+  "model": "nomad",
+  "seed": 20260813,
+  "sample_count": 29,
+  "sample_indices": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "batch": [
+    {
+      "name": "obs_image",
+      "shape": [
+        4,
+        12,
+        96,
+        96
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9725490212440491,
+      "finite": true,
+      "digest": "5b7637c9d8663a86"
+    },
+    {
+      "name": "goal_image",
+      "shape": [
+        4,
+        3,
+        96,
+        96
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9450980424880981,
+      "finite": true,
+      "digest": "1a1ad556452f8856"
+    },
+    {
+      "name": "action_label",
+      "shape": [
+        4,
+        8,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": -0.006508518476039171,
+      "max": 9.029358863830566,
+      "finite": true,
+      "digest": "4fabf866c75b33ea"
+    },
+    {
+      "name": "dist_label",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 11.0,
+      "max": 16.0,
+      "finite": true,
+      "digest": "89a06c93b1df1fa1"
+    },
+    {
+      "name": "goal_pos",
+      "shape": [
+        4,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 1.722120761871338,
+      "max": 17.445980072021484,
+      "finite": true,
+      "digest": "df4ff162daa14945"
+    },
+    {
+      "name": "dataset_index",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 5.0,
+      "max": 5.0,
+      "finite": true,
+      "digest": "195313754e63a742"
+    },
+    {
+      "name": "action_mask",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 1.0,
+      "max": 1.0,
+      "finite": true,
+      "digest": "f6bb1294da2f78cd"
+    }
+  ],
+  "batch_all_finite": true,
+  "outputs": [
+    {
+      "name": "dist_pred",
+      "shape": [
+        4,
+        1
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 8.560489654541016,
+      "max": 9.542891502380371,
+      "finite": true,
+      "digest": "74a6eddfc0770248"
+    },
+    {
+      "name": "noise_pred",
+      "shape": [
+        4,
+        8,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": -1.5209325551986694,
+      "max": 1.7942849397659302,
+      "finite": true,
+      "digest": "95cee58543f60473"
+    }
+  ],
+  "training_mode": true,
+  "resolved_config": {
+    "image_size": [
+      96,
+      96
+    ],
+    "context_size": 3,
+    "context_type": "temporal",
+    "len_traj_pred": 8,
+    "learn_angle": false,
+    "normalize": true,
+    "goal_type": "image",
+    "obs_encoder": "efficientnet-b0",
+    "obs_encoding_size": 1024,
+    "vision_encoder": "nomad_vint",
+    "encoding_size": 256,
+    "num_diffusion_iters": 10,
+    "goal_mask_prob": 0.5,
+    "down_dims": [
+      64,
+      128,
+      256
+    ],
+    "cond_predict_scale": false,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4
+  },
+  "dataset_options": {
+    "end_slack": 0,
+    "goals_per_obs": 2,
+    "negative_mining": true,
+    "waypoint_spacing": 1,
+    "from_shipped_config": true
+  },
+  "diffusion_state": {
+    "seed": 20260813,
+    "timesteps": [
+      2,
+      9,
+      1,
+      3
+    ],
+    "noise_shape": [
+      4,
+      8,
+      2
+    ],
+    "noise_digest": "5a9b88d7e6e5862c",
+    "noisy_action_digest": "3932d82746adc0ca",
+    "goal_mask": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "goal_mask_prob": 0.5,
+    "scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+    "naction_digest": "77da5e61c3e617d7"
+  }
+}

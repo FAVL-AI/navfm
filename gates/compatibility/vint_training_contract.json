@@ -1,0 +1,153 @@
+{
+  "model": "vint",
+  "crosswalk": {
+    "model_class": "third_party/visualnav-transformer/train/vint_train/models/vint/vint.py::ViNT",
+    "train_loop": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::train (L166-309)",
+    "transform_and_forward": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L251-257",
+    "loss_fn": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::_compute_losses (L36-96)",
+    "loss_call": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L267-275",
+    "total_loss": "alpha * 1e-2 * dist_loss + (1 - alpha) * action_loss",
+    "alpha": 0.5,
+    "alpha_source": "train/config/vint.yaml:39",
+    "backward_step": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L277-278",
+    "optimizer": "AdamW (train.py); lr overridden to 1e-5 for this smoke path only"
+  },
+  "shared": {
+    "dataset_class": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::ViNT_Dataset",
+    "sample_index_builder": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_build_index (L205-225)",
+    "index_population_rule": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221",
+    "goal_sampler": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_sample_goal (L227-)",
+    "collate": "torch.utils.data.DataLoader default_collate (no custom collate upstream)",
+    "batch_tuple": "(obs_image, goal_image, action_label, dist_label, goal_pos, dataset_index, action_mask)"
+  },
+  "resolved_config": {
+    "image_size": [
+      85,
+      64
+    ],
+    "context_size": 5,
+    "context_type": "temporal",
+    "len_traj_pred": 5,
+    "learn_angle": true,
+    "normalize": true,
+    "goal_type": "image",
+    "obs_encoder": "efficientnet-b0",
+    "obs_encoding_size": 512,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4
+  },
+  "dataset_options": {
+    "end_slack": 0,
+    "goals_per_obs": 2,
+    "negative_mining": true,
+    "waypoint_spacing": 1,
+    "from_shipped_config": true
+  },
+  "metric_waypoint_spacing_m": 0.12,
+  "batch_contract": [
+    {
+      "name": "obs_image",
+      "shape": [
+        4,
+        18,
+        64,
+        85
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9725490212440491,
+      "finite": true,
+      "digest": "4c014ccb3caee372"
+    },
+    {
+      "name": "goal_image",
+      "shape": [
+        4,
+        3,
+        64,
+        85
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9529411792755127,
+      "finite": true,
+      "digest": "261e3e655f3bb47b"
+    },
+    {
+      "name": "action_label",
+      "shape": [
+        4,
+        5,
+        4
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": -0.006508518476039171,
+      "max": 5.756246566772461,
+      "finite": true,
+      "digest": "deaa6fd2675218e8"
+    },
+    {
+      "name": "dist_label",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 11.0,
+      "max": 16.0,
+      "finite": true,
+      "digest": "89a06c93b1df1fa1"
+    },
+    {
+      "name": "goal_pos",
+      "shape": [
+        4,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.8248378038406372,
+      "max": 17.188093185424805,
+      "finite": true,
+      "digest": "7255ab51ccd1e273"
+    },
+    {
+      "name": "dataset_index",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 5.0,
+      "max": 5.0,
+      "finite": true,
+      "digest": "195313754e63a742"
+    },
+    {
+      "name": "action_mask",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.0,
+      "finite": true,
+      "digest": "374708fff7719dd5"
+    }
+  ],
+  "loss_components": [
+    "dist_loss",
+    "action_loss",
+    "action_waypts_cos_sim",
+    "multi_action_waypts_cos_sim",
+    "action_orien_cos_sim",
+    "multi_action_orien_cos_sim",
+    "total_loss"
+  ],
+  "diffusion_state": null,
+  "note": "model-specific differences are preserved, not standardised away"
+}

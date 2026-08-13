@@ -1,0 +1,2321 @@
+{
+  "check": "TRAIN_PATH_COMPATIBILITY",
+  "not_a_claim_of": "TRAINING_COMPLETED",
+  "timestamp_utc": "2026-08-13T08:30:58.437632+00:00",
+  "environment": {
+    "navfm_commit": "327078569d904e3de4a5722cc8f708bc2ae80c21",
+    "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "numpy": "2.4.4",
+    "device": "cpu"
+  },
+  "trajectory": {
+    "path": "/home/favl/navfm-data/simulation_development/pilot_0002",
+    "name": "pilot_0002",
+    "content_digest": "c897464fb3d5344f0c88d14ed27d363e"
+  },
+  "stage": "SIMULATION_DEVELOPMENT",
+  "admission_status": "NOT_ADMITTED",
+  "training_allowed_formal": false,
+  "engineering_train_path_smoke_allowed": true,
+  "training_path_crosswalk": {
+    "_shared": {
+      "dataset_class": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::ViNT_Dataset",
+      "sample_index_builder": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_build_index (L205-225)",
+      "index_population_rule": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221",
+      "goal_sampler": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_sample_goal (L227-)",
+      "collate": "torch.utils.data.DataLoader default_collate (no custom collate upstream)",
+      "batch_tuple": "(obs_image, goal_image, action_label, dist_label, goal_pos, dataset_index, action_mask)"
+    },
+    "gnm": {
+      "model_class": "third_party/visualnav-transformer/train/vint_train/models/gnm/gnm.py::GNM",
+      "train_loop": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::train (L166-309)",
+      "transform_and_forward": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L251-257",
+      "loss_fn": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::_compute_losses (L36-96)",
+      "loss_call": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L267-275",
+      "total_loss": "alpha * 1e-2 * dist_loss + (1 - alpha) * action_loss",
+      "alpha": 0.5,
+      "alpha_source": "train/config/gnm.yaml:31",
+      "backward_step": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L277-278",
+      "optimizer": "AdamW (train.py); lr overridden to 1e-5 for this smoke path only"
+    },
+    "vint": {
+      "model_class": "third_party/visualnav-transformer/train/vint_train/models/vint/vint.py::ViNT",
+      "train_loop": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::train (L166-309)",
+      "transform_and_forward": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L251-257",
+      "loss_fn": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::_compute_losses (L36-96)",
+      "loss_call": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L267-275",
+      "total_loss": "alpha * 1e-2 * dist_loss + (1 - alpha) * action_loss",
+      "alpha": 0.5,
+      "alpha_source": "train/config/vint.yaml:39",
+      "backward_step": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L277-278",
+      "optimizer": "AdamW (train.py); lr overridden to 1e-5 for this smoke path only"
+    },
+    "nomad": {
+      "model_class": "third_party/visualnav-transformer/train/vint_train/models/nomad/nomad.py::NoMaD (+ NoMaD_ViNT, DenseNetwork, ConditionalUnet1D)",
+      "train_loop": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::train_nomad (L525-720)",
+      "training_loss_is_inline": true,
+      "loss_source_range": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L613-657",
+      "note": "_compute_losses_nomad (L447-524) is the LOGGING/eval path -- it runs full diffusion sampling via model_output(). The training objective is the inline block, and that is what is transcribed here.",
+      "action_preprocessing": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::get_delta (L945) then normalize_data (L933) against ACTION_STATS",
+      "noise_scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+      "goal_masking": "goal_mask = (rand(B) < goal_mask_prob).long() -- L614",
+      "total_loss": "alpha * dist_loss + (1 - alpha) * diffusion_loss",
+      "alpha": 0.0001,
+      "alpha_source": "train/config/nomad.yaml:47",
+      "optimizer": "AdamW (train.py); lr overridden to 1e-5 for this smoke path only"
+    }
+  },
+  "index_trace": {
+    "populations": {
+      "gnm": {
+        "trajectory_frame_count": 40,
+        "context_size": 5,
+        "action_horizon": 5,
+        "waypoint_spacing": 1,
+        "end_slack": 0,
+        "begin_time": 5,
+        "end_time": 35,
+        "begin_rule": "context_size * waypoint_spacing",
+        "end_rule": "traj_len - end_slack - len_traj_pred * waypoint_spacing",
+        "candidate_population": 40,
+        "accepted_population": 30,
+        "rejected_population": 10,
+        "conservation_holds": true,
+        "predicted_effective": 30,
+        "actual_effective": 30,
+        "predicted_equals_actual": true,
+        "accepted_indices_match_rule": true,
+        "first_accepted": 5,
+        "last_accepted": 34,
+        "no_rejection_branch_in_source": true,
+        "source": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221"
+      },
+      "vint": {
+        "trajectory_frame_count": 40,
+        "context_size": 5,
+        "action_horizon": 5,
+        "waypoint_spacing": 1,
+        "end_slack": 0,
+        "begin_time": 5,
+        "end_time": 35,
+        "begin_rule": "context_size * waypoint_spacing",
+        "end_rule": "traj_len - end_slack - len_traj_pred * waypoint_spacing",
+        "candidate_population": 40,
+        "accepted_population": 30,
+        "rejected_population": 10,
+        "conservation_holds": true,
+        "predicted_effective": 30,
+        "actual_effective": 30,
+        "predicted_equals_actual": true,
+        "accepted_indices_match_rule": true,
+        "first_accepted": 5,
+        "last_accepted": 34,
+        "no_rejection_branch_in_source": true,
+        "source": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221"
+      },
+      "nomad": {
+        "trajectory_frame_count": 40,
+        "context_size": 3,
+        "action_horizon": 8,
+        "waypoint_spacing": 1,
+        "end_slack": 0,
+        "begin_time": 3,
+        "end_time": 32,
+        "begin_rule": "context_size * waypoint_spacing",
+        "end_rule": "traj_len - end_slack - len_traj_pred * waypoint_spacing",
+        "candidate_population": 40,
+        "accepted_population": 29,
+        "rejected_population": 11,
+        "conservation_holds": true,
+        "predicted_effective": 29,
+        "actual_effective": 29,
+        "predicted_equals_actual": true,
+        "accepted_indices_match_rule": true,
+        "first_accepted": 3,
+        "last_accepted": 31,
+        "no_rejection_branch_in_source": true,
+        "source": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221"
+      },
+      "_difference": {
+        "nomad_gains": [
+          3,
+          4
+        ],
+        "nomad_loses": [
+          32,
+          33,
+          34
+        ],
+        "net": -1,
+        "explanation": "NoMaD gains indices [3, 4] at the front because it needs only 3 context frames against 5, and loses [32, 33, 34] at the back because it predicts 8 steps ahead against 5. Net -1."
+      }
+    },
+    "index_trace_csv": "gates/forensics/nomad_sample_index_trace.csv"
+  },
+  "models": {
+    "gnm": {
+      "run1": {
+        "model": "gnm",
+        "run": "run1",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+        "sample_count": 30,
+        "sample_indices": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "resolved_config": {
+          "image_size": [
+            85,
+            64
+          ],
+          "context_size": 5,
+          "context_type": "temporal",
+          "len_traj_pred": 5,
+          "learn_angle": true,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoding_size": 1024
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              18,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "4c014ccb3caee372"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9529411792755127,
+            "finite": true,
+            "digest": "261e3e655f3bb47b"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 5.756246566772461,
+            "finite": true,
+            "digest": "deaa6fd2675218e8"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.8248378038406372,
+            "max": 17.188093185424805,
+            "finite": true,
+            "digest": "7255ab51ccd1e273"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.0,
+            "finite": true,
+            "digest": "374708fff7719dd5"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 638,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "obs_mobilenet.0.0.weight",
+            "shape": [
+              32,
+              18,
+              3,
+              3
+            ],
+            "norm": 13.746275901794434,
+            "digest": "06de125d73104d97"
+          },
+          {
+            "name": "obs_mobilenet.0.1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 6.548769950866699,
+            "digest": "7ff4d6422f2d22a4"
+          },
+          {
+            "name": "obs_mobilenet.0.1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 1.5951534509658813,
+            "digest": "48a4df4cca1b3eda"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.0.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 3.136435031890869,
+            "digest": "d56e9ada179e077d"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.648101806640625,
+            "digest": "35751c8fb4ebe2cb"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.8879702091217041,
+            "digest": "447c892f5d9c7ad6"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 4.276442050933838,
+            "max": 15.733378410339355,
+            "finite": true,
+            "digest": "0b848aa985471082"
+          },
+          {
+            "name": "action_pred",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -1.519099235534668,
+            "max": 5.874446868896484,
+            "finite": true,
+            "digest": "a06bc9afd581d28b"
+          }
+        ],
+        "losses": {
+          "dist_loss": 20.98782730102539,
+          "action_loss": 0.0,
+          "action_waypts_cos_sim": 0.0,
+          "multi_action_waypts_cos_sim": 0.0,
+          "action_orien_cos_sim": 0.0,
+          "multi_action_orien_cos_sim": 0.0,
+          "total_loss": 0.10493913292884827
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "action_loss": true,
+          "action_waypts_cos_sim": true,
+          "multi_action_waypts_cos_sim": true,
+          "action_orien_cos_sim": true,
+          "multi_action_orien_cos_sim": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 326,
+          "parameters_trainable": 326,
+          "parameters_with_gradient": 326,
+          "parameters_with_nonzero_gradient": 324,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.408010959625244
+        },
+        "parameters_changed_by_step": 326,
+        "parameters_total_trainable": 326,
+        "parameters_unchanged": {
+          "count": 0,
+          "names": [],
+          "elements": 0,
+          "checkpoint_elements": 8732125,
+          "fraction_of_checkpoint": 0.0,
+          "megabytes_fp32": 0.0
+        },
+        "watched_after": [
+          {
+            "name": "obs_mobilenet.0.0.weight",
+            "norm": 13.746267318725586,
+            "digest": "e5d298e61b39e451",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.0.1.weight",
+            "norm": 6.548764228820801,
+            "digest": "b20f7bf0305119c4",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.0.1.bias",
+            "norm": 1.595167875289917,
+            "digest": "efcaabb30551e3a9",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.0.weight",
+            "norm": 3.136431932449341,
+            "digest": "83501efd4fe5cdb5",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.weight",
+            "norm": 5.648097515106201,
+            "digest": "465f2182c0870a96",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.bias",
+            "norm": 0.8879621028900146,
+            "digest": "68c68b0556ecf5b0",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "run2": {
+        "model": "gnm",
+        "run": "run2",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+        "sample_count": 30,
+        "sample_indices": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "resolved_config": {
+          "image_size": [
+            85,
+            64
+          ],
+          "context_size": 5,
+          "context_type": "temporal",
+          "len_traj_pred": 5,
+          "learn_angle": true,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoding_size": 1024
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              18,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "4c014ccb3caee372"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9529411792755127,
+            "finite": true,
+            "digest": "261e3e655f3bb47b"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 5.756246566772461,
+            "finite": true,
+            "digest": "deaa6fd2675218e8"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.8248378038406372,
+            "max": 17.188093185424805,
+            "finite": true,
+            "digest": "7255ab51ccd1e273"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.0,
+            "finite": true,
+            "digest": "374708fff7719dd5"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 638,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "obs_mobilenet.0.0.weight",
+            "shape": [
+              32,
+              18,
+              3,
+              3
+            ],
+            "norm": 13.746275901794434,
+            "digest": "06de125d73104d97"
+          },
+          {
+            "name": "obs_mobilenet.0.1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 6.548769950866699,
+            "digest": "7ff4d6422f2d22a4"
+          },
+          {
+            "name": "obs_mobilenet.0.1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 1.5951534509658813,
+            "digest": "48a4df4cca1b3eda"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.0.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 3.136435031890869,
+            "digest": "d56e9ada179e077d"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.648101806640625,
+            "digest": "35751c8fb4ebe2cb"
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.8879702091217041,
+            "digest": "447c892f5d9c7ad6"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 4.276442050933838,
+            "max": 15.733378410339355,
+            "finite": true,
+            "digest": "0b848aa985471082"
+          },
+          {
+            "name": "action_pred",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -1.519099235534668,
+            "max": 5.874446868896484,
+            "finite": true,
+            "digest": "a06bc9afd581d28b"
+          }
+        ],
+        "losses": {
+          "dist_loss": 20.98782730102539,
+          "action_loss": 0.0,
+          "action_waypts_cos_sim": 0.0,
+          "multi_action_waypts_cos_sim": 0.0,
+          "action_orien_cos_sim": 0.0,
+          "multi_action_orien_cos_sim": 0.0,
+          "total_loss": 0.10493913292884827
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "action_loss": true,
+          "action_waypts_cos_sim": true,
+          "multi_action_waypts_cos_sim": true,
+          "action_orien_cos_sim": true,
+          "multi_action_orien_cos_sim": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 326,
+          "parameters_trainable": 326,
+          "parameters_with_gradient": 326,
+          "parameters_with_nonzero_gradient": 324,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.408010959625244
+        },
+        "parameters_changed_by_step": 326,
+        "parameters_total_trainable": 326,
+        "parameters_unchanged": {
+          "count": 0,
+          "names": [],
+          "elements": 0,
+          "checkpoint_elements": 8732125,
+          "fraction_of_checkpoint": 0.0,
+          "megabytes_fp32": 0.0
+        },
+        "watched_after": [
+          {
+            "name": "obs_mobilenet.0.0.weight",
+            "norm": 13.746267318725586,
+            "digest": "e5d298e61b39e451",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.0.1.weight",
+            "norm": 6.548764228820801,
+            "digest": "b20f7bf0305119c4",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.0.1.bias",
+            "norm": 1.595167875289917,
+            "digest": "efcaabb30551e3a9",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.0.weight",
+            "norm": 3.136431932449341,
+            "digest": "83501efd4fe5cdb5",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.weight",
+            "norm": 5.648097515106201,
+            "digest": "465f2182c0870a96",
+            "changed": true
+          },
+          {
+            "name": "obs_mobilenet.1.conv.0.1.bias",
+            "norm": 0.8879621028900146,
+            "digest": "68c68b0556ecf5b0",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "repeatability": {
+        "sample_indices_identical": true,
+        "batch_digests_identical": true,
+        "loss_differences": {
+          "dist_loss": {
+            "a": 20.98782730102539,
+            "b": 20.98782730102539,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_loss": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_waypts_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "multi_action_waypts_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_orien_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "multi_action_orien_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "total_loss": {
+            "a": 0.10493913292884827,
+            "b": 0.10493913292884827,
+            "abs": 0.0,
+            "rel": 0.0
+          }
+        },
+        "max_abs_difference": 0.0,
+        "max_rel_difference": 0.0,
+        "declared_tolerance": {
+          "rtol": 1e-05,
+          "atol": 1e-06,
+          "source": "existing engineering tolerance, R7; not newly invented"
+        },
+        "within_tolerance": true,
+        "result": "PASS"
+      },
+      "invalid_fixture": {
+        "model": "gnm",
+        "corruption": "action_label truncated horizon",
+        "valid_action_shape": [
+          4,
+          5,
+          4
+        ],
+        "corrupted_action_shape": [
+          4,
+          4,
+          4
+        ],
+        "rejected": true,
+        "result": "PASS",
+        "rejection": "AssertionError: torch.Size([4, 5, 4]) != torch.Size([4, 4, 4])"
+      }
+    },
+    "vint": {
+      "run1": {
+        "model": "vint",
+        "run": "run1",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+        "sample_count": 30,
+        "sample_indices": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "resolved_config": {
+          "image_size": [
+            85,
+            64
+          ],
+          "context_size": 5,
+          "context_type": "temporal",
+          "len_traj_pred": 5,
+          "learn_angle": true,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoder": "efficientnet-b0",
+          "obs_encoding_size": 512,
+          "mha_num_attention_heads": 4,
+          "mha_num_attention_layers": 4
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              18,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "4c014ccb3caee372"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9529411792755127,
+            "finite": true,
+            "digest": "261e3e655f3bb47b"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 5.756246566772461,
+            "finite": true,
+            "digest": "deaa6fd2675218e8"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.8248378038406372,
+            "max": 17.188093185424805,
+            "finite": true,
+            "digest": "7255ab51ccd1e273"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.0,
+            "finite": true,
+            "digest": "374708fff7719dd5"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 799,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "obs_encoder._conv_stem.weight",
+            "shape": [
+              32,
+              3,
+              3,
+              3
+            ],
+            "norm": 3.542733907699585,
+            "digest": "2b4ad132735d7d6e"
+          },
+          {
+            "name": "obs_encoder._bn0.weight",
+            "shape": [
+              32
+            ],
+            "norm": 3.850597858428955,
+            "digest": "6718cb15789bcea1"
+          },
+          {
+            "name": "obs_encoder._bn0.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.5273173451423645,
+            "digest": "56f290152ac33f2c"
+          },
+          {
+            "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 2.7030301094055176,
+            "digest": "6525770f32cb1084"
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 3.7675254344940186,
+            "digest": "937577396d637cd5"
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.4538267254829407,
+            "digest": "df616a38ac578349"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 4.017526626586914,
+            "max": 15.888601303100586,
+            "finite": true,
+            "digest": "3305f7773fc64a58"
+          },
+          {
+            "name": "action_pred",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.5871853232383728,
+            "max": 6.6307525634765625,
+            "finite": true,
+            "digest": "8ac734d481812e53"
+          }
+        ],
+        "losses": {
+          "dist_loss": 16.896100997924805,
+          "action_loss": 0.0,
+          "action_waypts_cos_sim": 0.0,
+          "multi_action_waypts_cos_sim": 0.0,
+          "action_orien_cos_sim": 0.0,
+          "multi_action_orien_cos_sim": 0.0,
+          "total_loss": 0.08448050171136856
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "action_loss": true,
+          "action_waypts_cos_sim": true,
+          "multi_action_waypts_cos_sim": true,
+          "action_orien_cos_sim": true,
+          "multi_action_orien_cos_sim": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 504,
+          "parameters_trainable": 504,
+          "parameters_with_gradient": 488,
+          "parameters_with_nonzero_gradient": 486,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.166417360305786
+        },
+        "parameters_changed_by_step": 488,
+        "parameters_total_trainable": 504,
+        "parameters_unchanged": {
+          "count": 16,
+          "names": [
+            "obs_encoder._fc.weight",
+            "obs_encoder._fc.bias",
+            "goal_encoder._fc.weight",
+            "goal_encoder._fc.bias",
+            "decoder.sa_layer.self_attn.in_proj_weight",
+            "decoder.sa_layer.self_attn.in_proj_bias",
+            "decoder.sa_layer.self_attn.out_proj.weight",
+            "decoder.sa_layer.self_attn.out_proj.bias",
+            "decoder.sa_layer.linear1.weight",
+            "decoder.sa_layer.linear1.bias",
+            "decoder.sa_layer.linear2.weight",
+            "decoder.sa_layer.linear2.bias",
+            "decoder.sa_layer.norm1.weight",
+            "decoder.sa_layer.norm1.bias",
+            "decoder.sa_layer.norm2.weight",
+            "decoder.sa_layer.norm2.bias"
+          ],
+          "elements": 5714384,
+          "checkpoint_elements": 29750111,
+          "fraction_of_checkpoint": 0.192079,
+          "megabytes_fp32": 22.86
+        },
+        "watched_after": [
+          {
+            "name": "obs_encoder._conv_stem.weight",
+            "norm": 3.5427346229553223,
+            "digest": "e00053c4d2762f2c",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._bn0.weight",
+            "norm": 3.850594997406006,
+            "digest": "804aa0fcebd4ea02",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._bn0.bias",
+            "norm": 0.5273305177688599,
+            "digest": "707e8adc105128e4",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+            "norm": 2.703035593032837,
+            "digest": "e2dabe42fd736fe0",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.weight",
+            "norm": 3.767517328262329,
+            "digest": "eba2df55c72d6ac9",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.bias",
+            "norm": 0.4538089334964752,
+            "digest": "aaedc88c511c4b11",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "run2": {
+        "model": "vint",
+        "run": "run2",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+        "sample_count": 30,
+        "sample_indices": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "resolved_config": {
+          "image_size": [
+            85,
+            64
+          ],
+          "context_size": 5,
+          "context_type": "temporal",
+          "len_traj_pred": 5,
+          "learn_angle": true,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoder": "efficientnet-b0",
+          "obs_encoding_size": 512,
+          "mha_num_attention_heads": 4,
+          "mha_num_attention_layers": 4
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              18,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "4c014ccb3caee372"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              64,
+              85
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9529411792755127,
+            "finite": true,
+            "digest": "261e3e655f3bb47b"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 5.756246566772461,
+            "finite": true,
+            "digest": "deaa6fd2675218e8"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.8248378038406372,
+            "max": 17.188093185424805,
+            "finite": true,
+            "digest": "7255ab51ccd1e273"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.0,
+            "finite": true,
+            "digest": "374708fff7719dd5"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 799,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "obs_encoder._conv_stem.weight",
+            "shape": [
+              32,
+              3,
+              3,
+              3
+            ],
+            "norm": 3.542733907699585,
+            "digest": "2b4ad132735d7d6e"
+          },
+          {
+            "name": "obs_encoder._bn0.weight",
+            "shape": [
+              32
+            ],
+            "norm": 3.850597858428955,
+            "digest": "6718cb15789bcea1"
+          },
+          {
+            "name": "obs_encoder._bn0.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.5273173451423645,
+            "digest": "56f290152ac33f2c"
+          },
+          {
+            "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 2.7030301094055176,
+            "digest": "6525770f32cb1084"
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 3.7675254344940186,
+            "digest": "937577396d637cd5"
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.4538267254829407,
+            "digest": "df616a38ac578349"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 4.017526626586914,
+            "max": 15.888601303100586,
+            "finite": true,
+            "digest": "3305f7773fc64a58"
+          },
+          {
+            "name": "action_pred",
+            "shape": [
+              4,
+              5,
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.5871853232383728,
+            "max": 6.6307525634765625,
+            "finite": true,
+            "digest": "8ac734d481812e53"
+          }
+        ],
+        "losses": {
+          "dist_loss": 16.896100997924805,
+          "action_loss": 0.0,
+          "action_waypts_cos_sim": 0.0,
+          "multi_action_waypts_cos_sim": 0.0,
+          "action_orien_cos_sim": 0.0,
+          "multi_action_orien_cos_sim": 0.0,
+          "total_loss": 0.08448050171136856
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "action_loss": true,
+          "action_waypts_cos_sim": true,
+          "multi_action_waypts_cos_sim": true,
+          "action_orien_cos_sim": true,
+          "multi_action_orien_cos_sim": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 504,
+          "parameters_trainable": 504,
+          "parameters_with_gradient": 488,
+          "parameters_with_nonzero_gradient": 486,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.166417360305786
+        },
+        "parameters_changed_by_step": 488,
+        "parameters_total_trainable": 504,
+        "parameters_unchanged": {
+          "count": 16,
+          "names": [
+            "obs_encoder._fc.weight",
+            "obs_encoder._fc.bias",
+            "goal_encoder._fc.weight",
+            "goal_encoder._fc.bias",
+            "decoder.sa_layer.self_attn.in_proj_weight",
+            "decoder.sa_layer.self_attn.in_proj_bias",
+            "decoder.sa_layer.self_attn.out_proj.weight",
+            "decoder.sa_layer.self_attn.out_proj.bias",
+            "decoder.sa_layer.linear1.weight",
+            "decoder.sa_layer.linear1.bias",
+            "decoder.sa_layer.linear2.weight",
+            "decoder.sa_layer.linear2.bias",
+            "decoder.sa_layer.norm1.weight",
+            "decoder.sa_layer.norm1.bias",
+            "decoder.sa_layer.norm2.weight",
+            "decoder.sa_layer.norm2.bias"
+          ],
+          "elements": 5714384,
+          "checkpoint_elements": 29750111,
+          "fraction_of_checkpoint": 0.192079,
+          "megabytes_fp32": 22.86
+        },
+        "watched_after": [
+          {
+            "name": "obs_encoder._conv_stem.weight",
+            "norm": 3.5427346229553223,
+            "digest": "e00053c4d2762f2c",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._bn0.weight",
+            "norm": 3.850594997406006,
+            "digest": "804aa0fcebd4ea02",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._bn0.bias",
+            "norm": 0.5273305177688599,
+            "digest": "707e8adc105128e4",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+            "norm": 2.703035593032837,
+            "digest": "e2dabe42fd736fe0",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.weight",
+            "norm": 3.767517328262329,
+            "digest": "eba2df55c72d6ac9",
+            "changed": true
+          },
+          {
+            "name": "obs_encoder._blocks.0._bn1.bias",
+            "norm": 0.4538089334964752,
+            "digest": "aaedc88c511c4b11",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "repeatability": {
+        "sample_indices_identical": true,
+        "batch_digests_identical": true,
+        "loss_differences": {
+          "dist_loss": {
+            "a": 16.896100997924805,
+            "b": 16.896100997924805,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_loss": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_waypts_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "multi_action_waypts_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "action_orien_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "multi_action_orien_cos_sim": {
+            "a": 0.0,
+            "b": 0.0,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "total_loss": {
+            "a": 0.08448050171136856,
+            "b": 0.08448050171136856,
+            "abs": 0.0,
+            "rel": 0.0
+          }
+        },
+        "max_abs_difference": 0.0,
+        "max_rel_difference": 0.0,
+        "declared_tolerance": {
+          "rtol": 1e-05,
+          "atol": 1e-06,
+          "source": "existing engineering tolerance, R7; not newly invented"
+        },
+        "within_tolerance": true,
+        "result": "PASS"
+      },
+      "invalid_fixture": {
+        "model": "vint",
+        "corruption": "action_label truncated horizon",
+        "valid_action_shape": [
+          4,
+          5,
+          4
+        ],
+        "corrupted_action_shape": [
+          4,
+          4,
+          4
+        ],
+        "rejected": true,
+        "result": "PASS",
+        "rejection": "AssertionError: torch.Size([4, 5, 4]) != torch.Size([4, 4, 4])"
+      }
+    },
+    "nomad": {
+      "run1": {
+        "model": "nomad",
+        "run": "run1",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+        "sample_count": 29,
+        "sample_indices": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "resolved_config": {
+          "image_size": [
+            96,
+            96
+          ],
+          "context_size": 3,
+          "context_type": "temporal",
+          "len_traj_pred": 8,
+          "learn_angle": false,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoder": "efficientnet-b0",
+          "obs_encoding_size": 1024,
+          "vision_encoder": "nomad_vint",
+          "encoding_size": 256,
+          "num_diffusion_iters": 10,
+          "goal_mask_prob": 0.5,
+          "down_dims": [
+            64,
+            128,
+            256
+          ],
+          "cond_predict_scale": false,
+          "mha_num_attention_heads": 4,
+          "mha_num_attention_layers": 4
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              12,
+              96,
+              96
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "5b7637c9d8663a86"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              96,
+              96
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9450980424880981,
+            "finite": true,
+            "digest": "1a1ad556452f8856"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              8,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 9.029358863830566,
+            "finite": true,
+            "digest": "4fabf866c75b33ea"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 1.722120761871338,
+            "max": 17.445980072021484,
+            "finite": true,
+            "digest": "df4ff162daa14945"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 1.0,
+            "max": 1.0,
+            "finite": true,
+            "digest": "f6bb1294da2f78cd"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 645,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "vision_encoder.obs_encoder._conv_stem.weight",
+            "shape": [
+              32,
+              3,
+              3,
+              3
+            ],
+            "norm": 3.1640465259552,
+            "digest": "0938f2f8a8ebadc9"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.2741827964782715,
+            "digest": "792fb61a233fd33c"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.2622500956058502,
+            "digest": "30a9033c5440409d"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 3.1933834552764893,
+            "digest": "d08390198ed091a5"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.342245101928711,
+            "digest": "53f315822495301a"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.19306355714797974,
+            "digest": "c308c73fc569e547"
+          }
+        ],
+        "diffusion_state": {
+          "seed": 20260813,
+          "timesteps": [
+            2,
+            9,
+            1,
+            3
+          ],
+          "noise_shape": [
+            4,
+            8,
+            2
+          ],
+          "noise_digest": "5a9b88d7e6e5862c",
+          "noisy_action_digest": "3932d82746adc0ca",
+          "goal_mask": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "goal_mask_prob": 0.5,
+          "scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+          "naction_digest": "77da5e61c3e617d7"
+        },
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 8.560489654541016,
+            "max": 9.542891502380371,
+            "finite": true,
+            "digest": "74a6eddfc0770248"
+          },
+          {
+            "name": "noise_pred",
+            "shape": [
+              4,
+              8,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -1.5209325551986694,
+            "max": 1.7942849397659302,
+            "finite": true,
+            "digest": "95cee58543f60473"
+          }
+        ],
+        "losses": {
+          "dist_loss": 14.243029594421387,
+          "diffusion_loss": 0.03493993729352951,
+          "total_loss": 0.03636074438691139
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "diffusion_loss": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 644,
+          "parameters_trainable": 644,
+          "parameters_with_gradient": 628,
+          "parameters_with_nonzero_gradient": 628,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.8813095092773438
+        },
+        "parameters_changed_by_step": 628,
+        "parameters_total_trainable": 644,
+        "parameters_unchanged": {
+          "count": 16,
+          "names": [
+            "vision_encoder.obs_encoder._fc.weight",
+            "vision_encoder.obs_encoder._fc.bias",
+            "vision_encoder.goal_encoder._fc.weight",
+            "vision_encoder.goal_encoder._fc.bias",
+            "vision_encoder.sa_layer.self_attn.in_proj_weight",
+            "vision_encoder.sa_layer.self_attn.in_proj_bias",
+            "vision_encoder.sa_layer.self_attn.out_proj.weight",
+            "vision_encoder.sa_layer.self_attn.out_proj.bias",
+            "vision_encoder.sa_layer.linear1.weight",
+            "vision_encoder.sa_layer.linear1.bias",
+            "vision_encoder.sa_layer.linear2.weight",
+            "vision_encoder.sa_layer.linear2.bias",
+            "vision_encoder.sa_layer.norm1.weight",
+            "vision_encoder.sa_layer.norm1.bias",
+            "vision_encoder.sa_layer.norm2.weight",
+            "vision_encoder.sa_layer.norm2.bias"
+          ],
+          "elements": 3351760,
+          "checkpoint_elements": 19050955,
+          "fraction_of_checkpoint": 0.175937,
+          "megabytes_fp32": 13.41
+        },
+        "watched_after": [
+          {
+            "name": "vision_encoder.obs_encoder._conv_stem.weight",
+            "norm": 3.164055824279785,
+            "digest": "fc11ae1ae5e8d30c",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.weight",
+            "norm": 5.274189472198486,
+            "digest": "11419e8c8d1615ee",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.bias",
+            "norm": 0.262260764837265,
+            "digest": "6b41266925e00ab2",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+            "norm": 3.1933863162994385,
+            "digest": "085c50832099ba95",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+            "norm": 5.342241287231445,
+            "digest": "644ac14c0cd371b2",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+            "norm": 0.1930682212114334,
+            "digest": "36eee5028df6f6ba",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "run2": {
+        "model": "nomad",
+        "run": "run2",
+        "seed": 20260813,
+        "checkpoint_sha256_before": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+        "sample_count": 29,
+        "sample_indices": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "resolved_config": {
+          "image_size": [
+            96,
+            96
+          ],
+          "context_size": 3,
+          "context_type": "temporal",
+          "len_traj_pred": 8,
+          "learn_angle": false,
+          "normalize": true,
+          "goal_type": "image",
+          "obs_encoder": "efficientnet-b0",
+          "obs_encoding_size": 1024,
+          "vision_encoder": "nomad_vint",
+          "encoding_size": 256,
+          "num_diffusion_iters": 10,
+          "goal_mask_prob": 0.5,
+          "down_dims": [
+            64,
+            128,
+            256
+          ],
+          "cond_predict_scale": false,
+          "mha_num_attention_heads": 4,
+          "mha_num_attention_layers": 4
+        },
+        "dataset_options": {
+          "end_slack": 0,
+          "goals_per_obs": 2,
+          "negative_mining": true,
+          "waypoint_spacing": 1,
+          "from_shipped_config": true
+        },
+        "metric_waypoint_spacing_m": 0.12,
+        "batch": [
+          {
+            "name": "obs_image",
+            "shape": [
+              4,
+              12,
+              96,
+              96
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9725490212440491,
+            "finite": true,
+            "digest": "5b7637c9d8663a86"
+          },
+          {
+            "name": "goal_image",
+            "shape": [
+              4,
+              3,
+              96,
+              96
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 0.0,
+            "max": 0.9450980424880981,
+            "finite": true,
+            "digest": "1a1ad556452f8856"
+          },
+          {
+            "name": "action_label",
+            "shape": [
+              4,
+              8,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -0.006508518476039171,
+            "max": 9.029358863830566,
+            "finite": true,
+            "digest": "4fabf866c75b33ea"
+          },
+          {
+            "name": "dist_label",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 11.0,
+            "max": 16.0,
+            "finite": true,
+            "digest": "89a06c93b1df1fa1"
+          },
+          {
+            "name": "goal_pos",
+            "shape": [
+              4,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 1.722120761871338,
+            "max": 17.445980072021484,
+            "finite": true,
+            "digest": "df4ff162daa14945"
+          },
+          {
+            "name": "dataset_index",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.int64",
+            "device": "cpu",
+            "min": 5.0,
+            "max": 5.0,
+            "finite": true,
+            "digest": "195313754e63a742"
+          },
+          {
+            "name": "action_mask",
+            "shape": [
+              4
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 1.0,
+            "max": 1.0,
+            "finite": true,
+            "digest": "f6bb1294da2f78cd"
+          }
+        ],
+        "batch_all_finite": true,
+        "checkpoint_tensors": 645,
+        "training_mode": true,
+        "watched_before": [
+          {
+            "name": "vision_encoder.obs_encoder._conv_stem.weight",
+            "shape": [
+              32,
+              3,
+              3,
+              3
+            ],
+            "norm": 3.1640465259552,
+            "digest": "0938f2f8a8ebadc9"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.2741827964782715,
+            "digest": "792fb61a233fd33c"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.2622500956058502,
+            "digest": "30a9033c5440409d"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+            "shape": [
+              32,
+              1,
+              3,
+              3
+            ],
+            "norm": 3.1933834552764893,
+            "digest": "d08390198ed091a5"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+            "shape": [
+              32
+            ],
+            "norm": 5.342245101928711,
+            "digest": "53f315822495301a"
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+            "shape": [
+              32
+            ],
+            "norm": 0.19306355714797974,
+            "digest": "c308c73fc569e547"
+          }
+        ],
+        "diffusion_state": {
+          "seed": 20260813,
+          "timesteps": [
+            2,
+            9,
+            1,
+            3
+          ],
+          "noise_shape": [
+            4,
+            8,
+            2
+          ],
+          "noise_digest": "5a9b88d7e6e5862c",
+          "noisy_action_digest": "3932d82746adc0ca",
+          "goal_mask": [
+            1,
+            1,
+            0,
+            1
+          ],
+          "goal_mask_prob": 0.5,
+          "scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+          "naction_digest": "77da5e61c3e617d7"
+        },
+        "outputs": [
+          {
+            "name": "dist_pred",
+            "shape": [
+              4,
+              1
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": 8.560489654541016,
+            "max": 9.542891502380371,
+            "finite": true,
+            "digest": "74a6eddfc0770248"
+          },
+          {
+            "name": "noise_pred",
+            "shape": [
+              4,
+              8,
+              2
+            ],
+            "dtype": "torch.float32",
+            "device": "cpu",
+            "min": -1.5209325551986694,
+            "max": 1.7942849397659302,
+            "finite": true,
+            "digest": "95cee58543f60473"
+          }
+        ],
+        "losses": {
+          "dist_loss": 14.243029594421387,
+          "diffusion_loss": 0.03493993729352951,
+          "total_loss": 0.03636074438691139
+        },
+        "losses_finite": {
+          "dist_loss": true,
+          "diffusion_loss": true,
+          "total_loss": true
+        },
+        "all_losses_finite": true,
+        "total_loss_is_scalar": true,
+        "gradients": {
+          "parameters_total": 644,
+          "parameters_trainable": 644,
+          "parameters_with_gradient": 628,
+          "parameters_with_nonzero_gradient": 628,
+          "parameters_with_nan_gradient": 0,
+          "parameters_with_inf_gradient": 0,
+          "gradient_global_norm": 2.8813095092773438
+        },
+        "parameters_changed_by_step": 628,
+        "parameters_total_trainable": 644,
+        "parameters_unchanged": {
+          "count": 16,
+          "names": [
+            "vision_encoder.obs_encoder._fc.weight",
+            "vision_encoder.obs_encoder._fc.bias",
+            "vision_encoder.goal_encoder._fc.weight",
+            "vision_encoder.goal_encoder._fc.bias",
+            "vision_encoder.sa_layer.self_attn.in_proj_weight",
+            "vision_encoder.sa_layer.self_attn.in_proj_bias",
+            "vision_encoder.sa_layer.self_attn.out_proj.weight",
+            "vision_encoder.sa_layer.self_attn.out_proj.bias",
+            "vision_encoder.sa_layer.linear1.weight",
+            "vision_encoder.sa_layer.linear1.bias",
+            "vision_encoder.sa_layer.linear2.weight",
+            "vision_encoder.sa_layer.linear2.bias",
+            "vision_encoder.sa_layer.norm1.weight",
+            "vision_encoder.sa_layer.norm1.bias",
+            "vision_encoder.sa_layer.norm2.weight",
+            "vision_encoder.sa_layer.norm2.bias"
+          ],
+          "elements": 3351760,
+          "checkpoint_elements": 19050955,
+          "fraction_of_checkpoint": 0.175937,
+          "megabytes_fp32": 13.41
+        },
+        "watched_after": [
+          {
+            "name": "vision_encoder.obs_encoder._conv_stem.weight",
+            "norm": 3.164055824279785,
+            "digest": "fc11ae1ae5e8d30c",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.weight",
+            "norm": 5.274189472198486,
+            "digest": "11419e8c8d1615ee",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._bn0.bias",
+            "norm": 0.262260764837265,
+            "digest": "6b41266925e00ab2",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._depthwise_conv.weight",
+            "norm": 3.1933863162994385,
+            "digest": "085c50832099ba95",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.weight",
+            "norm": 5.342241287231445,
+            "digest": "644ac14c0cd371b2",
+            "changed": true
+          },
+          {
+            "name": "vision_encoder.obs_encoder._blocks.0._bn1.bias",
+            "norm": 0.1930682212114334,
+            "digest": "36eee5028df6f6ba",
+            "changed": true
+          }
+        ],
+        "checkpoint_sha256_after": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+        "checkpoint_unchanged": true,
+        "result": "PASS",
+        "claim_boundary": "TRAIN_PATH_COMPATIBILITY only. One optimizer step on one batch proves the official training path is connected for this data. NOT a training run, NOT fine-tuning, NOT dataset admission, NOT a performance claim.",
+        "admission_status": "NOT_ADMITTED",
+        "engineering_train_path_smoke_allowed": true
+      },
+      "repeatability": {
+        "sample_indices_identical": true,
+        "batch_digests_identical": true,
+        "loss_differences": {
+          "dist_loss": {
+            "a": 14.243029594421387,
+            "b": 14.243029594421387,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "diffusion_loss": {
+            "a": 0.03493993729352951,
+            "b": 0.03493993729352951,
+            "abs": 0.0,
+            "rel": 0.0
+          },
+          "total_loss": {
+            "a": 0.03636074438691139,
+            "b": 0.03636074438691139,
+            "abs": 0.0,
+            "rel": 0.0
+          }
+        },
+        "max_abs_difference": 0.0,
+        "max_rel_difference": 0.0,
+        "declared_tolerance": {
+          "rtol": 1e-05,
+          "atol": 1e-06,
+          "source": "existing engineering tolerance, R7; not newly invented"
+        },
+        "within_tolerance": true,
+        "result": "PASS"
+      },
+      "invalid_fixture": {
+        "model": "nomad",
+        "corruption": "action_label truncated horizon",
+        "valid_action_shape": [
+          4,
+          8,
+          2
+        ],
+        "corrupted_action_shape": [
+          4,
+          7,
+          2
+        ],
+        "rejected": true,
+        "result": "PASS",
+        "rejection": "RuntimeError: The size of tensor a (8) must match the size of tensor b (7) at non-singleton dimension 1"
+      }
+    }
+  }
+}

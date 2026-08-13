@@ -1,0 +1,121 @@
+trajectory_id,candidate_index,model,obs_indices,goal_index,action_indices,distance_index,goal_mask,valid,rejection_reason,source_file,source_line
+pilot_0002,0,gnm,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,1,gnm,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,2,gnm,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,3,gnm,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,4,gnm,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,5,gnm,"0,1,2,3,4,5","sampled in (0,20]","5,6,7,8,9,10",5,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,6,gnm,"1,2,3,4,5,6","sampled in (0,20]","6,7,8,9,10,11",6,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,7,gnm,"2,3,4,5,6,7","sampled in (0,20]","7,8,9,10,11,12",7,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,8,gnm,"3,4,5,6,7,8","sampled in (0,20]","8,9,10,11,12,13",8,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,9,gnm,"4,5,6,7,8,9","sampled in (0,20]","9,10,11,12,13,14",9,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,10,gnm,"5,6,7,8,9,10","sampled in (0,20]","10,11,12,13,14,15",10,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,11,gnm,"6,7,8,9,10,11","sampled in (0,20]","11,12,13,14,15,16",11,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,12,gnm,"7,8,9,10,11,12","sampled in (0,20]","12,13,14,15,16,17",12,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,13,gnm,"8,9,10,11,12,13","sampled in (0,20]","13,14,15,16,17,18",13,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,14,gnm,"9,10,11,12,13,14","sampled in (0,20]","14,15,16,17,18,19",14,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,15,gnm,"10,11,12,13,14,15","sampled in (0,20]","15,16,17,18,19,20",15,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,16,gnm,"11,12,13,14,15,16","sampled in (0,20]","16,17,18,19,20,21",16,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,17,gnm,"12,13,14,15,16,17","sampled in (0,20]","17,18,19,20,21,22",17,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,18,gnm,"13,14,15,16,17,18","sampled in (0,20]","18,19,20,21,22,23",18,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,19,gnm,"14,15,16,17,18,19","sampled in (0,20]","19,20,21,22,23,24",19,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,20,gnm,"15,16,17,18,19,20","sampled in (0,19]","20,21,22,23,24,25",20,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,21,gnm,"16,17,18,19,20,21","sampled in (0,18]","21,22,23,24,25,26",21,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,22,gnm,"17,18,19,20,21,22","sampled in (0,17]","22,23,24,25,26,27",22,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,23,gnm,"18,19,20,21,22,23","sampled in (0,16]","23,24,25,26,27,28",23,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,24,gnm,"19,20,21,22,23,24","sampled in (0,15]","24,25,26,27,28,29",24,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,25,gnm,"20,21,22,23,24,25","sampled in (0,14]","25,26,27,28,29,30",25,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,26,gnm,"21,22,23,24,25,26","sampled in (0,13]","26,27,28,29,30,31",26,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,27,gnm,"22,23,24,25,26,27","sampled in (0,12]","27,28,29,30,31,32",27,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,28,gnm,"23,24,25,26,27,28","sampled in (0,11]","28,29,30,31,32,33",28,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,29,gnm,"24,25,26,27,28,29","sampled in (0,10]","29,30,31,32,33,34",29,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,30,gnm,"25,26,27,28,29,30","sampled in (0,9]","30,31,32,33,34,35",30,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,31,gnm,"26,27,28,29,30,31","sampled in (0,8]","31,32,33,34,35,36",31,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,32,gnm,"27,28,29,30,31,32","sampled in (0,7]","32,33,34,35,36,37",32,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,33,gnm,"28,29,30,31,32,33","sampled in (0,6]","33,34,35,36,37,38",33,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,34,gnm,"29,30,31,32,33,34","sampled in (0,5]","34,35,36,37,38,39",34,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,35,gnm,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,36,gnm,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,37,gnm,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,38,gnm,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,39,gnm,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,0,vint,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,1,vint,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,2,vint,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,3,vint,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,4,vint,,,,,n/a,False,needs 5 context frames behind; earliest is 5,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,5,vint,"0,1,2,3,4,5","sampled in (0,20]","5,6,7,8,9,10",5,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,6,vint,"1,2,3,4,5,6","sampled in (0,20]","6,7,8,9,10,11",6,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,7,vint,"2,3,4,5,6,7","sampled in (0,20]","7,8,9,10,11,12",7,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,8,vint,"3,4,5,6,7,8","sampled in (0,20]","8,9,10,11,12,13",8,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,9,vint,"4,5,6,7,8,9","sampled in (0,20]","9,10,11,12,13,14",9,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,10,vint,"5,6,7,8,9,10","sampled in (0,20]","10,11,12,13,14,15",10,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,11,vint,"6,7,8,9,10,11","sampled in (0,20]","11,12,13,14,15,16",11,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,12,vint,"7,8,9,10,11,12","sampled in (0,20]","12,13,14,15,16,17",12,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,13,vint,"8,9,10,11,12,13","sampled in (0,20]","13,14,15,16,17,18",13,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,14,vint,"9,10,11,12,13,14","sampled in (0,20]","14,15,16,17,18,19",14,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,15,vint,"10,11,12,13,14,15","sampled in (0,20]","15,16,17,18,19,20",15,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,16,vint,"11,12,13,14,15,16","sampled in (0,20]","16,17,18,19,20,21",16,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,17,vint,"12,13,14,15,16,17","sampled in (0,20]","17,18,19,20,21,22",17,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,18,vint,"13,14,15,16,17,18","sampled in (0,20]","18,19,20,21,22,23",18,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,19,vint,"14,15,16,17,18,19","sampled in (0,20]","19,20,21,22,23,24",19,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,20,vint,"15,16,17,18,19,20","sampled in (0,19]","20,21,22,23,24,25",20,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,21,vint,"16,17,18,19,20,21","sampled in (0,18]","21,22,23,24,25,26",21,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,22,vint,"17,18,19,20,21,22","sampled in (0,17]","22,23,24,25,26,27",22,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,23,vint,"18,19,20,21,22,23","sampled in (0,16]","23,24,25,26,27,28",23,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,24,vint,"19,20,21,22,23,24","sampled in (0,15]","24,25,26,27,28,29",24,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,25,vint,"20,21,22,23,24,25","sampled in (0,14]","25,26,27,28,29,30",25,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,26,vint,"21,22,23,24,25,26","sampled in (0,13]","26,27,28,29,30,31",26,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,27,vint,"22,23,24,25,26,27","sampled in (0,12]","27,28,29,30,31,32",27,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,28,vint,"23,24,25,26,27,28","sampled in (0,11]","28,29,30,31,32,33",28,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,29,vint,"24,25,26,27,28,29","sampled in (0,10]","29,30,31,32,33,34",29,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,30,vint,"25,26,27,28,29,30","sampled in (0,9]","30,31,32,33,34,35",30,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,31,vint,"26,27,28,29,30,31","sampled in (0,8]","31,32,33,34,35,36",31,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,32,vint,"27,28,29,30,31,32","sampled in (0,7]","32,33,34,35,36,37",32,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,33,vint,"28,29,30,31,32,33","sampled in (0,6]","33,34,35,36,37,38",33,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,34,vint,"29,30,31,32,33,34","sampled in (0,5]","34,35,36,37,38,39",34,n/a,True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,35,vint,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,36,vint,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,37,vint,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,38,vint,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,39,vint,,,,,n/a,False,needs 5 horizon frames ahead; last is 34,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,0,nomad,,,,,random per batch (NoMaD only),False,needs 3 context frames behind; earliest is 3,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,1,nomad,,,,,random per batch (NoMaD only),False,needs 3 context frames behind; earliest is 3,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,2,nomad,,,,,random per batch (NoMaD only),False,needs 3 context frames behind; earliest is 3,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,3,nomad,"0,1,2,3","sampled in (0,20]","3,4,5,6,7,8,9,10,11",3,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,4,nomad,"1,2,3,4","sampled in (0,20]","4,5,6,7,8,9,10,11,12",4,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,5,nomad,"2,3,4,5","sampled in (0,20]","5,6,7,8,9,10,11,12,13",5,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,6,nomad,"3,4,5,6","sampled in (0,20]","6,7,8,9,10,11,12,13,14",6,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,7,nomad,"4,5,6,7","sampled in (0,20]","7,8,9,10,11,12,13,14,15",7,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,8,nomad,"5,6,7,8","sampled in (0,20]","8,9,10,11,12,13,14,15,16",8,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,9,nomad,"6,7,8,9","sampled in (0,20]","9,10,11,12,13,14,15,16,17",9,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,10,nomad,"7,8,9,10","sampled in (0,20]","10,11,12,13,14,15,16,17,18",10,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,11,nomad,"8,9,10,11","sampled in (0,20]","11,12,13,14,15,16,17,18,19",11,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,12,nomad,"9,10,11,12","sampled in (0,20]","12,13,14,15,16,17,18,19,20",12,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,13,nomad,"10,11,12,13","sampled in (0,20]","13,14,15,16,17,18,19,20,21",13,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,14,nomad,"11,12,13,14","sampled in (0,20]","14,15,16,17,18,19,20,21,22",14,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,15,nomad,"12,13,14,15","sampled in (0,20]","15,16,17,18,19,20,21,22,23",15,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,16,nomad,"13,14,15,16","sampled in (0,20]","16,17,18,19,20,21,22,23,24",16,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,17,nomad,"14,15,16,17","sampled in (0,20]","17,18,19,20,21,22,23,24,25",17,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,18,nomad,"15,16,17,18","sampled in (0,20]","18,19,20,21,22,23,24,25,26",18,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,19,nomad,"16,17,18,19","sampled in (0,20]","19,20,21,22,23,24,25,26,27",19,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,20,nomad,"17,18,19,20","sampled in (0,19]","20,21,22,23,24,25,26,27,28",20,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,21,nomad,"18,19,20,21","sampled in (0,18]","21,22,23,24,25,26,27,28,29",21,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,22,nomad,"19,20,21,22","sampled in (0,17]","22,23,24,25,26,27,28,29,30",22,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,23,nomad,"20,21,22,23","sampled in (0,16]","23,24,25,26,27,28,29,30,31",23,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,24,nomad,"21,22,23,24","sampled in (0,15]","24,25,26,27,28,29,30,31,32",24,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,25,nomad,"22,23,24,25","sampled in (0,14]","25,26,27,28,29,30,31,32,33",25,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,26,nomad,"23,24,25,26","sampled in (0,13]","26,27,28,29,30,31,32,33,34",26,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,27,nomad,"24,25,26,27","sampled in (0,12]","27,28,29,30,31,32,33,34,35",27,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,28,nomad,"25,26,27,28","sampled in (0,11]","28,29,30,31,32,33,34,35,36",28,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,29,nomad,"26,27,28,29","sampled in (0,10]","29,30,31,32,33,34,35,36,37",29,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,30,nomad,"27,28,29,30","sampled in (0,9]","30,31,32,33,34,35,36,37,38",30,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,31,nomad,"28,29,30,31","sampled in (0,8]","31,32,33,34,35,36,37,38,39",31,random per batch (NoMaD only),True,,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,32,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,33,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,34,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,35,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,36,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,37,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,38,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221
+pilot_0002,39,nomad,,,,,random per batch (NoMaD only),False,needs 8 horizon frames ahead; last is 31,third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py,219-221

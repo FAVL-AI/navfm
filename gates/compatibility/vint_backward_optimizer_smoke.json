@@ -1,0 +1,136 @@
+{
+  "model": "vint",
+  "gradients": {
+    "parameters_total": 504,
+    "parameters_trainable": 504,
+    "parameters_with_gradient": 488,
+    "parameters_with_nonzero_gradient": 486,
+    "parameters_with_nan_gradient": 0,
+    "parameters_with_inf_gradient": 0,
+    "gradient_global_norm": 2.166417360305786
+  },
+  "watched_before": [
+    {
+      "name": "obs_encoder._conv_stem.weight",
+      "shape": [
+        32,
+        3,
+        3,
+        3
+      ],
+      "norm": 3.542733907699585,
+      "digest": "2b4ad132735d7d6e"
+    },
+    {
+      "name": "obs_encoder._bn0.weight",
+      "shape": [
+        32
+      ],
+      "norm": 3.850597858428955,
+      "digest": "6718cb15789bcea1"
+    },
+    {
+      "name": "obs_encoder._bn0.bias",
+      "shape": [
+        32
+      ],
+      "norm": 0.5273173451423645,
+      "digest": "56f290152ac33f2c"
+    },
+    {
+      "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+      "shape": [
+        32,
+        1,
+        3,
+        3
+      ],
+      "norm": 2.7030301094055176,
+      "digest": "6525770f32cb1084"
+    },
+    {
+      "name": "obs_encoder._blocks.0._bn1.weight",
+      "shape": [
+        32
+      ],
+      "norm": 3.7675254344940186,
+      "digest": "937577396d637cd5"
+    },
+    {
+      "name": "obs_encoder._blocks.0._bn1.bias",
+      "shape": [
+        32
+      ],
+      "norm": 0.4538267254829407,
+      "digest": "df616a38ac578349"
+    }
+  ],
+  "watched_after": [
+    {
+      "name": "obs_encoder._conv_stem.weight",
+      "norm": 3.5427346229553223,
+      "digest": "e00053c4d2762f2c",
+      "changed": true
+    },
+    {
+      "name": "obs_encoder._bn0.weight",
+      "norm": 3.850594997406006,
+      "digest": "804aa0fcebd4ea02",
+      "changed": true
+    },
+    {
+      "name": "obs_encoder._bn0.bias",
+      "norm": 0.5273305177688599,
+      "digest": "707e8adc105128e4",
+      "changed": true
+    },
+    {
+      "name": "obs_encoder._blocks.0._depthwise_conv.weight",
+      "norm": 2.703035593032837,
+      "digest": "e2dabe42fd736fe0",
+      "changed": true
+    },
+    {
+      "name": "obs_encoder._blocks.0._bn1.weight",
+      "norm": 3.767517328262329,
+      "digest": "eba2df55c72d6ac9",
+      "changed": true
+    },
+    {
+      "name": "obs_encoder._blocks.0._bn1.bias",
+      "norm": 0.4538089334964752,
+      "digest": "aaedc88c511c4b11",
+      "changed": true
+    }
+  ],
+  "parameters_changed_by_step": 488,
+  "parameters_total_trainable": 504,
+  "parameters_unchanged": {
+    "count": 16,
+    "names": [
+      "obs_encoder._fc.weight",
+      "obs_encoder._fc.bias",
+      "goal_encoder._fc.weight",
+      "goal_encoder._fc.bias",
+      "decoder.sa_layer.self_attn.in_proj_weight",
+      "decoder.sa_layer.self_attn.in_proj_bias",
+      "decoder.sa_layer.self_attn.out_proj.weight",
+      "decoder.sa_layer.self_attn.out_proj.bias",
+      "decoder.sa_layer.linear1.weight",
+      "decoder.sa_layer.linear1.bias",
+      "decoder.sa_layer.linear2.weight",
+      "decoder.sa_layer.linear2.bias",
+      "decoder.sa_layer.norm1.weight",
+      "decoder.sa_layer.norm1.bias",
+      "decoder.sa_layer.norm2.weight",
+      "decoder.sa_layer.norm2.bias"
+    ],
+    "elements": 5714384,
+    "checkpoint_elements": 29750111,
+    "fraction_of_checkpoint": 0.192079,
+    "megabytes_fp32": 22.86
+  },
+  "checkpoint_sha256_before": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+  "checkpoint_sha256_after": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+  "checkpoint_unchanged": true
+}

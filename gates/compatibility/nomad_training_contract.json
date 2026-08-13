@@ -1,0 +1,185 @@
+{
+  "model": "nomad",
+  "crosswalk": {
+    "model_class": "third_party/visualnav-transformer/train/vint_train/models/nomad/nomad.py::NoMaD (+ NoMaD_ViNT, DenseNetwork, ConditionalUnet1D)",
+    "train_loop": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::train_nomad (L525-720)",
+    "training_loss_is_inline": true,
+    "loss_source_range": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py L613-657",
+    "note": "_compute_losses_nomad (L447-524) is the LOGGING/eval path -- it runs full diffusion sampling via model_output(). The training objective is the inline block, and that is what is transcribed here.",
+    "action_preprocessing": "third_party/visualnav-transformer/train/vint_train/training/train_utils.py::get_delta (L945) then normalize_data (L933) against ACTION_STATS",
+    "noise_scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+    "goal_masking": "goal_mask = (rand(B) < goal_mask_prob).long() -- L614",
+    "total_loss": "alpha * dist_loss + (1 - alpha) * diffusion_loss",
+    "alpha": 0.0001,
+    "alpha_source": "train/config/nomad.yaml:47",
+    "optimizer": "AdamW (train.py); lr overridden to 1e-5 for this smoke path only"
+  },
+  "shared": {
+    "dataset_class": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::ViNT_Dataset",
+    "sample_index_builder": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_build_index (L205-225)",
+    "index_population_rule": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py L219-221",
+    "goal_sampler": "third_party/visualnav-transformer/train/vint_train/data/vint_dataset.py::_sample_goal (L227-)",
+    "collate": "torch.utils.data.DataLoader default_collate (no custom collate upstream)",
+    "batch_tuple": "(obs_image, goal_image, action_label, dist_label, goal_pos, dataset_index, action_mask)"
+  },
+  "resolved_config": {
+    "image_size": [
+      96,
+      96
+    ],
+    "context_size": 3,
+    "context_type": "temporal",
+    "len_traj_pred": 8,
+    "learn_angle": false,
+    "normalize": true,
+    "goal_type": "image",
+    "obs_encoder": "efficientnet-b0",
+    "obs_encoding_size": 1024,
+    "vision_encoder": "nomad_vint",
+    "encoding_size": 256,
+    "num_diffusion_iters": 10,
+    "goal_mask_prob": 0.5,
+    "down_dims": [
+      64,
+      128,
+      256
+    ],
+    "cond_predict_scale": false,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4
+  },
+  "dataset_options": {
+    "end_slack": 0,
+    "goals_per_obs": 2,
+    "negative_mining": true,
+    "waypoint_spacing": 1,
+    "from_shipped_config": true
+  },
+  "metric_waypoint_spacing_m": 0.12,
+  "batch_contract": [
+    {
+      "name": "obs_image",
+      "shape": [
+        4,
+        12,
+        96,
+        96
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9725490212440491,
+      "finite": true,
+      "digest": "5b7637c9d8663a86"
+    },
+    {
+      "name": "goal_image",
+      "shape": [
+        4,
+        3,
+        96,
+        96
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 0.0,
+      "max": 0.9450980424880981,
+      "finite": true,
+      "digest": "1a1ad556452f8856"
+    },
+    {
+      "name": "action_label",
+      "shape": [
+        4,
+        8,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": -0.006508518476039171,
+      "max": 9.029358863830566,
+      "finite": true,
+      "digest": "4fabf866c75b33ea"
+    },
+    {
+      "name": "dist_label",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 11.0,
+      "max": 16.0,
+      "finite": true,
+      "digest": "89a06c93b1df1fa1"
+    },
+    {
+      "name": "goal_pos",
+      "shape": [
+        4,
+        2
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 1.722120761871338,
+      "max": 17.445980072021484,
+      "finite": true,
+      "digest": "df4ff162daa14945"
+    },
+    {
+      "name": "dataset_index",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.int64",
+      "device": "cpu",
+      "min": 5.0,
+      "max": 5.0,
+      "finite": true,
+      "digest": "195313754e63a742"
+    },
+    {
+      "name": "action_mask",
+      "shape": [
+        4
+      ],
+      "dtype": "torch.float32",
+      "device": "cpu",
+      "min": 1.0,
+      "max": 1.0,
+      "finite": true,
+      "digest": "f6bb1294da2f78cd"
+    }
+  ],
+  "loss_components": [
+    "dist_loss",
+    "diffusion_loss",
+    "total_loss"
+  ],
+  "diffusion_state": {
+    "seed": 20260813,
+    "timesteps": [
+      2,
+      9,
+      1,
+      3
+    ],
+    "noise_shape": [
+      4,
+      8,
+      2
+    ],
+    "noise_digest": "5a9b88d7e6e5862c",
+    "noisy_action_digest": "3932d82746adc0ca",
+    "goal_mask": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "goal_mask_prob": 0.5,
+    "scheduler": "diffusers DDPMScheduler(num_train_timesteps=num_diffusion_iters, beta_schedule='squaredcos_cap_v2', clip_sample=True, prediction_type='epsilon') -- train/train.py L214-219",
+    "naction_digest": "77da5e61c3e617d7"
+  },
+  "note": "model-specific differences are preserved, not standardised away"
+}
