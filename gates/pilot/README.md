@@ -9,9 +9,18 @@
 | Harness validation | **executable, and executed** |
 | GO Stanford source dataset | **reference only** |
 
-**Nothing in this directory is pilot evidence.** No trajectory has been
+> **Superseded, and retained rather than deleted.** The paragraph below was
+> written before collection and is no longer true. Both trajectories were
+> subsequently collected and both PASS — see "Pilot result" at the end of this
+> file, and `pilot_0001_report.txt` / `pilot_0002_report.txt`. It is kept because
+> the harness-validation reports in this directory really are *not* pilot
+> evidence, and that distinction still holds: every report here carries
+> `collected_by_project: false` and `pilot_evidence: false`, while the two pilot
+> reports carry both as true.
+
+~~**Nothing in this directory is pilot evidence.** No trajectory has been
 collected. The two trajectories Prof. Bo asked for do not exist, and neither
-report here counts as one of them.
+report here counts as one of them.~~
 
 > **Correction.** This directory was created while the pilot was believed
 > blocked on a missing Isaac Sim runtime. That belief was wrong: Isaac Sim

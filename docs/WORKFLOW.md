@@ -52,8 +52,16 @@ pip install -e third_party/diffusion_policy
 pip install "diffusers==0.11.1" "huggingface_hub==0.25.2"
 
 # 0.3 Repo self-test, including the compatibility proof
-make verify
-NAVFM_UPSTREAM=third_party/visualnav-transformer pytest -q
+#     PYTHONPATH MUST BE UNSET. Measured, not stylistic: with the ROS 2 Humble
+#     PYTHONPATH inherited from a sourced shell, collection aborts at
+#     `ModuleNotFoundError: No module named 'lark'` before a single test runs.
+#     PYTHONPATH tells Python where to search for code, so a stale value makes
+#     verification load a different copy of a module than the repository under
+#     test -- the contamination class gates/M2/ exists to detect, and the reason
+#     the environment identity in gates/G0/evaluation_declaration.json includes
+#     PYTHONPATH as a field.
+env -u PYTHONPATH make verify
+env -u PYTHONPATH NAVFM_UPSTREAM=third_party/visualnav-transformer pytest -q
 
 # 0.4 Checkpoints -- Drive folder 1a9yWR2iooXFAqjQHetz263--4_2FFggg
 #     vint.pth (410 MB), gnm.pth (100 MB, rename to taste), nomad.pth (73 MB)

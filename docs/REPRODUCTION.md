@@ -275,3 +275,30 @@ Undocumented pitfalls found by reading the code:
   expecting a pickled optimizer *object*. Resume works only from checkpoints
   this repo wrote — and, on torch ≥ 2.6, only with the weights_only patch.
 * `data_config.yaml` defines `carla_intvns` twice (last wins).
+
+## Pushing to the remote — the account, not an organisation
+
+The remote is `git@github.com:FAVL-AI/navfm.git`, and `FAVL-AI` is a **separate
+personal GitHub account**, not a GitHub organisation. This matters because the
+symptom looks exactly like an organisation single-sign-on problem and is not one.
+
+| | |
+|---|---|
+| `ssh -T git@github.com` | `Hi FAVL-AI!` — the key at `~/.ssh/id_ed25519` authenticates **as** `FAVL-AI` |
+| `git ls-remote origin` | works; push over SSH works |
+| `gh api repos/FAVL-AI/navfm` | **HTTP 404**, because `gh` is logged in as `FrankAsanteVanLaarhoven`, a different account with no access to this private repository |
+| `gh api user/orgs` | empty — there is no organisation involved |
+| `X-GitHub-SSO` response header | absent, which is what rules single-sign-on out |
+
+So: **do not spend time on an organisation-token or SAML authorisation problem.
+There isn't one.** Push over SSH. Only `gh`-based commands (PR listing, branch
+protection, `repo view`) are unavailable, and none of them is required to push.
+
+If `gh` access is ever wanted, the fix is `gh auth login` as the `FAVL-AI`
+account — adding a second account and switching with `gh auth switch` — or adding
+`FrankAsanteVanLaarhoven` as a collaborator on the repository. Neither is
+required for the research workflow.
+
+Commit identity is a separate matter from the account that transports the push,
+and is unaffected: author and committer are Frank Asante Van Laarhoven
+<frankleroyvan@gmail.com>.
