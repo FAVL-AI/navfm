@@ -1,0 +1,31 @@
+{
+  "checks": [
+    {
+      "check": "commit_exists",
+      "detail": "resolved to 4c0950432dcd56c91a5b71bb8c10fbc222422570",
+      "passed": true
+    },
+    {
+      "check": "commit_is_ancestor_of_head",
+      "detail": "in HEAD's history",
+      "passed": true
+    },
+    {
+      "check": "protocol_hash_matches",
+      "detail": "protocol sha256 40d59e27f25a37fe... will be archived from this commit",
+      "passed": true
+    },
+    {
+      "check": "output_postdates_commit",
+      "detail": "output directory does not yet exist",
+      "passed": true
+    },
+    {
+      "check": "protocol_stable_across_runs",
+      "detail": "no prior initialisation here",
+      "passed": true
+    }
+  ],
+  "commit": "4c0950432dcd56c91a5b71bb8c10fbc222422570",
+  "protocol_sha256": "40d59e27f25a37fe710ce26f58ffdadc4db1b51eca078e09bb731ee5d8df82a1"
+}

@@ -1,0 +1,185 @@
+{
+  "argv": [
+    "--model",
+    "vint",
+    "--dataset",
+    "go_stanford",
+    "--split",
+    "test",
+    "--batch-size",
+    "400",
+    "--num-workers",
+    "0",
+    "--seed",
+    "0",
+    "--model-seed",
+    "2",
+    "--population-seed",
+    "0",
+    "--declaration",
+    "gates/G0/evaluation_declaration.json",
+    "--pair-manifest",
+    "gates/G0/evaluation_pairs.json",
+    "--preregistration-commit",
+    "4c0950432dcd56c91a5b71bb8c10fbc222422570",
+    "--evidence-class",
+    "random_init_control",
+    "--data-source",
+    "go_stanford_reconstruction",
+    "--data-folder",
+    "/home/favl/navfm-data/go_stanford/go_stanford",
+    "--split-folder",
+    "gates/G0/splits/test",
+    "--log-dir",
+    "runs/g0c",
+    "--run-name",
+    "g0c-control-seed2",
+    "--no-progress"
+  ],
+  "checkpoint_load": null,
+  "checkpoint_missing_keys": [],
+  "checkpoint_sha256": null,
+  "checkpoint_unexpected_keys": [],
+  "data_folder": "/home/favl/navfm-data/go_stanford/go_stanford",
+  "dataset_options": {
+    "end_slack": 0,
+    "from_shipped_config": true,
+    "goals_per_obs": 2,
+    "negative_mining": true,
+    "waypoint_spacing": 1
+  },
+  "model_config": {
+    "action": {
+      "max_dist_cat": 10,
+      "min_dist_cat": 0
+    },
+    "alpha": 0.5,
+    "batch_size": 256,
+    "beta": 0.1,
+    "clipping": false,
+    "close_far_threshold": 10,
+    "context_size": 5,
+    "context_type": "temporal",
+    "cyclic_period": 10,
+    "datasets": {
+      "go_stanford": {
+        "data_folder": "/home/<username>/vint_dataset/go_stanford_cropped",
+        "end_slack": 0,
+        "goals_per_obs": 2,
+        "negative_mining": true,
+        "test": "/home/<username>/data_splits/go_stanford/test/",
+        "train": "/home/<username>/data_splits/go_stanford/train/"
+      },
+      "recon": {
+        "data_folder": "/home/<username>/vint_dataset/recon",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true,
+        "test": "/home/<username>/data_splits/recon/test/",
+        "train": "/home/<username>/data_splits/recon/train/"
+      },
+      "sacson": {
+        "data_folder": "/home/<username>/vint_dataset/sacson/",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true,
+        "test": "/home/<username>/data_splits/sacson/test/",
+        "train": "/home/<username>/data_splits/sacson/train/"
+      },
+      "tartan_drive": {
+        "data_folder": "/home/<username>/vint_dataset/tartan_drive/",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true,
+        "test": "/home/<username>/data_splits/tartan_drive/test/",
+        "train": "/home/<username>/data_splits/tartan_drive/train/"
+      }
+    },
+    "distance": {
+      "max_dist_cat": 20,
+      "min_dist_cat": 0
+    },
+    "epochs": 100,
+    "eval_batch_size": 400,
+    "eval_fraction": 0.25,
+    "eval_freq": 1,
+    "goal_encoding_size": 1024,
+    "goal_type": "image",
+    "gpu_ids": [
+      0
+    ],
+    "image_log_freq": 1000,
+    "image_size": [
+      85,
+      64
+    ],
+    "late_fusion": false,
+    "learn_angle": true,
+    "len_traj_pred": 5,
+    "lr": "5e-4",
+    "max_norm": 1.0,
+    "mha_ff_dim_factor": 4,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4,
+    "model_type": "vint",
+    "normalize": true,
+    "num_images_log": 8,
+    "num_workers": 12,
+    "obs_encoder": "efficientnet-b0",
+    "obs_encoding_size": 512,
+    "obs_type": "image",
+    "optimizer": "adamw",
+    "pairwise_test_freq": 0,
+    "plateau_factor": 0.5,
+    "plateau_patience": 3,
+    "print_log_freq": 100,
+    "project_name": "vint-release",
+    "run_name": "vint-5c",
+    "scheduler": "cosine",
+    "seed": 0,
+    "train": true,
+    "train_subset": 1.0,
+    "use_wandb": true,
+    "wandb_log_freq": 10,
+    "warmup": true,
+    "warmup_epochs": 4
+  },
+  "model_seed": 2,
+  "num_workers": 0,
+  "population_seed": 0,
+  "preregistration_checks": [
+    {
+      "check": "commit_exists",
+      "detail": "resolved to 4c0950432dcd56c91a5b71bb8c10fbc222422570",
+      "passed": true
+    },
+    {
+      "check": "commit_is_ancestor_of_head",
+      "detail": "in HEAD's history",
+      "passed": true
+    },
+    {
+      "check": "protocol_hash_matches",
+      "detail": "protocol sha256 40d59e27f25a37fe... will be archived from this commit",
+      "passed": true
+    },
+    {
+      "check": "output_postdates_commit",
+      "detail": "output directory does not yet exist",
+      "passed": true
+    },
+    {
+      "check": "protocol_stable_across_runs",
+      "detail": "no prior initialisation here",
+      "passed": true
+    }
+  ],
+  "preregistration_commit": "4c0950432dcd56c91a5b71bb8c10fbc222422570",
+  "preregistration_protocol_sha256": "40d59e27f25a37fe710ce26f58ffdadc4db1b51eca078e09bb731ee5d8df82a1",
+  "realised_pair_count": 41872,
+  "realised_population_sha256": "57a7fbbeba91b92ab58a3c2889536352758e41af8280e8f0edc2e10abefd1cc0",
+  "seed": 0,
+  "split_folder": "gates/G0/splits/test",
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "upstream_root": "/home/favl/projects/navfm/third_party/visualnav-transformer"
+}

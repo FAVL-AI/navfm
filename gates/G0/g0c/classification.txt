@@ -1,0 +1,41 @@
+G0.c CLASSIFICATION -- gate E0.2, released vint.pth on the frozen GO Stanford holdout
+==============================================================================
+  population        : 41872 pairs, manifest 57a7fbbeba91b92a
+  batch size        : 400   checkpoint 155fd72de2e98ae0
+  primary endpoint  : strict/total_loss = 0.18026807678384063
+
+  arm                        strict/total  strict/action  strict/dist
+  checkpoint r1                0.18026808     0.24624969    11.428646
+  checkpoint r2                0.18026808     0.24624969    11.428646
+  control seed 0               2.56558499     3.71418720   141.698278
+  control seed 1               2.89068280     4.36191745   141.944815
+  control seed 2               2.77197192     4.13551938   140.842447
+  control seed 0 (replay)      2.56558499     3.71418720   141.698278
+
+  CLASSIFICATION 2 CONDITIONS -- conjunctive, all seven required
+  --------------------------------------------------------------------------
+  PASS  1 procedural validity
+        freeze audit 16/16; 5 preregistration checks PASS; worktree clean; checkpoint digest re-verified; environment identity matches 4408691c; no prior G0.c directory
+  PASS  2 complete instrument execution
+        454 tests pass; 33 upstream-marked collected, none skipped/deselected, all passed, upstream pinned dca79815b704; all outputs and lineage records produced
+  PASS  3 deterministic checkpoint repeatability
+        two executions at model_seed 0 / evaluation_seed 0; every parsed numerical and lineage record exactly equal; only wall_clock_s differs, which is neither
+  PASS  4 control replayability and distinctness
+        seed 0 replays exactly; three seeds give three distinct losses (2.565585, 2.890683, 2.771972) -- three initialisations, not three permutations
+  PASS  5 metric validity and completeness
+        classificatory metrics implemented pre-execution, declared manifest keys, finite, in range, traceable; the two orientation cosines (F12, algebraically identical) are descriptive only and classify nothing
+  PASS  6 predeclared behavioural sanity ordering
+        strict/total_loss 0.180268 < each control individually (2.565585, 2.890683, 2.771972); action_loss and dist_loss likewise; no tie
+  PASS  7 limited historical-anchor relationship
+        L/0.17398 = 1.036143, within [0.1, 10] (equivalently 0.017398 <= L <= 1.7398). A sanity condition, NOT a reproduction tolerance
+
+  VERDICT: CLASSIFICATION 2 -- RECONSTRUCTED BUT NOT REPRODUCED
+
+  Layer D -- historical-anchor interpretation (descriptive)
+    L = 0.18026808 against the checkpoint-associated 0.17398; ratio 1.036143,
+    a deviation of +3.61%. Same order of magnitude. The two
+    quantities are NOT equivalent estimands: 0.17398 was computed over an
+    unrecoverable five-dataset mixture, this over a reconstructed single-corpus
+    scene-grouped holdout of 760 trajectories across 15 held-out scenes.
+    Proximity is therefore corroborative of a correct instrument, and is not
+    evidence of reproduction. No reproduction claim is made or implied.

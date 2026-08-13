@@ -1,0 +1,51 @@
+POST-RUN RE-RUN OF THE PRE-EXECUTION FREEZE AUDIT -- READ THIS FIRST
+
+This file records a category error, kept rather than deleted.
+
+The protocol freeze audit is a PRE-EXECUTION gate. It was run and passed 16/16
+immediately before G0.c executed; that passing run is the authorising evidence
+and is reproduced in gates/G0/freeze_audit.txt and in this gate's record.
+
+It was then re-run AFTER execution, which is not what it is for. Two checks now
+fail, and both fail correctly:
+
+  no_existing_g0c_result_directory   FAIL -- because runs/g0c now exists
+  no_pre_audit_evaluator_output      FAIL -- because evaluator output now exists
+
+Both guard against a result existing BEFORE the gate runs. A result now exists,
+because G0.c ran. The audit is reporting exactly what it was built to report.
+
+Its closing line, "gate execution invalid -- no evidential classification",
+therefore applies to THIS post-hoc invocation and NOT to the G0.c execution.
+G0.c's own classification is in classification.txt: Classification 2,
+Reconstructed but not reproduced, all seven conjunctive conditions passing.
+
+Retained because deleting a check that said something inconvenient -- even
+when the inconvenience is the checker's own misuse -- is the habit this
+repository's failure records exist to prevent. The raw output follows unedited.
+
+======================================================================
+
+PROTOCOL FREEZE AUDIT
+=====================
+
+amendment_committed                    PASS  4c0950432dcd56c91a5b71bb8c10fbc222422570 -- carries a G0.c amendment
+amendment_sha_recorded                 PASS  full SHA 4c0950432dcd56c91a5b71bb8c10fbc222422570
+amendment_ancestor_of_head             PASS  in HEAD's history
+preregistration_hash_recorded          PASS  sha256 40d59e27f25a37fe710ce26f58ffdadc4db1b51eca078e09bb731ee5d8df82a1
+scene_key_rule_hash_recorded           PASS  scene_key_v1 rule sha256 bbd0e76ddee9ebcd170e19d90cd548cf17c86ec165fea9bd335d136d9c363a45
+scene_order_algorithm_hash_recorded    PASS  scene_order_v1 algorithm sha256 0422bc546a467f60bf6e7b480453f246cd798c6c7f5ccc9a89716f5724cfcd15
+split_digests_recorded_and_match       PASS  train and test digests match committed files
+sha256sums_recorded                    PASS  gates/G0/SHA256SUMS sha256 9b007714a3418d3930557873e273cb3d94756a3552fb5fec1a18822d6f78ebd4
+checkpoint_digest_reverified           PASS  vint.pth 155fd72de2e98ae0 vs recorded 155fd72de2e98ae0
+environment_identity_recorded          PASS  matches preregistered 4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625
+worktree_state_declared                PASS  working tree: modified (1): gates/G0/g0c/
+artefacts_resolve_at_amendment_commit  PASS  all pinned artefacts present at the amendment commit
+evaluation_pair_manifest_digest        PASS  41872 pairs, digest 57a7fbbeba91b92a recomputed and matching
+upstream_patch_identity_verified       PASS  upstream dca79815b704, patch script d091961020c52c3b, archived+live diff f77e1a655a12020a, 5 markers applied
+no_existing_g0c_result_directory       FAIL  runs/g0c already exists
+no_pre_audit_evaluator_output          FAIL  12 evaluator output(s) predate this audit: ['/home/favl/projects/navfm/runs/g0c/g0c-control-seed0-replay/metrics.json', '/home/favl/projects/navfm/runs/g0c/g0c-control-seed0/metrics.json', '/home/favl/projects/navfm/runs/g0c/g0c-control-seed1/metrics.json']
+
+2 of 16 checks FAILED.
+gate execution invalid -- no evidential classification.
+This is not a result. It is the gate declining to produce one.
