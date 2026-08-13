@@ -761,3 +761,570 @@ rule this repository depends on:
 
 > A reviewer's statement is evidence to verify, not a fact to copy without
 > recomputation.
+
+## Amendment 5 — 2026-08-07, revised 2026-08-13 — GNM / ViNT / NoMaD reproducibility study
+
+Drafted 2026-08-07; substantially revised through trigger-3 adjudication and
+committed 2026-08-13. Both dates are given because the crosswalk's provenance
+claims were re-derived during the revision, not at drafting.
+
+**Status: adjudicated under trigger-3.** The round-by-round verdict record,
+including every defect found and the correction applied, is
+`gates/redteam/trigger3-amendment5-2026-08-13.md`. No checkpoint could be loaded
+and no inference run until trigger-3 returned an explicitly `committable`
+verdict; a verdict of `Fixing` alone was never sufficient, and several rounds
+returned `Fixing` with `committable: FALSE`.
+
+**Trigger-3 classification: fixing.** The determination the standing-instructions
+file requires of every amendment, stated here rather than deferred. This
+amendment introduces no result-dependent change: it fixes no threshold, alters
+no metric, changes no stopping rule and touches no population. It constrains what
+may be claimed *before* any checkpoint is loaded — `runs/` does not exist and no
+inference has run — declares the paper-reproduction column unclaimable in
+advance, assigns `DELTA` or `RERUN` to eight of the twelve crosswalk rows while
+confining `REUSE` to the three rows whose evidence is digest identity alone (the
+twelfth is `UNDER RECONCILIATION`), and closes R8–R11 together with Success Rate,
+Navigation Error and SPL. A rescuing amendment widens what may be claimed after
+a result is seen; this one narrows what may be claimed before any result exists.
+
+**Purpose.** Define, before any checkpoint is loaded or inference is run, exactly
+what "reproduced" can and cannot mean for the three released VisualNav
+Transformer models.
+
+### Three independent claims
+
+| Column | Meaning | Can become PASS from the current public release? |
+|---|---|---|
+| Released-artifact reproducibility | Released code, checkpoint, loader and inference can be instantiated and executed | Yes |
+| Public-data training reproducibility | Released training code can train on the publicly released datasets under a frozen protocol | Yes, subject to execution |
+| Exact paper reproduction | Original published result can be recreated from the complete original training/evaluation inputs | **Not claimable** unless unreleased inputs become available |
+
+> These columns are independent. PASS in one column must never be used to infer
+> PASS in another.
+
+The third column is not blocked by any deficiency of this project. The official
+release states that GNM, ViNT and NoMaD were trained on a mixture of publicly
+available and **unreleased** datasets. Absent those inputs and sufficient
+evaluation detail, exact paper reproduction is not independently reconstructable,
+and this amendment declares that in advance rather than discovering it later.
+
+> A failure to match the paper is still a successful reproducibility experiment
+> if we can identify, preserve and demonstrate why the published result cannot
+> be independently reconstructed.
+
+### The ladder, frozen per model
+
+```
+R0  source frozen        R6  strict checkpoint load
+R1  environment frozen   R7  deterministic inference
+R2  data verified        R8  training mechanics
+R3  preprocessing        R9  public-data training
+R4  loader verified      R10 evaluation
+R5  checkpoint verified  R11 paper comparison
+```
+
+GNM uses this ladder unmodified. ViNT and NoMaD carry preregistered
+qualifications, both introduced because a pre-Amendment-5 audit located earlier
+evidence that this amendment must not ignore.
+
+> **NoMaD R7 — UNDER RECONCILIATION.** The current `navfm` implementation does
+> not contain the diffusion sampling path required for NoMaD inference. However,
+> the earlier `FAVL-AI/visualnav-transformer` reproduction lineage contains
+> evidence that NoMaD inference executed using the official DDPM scheduler at 10
+> steps and produced bitwise-identical outputs across three repeated runs under a
+> frozen seed — **on synthetic seeded frames, not on GO Stanford**. The existing
+> evidence must be assessed for adoption by reference or delta verification
+> before any new implementation or execution is introduced.
+>
+> That input fact bounds the reconciliation before it starts. The DDPM execution,
+> the three-repeat result, the checkpoint identity and the model configuration
+> are adoptable by reference. The frozen GO Stanford input-batch digest is not,
+> and no reconciliation can produce it, so this rung retains a real execution
+> delta irrespective of how the reconciliation concludes.
+
+The earlier wording of this clause declared NoMaD R7 simply BLOCKED, citing
+`src/navfm/upstream.py:218`. That was too broad: the missing path is
+repository-local to `navfm` and does not establish a model-level blocker.
+
+> **ViNT historical-evidence disposition**
+>
+> The pre-Amendment-5 audit of the July `FAVL-AI/visualnav-transformer`
+> reproduction lineage is complete. ViNT-specific evidence does not support
+> inheritance of the family-level reproduction verdict. The following
+> dispositions are therefore frozen before new execution:
+>
+> **ViNT R6 — DELTA.** Historical ViNT checkpoint-verification evidence records
+> zero missing and zero unexpected keys, but `scripts/02_verify_checkpoints.py:168`
+> performed the load with `strict=False`. Amendment 5 requires an explicitly
+> strict state-dict load, so the historical result does not establish R6 under
+> the current protocol.
+>
+> The historical record exists in two forms, and only one is durable. A tracked
+> log, `reports/official_reproduction/logs/02_verify_checkpoints.log`, carries
+> the result and survives a clean clone — but it enters the fork at **`0afa095`
+> (2026-07-30)**, three days *after* `900c418`, and is covered by no
+> reproduction tag. The machine-readable artefact
+> `experiments/_evidence/checkpoint_verification.json` is **untracked** and does
+> not survive a clean clone; its only self-dated provenance is
+> `verified_utc 2026-07-30T10:10:16Z`, which likewise postdates `900c418`
+> (2026-07-27T11:05:32+01:00). Its state as at `900c418` is unrecoverable by
+> anyone, because it was never tracked and was overwritten on 2026-07-30. That
+> is a permanent limit on this row, recorded rather than repaired.
+>
+> The earlier wording of this clause said the evidence "is not durable from a
+> clean clone" without qualification. That overstated the case: it is true of
+> the untracked JSON and false of the tracked log. Historical evidence shall be
+> cited by reference **at the revision where it actually exists**; the missing
+> delta is an explicit strict load plus a durable machine-readable record.
+
+Two evidence classes must not be conflated:
+
+```
+experiments/_evidence/              IGNORED by git (.gitignore:87 at 900c418;
+                                    .gitignore:92 at fork HEAD)
+                                    checkpoint-verification evidence
+experiments/validation/m1_family/   TRACKED at the audited July revision
+                                    gnm_gate.json present
+                                    nomad_gate.json present
+                                    NO vint_gate.json
+```
+>
+> **ViNT R7 — RERUN.** The machine-readable family gate directory is tracked. It
+> contains GNM and NoMaD gate records but no ViNT gate record, and the gate
+> implementation restricts supported models to GNM and NoMaD. No deterministic
+> ViNT inference record containing a frozen input digest, seed protocol, output
+> digest, repeat count and declared tolerance has been located. R7 therefore
+> requires a new execution under Amendment 5.
+>
+> **ViNT R8 — DELTA.** Historical evidence demonstrates execution of the released
+> ViNT training entry point on public GO Stanford data. The archived experiment
+> was explicitly smoke-scaled: one epoch from random initialization, batch size
+> 24 rather than the official batch size 256, with the recorded loss-identity
+> comparison approximately `1.4594107256016287e-08`. The historical artefact
+> explicitly states that this run is **not a reproduction of any published ViNT
+> result**. Amendment 5 adopts that evidence only as proof of prior
+> training-mechanics execution. It does not establish public-data training
+> reproduction or paper-result reproduction. **No R8 execution is authorised by
+> this amendment**, which defines no R8 criterion; see "R8 is NOT opened by this
+> amendment" below.
+>
+> The July family-level reproduction tag shall not be used to transfer GNM or
+> NoMaD verification to ViNT. Its own rule that no verdict is inherited between
+> models remains controlling. The absence of ViNT R7 evidence is recorded as a
+> defect in the historical gate apparatus, not as evidence that ViNT itself is
+> non-reproducible and not as a deficiency of `navfm`.
+
+### Frozen crosswalk — provenance-complete
+
+Row provenance is of three kinds, and each row states which applies to it. The
+**eight fork-sourced rows** (GNM R6/R7/R8, ViNT R6, ViNT R8, NoMaD R6/R7/R8) were
+derived by re-opening the primary artefact in `/home/favl/robotics/FleetSafe-VLA`.
+The **three R5 rows** were derived by re-opening `gates/G0/SHA256SUMS` and the
+checkpoint files in **`navfm`**, which is where that evidence lives; no such path
+has ever existed in the fork. **ViNT R7** rests on a verified absence in the fork
+rather than on any artefact. No value is carried over from any summary. Fields
+not independently establishable are written `NOT ESTABLISHED` and are never
+inferred.
+
+> No cross-repository evidence may affect an Amendment 5 disposition or
+> execution-order decision unless the source repository, commit or tag, evidence
+> path, checkpoint identity, dataset identity and original claim boundary are
+> recorded in the frozen crosswalk. Historical execution is adopted by reference
+> and shall never be re-described as execution performed in `navfm`.
+
+Common to every row **whose source is the fork**: `source_repository` =
+`FAVL-AI/visualnav-transformer` at `/home/favl/robotics/FleetSafe-VLA`;
+`verification_source` = direct `git show <commit>:<path>` against that clone
+during this correction pass.
+
+Two classes of row do **not** take those defaults, and stating a blanket default
+over them would misattribute a `navfm` artefact to the fork — the inverse of the
+re-description this amendment forbids:
+
+* **The three R5 rows.** Their `source_repository` is **`FAVL-AI/navfm`**, and
+  their evidence path `gates/G0/SHA256SUMS` is tracked *here*, not in the fork.
+  Their `verification_source` is `cd checkpoints && sha256sum -c SHA256SUMS`,
+  not `git show`.
+* **The ViNT R6 row's second artefact**, `experiments/_evidence/checkpoint_verification.json`.
+  It is untracked, so `git show` cannot retrieve it at any commit; it was read
+  from the fork's working tree, and that is the whole reason the row records its
+  provenance as `NOT ESTABLISHED`.
+
+| Model · Rung | Disposition | source_commit / tag | evidence_path (tracked?) | checkpoint_sha256 | **dataset identity** | **dataset / input digest** | historical claim / boundary | missing Amendment-5 delta |
+|---|---|---|---|---|---|---|---|---|
+| GNM R5 | REUSE | n/a — digest verified in `navfm` | `gates/G0/SHA256SUMS` (**tracked**, `navfm`); `checkpoints/SHA256SUMS` is an untracked working copy (**ignored**, `.gitignore:22`) with identical checkpoint lines | `4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95` | n/a — identity only, no dataset read | n/a | identity only | none |
+| GNM R6 | DELTA | `900c418` / `gnm-reproduction-v1.0.0` | `experiments/validation/m1_family/gnm_gate.json` (tracked) | as above | n/a — checkpoint load only | n/a | 0 missing / 0 unexpected recorded | strict load asserted; durable record under Amendment 5 |
+| GNM R7 | DELTA | `900c418` / `gnm-reproduction-v1.0.0` | same gate file (tracked) | as above | **synthetic seeded frames — NOT GO Stanford.** `np.random.default_rng(SEED+i)`, `SEED = 0`, 480×640×3 `uint8`, through upstream `resize_and_aspect_crop` (`15_reproduction_gate.py:113–125`, called at `:152`,`:155`). The script's own docstring: *"Synthetic, and not benchmark data"* | 6 observation frames, first `1ed344aa3591f729…`; goal frame `987d033e0031b9c5…` | **`repeat_count: 1`** — a single run, **on synthetic input** | frozen **GO Stanford** input batch — **not satisfiable by reference**, because the historical input was synthetic; declared tolerance; **repeats ≥ 2**; input/output digests |
+| GNM R8 | DELTA | `900c418` / `gnm-reproduction-v1.0.0` | `m1_family/gnm_entry_point.json` (tracked) | n/a | `go_stanford` (public, official processed format) | fork split registry; corpus digest **NOT ESTABLISHED** | `exit_code 0`, `epochs 1`, `batch_size 24`; boundary: *"execution evidence only … NOT a reproduction of any published GNM result and must never be cited as one"* | official-scale configuration (`batch_size: 400`, `epochs: 30` — GNM's official scale, **not** ViNT's 256/100); **R8 criterion NOT DEFINED in this amendment — R8 requires a further dated amendment** |
+| ViNT R5 | REUSE | n/a — digest verified in `navfm` | `gates/G0/SHA256SUMS` (**tracked**, `navfm`); `checkpoints/SHA256SUMS` **ignored** as above | `155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f` | n/a — identity only, no dataset read | n/a | identity only | none |
+| ViNT R6 | **DELTA** | **`0afa095`** (2026-07-30) for the tracked log — **not `900c418`**, where the path does not exist; **NOT ESTABLISHED** for the untracked artefact; no tag contains either | `reports/official_reproduction/logs/02_verify_checkpoints.log` (**tracked at `0afa095`; absent at `900c418`**); `experiments/_evidence/checkpoint_verification.json` (**untracked**; only self-dated provenance `verified_utc 2026-07-30T10:10:16Z`) | as above | n/a — checkpoint load only | n/a | 0 missing / 0 unexpected, but `strict=False` at `scripts/02_verify_checkpoints.py:168` | explicit strict load; durable machine-readable record |
+| ViNT R7 | **RERUN** | **NOT ESTABLISHED** — no ViNT gate record in any revision | **NOT ESTABLISHED** | as above | **NOT ESTABLISHED** — no inference record exists | **NOT ESTABLISHED** | none located | entire rung |
+| ViNT R8 | **DELTA** | **`ce9708e`** / **NOT ESTABLISHED — no tag contains it** | `m1_family/vint_entry_point.json` (tracked at `ce9708e`) | n/a | `go_stanford` (public, official processed format), **scene-entangled split, ≈34.5% padded targets** | split `{train: 2956, test: 740}`; corpus digest **NOT ESTABLISHED** | `exit_code 0`, `epochs 1`, `batch_size 24`, `initialisation "random (from-scratch smoke, not the official checkpoint)"`; boundary quoted below | official-scale configuration (`batch_size: 256`, `epochs: 100`); **R8 criterion NOT DEFINED in this amendment — R8 requires a further dated amendment** |
+| NoMaD R5 | REUSE | n/a — digest verified in `navfm` | `gates/G0/SHA256SUMS` (**tracked**, `navfm`); `checkpoints/SHA256SUMS` **ignored** as above | `70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333` | n/a — identity only, no dataset read | n/a | identity only | none |
+| NoMaD R6 | DELTA | `900c418` / `nomad-reproduction-v1.0.0` for the gate file; **`0afa095`** for the tensor count | `m1_family/nomad_gate.json` (tracked) — records `parameters: 19049675`, `missing_keys: []`, `unexpected_keys: []` and **no tensor-count field**; the 645/645 figure is in `0afa095:reports/official_reproduction/logs/02_verify_checkpoints.log` (tracked) and in the untracked JSON | as above | n/a — checkpoint load only | n/a | 0 missing / 0 unexpected recorded; tensor count sourced separately as above | strict load asserted; durable record |
+| NoMaD R7 | **UNDER RECONCILIATION** | `900c418` / `nomad-reproduction-v1.0.0` | `m1_family/nomad_gate.json` (tracked) | as above | **synthetic seeded frames — NOT GO Stanford.** Same `official_frame` path as GNM R7 (`:113–125`, called at `:193`,`:196`) | 4 observation frames, first `1ed344aa3591f729…`; goal frame `987d033e0031b9c5…` | `repeat_count: 3`, DDPM at 10 steps, bitwise identical across repeats — **on synthetic input** | frozen **GO Stanford** input batch — **not satisfiable by reference**, so a real execution delta always remains; tolerance record. **No port by default** |
+| NoMaD R8 | DELTA | `900c418` / `nomad-reproduction-v1.0.0` | `m1_family/nomad_entry_point.json` (tracked) | n/a | `go_stanford` (public, official processed format) | fork split registry; corpus digest **NOT ESTABLISHED** | `exit_code 0`, `epochs 1`, `batch_size 16`; boundary: *"execution evidence only … NOT a reproduction of any published NoMaD result and must never be cited as one"* | official-scale configuration (`batch_size: 256`, `epochs: 100`); **R8 criterion NOT DEFINED in this amendment — R8 requires a further dated amendment** |
+
+**ViNT R8 claim boundary, quoted verbatim and not paraphrased**
+(`ce9708e:experiments/validation/m1_family/vint_entry_point.json`):
+
+> *"execution evidence only. One smoke-scaled epoch from random init on a
+> scene-entangled split with ~34.5% padded targets. NOT a reproduction of any
+> published ViNT result, and NOT comparable to GNM's or NoMaD's numbers:
+> different optimiser, schedule, capacity and objective scaling."*
+
+Its final clause is binding: this row **may not be used for cross-model
+comparison**.
+
+**Four provenance facts that symmetry would have got wrong.** `900c418` carries
+`gnm_entry_point.json`, `gnm_gate.json`, `nomad_entry_point.json` and
+`nomad_gate.json` — and **no ViNT file of either kind**. `vint_entry_point.json`
+is **introduced by** exactly one commit, `ce9708e`, ≈86 minutes after the tagged
+commit, and is contained in the tree of no tag. (It persists in 98 commits
+through the fork tip; the load-bearing fact is that no tag reaches it, not that
+it appears only once. An earlier wording said "exists at exactly one commit",
+which is false and is corrected here rather than in place.) **GNM R7 rests
+on `repeat_count: 1`**, so it carries no repeatability evidence, unlike
+NoMaD's 3.
+
+**And the fourth, which changes the execution order: the historical GNM R7 and
+NoMaD R7 inference did not run on GO Stanford at all.** Both drew their input
+from `official_frame` (`900c418:scripts/15_reproduction_gate.py:113–125`), which
+generates a synthetic frame from `np.random.default_rng(SEED + i)` at `SEED = 0`
+and pushes it through upstream's own `resize_and_aspect_crop`. The function's
+docstring states the boundary itself: *"Synthetic, and not benchmark data: it
+exists to exercise the official contract, and is regenerable from the seed."*
+
+The tag annotations preserve the same distinction, and an earlier reading of
+this crosswalk lost it: `gnm-reproduction-v1.0.0` says *"**smoke inference**
+through the official forward path returns `dist [1,1]` and `action [1,5,4]`"*
+without naming a dataset, and separately that *"official `train.py` executes on
+public GO Stanford data"* — which is R8, not R7.
+
+The consequence is not cosmetic. Amendment 5's R7 criterion requires a frozen
+**GO Stanford** input-batch digest. No quantity of synthetic-input evidence can
+supply it, however many repeats it carries. **NoMaD R7 therefore always retains
+a real execution delta and can never be closed by reference alone**, and GNM R7's
+gap is not only repeatability but the input population. Both corrections are
+carried into the execution order below.
+
+### Historical defect recorded, not repaired
+
+> **Historical ViNT R7 gate defect.** Independent verification of the July
+> `FAVL-AI/visualnav-transformer` lineage establishes that no `vint_gate.json`
+> exists in the audited revisions and that `scripts/15_reproduction_gate.py`
+> restricts the machine-readable reproduction gate to GNM and NoMaD. The
+> family-level reproduction claim therefore has no machine-readable ViNT R7 gate
+> record in the audited lineage. No claim is made that `TRACEABILITY.md`
+> referenced a ViNT gate artefact; it did not. This discrepancy is preserved as a
+> limitation of the historical family-level R7 claim and is not retroactively
+> repaired.
+
+### R5 evidence, frozen here
+
+Verified by `sha256sum -c`, run from `checkpoints/` because both digest files use
+`./`-relative paths and `gates/G0/SHA256SUMS` additionally lists
+`./go_stanford.zip`, which does not resolve there:
+
+```
+cd checkpoints && sha256sum -c SHA256SUMS
+```
+
+`gates/G0/SHA256SUMS` is **tracked** in `navfm` and is the durable record; the
+working copy at `checkpoints/SHA256SUMS` carries identical checkpoint lines but
+is **ignored** (`.gitignore:22`) and survives no clean clone, so it must not be
+cited as the durable record. The three checkpoint digests are:
+
+| Checkpoint | Bytes | SHA-256 | R5 |
+|---|---|---|---|
+| `gnm.pth` | 104,806,886 | `4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95` | verified |
+| `nomad.pth` | 76,473,631 | `70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333` | verified |
+| `vint.pth` | 430,167,114 | `155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f` | verified |
+
+**These establish R5, not R6.** A checkpoint whose digest matches has been
+identified, not loaded.
+
+### What this amendment authorises loading `vint.pth` for: R6 only
+
+> The previous prohibition
+> (`docs/reviews/2026-07-31-g0c-amendment-specification.md:304`) barred loading
+> `vint.pth` **for evaluation** until the G0.c protocol was frozen. The G0.c
+> population and protocol are frozen at `eee5a66` with freeze audit 16/16.
+>
+> **G0.c itself has not executed and no G0.c metric exists.** The freeze audit
+> concludes "the protocol is frozen and G0.c *may execute*", and two of its own
+> sixteen checks — `no_existing_g0c_result_directory` and
+> `no_pre_audit_evaluator_output` — pass precisely because no result is present.
+> `runs/` does not exist. Committed Amendment 3 states the same evidential state.
+>
+> The R6 strict load preregistered here is a **different experiment from G0.c
+> evaluation**: it loads weights into an architecture and produces no G0.c
+> metric, no dataset pass and no classification under the G0.c decision rule.
+> Checkpoint loading **for R6** is therefore permitted once this amendment is
+> adjudicated and frozen. The prohibition on loading `vint.pth` *for G0.c
+> evaluation* is retired by the freeze, and G0.c executes under its own frozen
+> protocol, not under this clause.
+
+An earlier wording of this clause read "G0.c is now closed at `eee5a66`". That
+was false — `eee5a66` froze G0.c's population and protocol, as its own commit
+subject records ("Freeze the G0.c evaluation population"), and closure of a gate
+defined by `docs/WORKFLOW.md:82` as *evaluating* the checkpoint requires an
+evaluation that has never run. The error is recorded rather than silently
+replaced, because it was the sole stated basis for retiring a loading
+prohibition, and a gate retired on a false premise is not a gate.
+
+### Evaluation population
+
+```
+GO Stanford frozen pair population : 41,872
+manifest digest                    : 57a7fbbeba91b92a
+```
+
+This population shall not be regenerated or opportunistically changed after
+inference outputs have been seen.
+
+### Repeatability criterion, frozen before the first inference
+
+> For **GNM, ViNT and NoMaD**, repeated inference shall use identical model
+> checkpoint, model configuration, frozen input batch, device, preprocessing,
+> seed and evaluation mode. The primary comparison is element-wise float32 output
+> equivalence using `torch.allclose(rtol=1e-5, atol=1e-6)`. Maximum absolute
+> difference and maximum relative difference shall also be archived. Any failure
+> is reported as a repeatability failure and the tolerance shall not be widened
+> after results are observed.
+
+An earlier wording scoped this criterion to GNM and ViNT alone, while step 5
+below **mandates** a NoMaD R7 execution and requires it to produce a tolerance
+record. That instruction had no referent: the amendment ordered a run and
+declared no rule for accepting it, leaving the tolerance to be chosen after the
+outputs were seen — which is exactly what the no-rescue clause forbids. NoMaD is
+therefore brought under the same declared tolerance as the other two, before its
+first inference.
+
+> **NoMaD, additionally.** The historical NoMaD record is *bitwise* identical
+> across three repeats under a frozen seed, on synthetic input. Bitwise identity
+> is stricter than `allclose` and shall be **reported** for the new GO Stanford
+> run if achieved. It is **not** the acceptance threshold: the declared tolerance
+> above governs, uniformly across all three models. Adopting the stricter
+> historical property as a threshold would set an acceptance rule on hardware and
+> an input population the historical run never used.
+
+Held identical across repeats: input digest, preprocessing digest, checkpoint
+digest, seed, `model.eval()`, `torch.no_grad()`, device, software environment.
+
+If CUDA deterministic algorithms can be enabled without breaking the upstream
+implementation, they shall be enabled and recorded. If upstream execution cannot
+satisfy deterministic-algorithm enforcement, **that fact shall be recorded**
+rather than the check being silently disabled.
+
+**This tolerance governs repeatability only and must never be applied to
+paper-level agreement.** They are different questions: repeatability is same
+implementation, same machine, same input; paper reproduction is agreement with
+published experimental results. The paper comparison requires its own
+metric-specific rule, fixed once the published target metrics and evaluation
+protocol have been identified, in a later amendment.
+
+### Cross-repository evidence
+
+> Historical evidence from another repository may satisfy or partially satisfy a
+> reproduction rung only when its repository, commit or tag, model checkpoint
+> digest, dataset identity, implementation lineage and execution record are
+> explicitly cited. Such evidence must be adopted by reference and must not be
+> silently copied or re-described as execution performed in `navfm`. Where the
+> historical evidence does not satisfy every requirement of the current rung,
+> only the missing delta shall be executed.
+
+Corollary, so the rule cannot be read as an invitation to duplicate: existing
+evidence shall not be discarded or repeated solely because this protocol was
+introduced later.
+
+FleetSafe material is excluded by the standing repository boundary and may not
+be adopted under this clause — specifically the fork's `hospital-v1.0.0` corpus,
+which counts toward no `navfm` rung.
+
+### No-rescue clause
+
+> No project-collected pilot data, synthetic replacement data, altered split,
+> modified metric, changed stopping rule, additional training corpus or
+> post-result tolerance adjustment may be introduced to make a failed
+> reproduction appear successful. Any such change requires a new dated amendment
+> before execution.
+
+### Permitted execution after adjudication
+
+Only the following, in order, and not training:
+
+> **Post-adjudication execution order — derived from the provenance-complete
+> crosswalk**
+>
+> This order may execute only work classified `DELTA`, `RERUN`, or the missing
+> delta of an `UNDER RECONCILIATION` row once that reconciliation has identified
+> it (NoMaD R7, steps 4-5). `REUSE` evidence is adopted by reference and must not be rerun
+> merely for symmetry. `UNDER RECONCILIATION` evidence must be resolved before
+> new implementation is introduced.
+
+1. **Close R6 strict-load deltas first.** For each model whose R6 row is
+   `DELTA`, instantiate the frozen architecture and perform an explicit strict
+   checkpoint load, producing a durable machine-readable record containing
+   checkpoint digest, parameter/tensor counts, missing keys and unexpected keys.
+   Models whose R6 row is `REUSE` are not rerun.
+2. **GNM R7 — execute the two missing deltas, which are input population and
+   repeatability.** Historical GNM R7 evidence contains `repeat_count = 1`, so it
+   establishes no repeatability. It also ran on **synthetic seeded frames rather
+   than GO Stanford**, so it establishes no frozen-input-population evidence
+   either. Both gaps are real and neither substitutes for the other: two repeats
+   on synthetic input would still leave R7 open. Run the frozen Amendment-5
+   **GO Stanford** input through the already-established GNM path for at least two
+   repeats under the declared seed/device/preprocessing protocol. Record input
+   digest, output digest, output shapes, finite-value checks,
+   `torch.allclose(rtol=1e-5, atol=1e-6)`, maximum absolute difference and
+   maximum relative difference. Do not repeat unrelated historical GNM gate work.
+3. **ViNT R7 — perform the new deterministic-inference run.** This is a
+   legitimate `RERUN`/new execution because no qualifying historical
+   deterministic-inference record exists. Produce the full Amendment-5
+   machine-readable R7 record from the frozen GO Stanford input population. The
+   historical prose output shapes may be cited as context only and must not
+   satisfy any R7 field.
+4. **NoMaD R7 — reconcile historical evidence before executing anything new.**
+   Re-read the cited historical DDPM evidence and compare it field-by-field with
+   the frozen Amendment-5 R7 criterion. Preserve its historical ten-step DDPM
+   execution and three-repeat result by reference. Classify each current
+   requirement as already satisfied or missing. Do not port or rebuild the NoMaD
+   sampling implementation merely to make `navfm` symmetrical.
+5. **NoMaD R7 — execute the demonstrated missing delta, which is known in advance
+   to be non-empty.** The historical NoMaD R7 record ran on **synthetic seeded
+   frames, not GO Stanford**, so it cannot supply the frozen GO Stanford
+   input-batch digest the Amendment-5 R7 criterion requires. **This step
+   therefore cannot terminate at zero new inference**, and the reconciliation in
+   step 4 must not be read as offering that exit — an earlier wording of this
+   step did, and that was the defect. What reconciliation *does* establish is how
+   much is already carried by reference: the ten-step DDPM execution, the
+   three-repeat bitwise-identical result, the checkpoint identity and the model
+   configuration are adopted and must not be re-run to prove them again. The
+   delta to execute is the frozen GO Stanford input population, its digest, the
+   declared tolerance record and the environment field — **at least two repeats**,
+   as for GNM, since the adopted three-repeat result is on synthetic input and
+   evidences nothing about this population — and nothing else. Any
+   code transfer requires a separate justified change rather than being smuggled
+   into this step.
+6. **Archive and reconcile the resulting evidence before advancing the ladder.**
+   For every executed delta, archive the exact `navfm` commit, checkpoint
+   SHA-256, dataset/manifest identity, input/config digest, environment,
+   machine-readable result and W&B run/artifact where applicable. Update the
+   evidence crosswalk with the new record while preserving the distinction
+   between historical cross-repository execution and new `navfm` execution. Do
+   not proceed to R8 training mechanics, R9 public-data training, R10 evaluation,
+   R11 paper comparison, SR, Navigation Error or SPL under this execution order.
+
+### R8 is NOT opened by this amendment
+
+An earlier draft of the execution order carried three R8 steps while its own
+preamble read "and not training". Those steps are withdrawn, and the reason is
+recorded rather than the contradiction merely resolved.
+
+Two facts decided it. First, the crosswalk gives every R8 missing delta as
+**official-scale configuration**, and official scale is **per model, not
+uniform** — a distinction an earlier wording of this section lost by
+generalising ViNT's figures across all three:
+
+| Model | Official scale | Historical record | Source |
+|---|---|---|---|
+| GNM | `batch_size: 400`, `epochs: 30` | batch 24, 1 epoch | `train/config/gnm.yaml:9,11` @ `dca7981` |
+| ViNT | `batch_size: 256`, `epochs: 100` | batch 24, 1 epoch | `train/config/vint.yaml:7–8` @ `dca7981` |
+| NoMaD | `batch_size: 256`, `epochs: 100` | **batch 16**, 1 epoch | `train/config/nomad.yaml:7–8` @ `dca7981` |
+
+The upstream clone is not tracked in `navfm`, so the pinned commit `dca7981` is
+given rather than the path alone. Each model's figures are independently
+corroborated by a **tracked** artefact in the fork — one per model, because a
+single config corroborates only its own model:
+
+| Model | Tracked corroborator | What it records |
+|---|---|---|
+| GNM | `900c418:experiments/configs/gnm_gostanford_smoke.yaml:14,16` | `batch_size: 24  # [SMOKE] official: 400`; `epochs: 1  # [SMOKE] official: 30` |
+| NoMaD | `900c418:experiments/configs/nomad_gostanford_smoke.yaml:15,17` | `batch_size: 16  # [SMOKE] official: 256`; `epochs: 1  # [SMOKE] official: 100` |
+| ViNT | `ce9708e:experiments/configs/vint_gostanford_smoke.yaml:9` | *"Official: batch 256, 100 epochs, 12 workers, 4 warmup epochs."* |
+
+An earlier wording of this passage cited the GNM config alone as corroborating
+"the figures", which are six values across three models. It corroborates two.
+The other two configs were located and are cited above rather than the claim
+being narrowed, because the corroboration genuinely exists.
+
+Every one of those deltas requires a full training run to close — the most costly
+and least reversible action in this programme — and that conclusion holds under
+each model's own figures, not only under the generalisation that was wrong.
+
+Second, **Amendment 5 does not define an R8 criterion.** The
+crosswalk cells and the withdrawn steps both referred to "the frozen R8
+criterion"; no such criterion is stated anywhere in this amendment. An execution
+step measured against an undefined criterion is not a preregistered experiment.
+
+> R8 training mechanics require a **further dated amendment** that first states
+> the R8 criterion — configuration, scale, split identity, seed protocol, record
+> fields and claim boundary — and is itself adjudicated under trigger-3. No R8
+> execution is authorised until then. The historical R8 evidence in the crosswalk
+> remains adopted by reference for what it is: prior training-mechanics
+> execution, explicitly not a reproduction of any published result, and in ViNT's
+> case explicitly not comparable to GNM's or NoMaD's numbers.
+
+This narrows the amendment. It is recorded here because withdrawing an
+authorisation is a protocol change in its own right, and a reader comparing
+drafts must be able to see that the change was made deliberately and why.
+
+> The order above is dependency-driven rather than model-symmetric. A model with
+> stronger historical evidence may require less new execution than another
+> model. Missing evidence must not be manufactured by repeating unrelated work,
+> and existing evidence must not be discarded solely because it predates
+> Amendment 5.
+
+> GNM's historical `repeat_count = 1` shall not be described as
+> deterministic-repeatability evidence. It establishes a historical inference
+> execution only; repeatability is an Amendment-5 delta.
+
+```
+R5     GNM REUSE · ViNT REUSE · NoMaD REUSE
+  |
+R6     strict-load DELTAs only
+  |
+R7     GNM input-population + repeatability DELTA
+       ViNT full deterministic RERUN
+       NoMaD reconciliation by reference; GO Stanford input delta MANDATORY
+  |
+archive + provenance reconciliation
+  |
+STOP        R8 is NOT opened by this execution order (requires a further
+            amendment defining the R8 criterion); nor are R9-R11
+```
+
+ViNT R7 is a legitimate new run, not a repeat: no prior record exists. The
+historical prose statement of ViNT output shapes may be cited as supporting
+context but shall not be treated as R7 evidence. The new run must produce the
+machine-readable record:
+
+```
+checkpoint digest          raw output shapes
+model/config digest        finite-output checks
+frozen GO Stanford         output digest
+  input-batch digest       repeat count
+seed                       torch.allclose(rtol=1e-5, atol=1e-6)
+device/software env        max absolute difference
+model.eval()               max relative difference
+strictly defined preprocessing
+```
+
+Each checkpoint-loading record shall answer: architecture instantiated? strict
+`state_dict` load? missing keys = 0? unexpected keys = 0? all tensors finite?
+`model.eval()`? frozen official input accepted? forward pass completed? output
+shape correct? repeatability criterion satisfied?
+
+Training mechanics (R8) are not opened by this amendment. They require a
+further dated amendment that first states the R8 criterion, adjudicated under
+trigger-3, and may in no case begin before R6–R7 are closed.
+
+### SR / NE / SPL remain BLOCKED
+
+Success Rate, Navigation Error and SPL are closed-loop navigation quantities and
+shall not be computed from static training trajectories. They remain BLOCKED
+until a later frozen evaluation protocol supplies their required inputs: a
+defined episode set with start and goal poses, a stopping criterion, final poses
+in a verified metric coordinate system, and for SPL the shortest feasible path
+length alongside the executed path length.
