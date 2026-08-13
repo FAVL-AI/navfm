@@ -1,0 +1,142 @@
+{
+  "git_sha": "54fa39927b6e2b2e4d870d21b948c1ee76f35858",
+  "git_worktree_clean": true,
+  "timestamp_utc": "2026-08-13T05:09:41.611522+00:00",
+  "python": "3.11.15",
+  "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+  "command": "python scripts/verify_r6_strict_load.py --model gnm --model vint --model nomad --extra-syspath /tmp/navfm-r6-deps --out-dir gates/reproduction/R6",
+  "environment_id": "a5f2b2d6aa6d10e1ac1e6cfbd6a39c1dcef4d8178200ca5129babf2ea3ac7187",
+  "protocol_source": "HEAD:PREREGISTRATION.md",
+  "r6_dispositions": {
+    "gnm": "DELTA",
+    "vint": "DELTA",
+    "nomad": "DELTA"
+  },
+  "syspath_additions": [
+    "/home/favl/projects/navfm/third_party/diffusion_policy",
+    "/tmp/navfm-r6-deps"
+  ],
+  "inference_run": false,
+  "frozen_input_batch_used": false,
+  "tolerance_declared": false,
+  "claim_boundary": "R6 only: the released weights load strictly into the released architecture. This establishes neither deterministic inference (R7) nor any published result, and produces no G0.c metric.",
+  "rung": "R6",
+  "model": "gnm",
+  "checkpoint_path": "checkpoints/gnm.pth",
+  "checkpoint_sha256": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+  "checkpoint_sha256_recorded": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+  "checkpoint_digest_matches": true,
+  "checkpoint_bytes": 104806886,
+  "architecture_config": {
+    "project_name": "vint-release",
+    "run_name": "gnm",
+    "use_wandb": true,
+    "train": true,
+    "batch_size": 400,
+    "eval_batch_size": 400,
+    "epochs": 30,
+    "gpu_ids": [
+      0
+    ],
+    "num_workers": 4,
+    "lr": "7e-4",
+    "optimizer": "adam",
+    "seed": 0,
+    "clipping": false,
+    "train_subset": 1.0,
+    "model_type": "gnm",
+    "obs_encoding_size": 1024,
+    "goal_encoding_size": 1024,
+    "normalize": true,
+    "context_type": "temporal",
+    "context_size": 5,
+    "alpha": 0.5,
+    "beta": 0.1,
+    "obs_type": "image",
+    "goal_type": "image",
+    "scheduler": null,
+    "distance": {
+      "min_dist_cat": 0,
+      "max_dist_cat": 20
+    },
+    "action": {
+      "min_dist_cat": 2,
+      "max_dist_cat": 10
+    },
+    "close_far_threshold": 10,
+    "len_traj_pred": 5,
+    "learn_angle": true,
+    "image_size": [
+      85,
+      64
+    ],
+    "print_log_freq": 100,
+    "image_log_freq": 1000,
+    "num_images_log": 8,
+    "pairwise_test_freq": 20,
+    "eval_fraction": 0.25,
+    "wandb_log_freq": 10,
+    "eval_freq": 1,
+    "datasets": {
+      "recon": {
+        "data_folder": "/home/<username>/vint_dataset/recon",
+        "train": "/home/<username>/data_splits/recon/train/",
+        "test": "/home/<username>/data_splits/recon/test/",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true
+      },
+      "go_stanford": {
+        "data_folder": "/home/<username>/vint_dataset/go_stanford_cropped",
+        "train": "/home/<username>/data_splits/go_stanford/train/",
+        "test": "/home/<username>/data_splits/go_stanford/test/",
+        "end_slack": 0,
+        "goals_per_obs": 2,
+        "negative_mining": true
+      },
+      "tartan_drive": {
+        "data_folder": "/home/<username>/vint_dataset/tartan_drive/",
+        "train": "/home/<username>/data_splits/tartan_drive/train/",
+        "test": "/home/<username>/data_splits/tartan_drive/test/",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true
+      },
+      "sacson": {
+        "data_folder": "/home/<username>/vint_dataset/sacson/",
+        "train": "/home/<username>/data_splits/sacson/train/",
+        "test": "/home/<username>/data_splits/sacson/test/",
+        "end_slack": 3,
+        "goals_per_obs": 1,
+        "negative_mining": true
+      }
+    }
+  },
+  "parameters": {
+    "total": 8663797,
+    "trainable": 8663797,
+    "frozen": 0
+  },
+  "model_tensors": 638,
+  "checkpoint_tensors": 638,
+  "missing_keys": [],
+  "unexpected_keys": [],
+  "missing_key_count": 0,
+  "unexpected_key_count": 0,
+  "strict_load": true,
+  "strict_load_error": null,
+  "finite_check": {
+    "tensors_checked": 534,
+    "tensors_skipped_non_float": 104,
+    "non_finite_tensors": [],
+    "all_finite": true
+  },
+  "evaluation_mode": {
+    "eval_called": true,
+    "root_training_flag": false,
+    "submodules_still_training": [],
+    "verified": true
+  },
+  "torch_version": "2.11.0+cu128",
+  "result": "PASS"
+}
