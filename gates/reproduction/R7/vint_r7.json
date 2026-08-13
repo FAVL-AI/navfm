@@ -1,0 +1,95 @@
+{
+  "rung": "R7",
+  "model": "vint",
+  "checkpoint_path": "checkpoints/vint.pth",
+  "checkpoint_sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+  "checkpoint_digest_matches": true,
+  "config_digest": "7a017cb1ddc2062cf94b26dff5f3963e2ffd6cc290cb3b5fe7c0872d72d1ff5f",
+  "parameters": {
+    "total": 29662397,
+    "trainable": 29662397,
+    "frozen": 0
+  },
+  "model_tensors": 799,
+  "strict_load": true,
+  "evaluation_mode": true,
+  "device": "cuda:0",
+  "seed": 0,
+  "repeat_count": 2,
+  "tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-06,
+    "source": "PREREGISTRATION.md Amendment 5"
+  },
+  "input": {
+    "dataset_size": 41872,
+    "batch_size": 400,
+    "population_seed": 0,
+    "loader_seed": 0,
+    "image_size": [
+      85,
+      64
+    ],
+    "context_size": 5,
+    "len_traj_pred": 5,
+    "input_batch_digest": "f552cfc33c0526aa2b7723a2ab983c422293efee266f54aeece3872c7e127c1a",
+    "input_shapes": [
+      [
+        400,
+        18,
+        64,
+        85
+      ],
+      [
+        400,
+        3,
+        64,
+        85
+      ]
+    ],
+    "population_manifest": "/home/favl/projects/navfm/gates/G0/evaluation_pairs.json",
+    "population_manifest_digest": "57a7fbbeba91b92ab58a3c2889536352758e41af8280e8f0edc2e10abefd1cc0"
+  },
+  "outputs": {
+    "action_pred": {
+      "shape": [
+        400,
+        5,
+        4
+      ],
+      "dtype": "torch.float32",
+      "all_finite": true,
+      "output_digest": "a6993099e013c637a4342948df5e48c8a7357e8b3dbe769053a25613358b0555",
+      "allclose": true,
+      "bitwise_identical": true,
+      "max_abs_diff": 0.0,
+      "max_rel_diff": 0.0
+    },
+    "dist_pred": {
+      "shape": [
+        400,
+        1
+      ],
+      "dtype": "torch.float32",
+      "all_finite": true,
+      "output_digest": "58ec6389300b4ccdc105002e8d7b900b93abe4c0c98a7b0dda90d05da180f141",
+      "allclose": true,
+      "bitwise_identical": true,
+      "max_abs_diff": 0.0,
+      "max_rel_diff": 0.0
+    }
+  },
+  "max_abs_diff": 0.0,
+  "max_rel_diff": 0.0,
+  "repeatability": "PASS",
+  "bitwise_identical_across_repeats": true,
+  "environment_id": "4408691cfeb89860fdf42d3db9efed012650e72dfa8c37fb917131974cbde625",
+  "torch_version": "2.11.0+cu128",
+  "python": "3.11.15",
+  "git_sha": "ff7586f3dbb2fac06031c924a42a7846809b5f3c",
+  "timestamp_utc": "2026-08-13T05:28:13.070368+00:00",
+  "command": "python scripts/verify_r7_deterministic.py --model vint --repeats 2 --data-folder /home/favl/navfm-data/go_stanford/go_stanford --split-folder gates/G0/splits/test --out-dir gates/reproduction/R7",
+  "training_run": false,
+  "diffusion_sampling_invoked": false,
+  "claim_boundary": "R7 only: the same frozen GO Stanford input, run repeatedly under the declared protocol, produces outputs within the declared tolerance. This is not a metric, not a G0.c quantity, and not a reproduction of any published result."
+}
