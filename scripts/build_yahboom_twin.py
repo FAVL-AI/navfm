@@ -116,10 +116,25 @@ def main() -> int:
     # --- mount the front camera ON the robot -------------------------------
     # Parented under the imported robot, so it is part of the articulation's
     # transform chain. A camera that merely points forward is not this.
+    # The camera hangs off the TOP ARM, not the chassis. Resolve the mount by
+    # TRAVERSING for the link, not by guessing a path: the URDF importer does not
+    # nest links the way the joint tree reads, so "top_arm_mount/camera_link"
+    # never exists. Guessing put the camera on the mast BASE at 0.120 m -- level
+    # with the chassis -- and the height assertion below caught it.
     base = prim_path
-    cam_path = f"{base}/base_link/front_rgb_camera"
-    if not stage.GetPrimAtPath(f"{base}/base_link"):
-        cam_path = f"{base}/front_rgb_camera"
+    by_name = {}
+    for prim in stage.Traverse():
+        by_name.setdefault(prim.GetName(), str(prim.GetPath()))
+    cam_parent_path = None
+    for want in ("camera_link", "top_arm_mount", "base_link"):
+        if want in by_name and by_name[want].startswith(base):
+            cam_parent_path, cam_parent = by_name[want], want
+            break
+    if cam_parent_path is None:
+        cam_parent_path, cam_parent = base, ""
+    cam_path = f"{cam_parent_path}/front_rgb_camera"
+    record["link_prim_paths"] = {k: v for k, v in by_name.items() if v.startswith(base)}
+
     cam = UsdGeom.Camera.Define(stage, cam_path)
     cam.CreateFocalLengthAttr(18.0)
     cam.CreateHorizontalApertureAttr(20.955)
@@ -127,14 +142,33 @@ def main() -> int:
     cam.CreateClippingRangeAttr(Gf.Vec2f(0.05, 100.0))
     xf = UsdGeom.Xformable(cam.GetPrim())
     xf.ClearXformOpOrder()
-    xf.AddTranslateOp().Set(Gf.Vec3d(0.10, 0.0, 0.12))
+    # Zero local offset: the URDF's top_arm_mount -> camera_link chain already
+    # places it. Only the optical convention is applied here.
+    xf.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, 0.0))
     xf.AddRotateXYZOp().Set(Gf.Vec3d(90.0, 0.0, -90.0))
+
+    from pxr import UsdGeom as _UG
+    cam_world = _UG.Xformable(cam.GetPrim()).ComputeLocalToWorldTransform(0).ExtractTranslation()
+    base_prim = stage.GetPrimAtPath(f"{base}/base_link")
+    base_world = (_UG.Xformable(base_prim).ComputeLocalToWorldTransform(0).ExtractTranslation()
+                  if base_prim else None)
     record["camera"] = {
-        "prim": cam_path,
+        "prim": cam_path, "parent_link": cam_parent,
         "parent": str(cam.GetPrim().GetParent().GetPath()),
         "is_descendant_of_robot": cam_path.startswith(base),
-        "local_translation": [0.10, 0.0, 0.12],
+        # Derived from geometry, not from the parent's name. A link called
+        # camera_link proves nothing about where it sits; its height does.
+        "mounted_on_top_arm": (
+            (float(cam_world[2]) - float(base_world[2])) > 0.15 if base_world else False
+        ),
+        "top_arm_link_present": bool(stage.GetPrimAtPath(f"{base}/top_arm_mount")),
         "local_rotation_xyz_deg": [90.0, 0.0, -90.0],
+        "world_height_m": float(cam_world[2]),
+        "base_link_world_height_m": float(base_world[2]) if base_world else None,
+        "height_above_base_link_m": (float(cam_world[2]) - float(base_world[2])) if base_world else None,
+        "above_chassis": (float(cam_world[2]) - float(base_world[2])) > 0.08 if base_world else None,
+        "type": "monocular_rgb", "viewpoint": "egocentric_forward",
+        "mount": "yahboom_top_arm", "calibration_status": "PROVISIONAL_SIMULATION",
     }
 
     Path(args.out_usd).parent.mkdir(parents=True, exist_ok=True)
@@ -150,6 +184,8 @@ def main() -> int:
         and counts["rigid_bodies"] >= 5
         and counts["colliders"] >= 5
         and record["camera"]["is_descendant_of_robot"]
+        and bool(record["camera"]["mounted_on_top_arm"])
+        and bool(record["camera"]["above_chassis"])
     )
     record["verdict"] = "PASS" if ok else "FAIL"
     record["comparison_to_rejected_placeholder"] = {
@@ -166,7 +202,11 @@ def main() -> int:
     for k, v in counts.items():
         print(f"  {k:<18}: {v}")
     print(f"  camera prim       : {cam_path}")
-    print(f"  camera on robot   : {record['camera']['is_descendant_of_robot']}")
+    print(f"  camera parent     : {cam_parent}")
+    print(f"  on top arm        : {record['camera']['mounted_on_top_arm']}")
+    print(f"  camera height     : {record['camera']['world_height_m']:.3f} m from ground")
+    print(f"  above base_link   : {record['camera']['height_above_base_link_m']:.3f} m")
+    print(f"  above chassis     : {record['camera']['above_chassis']}")
     print(f"  usd               : {record['usd']['path']} ({record['usd']['bytes']:,} bytes)")
     print(f"  VERDICT           : {record['verdict']}")
     app.close()

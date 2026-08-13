@@ -3,7 +3,10 @@
   "stage": "SIMULATION_DEVELOPMENT",
   "admission_status": "NOT_ADMITTED",
   "source_policy": "released ViNT (closed loop)",
-  "note": "each loader runs in its own process with its own cache directory; the reference loader refuses to reopen an LMDB environment already open in the same process, which is a harness constraint and not a data property",
+  "camera_mount": "yahboom_top_arm",
+  "camera_height_m": 0.28,
+  "camera_prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+  "note": "each loader runs in its own process; the reference loader refuses to reopen an LMDB environment already open in the same process, a harness constraint not a data property",
   "loader_gnm": {
     "result": "PASS",
     "samples": 30,
@@ -33,9 +36,7 @@
       85,
       64
     ],
-    "context_size": 5,
-    "len_traj_pred": 5,
-    "learn_angle": true
+    "context_size": 5
   },
   "loader_vint": {
     "result": "PASS",
@@ -66,9 +67,7 @@
       85,
       64
     ],
-    "context_size": 5,
-    "len_traj_pred": 5,
-    "learn_angle": true
+    "context_size": 5
   },
   "loader_nomad": {
     "result": "PASS",
@@ -99,9 +98,7 @@
       96,
       96
     ],
-    "context_size": 3,
-    "len_traj_pred": 8,
-    "learn_angle": false
+    "context_size": 3
   },
   "passing": 3
 }

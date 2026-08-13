@@ -166,7 +166,10 @@ def main() -> int:
     with contextlib.suppress(Exception):
         robot.switch_control_mode("velocity")
 
-    cam_path = "/World/YahboomM3Pro/base_link/front_rgb_camera"
+    # Top-arm mount, not the chassis. The URDF importer flattens links to
+    # siblings, so camera_link is its own prim placed at the mast top by the
+    # joint chain -- 0.280 m from ground against base_link at 0.040 m.
+    cam_path = "/World/YahboomM3Pro/camera_link/front_rgb_camera"
     rp = rep.create.render_product(cam_path, (320, 240))
     rgb = rep.AnnotatorRegistry.get_annotator("rgb")
     rgb.attach([rp])
@@ -383,6 +386,15 @@ def main() -> int:
             "training_allowed": False, "final_evaluation_allowed": False,
             "source": "ISAAC_SIM", "source_policy": "released ViNT (closed loop)",
             "robot": "Yahboom ROSMASTER M3 Pro digital twin",
+            "camera": {
+                "prim": cam_path, "type": "monocular_rgb",
+                "viewpoint": "egocentric_forward", "mount": "yahboom_top_arm",
+                "mount_height_m": 0.280, "height_above_base_link_m": 0.240,
+                "forward_offset_m": 0.100, "lateral_offset_m": 0.0,
+                "roll_rad": 0.0, "pitch_rad": 0.0, "yaw_rad": 0.0,
+                "resolution": [320, 240],
+                "calibration_status": "PROVISIONAL_SIMULATION",
+            },
             "camera_prim": cam_path, "goal_image_sha256": goal_digest,
             "goal_pose": [gx, gy, gyaw], "start_pose": [sx, sy, syaw],
             "executed_waypoint_index": EXECUTED_WAYPOINT_INDEX,

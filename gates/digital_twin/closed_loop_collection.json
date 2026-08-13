@@ -4,11 +4,31 @@
   "claim_status": "ENGINEERING_EVIDENCE_ONLY",
   "robot_source": "ISAAC_SIM",
   "physical_robot_validation": "NOT_PERFORMED",
-  "robot": "Yahboom ROSMASTER M3 Pro digital twin (URDF-derived, physics)",
-  "robot_usd_sha256": "f557e277ed7ab89d025b8fee85ab6ee1bed5fa100d08ca563892e638b7d2191e",
+  "robot": "Yahboom ROSMASTER M3 Pro digital twin (URDF-derived, physics, top-arm camera)",
+  "robot_usd_sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
   "checkpoint_sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
   "policy": "released ViNT, closed loop, CPU inference",
-  "camera_prim": "/World/YahboomM3Pro/base_link/front_rgb_camera",
+  "camera": {
+    "prim": "/yahboom_m3pro/camera_link/front_rgb_camera",
+    "parent_link": "camera_link",
+    "parent": "/yahboom_m3pro/camera_link",
+    "is_descendant_of_robot": true,
+    "mounted_on_top_arm": true,
+    "top_arm_link_present": true,
+    "local_rotation_xyz_deg": [
+      90.0,
+      0.0,
+      -90.0
+    ],
+    "world_height_m": 0.2800000011920929,
+    "base_link_world_height_m": 0.03999999910593033,
+    "height_above_base_link_m": 0.24000000208616257,
+    "above_chassis": true,
+    "type": "monocular_rgb",
+    "viewpoint": "egocentric_forward",
+    "mount": "yahboom_top_arm",
+    "calibration_status": "PROVISIONAL_SIMULATION"
+  },
   "wheel_radius_m": 0.04,
   "wheel_radius_status": "PROVISIONAL_SIMULATION_VALUE",
   "executed_waypoint_index": 2,
@@ -31,23 +51,31 @@
       "all_finite": true,
       "yaw_unwrapped": true,
       "images": 40,
-      "start": [
-        -0.0003295785281807184,
-        0.0031144218519330025,
-        0.01299038962176163
-      ],
-      "end": [
-        4.815776824951172,
-        0.8866928219795227,
-        0.13885330791253253
-      ],
-      "net_displacement_m": 4.896487688007277,
-      "path_length_m": 4.910436936109191,
-      "total_yaw_change_deg": 7.211414015261106,
+      "net_displacement_m": 4.867314838674003,
+      "path_length_m": 4.909138504371351,
+      "total_yaw_change_deg": 2.2302710368004486,
       "commanded_vx_mean_ms": 0.45,
-      "achieved_speed_ms": 0.4910436936109191,
-      "achieved_over_commanded": 1.0912082080242647,
-      "goal_image_sha256": "4529104d0a6beebf1303c8cb45c28664a4773b59c53e93aa38d2ef9208ebfd64",
+      "achieved_speed_ms": 0.49091385043713515,
+      "achieved_over_commanded": 1.0909196676380781,
+      "camera": {
+        "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+        "type": "monocular_rgb",
+        "viewpoint": "egocentric_forward",
+        "mount": "yahboom_top_arm",
+        "mount_height_m": 0.28,
+        "height_above_base_link_m": 0.24,
+        "forward_offset_m": 0.1,
+        "lateral_offset_m": 0.0,
+        "roll_rad": 0.0,
+        "pitch_rad": 0.0,
+        "yaw_rad": 0.0,
+        "resolution": [
+          320,
+          240
+        ],
+        "calibration_status": "PROVISIONAL_SIMULATION"
+      },
+      "goal_image_sha256": "2711f56047462b6f12d505b3bc8df7122193ed851edc3461c42a220434c1b5a5",
       "goal_pose": [
         1.6,
         0.35,
@@ -75,23 +103,31 @@
       "all_finite": true,
       "yaw_unwrapped": true,
       "images": 40,
-      "start": [
-        -5.953137224423699e-05,
-        -2.8768545234925114e-05,
-        0.001269491457166432
-      ],
-      "end": [
-        4.999861240386963,
-        0.821483850479126,
-        0.1550058456167702
-      ],
-      "net_displacement_m": 5.0669606972114405,
-      "path_length_m": 5.072679588142543,
-      "total_yaw_change_deg": 8.808444251073794,
+      "net_displacement_m": 4.967591436941919,
+      "path_length_m": 5.050846644599967,
+      "total_yaw_change_deg": 37.944654755945976,
       "commanded_vx_mean_ms": 0.45,
-      "achieved_speed_ms": 0.5072679588142542,
-      "achieved_over_commanded": 1.1272621306983428,
-      "goal_image_sha256": "c948adcba197b9bf21f12f6681d7e7d02ca2af1b6302dc360b46ea5e1b783d2c",
+      "achieved_speed_ms": 0.5050846644599967,
+      "achieved_over_commanded": 1.1224103654666593,
+      "camera": {
+        "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+        "type": "monocular_rgb",
+        "viewpoint": "egocentric_forward",
+        "mount": "yahboom_top_arm",
+        "mount_height_m": 0.28,
+        "height_above_base_link_m": 0.24,
+        "forward_offset_m": 0.1,
+        "lateral_offset_m": 0.0,
+        "roll_rad": 0.0,
+        "pitch_rad": 0.0,
+        "yaw_rad": 0.0,
+        "resolution": [
+          320,
+          240
+        ],
+        "calibration_status": "PROVISIONAL_SIMULATION"
+      },
+      "goal_image_sha256": "f4a90a4109adf912f570e048f4b412de7186a95be336f01ff621bf2a7bdc9399",
       "goal_pose": [
         1.0,
         1.4,
@@ -109,7 +145,10 @@
     "stage": "SIMULATION_DEVELOPMENT",
     "admission_status": "NOT_ADMITTED",
     "source_policy": "released ViNT (closed loop)",
-    "note": "each loader runs in its own process with its own cache directory; the reference loader refuses to reopen an LMDB environment already open in the same process, which is a harness constraint and not a data property",
+    "camera_mount": "yahboom_top_arm",
+    "camera_height_m": 0.28,
+    "camera_prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+    "note": "each loader runs in its own process; the reference loader refuses to reopen an LMDB environment already open in the same process, a harness constraint not a data property",
     "loader_gnm": {
       "result": "PASS",
       "samples": 30,
@@ -139,9 +178,7 @@
         85,
         64
       ],
-      "context_size": 5,
-      "len_traj_pred": 5,
-      "learn_angle": true
+      "context_size": 5
     },
     "loader_vint": {
       "result": "PASS",
@@ -172,9 +209,7 @@
         85,
         64
       ],
-      "context_size": 5,
-      "len_traj_pred": 5,
-      "learn_angle": true
+      "context_size": 5
     },
     "loader_nomad": {
       "result": "PASS",
@@ -205,9 +240,7 @@
         96,
         96
       ],
-      "context_size": 3,
-      "len_traj_pred": 8,
-      "learn_angle": false
+      "context_size": 3
     },
     "passing": 3
   }
