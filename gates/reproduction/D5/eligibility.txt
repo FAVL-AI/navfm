@@ -1,0 +1,41 @@
+D5 -- MATCHED THREE-MODEL COMPARISON: ELIGIBILITY AUDIT
+==============================================================================
+Run before any comparison is generated. A comparison is fair only if the three
+results mean the same kind of thing and were produced under comparable rules.
+
+  PASS  same scientific evaluation category (R6)
+        all three are R6 strict checkpoint loads -- same question, same procedure
+  PASS  same scientific evaluation category (R7)
+        all three are R7 deterministic-inference checks on the frozen population
+  PASS  matched dataset population
+        one frozen manifest across all three: 57a7fbbeba91b92a, 41,872 pairs, draw order seed 0
+  PASS  matched split and draw rules
+        identical split folder and seeds (0, 0) for all three
+  FAIL  matched observation contract
+        NOT matched by design: {'gnm': ((85, 64), 5), 'vint': ((85, 64), 5), 'nomad': ((96, 96), 3)}. Each model's own official contract; a legitimate architectural difference, not a leak -- but it means input tensors are not shared
+  PASS  verified checkpoints
+        all three digests re-verified at load against the tracked gates/G0/SHA256SUMS
+  PASS  same acceptance semantics
+        one declared tolerance for all three: rtol/atol (1e-05, 1e-06), from the committed protocol
+  PASS  traceable execution
+        every record carries git SHA, environment id, command, timestamp, input and output digests
+  PASS  no privileged-information leakage
+        no model saw data another did not; one population, one draw order, no training occurred
+  FAIL  same metric definitions across all three
+        NOT satisfied: {'vint': 'G0.c strict/total_loss', 'gnm': 'NONE -- no offline evaluation run', 'nomad': 'NONE -- no offline evaluation path exists in navfm'}. Only ViNT has an evaluation metric (G0.c). GNM has no offline evaluation run; NoMaD has no offline evaluation path at all (upstream.build_model refuses it; the diffusion sampling loop is not implemented)
+
+  PERMANENT EXCLUSION (machine-readable, recorded separately):
+    historical ViNT R8 (fork ce9708e) is PERMANENTLY INELIGIBLE for this comparison.
+    Its own claim boundary forbids it: "NOT comparable to GNM's or NoMaD's numbers:
+    different optimiser, schedule, capacity and objective scaling."
+
+  VERDICT
+  --------------------------------------------------------------------------
+  Performance comparison (which model navigates better):  NOT ELIGIBLE
+    Blocked by a single missing input, not by a protocol flaw: only one of the
+    three has an evaluation metric. This is a fact about what has been run, and
+    a table would have to invent two of its three rows.
+  Reproducibility-status comparison (R6/R7):              ELIGIBLE
+    Same category, one frozen population, one draw order, one declared tolerance,
+    three verified checkpoints, fully traceable. Differing observation contracts
+    are each model's own official specification and are reported, not hidden.

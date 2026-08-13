@@ -1,0 +1,42 @@
+GNM / ViNT / NoMaD -- MATCHED REPRODUCIBILITY COMPARISON
+==============================================================================
+Eligible under the D5 audit for reproducibility status only. This is NOT a
+performance comparison and must never be presented as one: only ViNT has an
+evaluation metric, so two of three performance rows do not exist.
+
+                                       GNM            ViNT           NoMaD
+--------------------------------------------------------------------------
+checkpoint digest             4b03e0255f8a    155fd72de2e9    70f79b826252
+checkpoint bytes               104,806,886     430,167,114      76,473,631
+R6 strict load                        True            True            True
+state-dict tensors                     638             799             645
+parameters                       8,663,797      29,662,397      19,049,675
+missing keys                             0               0               0
+unexpected keys                          0               0               0
+all values finite                     True            True            True
+eval mode verified                    True            True            True
+--------------------------------------------------------------------------
+R7 repeatability                      PASS            PASS            PASS
+repeats                                  2               2               2
+max abs difference                 0.0e+00         0.0e+00         0.0e+00
+max rel difference                 0.0e+00         0.0e+00         0.0e+00
+bitwise identical                     True            True            True
+observation contract              85x64/c5        85x64/c5        96x96/c3
+input batch digest            f552cfc33c05    f552cfc33c05    59045ae759bb
+--------------------------------------------------------------------------
+evaluation metric                     none            G0.c            none
+
+What is matched: one frozen population (57a7fbbeba91b92a, 41,872 pairs), one
+draw order, one declared tolerance rtol=1e-5/atol=1e-6, three verified
+checkpoints, fully traceable execution, no leakage, no training.
+
+What is not, and why it is legitimate: the observation contracts differ because
+the released models differ -- 85x64 with context 5 for GNM and ViNT, 96x96 with
+context 3 for NoMaD. That is each model's own official specification. It is
+reported rather than normalised away, and it is why the three share a population
+and a draw order but not a literal input tensor.
+
+PERMANENTLY EXCLUDED: the historical ViNT R8 row (fork ce9708e). Its own claim
+boundary forbids cross-model comparison. It appears in no cell above.
+
+Machine-readable exclusion written to gates/reproduction/D5/exclusion_vint_r8.json

@@ -1,0 +1,13 @@
+{
+  "exclusion_id": "D5-EXCL-001",
+  "status": "PERMANENT",
+  "subject": "historical ViNT R8",
+  "source_repository": "FAVL-AI/visualnav-transformer",
+  "source_commit": "ce9708e",
+  "source_tag": "NOT ESTABLISHED",
+  "evidence_path": "experiments/validation/m1_family/vint_entry_point.json",
+  "reason": "the artefact's own claim_boundary forbids cross-model comparison",
+  "claim_boundary_verbatim": "execution evidence only. One smoke-scaled epoch from random init on a scene-entangled split with ~34.5% padded targets. NOT a reproduction of any published ViNT result, and NOT comparable to GNM's or NoMaD's numbers: different optimiser, schedule, capacity and objective scaling.",
+  "may_be_reinstated": false,
+  "note": "Excluded regardless of any future evidence, because the exclusion is a property of the artefact, not of what surrounds it."
+}
