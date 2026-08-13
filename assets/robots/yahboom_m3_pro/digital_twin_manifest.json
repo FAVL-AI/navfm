@@ -1,0 +1,27 @@
+{
+  "robot": "Yahboom ROSMASTER M3 Pro",
+  "role": "navfm canonical simulation digital twin",
+  "created_utc": "2026-08-13T06:41:45.263605+00:00",
+  "upstream": {
+    "repository": "gnm-vlnverse-baseline",
+    "path": "assets/robots/yahboom_m3_pro/yahboom_m3pro.urdf",
+    "sha256": "5043529da206a36054ddc3e0170cd199fda9c68cf0d5b68cdddcda525ad760c2"
+  },
+  "navfm_urdf": {
+    "path": "assets/robots/yahboom_m3_pro/yahboom_m3pro.urdf",
+    "sha256": "190cb85c4e7c9c2f6cef21143fb18584731fb56637192f8cb48aeca2b15fdd74"
+  },
+  "changes": [
+    {
+      "field": "wheel_radius_m",
+      "from": 0.048,
+      "to": 0.04,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "basis": "navfm records 80 mm mecanum wheels; upstream 0.048 matches the Yahboom X3 URDF exactly and was self-flagged 'same as X3'",
+      "occurrences_changed": 9,
+      "physically_measured": false
+    }
+  ],
+  "external_mesh_references": 0,
+  "claim_boundary": "Simulation asset. No result derived from it may be described as physically calibrated until the ledger's REQUIRES_PHYSICAL_MEASUREMENT fields are measured."
+}

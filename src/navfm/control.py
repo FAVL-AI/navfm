@@ -31,6 +31,7 @@ import dataclasses
 import enum
 import math
 from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 
@@ -299,3 +300,42 @@ def resample_path(path: np.ndarray, spacing: float) -> np.ndarray:
     x = np.interp(targets, cum, path[:, 0])
     y = np.interp(targets, cum, path[:, 1])
     return np.stack([x, y], axis=1)
+
+def unnormalise_waypoint(
+    waypoint: Any, *, metric_waypoint_spacing: float, waypoint_spacing: int = 1
+) -> np.ndarray:
+    """Normalised model waypoint -> metres in the robot frame.
+
+    The exact inverse of the label-side normalisation in
+    :func:`navfm.kinematics.to_local_waypoints`, which divides robot-frame
+    displacements by ``metric_waypoint_spacing * waypoint_spacing``. A policy
+    trained on those labels predicts in the same normalised units, so its output
+    must be multiplied back before any controller sees it.
+
+    This existed only as a sentence in a docstring describing the *upstream*
+    deployment stack, while :func:`waypoint_to_twist` consumes metres directly.
+    Feeding a raw prediction to it therefore rescaled every command by
+    ``1 / metric_waypoint_spacing`` -- about 8x for GO Stanford -- without
+    raising, and produced a trajectory that looks plausible and is wrong
+    everywhere. The failure is silent because nothing downstream knows which
+    units it received.
+
+    Only the displacement components are scaled. ``(cos, sin)`` are a direction:
+    scaling them would change the represented angle, not its magnitude.
+    """
+    scale = float(metric_waypoint_spacing) * float(waypoint_spacing)
+    if not math.isfinite(scale) or scale <= 0:
+        raise ValueError(
+            f"metric_waypoint_spacing * waypoint_spacing must be positive and finite; "
+            f"got {scale!r}. A zero or negative scale would silently null or mirror "
+            f"every command."
+        )
+    wp = np.asarray(waypoint, dtype=np.float64).copy()
+    if wp.shape[-1] not in (2, 4):
+        raise ValueError(
+            f"waypoint last dimension must be 2 (dx, dy) or 4 (dx, dy, cos, sin); "
+            f"got shape {wp.shape}"
+        )
+    wp[..., 0] *= scale
+    wp[..., 1] *= scale
+    return wp

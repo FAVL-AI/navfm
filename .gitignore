@@ -41,3 +41,7 @@ collection_manifest.json
 # OS
 .DS_Store
 dataset_dist_*.pkl
+
+# Large simulation assets: the URDF is the canonical, reproducible source.
+# The physics USD is rebuilt from that URDF in scripts/build_yahboom_twin.py.
+assets/robots/**/*_physics.usd

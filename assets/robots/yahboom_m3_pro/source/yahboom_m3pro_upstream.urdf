@@ -1,0 +1,391 @@
+<?xml version="1.0"?>
+<!--
+  Yahboom RosMaster M3Pro — URDF
+  ═══════════════════════════════════════════════════════════════════════════
+
+  STATUS: STRUCTURAL BASELINE from product specifications.
+
+  GEOMETRY SOURCE
+    All dimension values come from robot_contract_m3pro.yaml, which reflects
+    the Yahboom ROSMASTER M3Pro product specification.  No dimensions were
+    invented.  Values requiring caliper verification are noted per-joint.
+
+  INERTIALS
+    Box/cylinder approximations computed from product-spec masses.
+    *** Replace with physically measured values before Stage 1 RL training. ***
+    Incorrect inertials cause ~30% velocity tracking error in sim-to-real.
+    See: fleet_safe_vla/robots/yahboom/m3pro/ASSET_IMPORT_PLAN.md
+
+  MESH GEOMETRY
+    Primitive geometry only (box/cylinder) — no STL/DAE mesh files.
+    Mesh files are NOT required for kinematics or RL training.
+    If Yahboom provides a CAD STEP file, generate STL meshes and replace
+    the primitive <geometry> blocks.
+
+  COORDINATE FRAME
+    ROS REP-103: x=forward  y=left  z=up
+    base_link origin: wheel-axle midpoint at ground plane (z=0).
+    base_footprint:   projection onto ground (z=0, same XY as base_link).
+
+  VERIFIED DIMENSIONS (product spec, cross-checked against X3 baseline)
+    Wheel radius:    0.048 m   — same as X3; verify with calipers
+    Wheelbase:       0.155 m   — front↔rear axle center distance
+    Track width:     0.170 m   — left↔right wheel center distance
+    lx (half wb):    0.0775 m
+    ly (half track): 0.0850 m
+
+  PLACEHOLDER DIMENSIONS (require physical measurement for Stage 1)
+    Body mass:       1.800 kg  — total 2.4 kg minus 4 × 0.150 kg wheels
+    Wheel mass:      0.150 kg  — weigh one wheel on a postal scale
+    Body inertia:    box formula from dimensions above
+    Wheel inertia:   solid cylinder formula
+
+  JOINT NAMES — DO NOT RENAME (obs_adapter, env_cfg, safety_node use these)
+    fl_wheel_joint, fr_wheel_joint, rl_wheel_joint, rr_wheel_joint
+-->
+<robot name="yahboom_m3pro">
+
+  <!-- ── Ground projection frame ──────────────────────────────────────────── -->
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child  link="base_link"/>
+    <!-- wheel_radius = 0.048 m; lifts base_link to wheel-axle height above ground -->
+    <origin xyz="0 0 0.048" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ── Chassis ───────────────────────────────────────────────────────────── -->
+
+  <link name="base_link">
+    <visual>
+      <!-- box: length=0.290 m, width=0.235 m, chassis height=0.080 m
+           chassis height estimated from X3 proportions; measure body depth if needed -->
+      <origin xyz="0 0 0.040" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.290 0.235 0.080"/>
+      </geometry>
+      <material name="dark_grey">
+        <color rgba="0.15 0.15 0.15 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.040" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.290 0.235 0.080"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <!--
+        PLACEHOLDER — replace with measured values before Stage 1 training.
+        Method: place robot on scale, note total mass; weigh 4 wheels separately.
+          body_mass = total_mass − 4 × wheel_mass ≈ 2.400 − 4×0.150 = 1.800 kg
+        Box-formula inertia (a=0.290, b=0.235, c=0.080, m=1.800):
+          ixx = m/12 × (b² + c²) = 1.800/12 × (0.235² + 0.080²) = 0.00924 ≈ 0.009
+          iyy = m/12 × (a² + c²) = 1.800/12 × (0.290² + 0.080²) = 0.01358 ≈ 0.014
+          izz = m/12 × (a² + b²) = 1.800/12 × (0.290² + 0.235²) = 0.02089 ≈ 0.021
+      -->
+      <origin xyz="0 0 0.040" rpy="0 0 0"/>
+      <mass value="1.800"/>
+      <inertia ixx="0.009" ixy="0.0" ixz="0.0"
+               iyy="0.014" iyz="0.0"
+               izz="0.021"/>
+    </inertial>
+  </link>
+
+
+  <!-- ── Front-left mecanum wheel (fl) ────────────────────────────────────── -->
+  <!--
+    Position:  x=+lx=+0.0775  y=+ly=+0.085  z=0
+    Axis:      (0, 1, 0) — wheel spins about Y (forward/backward motion)
+    Visual:    cylinder with rpy=(-π/2, 0, 0) to orient its axis along Y
+    Inertia:   cylinder spin axis = Y
+               iyy = 0.5·m·r²         = 0.5×0.150×0.048² = 1.73 × 10⁻⁴
+               ixx = izz = m(3r²+h²)/12 = 0.150×0.007537/12 = 9.42 × 10⁻⁵
+  -->
+
+  <link name="fl_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+      <material name="tyre_black">
+        <color rgba="0.05 0.05 0.05 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.150"/>
+      <!-- PLACEHOLDER: weigh one wheel; recompute with measured mass -->
+      <inertia ixx="0.000094" ixy="0.0" ixz="0.0"
+               iyy="0.000173" iyz="0.0"
+               izz="0.000094"/>
+    </inertial>
+  </link>
+
+  <joint name="fl_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child  link="fl_wheel"/>
+    <!-- lx=0.0775 m, ly=0.085 m — verify with calipers against physical robot -->
+    <origin xyz="0.0775 0.085 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+
+  <!-- ── Front-right mecanum wheel (fr) ───────────────────────────────────── -->
+
+  <link name="fr_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+      <material name="tyre_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.150"/>
+      <inertia ixx="0.000094" ixy="0.0" ixz="0.0"
+               iyy="0.000173" iyz="0.0"
+               izz="0.000094"/>
+    </inertial>
+  </link>
+
+  <joint name="fr_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child  link="fr_wheel"/>
+    <origin xyz="0.0775 -0.085 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+
+  <!-- ── Rear-left mecanum wheel (rl) ─────────────────────────────────────── -->
+
+  <link name="rl_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+      <material name="tyre_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.150"/>
+      <inertia ixx="0.000094" ixy="0.0" ixz="0.0"
+               iyy="0.000173" iyz="0.0"
+               izz="0.000094"/>
+    </inertial>
+  </link>
+
+  <joint name="rl_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child  link="rl_wheel"/>
+    <origin xyz="-0.0775 0.085 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+
+  <!-- ── Rear-right mecanum wheel (rr) ────────────────────────────────────── -->
+
+  <link name="rr_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+      <material name="tyre_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+      <geometry>
+        <cylinder length="0.025" radius="0.048"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.150"/>
+      <inertia ixx="0.000094" ixy="0.0" ixz="0.0"
+               iyy="0.000173" iyz="0.0"
+               izz="0.000094"/>
+    </inertial>
+  </link>
+
+  <joint name="rr_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child  link="rr_wheel"/>
+    <origin xyz="-0.0775 -0.085 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+
+  <!-- ── LiDAR ─────────────────────────────────────────────────────────────── -->
+  <!--
+    contract: lidar_height_m = 0.160 m from ground
+    base_link origin is at z = 0.048 m (wheel radius)
+    → lidar_joint z-offset = 0.160 − 0.048 = 0.112 m above base_link
+    Model: RPLidar A1M8 approximate (same as X3; verify against physical unit)
+  -->
+
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0 0 0.020" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.040" radius="0.038"/>
+      </geometry>
+      <material name="lidar_blue">
+        <color rgba="0.0 0.3 0.8 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.020" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.040" radius="0.038"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <!-- RPLidar A1M8: ~0.170 kg; cylinder approx -->
+      <mass value="0.170"/>
+      <inertia ixx="0.000120" ixy="0.0" ixz="0.0"
+               iyy="0.000120" iyz="0.0"
+               izz="0.000180"/>
+    </inertial>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="lidar_link"/>
+    <!-- 0.160 m from ground − 0.048 m wheel radius = 0.112 m above base_link -->
+    <origin xyz="0.0 0.0 0.112" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ── Camera ────────────────────────────────────────────────────────────── -->
+  <!--
+    contract: camera_height_m = 0.130 m from ground
+    → camera_joint z-offset = 0.130 − 0.048 = 0.082 m above base_link
+    x=0.100 m forward estimated from M3Pro body length (0.290/2 ≈ 0.145 m to edge)
+    PLACEHOLDER: measure actual camera mounting position from robot.
+  -->
+
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.025 0.090 0.025"/>
+      </geometry>
+      <material name="camera_black">
+        <color rgba="0.05 0.05 0.05 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.025 0.090 0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.050"/>
+      <inertia ixx="0.0000100" ixy="0.0" ixz="0.0"
+               iyy="0.0000100" iyz="0.0"
+               izz="0.0000100"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="camera_link"/>
+    <!-- x=+0.100 m forward, z=+0.082 m (= 0.130 m from ground) -->
+    <origin xyz="0.100 0.0 0.082" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ROS optical frame: z-forward, x-right, y-down -->
+  <link name="camera_optical_link"/>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+
+  <!-- ── IMU ───────────────────────────────────────────────────────────────── -->
+  <!--
+    IMU is mounted on the main board inside the chassis.
+    z=0.040 positions it at the board height (middle of chassis).
+    PLACEHOLDER: measure actual mounting position.
+  -->
+
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="0.0000001" ixy="0.0" ixz="0.0"
+               iyy="0.0000001" iyz="0.0"
+               izz="0.0000001"/>
+    </inertial>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin xyz="0.0 0.0 0.040" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ── ros2_control ──────────────────────────────────────────────────────── -->
+  <!--
+    Hardware plugin: yahboom_hardware/YahboomM3ProHardware
+    This plugin does not exist yet — it must be implemented in:
+      ros2_ws/src/yahboom_hardware/src/m3pro_hardware.cpp
+    or replaced with the mock_components/GenericSystem plugin for simulation.
+    See: ASSET_IMPORT_PLAN.md §ros2_control
+  -->
+
+  <ros2_control name="yahboom_m3pro_hardware" type="system">
+    <hardware>
+      <plugin>yahboom_hardware/YahboomM3ProHardware</plugin>
+      <param name="serial_port">/dev/yahboom</param>
+      <param name="baud_rate">115200</param>
+      <param name="timeout_ms">100</param>
+    </hardware>
+    <joint name="fl_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="fr_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rl_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rr_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+</robot>

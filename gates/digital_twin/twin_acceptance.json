@@ -1,0 +1,74 @@
+{
+  "stage": "SIMULATION_DEVELOPMENT",
+  "admission_status": "NOT_ADMITTED",
+  "claim_status": "ENGINEERING_EVIDENCE_ONLY",
+  "robot_source": "ISAAC_SIM",
+  "physical_robot_validation": "NOT_PERFORMED",
+  "timestamp_utc": "2026-08-13T06:43:26.532970+00:00",
+  "urdf": {
+    "path": "assets/robots/yahboom_m3_pro/yahboom_m3pro.urdf",
+    "sha256": "190cb85c4e7c9c2f6cef21143fb18584731fb56637192f8cb48aeca2b15fdd74"
+  },
+  "import": {
+    "status": true,
+    "prim_path": "/yahboom_m3pro"
+  },
+  "physics_census": {
+    "rigid_bodies": 10,
+    "colliders": 7,
+    "joints": 9,
+    "articulation_roots": 1,
+    "meshes": 0
+  },
+  "links": [
+    "base_footprint",
+    "base_link",
+    "camera_link",
+    "camera_optical_link",
+    "fl_wheel",
+    "fr_wheel",
+    "imu_link",
+    "lidar_link",
+    "rl_wheel",
+    "rr_wheel"
+  ],
+  "joints": [
+    "base_footprint_joint",
+    "camera_joint",
+    "camera_optical_joint",
+    "fl_wheel_joint",
+    "fr_wheel_joint",
+    "imu_joint",
+    "lidar_joint",
+    "rl_wheel_joint",
+    "rr_wheel_joint"
+  ],
+  "camera": {
+    "prim": "/yahboom_m3pro/base_link/front_rgb_camera",
+    "parent": "/yahboom_m3pro/base_link",
+    "is_descendant_of_robot": true,
+    "local_translation": [
+      0.1,
+      0.0,
+      0.12
+    ],
+    "local_rotation_xyz_deg": [
+      90.0,
+      0.0,
+      -90.0
+    ]
+  },
+  "usd": {
+    "path": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "sha256": "f557e277ed7ab89d025b8fee85ab6ee1bed5fa100d08ca563892e638b7d2191e",
+    "bytes": 10414
+  },
+  "verdict": "PASS",
+  "comparison_to_rejected_placeholder": {
+    "placeholder_bytes": 3581,
+    "placeholder_joints": 0,
+    "placeholder_rigid_bodies": 0,
+    "placeholder_colliders": 0,
+    "note": "the asset this replaces had none of the above; that is why it was rejected"
+  }
+}
