@@ -1,0 +1,69 @@
+{
+  "claim": "navfm's reproduction evidence is strictly stronger than the evidence available for the released artefacts",
+  "not_claimed": "navigation performance superiority -- D5 ruled it ineligible",
+  "git_sha": "9d0a69b5af2766dc0650c25dce31fa0e177bd7b3",
+  "kpis": [
+    {
+      "kpi": "Checkpoint load asserted strictly",
+      "released_artefact_evidence": "strict=False at 02_verify_checkpoints.py:168 and 15_reproduction_gate.py:319 -- counts reported, never asserted; the call cannot fail",
+      "navfm_evidence": "strict=True for all three models; PyTorch raises on any mismatch and none was raised",
+      "surpassed": true
+    },
+    {
+      "kpi": "Models with a deterministic-inference record",
+      "released_artefact_evidence": "2 of 3 (GNM, NoMaD). vint_gate.json exists in NO revision of 236; the gate script binds --model to choices excluding ViNT",
+      "navfm_evidence": "3 of 3",
+      "surpassed": true
+    },
+    {
+      "kpi": "Inference input population",
+      "released_artefact_evidence": "synthetic seeded frames -- np.random.default_rng(SEED+i), 480x640x3 uint8; the script's own docstring says 'Synthetic, and not benchmark data'",
+      "navfm_evidence": "frozen GO Stanford, 41,872 pairs, manifest 57a7fbbeba91b92a, in draw order",
+      "surpassed": true
+    },
+    {
+      "kpi": "Repeat count evidencing repeatability",
+      "released_artefact_evidence": "GNM 1 (no repeatability at all); NoMaD 3; ViNT none",
+      "navfm_evidence": "2 for every model, on the frozen population",
+      "surpassed": true
+    },
+    {
+      "kpi": "Declared tolerance before first inference",
+      "released_artefact_evidence": "none declared in the historical gate",
+      "navfm_evidence": "torch.allclose(rtol=1e-5, atol=1e-6), frozen in the committed protocol; the harness refuses to run if the protocol does not carry it",
+      "surpassed": true
+    },
+    {
+      "kpi": "Max abs / max rel difference archived",
+      "released_artefact_evidence": "not recorded",
+      "navfm_evidence": "0.0 / 0.0 for all three; bitwise identical, reported but never adopted as the threshold",
+      "surpassed": true
+    },
+    {
+      "kpi": "Adversarial adjudication of the protocol",
+      "released_artefact_evidence": "none",
+      "navfm_evidence": "8 independent trigger-3 rounds, 22 defects found and corrected, round 8 a four-lens panel with two skeptics per claim",
+      "surpassed": true
+    },
+    {
+      "kpi": "Provenance recorded per evidence row",
+      "released_artefact_evidence": "tags assert 'independently evidenced'; ViNT R7 had no gate record behind that claim",
+      "navfm_evidence": "12-row crosswalk: repository, commit, tag, path, tracked status, checkpoint digest, dataset identity, dataset digest, claim boundary, missing delta",
+      "surpassed": true
+    },
+    {
+      "kpi": "Exact paper reproduction",
+      "released_artefact_evidence": "not claimable -- upstream states training used unreleased datasets",
+      "navfm_evidence": "not claimable, and declared so IN ADVANCE rather than discovered",
+      "surpassed": false
+    },
+    {
+      "kpi": "Navigation performance vs the three models",
+      "released_artefact_evidence": "published numbers are real-robot trials",
+      "navfm_evidence": "NOT ELIGIBLE -- only ViNT has an evaluation metric; a 3-model table would invent 2 of 3 rows",
+      "surpassed": false
+    }
+  ],
+  "surpassed_count": 8,
+  "total": 10
+}
