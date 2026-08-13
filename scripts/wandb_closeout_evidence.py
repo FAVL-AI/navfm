@@ -200,6 +200,12 @@ def main(argv: list[str] | None = None) -> int:
         "E2/decisions_deferred": 4,
         "E2/requirements_untracked": 1,
         "governance/finding": "F-G2-1 -- the E2 block is mis-scoped in both directions",
+        "twin/verdict": "PASS -- 1 articulation root, 9 joints, 10 rigid bodies, 7 colliders",
+        "twin/wheel_radius_m": 0.040,
+        "twin/wheel_radius_status": "PROVISIONAL_SIMULATION_VALUE (not a caliper measurement)",
+        "closed_loop/pilots": 2,
+        "closed_loop/three_model_loaders_passing": "3/3",
+        "closed_loop/admission_status": "NOT_ADMITTED",
     })
 
     # --- claim boundary, stated in the ledger itself ------------------------
@@ -270,6 +276,72 @@ def main(argv: list[str] | None = None) -> int:
              "from gates/g2_decisions.json, so fixing the other four would step over it",
              "E2 collection", "NO"],
         ])})
+
+    # --- the simulation chain, closed end to end ---------------------------
+    tw = _load("gates/digital_twin/twin_acceptance.json")
+    cl = _load("gates/digital_twin/closed_loop_collection.json")
+    lc = _load("gates/digital_twin/three_model_loader_compatibility.json")
+
+    c = tw["physics_census"]
+    run.log({"digital_twin": wandb.Table(
+        columns=["property", "rejected_placeholder", "navfm_twin"],
+        data=[
+            ["bytes", "3581", str(tw["usd"]["bytes"])],
+            ["articulation roots", "0", str(c["articulation_roots"])],
+            ["joints", "0", str(c["joints"])],
+            ["rigid bodies", "0", str(c["rigid_bodies"])],
+            ["colliders", "0", str(c["colliders"])],
+            ["camera on robot", "n/a", str(tw["camera"]["is_descendant_of_robot"])],
+            ["verdict", "REJECTED", tw["verdict"]],
+        ])})
+
+    run.log({"closed_loop_pilots": wandb.Table(
+        columns=["pilot", "frames", "net_displacement_m", "path_length_m", "yaw_change_deg",
+                 "commanded_ms", "achieved_ms", "achieved_over_commanded",
+                 "position_shape", "position_dtype", "object_dtype", "yaw_unwrapped",
+                 "validator_vint", "validator_gnm", "validator_nomad"],
+        data=[[p["name"], p["frames"], p["net_displacement_m"], p["path_length_m"],
+               p["total_yaw_change_deg"], p["commanded_vx_mean_ms"], p["achieved_speed_ms"],
+               p["achieved_over_commanded"], str(p["position_shape"]), p["position_dtype"],
+               p["object_dtype"], p["yaw_unwrapped"],
+               p["option1_validator"]["vint"], p["option1_validator"]["gnm"],
+               p["option1_validator"]["nomad"]] for p in cl["pilots"]])})
+
+    run.log({"three_model_loader_compatibility": wandb.Table(
+        columns=["model", "result", "samples", "observation", "goal", "action",
+                 "image_size", "context_size"],
+        data=[[m, lc[f"loader_{m}"]["result"], lc[f"loader_{m}"].get("samples"),
+               str(lc[f"loader_{m}"].get("shapes", [None])[0]),
+               str(lc[f"loader_{m}"].get("shapes", [None, None])[1]),
+               str(lc[f"loader_{m}"].get("shapes", [None, None, None])[2]),
+               str(lc[f"loader_{m}"].get("image_size")),
+               lc[f"loader_{m}"].get("context_size")] for m in ("gnm", "vint", "nomad")])})
+
+    # The three bugs, recorded because each would have produced convincing and
+    # worthless evidence, and none is visible in a well-formed trajectory file.
+    run.log({"silent_failures_caught": wandb.Table(
+        columns=["failure", "what_it_would_have_produced", "why_nothing_downstream_catches_it",
+                 "how_it_was_caught"],
+        data=[
+            ["Wheel joints imported with zero stiffness and zero damping",
+             "40 perfectly-formed frames of a robot that moved 0.001 m while its log said 0.45 m/s",
+             "the file passes every Option 1 check and loads in all three models",
+             "comparing commanded velocity against achieved displacement"],
+            ["PyTorch CUDA context beside Isaac's RTX renderer",
+             "no data -- SIGSEGV at first inference, reproducibly",
+             "n/a, it is a hard crash",
+             "identical failure point across both pilots"],
+            ["Missing waypoint un-normalisation",
+             "every command 8x too fast, trajectory plausible and wrong everywhere",
+             "the 0.45 m/s saturation clamp returns the SAME value for correct and wrong, "
+             "so the safety limiter erases the evidence",
+             "a named, tested conversion function -- 22 tests"],
+        ])})
+
+    for f in sorted((REPO / "gates/digital_twin/frames").glob("*.jpg")):
+        run.log({f"yahboom_pov/{f.stem}": wandb.Image(
+            str(f), caption=f"{f.stem} | Yahboom digital twin, front RGB on base_link | "
+                            "ViNT closed loop | SIMULATION_DEVELOPMENT, NOT_ADMITTED")})
 
     # --- robot point-of-view frames from the completed pilot ----------------
     pilot_root = Path(args.pilot_root)
