@@ -1,0 +1,125 @@
+{
+  "ledger": "Yahboom ROSMASTER M3 Pro sim-to-real calibration ledger",
+  "created_utc": "2026-08-13T06:38:28.306741+00:00",
+  "purpose": "Simulation proceeds on provisional values; this records which are provisional so none is ever mistaken for a measurement. A field may be used in simulation while REQUIRES_PHYSICAL_MEASUREMENT, provided results carry stage=SIMULATION_DEVELOPMENT. It may not enter a physical or sim-to-real claim until VERIFIED_FROM_MEASUREMENT.",
+  "status_vocabulary": [
+    "VERIFIED_FROM_ASSET",
+    "VERIFIED_FROM_PROJECT_RECORD",
+    "PROVISIONAL_SIMULATION_VALUE",
+    "REQUIRES_PHYSICAL_MEASUREMENT",
+    "CONFLICT"
+  ],
+  "fields": [
+    {
+      "field": "wheel_radius_m",
+      "urdf": 0.048,
+      "navfm_record": 0.04,
+      "status": "CONFLICT",
+      "severity": "BLOCKING for recorded trajectories",
+      "note": "URDF carries the X3 value and says so. navfm records 80 mm wheels. 20% apart. Converts wheel speed to ground distance, so it lands in `position` silently.",
+      "resolution": "caliper measurement, or a declared simulation value with the X3 lineage stated"
+    },
+    {
+      "field": "track_width_m",
+      "urdf": 0.17,
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "URDF half-track ly=0.0850 -> 0.170 full. Yahboom publishes no figure."
+    },
+    {
+      "field": "wheelbase_m",
+      "urdf": 0.155,
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "URDF half lx=0.0775 -> 0.155 full."
+    },
+    {
+      "field": "chassis_dimensions_m",
+      "urdf": [
+        0.29,
+        0.235,
+        0.08
+      ],
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "Inline box. Inconsistent with the 0.75x0.45 sibling placeholder, which is why that placeholder is not adopted."
+    },
+    {
+      "field": "mass_kg",
+      "urdf": 1.8,
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "Inertia is computed from this by the box formula, shown in the URDF."
+    },
+    {
+      "field": "footprint_radius_m",
+      "urdf": null,
+      "navfm_record": 0.24,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "navfm robot.py marks it PROVISIONAL, derived from 80 mm wheels plus a typical chassis."
+    },
+    {
+      "field": "max_linear_velocity_ms",
+      "urdf": null,
+      "navfm_record": "PROVISIONAL",
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "control.py M3PRO_LIMITS: Yahboom publishes none."
+    },
+    {
+      "field": "max_angular_velocity_rads",
+      "urdf": null,
+      "navfm_record": "PROVISIONAL",
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "as above"
+    },
+    {
+      "field": "camera_height_m",
+      "urdf": null,
+      "navfm_record": "PROVISIONAL",
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "navfm CameraRig marks extrinsics PROVISIONAL"
+    },
+    {
+      "field": "camera_pitch_rad",
+      "urdf": null,
+      "navfm_record": "PROVISIONAL",
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "as above"
+    },
+    {
+      "field": "camera_intrinsics",
+      "urdf": null,
+      "navfm_record": "PROVISIONAL",
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "G1.c requires a wall at 1 m to subtend the angle a 64 deg horizontal field predicts, +/-2 deg"
+    },
+    {
+      "field": "mecanum_roller_geometry",
+      "urdf": "cylinder approximation",
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "URDF models mecanum wheels as plain cylinders. Adequate for body-velocity control; NOT adequate for per-roller slip dynamics. State this before any claim about holonomic execution fidelity -- it is the H2 manipulated variable."
+    },
+    {
+      "field": "wheel_inertia",
+      "urdf": "not separately declared",
+      "navfm_record": null,
+      "status": "PROVISIONAL_SIMULATION_VALUE",
+      "note": "chassis inertia only"
+    },
+    {
+      "field": "tyre_friction",
+      "urdf": null,
+      "navfm_record": null,
+      "status": "REQUIRES_PHYSICAL_MEASUREMENT",
+      "note": "Isaac default until measured. Affects slip, therefore odometry drift."
+    },
+    {
+      "field": "control_rate_hz",
+      "urdf": null,
+      "navfm_record": 4.0,
+      "status": "VERIFIED_FROM_PROJECT_RECORD",
+      "note": "reference deployment stack: 0.2 m/s at 4 Hz"
+    }
+  ]
+}

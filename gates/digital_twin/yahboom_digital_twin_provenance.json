@@ -1,0 +1,48 @@
+{
+  "audit": "Yahboom ROSMASTER M3 Pro digital-twin provenance and physics gate",
+  "audited_at_utc": "2026-08-13T06:38:01.015557+00:00",
+  "auditing_repository": "FAVL-AI/navfm",
+  "auditing_commit": "00630bd2721d6be907496bb3f7a9850cad76a4c6",
+  "verdict": "URDF ADOPTABLE WITH ONE BLOCKING CORRECTION; USD REJECTED",
+  "path_correction": {
+    "requested_path": "/home/favl/robotics/FleetSafe-VisualNav-Benchmark/assets/robots/yahboom_m3_pro/",
+    "exists": false,
+    "actual_location": "/home/favl/robotics/gnm-vlnverse-baseline/assets/robots/yahboom_m3_pro",
+    "note": "FleetSafe-VisualNav-Benchmark is not present on this workstation. The asset chain lives in gnm-vlnverse-baseline, which also holds a second copy at /home/favl/gnm-vlnverse-baseline. The reports inside the asset directory reference the absent FleetSafe path throughout, so their internal paths do not resolve."
+  },
+  "urdf": {
+    "path": "/home/favl/robotics/gnm-vlnverse-baseline/assets/robots/yahboom_m3_pro/yahboom_m3pro.urdf",
+    "sha256": "5043529da206a36054ddc3e0170cd199fda9c68cf0d5b68cdddcda525ad760c2",
+    "bytes": 14123,
+    "source_commit": "67b038385629658096ed5f656cd1a29d1592f165",
+    "external_mesh_references": 0,
+    "links_and_joints": 23,
+    "self_contained": true,
+    "assessment": "ADOPTABLE. Fully inline primitive geometry -- boxes and cylinders declared in the URDF itself -- so it imports without any mesh files, which is fortunate because none exist (asset_report: stl/dae/obj all 0). Inertia is computed from the box formula and shown in the file. This is a real, physics-capable robot description."
+  },
+  "usd": {
+    "path": "/home/favl/robotics/gnm-vlnverse-baseline/assets/robots/yahboom_m3_pro/yahboom_m3pro.usd",
+    "sha256": "de0b90d945975debf1cc6e6c2c52b1d77f3800d0169e402f71926345f3810764",
+    "bytes": 3581,
+    "format": "binary USDC",
+    "physics_content": {
+      "PhysicsRevoluteJoint": 0,
+      "ArticulationRoot": 0,
+      "Mesh": 0,
+      "RigidBodyAPI": 0,
+      "CollisionAPI": 0
+    },
+    "is_urdf_derived": false,
+    "assessment": "REJECTED as a digital twin. 3,581 bytes containing zero joints, zero meshes, zero rigid bodies and zero colliders. It cannot articulate, cannot collide and cannot be driven. Three independent records agree it was never generated from the URDF: asset_report.json says has_usd=false, generated_usd=null, status='urdf_found'; and isaac_import_status.json says status='already_exists', which means the importer found a file and skipped -- not that it converted one."
+  },
+  "BLOCKING_DEFECT": {
+    "field": "wheel_radius",
+    "urdf_value_m": 0.048,
+    "urdf_self_comment": "Wheel radius:    0.048 m   - same as X3; verify with calipers",
+    "navfm_recorded": "80 mm mecanum wheels (src/navfm/isaac/robot.py) -> radius 0.040 m",
+    "x3_urdf_value_m": 0.048,
+    "discrepancy_percent": 20.0,
+    "why_it_is_blocking": "Wheel radius converts wheel angular velocity into ground distance. A 20% error scales every commanded velocity and every odometry-derived displacement by 20%, which lands directly in `position` -- the label the models learn from. It would not crash, would not warn, and would corrupt every trajectory silently. The URDF carries the X3 value and says so in its own comment.",
+    "resolution_required_before": "any recorded trajectory. Not before import, articulation, camera mounting or motion debugging -- those are unaffected by a radius error."
+  }
+}
