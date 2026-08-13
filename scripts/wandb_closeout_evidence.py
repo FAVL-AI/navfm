@@ -192,6 +192,14 @@ def main(argv: list[str] | None = None) -> int:
         "amendment5/rounds": 8,
         "amendment5/defects_found_and_corrected": 22,
         "tests_passed": 454,
+        "collection/fresh_pilot_authorised": "NO -- two-trajectory permission spent, no review recorded",
+        "collection/fresh_pilot_implementable": "NO -- no Yahboom asset, no closed-loop driver",
+        "collection/blockers_not_authorised": 5,
+        "collection/blockers_not_implemented": 4,
+        "collection/blockers_not_measured": 1,
+        "E2/decisions_deferred": 4,
+        "E2/requirements_untracked": 1,
+        "governance/finding": "F-G2-1 -- the E2 block is mis-scoped in both directions",
     })
 
     # --- claim boundary, stated in the ledger itself ------------------------
@@ -206,6 +214,61 @@ def main(argv: list[str] | None = None) -> int:
              "Any three-model performance comparison -- two of three rows do not exist"],
             ["The historical GNM/NoMaD inference evidence ran on synthetic frames, not GO Stanford",
              "That the historical ViNT R8 row may enter any comparison -- permanently excluded"],
+        ])})
+
+    # --- collection readiness: what blocks a fresh pilot, and which remedy --
+    # Two words kept strictly apart, because they need different remedies:
+    # NOT AUTHORISED is cleared by an agreement or a dated amendment; NOT
+    # IMPLEMENTED is cleared by engineering. Writing code does not clear the
+    # first, and a supervisor agreement does not clear the second.
+    run.log({"collection_blockers": wandb.Table(
+        columns=["rank", "blocker", "kind", "remedy", "evidence"],
+        data=[
+            [1, "Two-trajectory permission is spent; no review of the two completed pilots is recorded",
+             "NOT AUTHORISED", "a recorded supervisor agreement -- the cheapest unblock in the report",
+             "docs/WORKFLOW.md:232-233; gates/redteam/ and docs/reviews/ contain no pilot review"],
+            [2, "Success rate, navigation error and route efficiency are BLOCKED",
+             "NOT AUTHORISED", "a new dated amendment, adjudicated under trigger-3",
+             "PREREGISTRATION.md 'SR / NE / SPL remain BLOCKED'"],
+            [3, "Permitted execution order stops at R7 and forbids evaluation",
+             "NOT AUTHORISED", "a new dated amendment", "PREREGISTRATION.md execution order"],
+            [4, "No in-force goal definition for image-goal navigation",
+             "NOT AUTHORISED", "trigger-3 adjudication of the ImageNav contract",
+             "docs/drafts/IMAGENAV_EPISODE_CONTRACT.md: 'Not in force'"],
+            [5, "No Yahboom model file exists, and none ever has",
+             "NOT IMPLEMENTED", "engineering plus an asset provenance decision",
+             "assets/ absent; no USD tracked in any commit"],
+            [6, "The URDF converter the error message names does not exist",
+             "NOT IMPLEMENTED", "engineering", "src/navfm/isaac/urdf_import.py absent"],
+            [7, "No code connects a model to the simulator's steering",
+             "NOT IMPLEMENTED", "engineering", "no file imports both a model builder and SimRobot"],
+            [8, "No waypoint un-normalisation; the controller consumes metres",
+             "NOT IMPLEMENTED", "engineering, plus a declared executed-waypoint index",
+             "described only in a docstring about the upstream stack"],
+            [9, "G1 fails: robot geometry, limits and camera extrinsics are PROVISIONAL",
+             "NOT MEASURED", "physical measurement on the robot",
+             "src/navfm/control.py M3PRO_LIMITS; src/navfm/isaac/robot.py"],
+            [10, "No rule admits or refuses learned-policy-generated data",
+             "NOT AUTHORISED", "a declared rule, before the data exists",
+             "NO VALUE DECLARED; the on-disk contract cannot distinguish it"],
+        ])})
+
+    run.log({"E2_decisions": wandb.Table(
+        columns=["decision", "current_value", "status", "blocks", "blocks_a_2_trajectory_pilot"],
+        data=[
+            ["Estimation software, OPTIMISER, and convergence tolerance",
+             "NO VALUE DECLARED", "DEFERRED", "E2 collection only", "NO"],
+            ["Number of held-out scenes", "NO VALUE DECLARED", "DEFERRED",
+             "E2 collection only", "NO"],
+            ["Per-cell episode count, as an exact number",
+             "NO VALUE DECLARED (floor of >= 30 exists and is explicitly not the value)",
+             "DEFERRED", "E2 collection only", "NO"],
+            ["Estimator implementation", "NO VALUE DECLARED", "DEFERRED",
+             "E2 collection and E2 analysis capability", "NO"],
+            ["Estimator type-I error rate on simulated null data, and its tolerance",
+             "NO VALUE DECLARED", "UNTRACKED -- required by the gate condition but absent "
+             "from gates/g2_decisions.json, so fixing the other four would step over it",
+             "E2 collection", "NO"],
         ])})
 
     # --- robot point-of-view frames from the completed pilot ----------------
