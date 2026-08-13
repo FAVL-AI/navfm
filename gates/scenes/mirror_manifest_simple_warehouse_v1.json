@@ -1,0 +1,3786 @@
+{
+  "check": "FULL_RENDER_CLOSURE",
+  "scene_id": "simple_warehouse_v1",
+  "root_usd": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Simple_Warehouse/warehouse.usd",
+  "mirror_root": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1",
+  "source_base_url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac",
+  "timestamp_utc": "2026-08-13T09:07:38.979939+00:00",
+  "definition": "Closure over USD references, MDL material modules and the textures those modules request, iterated to a fixed point. The previous definition covered only the first class and reported complete (FL-016).",
+  "nodes": {
+    "Environments/Materials/MI_Barcode_0001.mdl": {
+      "path": "Environments/Materials/MI_Barcode_0001.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_Barcode_0001.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_Barcode_0001.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_CeilingA_06b.mdl": {
+      "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_CeilingA_06b.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_CeilingA_06b.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_Floor_01.mdl": {
+      "path": "Environments/Materials/MI_Floor_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_Floor_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_Floor_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_FrameA_01.mdl": {
+      "path": "Environments/Materials/MI_FrameA_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_FrameA_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_FrameA_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_LampCeilingA.mdl": {
+      "path": "Environments/Materials/MI_LampCeilingA.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_LampCeilingA.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_LampCeilingA.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_PushcartA_01.mdl": {
+      "path": "Environments/Materials/MI_PushcartA_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_PushcartA_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_PushcartA_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_RackShield_01.mdl": {
+      "path": "Environments/Materials/MI_RackShield_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_RackShield_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_RackShield_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_SignB.mdl": {
+      "path": "Environments/Materials/MI_SignB.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_SignB.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_SignB.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/MI_WallB_01.mdl": {
+      "path": "Environments/Materials/MI_WallB_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/MI_WallB_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/MI_WallB_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/M_AisleSign.mdl": {
+      "path": "Environments/Materials/M_AisleSign.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/M_AisleSign.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/M_AisleSign.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/M_Glow.mdl": {
+      "path": "Environments/Materials/M_Glow.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/M_Glow.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/M_Glow.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/M_WallBoard_01.mdl": {
+      "path": "Environments/Materials/M_WallBoard_01.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/M_WallBoard_01.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/M_WallBoard_01.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "OmniPBR.mdl": {
+      "path": "OmniPBR.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/OmniPBR.mdl",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/OmniPBR.mdl",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/0001.png": {
+      "path": "Environments/Materials/Textures/0001.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/0001.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/0001.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_BeamsA_D.png": {
+      "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_BeamsA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_BeamsA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_BeamsA_M.png": {
+      "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_BeamsA_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_BeamsA_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_BeamsA_N.png": {
+      "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_BeamsA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_BeamsA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_BeamsA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_BeamsA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_BeamsA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_BlankMask_M.png": {
+      "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_BlankMask_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_BlankMask_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CardBoxA_D.png": {
+      "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CardBoxA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CardBoxA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CardBoxA_N.png": {
+      "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CardBoxA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CardBoxA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CardBoxA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CardBoxA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CardBoxA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CeilingA_D.png": {
+      "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CeilingA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CeilingA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CeilingA_M.png": {
+      "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CeilingA_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CeilingA_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CeilingA_N.png": {
+      "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CeilingA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CeilingA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_CeilingA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_CeilingA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_CeilingA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FireExtinguisher_D.png": {
+      "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FireExtinguisher_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FireExtinguisher_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FireExtinguisher_N.png": {
+      "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FireExtinguisher_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FireExtinguisher_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FireExtinguisher_ORM.png": {
+      "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FloorStripes_D.png": {
+      "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FloorStripes_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FloorStripes_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FloorStripes_M.png": {
+      "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FloorStripes_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FloorStripes_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FloorStripes_N.png": {
+      "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FloorStripes_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FloorStripes_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FloorStripes_ORM.png": {
+      "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FloorStripes_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FloorStripes_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_Floor_01_D.png": {
+      "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_Floor_01_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_Floor_01_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_Floor_01_M.png": {
+      "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_Floor_01_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_Floor_01_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_Floor_01_N.png": {
+      "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_Floor_01_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_Floor_01_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_Floor_01_ORM.png": {
+      "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_Floor_01_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_Floor_01_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FrameA_D.png": {
+      "path": "Environments/Materials/Textures/T_FrameA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FrameA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FrameA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FrameA_M.png": {
+      "path": "Environments/Materials/Textures/T_FrameA_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FrameA_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FrameA_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FrameA_N.png": {
+      "path": "Environments/Materials/Textures/T_FrameA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FrameA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FrameA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_FrameA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_FrameA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_FrameA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_LampCeilingA_D.png": {
+      "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_LampCeilingA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_LampCeilingA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_LampCeilingA_N.png": {
+      "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_LampCeilingA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_LampCeilingA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_LampCeilingA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PaletteA_01_D.png": {
+      "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PaletteA_01_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PaletteA_01_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PaletteA_01_M.png": {
+      "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PaletteA_01_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PaletteA_01_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PaletteA_01_N.png": {
+      "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PaletteA_01_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PaletteA_01_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PaletteA_01_ORM.png": {
+      "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PushcartA_D.png": {
+      "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PushcartA_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PushcartA_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PushcartA_M.png": {
+      "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PushcartA_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PushcartA_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PushcartA_N.png": {
+      "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PushcartA_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PushcartA_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_PushcartA_ORM.png": {
+      "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_PushcartA_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_PushcartA_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_01_D.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_01_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_01_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_01_M.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_01_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_01_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_01_N.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_01_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_01_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_01_ORM.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_02_D.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_02_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_02_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_02_M.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_02_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_02_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_02_N.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_02_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_02_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_02_ORM.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_03_D.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_03_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_03_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_03_M.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_03_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_03_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_03_N.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_03_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_03_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_03_ORM.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_04_D.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_04_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_04_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_04_M.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_04_M.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_04_M.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_04_N.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_04_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_04_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackSetA_04_ORM.png": {
+      "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackShield_D.png": {
+      "path": "Environments/Materials/Textures/T_RackShield_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackShield_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackShield_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackShield_N.png": {
+      "path": "Environments/Materials/Textures/T_RackShield_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackShield_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackShield_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_RackShield_ORM.png": {
+      "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_RackShield_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_RackShield_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_SignsB_D.png": {
+      "path": "Environments/Materials/Textures/T_SignsB_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_SignsB_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_SignsB_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_SignsC_D.png": {
+      "path": "Environments/Materials/Textures/T_SignsC_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_SignsC_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_SignsC_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_SignsC_ORM.png": {
+      "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_SignsC_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_SignsC_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_01_D.png": {
+      "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_01_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_01_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_01_N.png": {
+      "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_01_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_01_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_01_ORM.png": {
+      "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_01_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_01_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_02_D.png": {
+      "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_02_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_02_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_02_N.png": {
+      "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_02_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_02_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallA_02_ORM.png": {
+      "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallA_02_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallA_02_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallDetails_D.png": {
+      "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallDetails_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallDetails_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallDetails_N.png": {
+      "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallDetails_N.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallDetails_N.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Environments/Materials/Textures/T_WallDetails_ORM.png": {
+      "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Materials/Textures/T_WallDetails_ORM.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Materials/Textures/T_WallDetails_ORM.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Materials/Textures/FOF_Map_Labels_D.png": {
+      "path": "Materials/Textures/FOF_Map_Labels_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Materials/Textures/FOF_Map_Labels_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Materials/Textures/FOF_Map_Labels_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Materials/Textures/FOF_Map_Magenta_Box_D.png": {
+      "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Materials/Textures/FOF_Map_Magenta_Box_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Materials/Textures/FOF_Map_Magenta_Box_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    },
+    "Materials/Textures/FOF_Mesh_Labels_D.png": {
+      "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Materials/Textures/FOF_Mesh_Labels_D.png",
+      "referenced_by": [
+        "warehouse.usd"
+      ],
+      "exists": false,
+      "resolution_method": "mirror_relative",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Materials/Textures/FOF_Mesh_Labels_D.png",
+      "fetch_error": "HTTPError: HTTP Error 404: Not Found"
+    }
+  },
+  "rounds": [
+    {
+      "round": 0,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "missing": 86,
+      "fetched": 0,
+      "failed": 86,
+      "results": [
+        {
+          "path": "Environments/Materials/MI_Barcode_0001.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_CeilingA_06b.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_Floor_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_FrameA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_LampCeilingA.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_PushcartA_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_RackShield_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_SignB.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/MI_WallB_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_AisleSign.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_Glow.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/M_WallBoard_01.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "OmniPBR.mdl",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/0001.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BeamsA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_BlankMask_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_CeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_Floor_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_FrameA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_PushcartA_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_M.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_RackShield_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsB_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_SignsC_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_01_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallA_02_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_N.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Environments/Materials/Textures/T_WallDetails_ORM.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        },
+        {
+          "path": "Materials/Textures/FOF_Mesh_Labels_D.png",
+          "ok": false,
+          "error": "HTTPError: HTTP Error 404: Not Found"
+        }
+      ]
+    }
+  ],
+  "initial": {
+    "mdl_referenced": 13,
+    "asset_paths_referenced": 86,
+    "missing_before": 86
+  },
+  "closure": {
+    "usd_closure_complete": true,
+    "material_closure_complete": false,
+    "texture_closure_complete": false,
+    "mdl": {
+      "required": 13,
+      "present": 0
+    },
+    "textures": {
+      "required": 73,
+      "present": 0
+    },
+    "usd": {
+      "required": 0,
+      "present": 0
+    },
+    "total_dependencies": 86,
+    "unresolved": [
+      "Environments/Materials/MI_Barcode_0001.mdl",
+      "Environments/Materials/MI_CeilingA_06b.mdl",
+      "Environments/Materials/MI_Floor_01.mdl",
+      "Environments/Materials/MI_FrameA_01.mdl",
+      "Environments/Materials/MI_LampCeilingA.mdl",
+      "Environments/Materials/MI_PushcartA_01.mdl",
+      "Environments/Materials/MI_RackShield_01.mdl",
+      "Environments/Materials/MI_SignB.mdl",
+      "Environments/Materials/MI_WallB_01.mdl",
+      "Environments/Materials/M_AisleSign.mdl",
+      "Environments/Materials/M_Glow.mdl",
+      "Environments/Materials/M_WallBoard_01.mdl",
+      "Environments/Materials/Textures/0001.png",
+      "Environments/Materials/Textures/T_BeamsA_D.png",
+      "Environments/Materials/Textures/T_BeamsA_M.png",
+      "Environments/Materials/Textures/T_BeamsA_N.png",
+      "Environments/Materials/Textures/T_BeamsA_ORM.png",
+      "Environments/Materials/Textures/T_BlankMask_M.png",
+      "Environments/Materials/Textures/T_CardBoxA_D.png",
+      "Environments/Materials/Textures/T_CardBoxA_N.png",
+      "Environments/Materials/Textures/T_CardBoxA_ORM.png",
+      "Environments/Materials/Textures/T_CeilingA_D.png",
+      "Environments/Materials/Textures/T_CeilingA_M.png",
+      "Environments/Materials/Textures/T_CeilingA_N.png",
+      "Environments/Materials/Textures/T_CeilingA_ORM.png",
+      "Environments/Materials/Textures/T_FireExtinguisher_D.png",
+      "Environments/Materials/Textures/T_FireExtinguisher_N.png",
+      "Environments/Materials/Textures/T_FireExtinguisher_ORM.png",
+      "Environments/Materials/Textures/T_FloorStripes_D.png",
+      "Environments/Materials/Textures/T_FloorStripes_M.png",
+      "Environments/Materials/Textures/T_FloorStripes_N.png",
+      "Environments/Materials/Textures/T_FloorStripes_ORM.png",
+      "Environments/Materials/Textures/T_Floor_01_D.png",
+      "Environments/Materials/Textures/T_Floor_01_M.png",
+      "Environments/Materials/Textures/T_Floor_01_N.png",
+      "Environments/Materials/Textures/T_Floor_01_ORM.png",
+      "Environments/Materials/Textures/T_FrameA_D.png",
+      "Environments/Materials/Textures/T_FrameA_M.png",
+      "Environments/Materials/Textures/T_FrameA_N.png",
+      "Environments/Materials/Textures/T_FrameA_ORM.png",
+      "Environments/Materials/Textures/T_LampCeilingA_D.png",
+      "Environments/Materials/Textures/T_LampCeilingA_N.png",
+      "Environments/Materials/Textures/T_LampCeilingA_ORM.png",
+      "Environments/Materials/Textures/T_PaletteA_01_D.png",
+      "Environments/Materials/Textures/T_PaletteA_01_M.png",
+      "Environments/Materials/Textures/T_PaletteA_01_N.png",
+      "Environments/Materials/Textures/T_PaletteA_01_ORM.png",
+      "Environments/Materials/Textures/T_PushcartA_D.png",
+      "Environments/Materials/Textures/T_PushcartA_M.png",
+      "Environments/Materials/Textures/T_PushcartA_N.png",
+      "Environments/Materials/Textures/T_PushcartA_ORM.png",
+      "Environments/Materials/Textures/T_RackSetA_01_D.png",
+      "Environments/Materials/Textures/T_RackSetA_01_M.png",
+      "Environments/Materials/Textures/T_RackSetA_01_N.png",
+      "Environments/Materials/Textures/T_RackSetA_01_ORM.png",
+      "Environments/Materials/Textures/T_RackSetA_02_D.png",
+      "Environments/Materials/Textures/T_RackSetA_02_M.png",
+      "Environments/Materials/Textures/T_RackSetA_02_N.png",
+      "Environments/Materials/Textures/T_RackSetA_02_ORM.png",
+      "Environments/Materials/Textures/T_RackSetA_03_D.png",
+      "Environments/Materials/Textures/T_RackSetA_03_M.png",
+      "Environments/Materials/Textures/T_RackSetA_03_N.png",
+      "Environments/Materials/Textures/T_RackSetA_03_ORM.png",
+      "Environments/Materials/Textures/T_RackSetA_04_D.png",
+      "Environments/Materials/Textures/T_RackSetA_04_M.png",
+      "Environments/Materials/Textures/T_RackSetA_04_N.png",
+      "Environments/Materials/Textures/T_RackSetA_04_ORM.png",
+      "Environments/Materials/Textures/T_RackShield_D.png",
+      "Environments/Materials/Textures/T_RackShield_N.png",
+      "Environments/Materials/Textures/T_RackShield_ORM.png",
+      "Environments/Materials/Textures/T_SignsB_D.png",
+      "Environments/Materials/Textures/T_SignsC_D.png",
+      "Environments/Materials/Textures/T_SignsC_ORM.png",
+      "Environments/Materials/Textures/T_WallA_01_D.png",
+      "Environments/Materials/Textures/T_WallA_01_N.png",
+      "Environments/Materials/Textures/T_WallA_01_ORM.png",
+      "Environments/Materials/Textures/T_WallA_02_D.png",
+      "Environments/Materials/Textures/T_WallA_02_N.png",
+      "Environments/Materials/Textures/T_WallA_02_ORM.png",
+      "Environments/Materials/Textures/T_WallDetails_D.png",
+      "Environments/Materials/Textures/T_WallDetails_N.png",
+      "Environments/Materials/Textures/T_WallDetails_ORM.png",
+      "Materials/Textures/FOF_Map_Labels_D.png",
+      "Materials/Textures/FOF_Map_Magenta_Box_D.png",
+      "Materials/Textures/FOF_Mesh_Labels_D.png",
+      "OmniPBR.mdl"
+    ],
+    "full_render_closure": false
+  },
+  "render_validation_complete": "NOT_EVALUATED_HERE \u2014 see camera_view_acceptance"
+}

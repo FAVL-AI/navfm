@@ -1,0 +1,428 @@
+{
+  "check": "FULL_RENDER_CLOSURE",
+  "scene_id": "hospital_v1",
+  "root_usd": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/hospital.usd",
+  "mirror_root": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1",
+  "source_base_url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital",
+  "timestamp_utc": "2026-08-13T09:07:08.895859+00:00",
+  "definition": "Closure over USD references, MDL material modules and the textures those modules request, iterated to a fixed point. The previous definition covered only the first class and reported complete (FL-016).",
+  "nodes": {
+    "Materials/MI_Hospital_Floor.mdl": {
+      "path": "Materials/MI_Hospital_Floor.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/MI_Hospital_Floor.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "22882d8bd4361c813f4593b70447eb6da22e2768e5b3795dd7378b97614f180c",
+      "bytes": 4969
+    },
+    "Materials/M_Checkered.mdl": {
+      "path": "Materials/M_Checkered.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Checkered.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "c7918c8064c667da544ee5604934b09c54e3c5d5a72c7474d69db306fb82a86c",
+      "bytes": 2479
+    },
+    "Materials/M_Floor_Basse.mdl": {
+      "path": "Materials/M_Floor_Basse.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Floor_Basse.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "443eb1b0fc74698273c9bc009741568bf53e59af01bcd3d3b38d6fa6b473157d",
+      "bytes": 2180
+    },
+    "Materials/M_Floor_Black.mdl": {
+      "path": "Materials/M_Floor_Black.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Floor_Black.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "096e9bd1b90b1257b5700fdcbb6d2053635717b85b090564bdf7968372facadc",
+      "bytes": 1935
+    },
+    "Materials/M_Wood_Floor.mdl": {
+      "path": "Materials/M_Wood_Floor.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Wood_Floor.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "dd40e5c1fb2c4487f6368e0855412b070be7e7b4162f065b37d22d4f974e084c",
+      "bytes": 2334
+    },
+    "Materials/M_Wood_Floor_Small.mdl": {
+      "path": "Materials/M_Wood_Floor_Small.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Wood_Floor_Small.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "f5d848cfb2404a5f9769a03406fc89fe9029f89097e2a60643f9f5a620640aee",
+      "bytes": 1874
+    },
+    "Materials/M_Wood_Walnut.mdl": {
+      "path": "Materials/M_Wood_Walnut.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/M_Wood_Walnut.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "a608446bde9f6b376f5f4ed2eaeab5d9958841fbe6a5b32072bbbafe20c9cde6",
+      "bytes": 2750
+    },
+    "Materials/Modular2.mdl": {
+      "path": "Materials/Modular2.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Modular2.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "290252e1bd2bb7a22930c4464a439059f24985e2ac9331341d09903c9d92329d",
+      "bytes": 1146
+    },
+    "Materials/Office.mdl": {
+      "path": "Materials/Office.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Office.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "6f3a993111759e547eb38c823b8b6d6d10910124a9a7f53b77ae7ad2c6d3f718",
+      "bytes": 1145
+    },
+    "Materials/WorldGridMaterial.mdl": {
+      "path": "Materials/WorldGridMaterial.mdl",
+      "type": "MATERIAL_MODULE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/WorldGridMaterial.mdl",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "82a356a53e753ee4d27f767cc7b8f6f27af53463b65e2744abed5bb2b79231e0",
+      "bytes": 2895
+    },
+    "NVIDIA/Assets/Skies/Cloudy/abandoned_parking_4k.hdr": {
+      "path": "NVIDIA/Assets/Skies/Cloudy/abandoned_parking_4k.hdr",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/NVIDIA/Assets/Skies/Cloudy/abandoned_parking_4k.hdr",
+      "referenced_by": [
+        "hospital.usd"
+      ],
+      "exists": true,
+      "resolution_method": "fetched_from_source",
+      "source_uri": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/NVIDIA/Assets/Skies/Cloudy/abandoned_parking_4k.hdr",
+      "sha256": "3797789e0e71990f3129c5ebdd052883c458b5834845a239d8c822f5a577a389",
+      "bytes": 25661358,
+      "retrieved_utc": "2026-08-13T09:07:20.477519+00:00"
+    },
+    "Materials/Textures/T_WhitePlastic_R.png": {
+      "path": "Materials/Textures/T_WhitePlastic_R.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_WhitePlastic_R.png",
+      "referenced_by": [
+        "hospital.usd",
+        "Materials/MI_Hospital_Floor.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "a4cb7f2b81f314028646edd8af7507cb7cd02a4754cfb0c04115cfdf56940b90",
+      "bytes": 2188615
+    },
+    "Materials/Textures/Tex_Hospital_Floor_Black_basecolor.png": {
+      "path": "Materials/Textures/Tex_Hospital_Floor_Black_basecolor.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Hospital_Floor_Black_basecolor.png",
+      "referenced_by": [
+        "hospital.usd",
+        "Materials/M_Floor_Black.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "06ed56a25d39bda388fcb29927ea548c4e430b8b6ff021e03c479e07e73b8408",
+      "bytes": 3172883
+    },
+    "Materials/Textures/Tex_Hospital_Floor_Black_normal.png": {
+      "path": "Materials/Textures/Tex_Hospital_Floor_Black_normal.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Hospital_Floor_Black_normal.png",
+      "referenced_by": [
+        "hospital.usd",
+        "Materials/M_Floor_Basse.mdl",
+        "Materials/M_Floor_Black.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "dd72e0b9293907bfc6785fa471e819547b01753197caf9c90a0829fd2e1eafd7",
+      "bytes": 6146464
+    },
+    "Materials/Textures/T_WhitePlastic_N.png": {
+      "path": "Materials/Textures/T_WhitePlastic_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_WhitePlastic_N.png",
+      "referenced_by": [
+        "Materials/MI_Hospital_Floor.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "5141fdf35ea2c164d43b31891e0e1cbe87672b18ac8d43156c3b3e21ecc51148",
+      "bytes": 78119
+    },
+    "Materials/Textures/T_WhitePlastic_D.png": {
+      "path": "Materials/Textures/T_WhitePlastic_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_WhitePlastic_D.png",
+      "referenced_by": [
+        "Materials/MI_Hospital_Floor.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "5647e20a000f6369aee995e2a3becb5259b5838eb6c5f26e8710f449dc4be202",
+      "bytes": 1365607
+    },
+    "Materials/Textures/Tex_Checkered_basecolor.png": {
+      "path": "Materials/Textures/Tex_Checkered_basecolor.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Checkered_basecolor.png",
+      "referenced_by": [
+        "Materials/M_Checkered.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "7242b521999522e1baa134f356b234342051eb042feb003d49101097b577f288",
+      "bytes": 11905283
+    },
+    "Materials/Textures/Tex_Checkered_RAM.png": {
+      "path": "Materials/Textures/Tex_Checkered_RAM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Checkered_RAM.png",
+      "referenced_by": [
+        "Materials/M_Checkered.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "bc7b47a8db496be2b9d0f6a516a5cc6ae0ef6016adff8c1241ba30a4cb5faa0b",
+      "bytes": 14267070
+    },
+    "Materials/Textures/Tex_Checkered_normal.png": {
+      "path": "Materials/Textures/Tex_Checkered_normal.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Checkered_normal.png",
+      "referenced_by": [
+        "Materials/M_Checkered.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "b7564cc164e7ba97bd330dd4ab7043fe03eeeae71176816f6506662faa60bb76",
+      "bytes": 6781488
+    },
+    "Materials/Textures/Tex_Hospital_Floor_Black_Merge_RAM.png": {
+      "path": "Materials/Textures/Tex_Hospital_Floor_Black_Merge_RAM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Hospital_Floor_Black_Merge_RAM.png",
+      "referenced_by": [
+        "Materials/M_Floor_Basse.mdl",
+        "Materials/M_Floor_Black.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "e5e8c3b9ac38a14e746c79cfe1e8730f3dba2b88cde05cb877ccea71d2c0d07e",
+      "bytes": 8738044
+    },
+    "Materials/Textures/Tex_Hospital_Floor_basecolor.png": {
+      "path": "Materials/Textures/Tex_Hospital_Floor_basecolor.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Hospital_Floor_basecolor.png",
+      "referenced_by": [
+        "Materials/M_Floor_Basse.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "f1a9a904055b9ac6cb936feda9fb89b834e677516cc25a53500013ebfc50c900",
+      "bytes": 645241
+    },
+    "Materials/Textures/Tex_Hospital_Floor_Merge_RAM.png": {
+      "path": "Materials/Textures/Tex_Hospital_Floor_Merge_RAM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Hospital_Floor_Merge_RAM.png",
+      "referenced_by": [
+        "Materials/M_Floor_Basse.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "4b200acec537f53ec4f0c452bbcae9e1f2c5ce1afe937ba2ff88428584914362",
+      "bytes": 845735
+    },
+    "Materials/Textures/Tex_Wood_Floor_normal.png": {
+      "path": "Materials/Textures/Tex_Wood_Floor_normal.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Wood_Floor_normal.png",
+      "referenced_by": [
+        "Materials/M_Wood_Floor.mdl",
+        "Materials/M_Wood_Floor_Small.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "97c7eb20cd466cdebce9028e22a2100044416f85e452a02845ae276d5c917830",
+      "bytes": 6686955
+    },
+    "Materials/Textures/Tex_Wood_Floor_basecolor.png": {
+      "path": "Materials/Textures/Tex_Wood_Floor_basecolor.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Wood_Floor_basecolor.png",
+      "referenced_by": [
+        "Materials/M_Wood_Floor.mdl",
+        "Materials/M_Wood_Floor_Small.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "8df88777d2629a7abe29a65b49befbc2dc7f301593cd094adb5d4f69952f5bb7",
+      "bytes": 8474570
+    },
+    "Materials/Textures/Tex_Wood_Floor_MergeRAM.png": {
+      "path": "Materials/Textures/Tex_Wood_Floor_MergeRAM.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/Tex_Wood_Floor_MergeRAM.png",
+      "referenced_by": [
+        "Materials/M_Wood_Floor.mdl",
+        "Materials/M_Wood_Floor_Small.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "c47d06f69a01e170702358e667687516da5a16b31f74a6912e138fdc04c732c1",
+      "bytes": 5010001
+    },
+    "Materials/Textures/T_Wood_Walnut_N.png": {
+      "path": "Materials/Textures/T_Wood_Walnut_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_Wood_Walnut_N.png",
+      "referenced_by": [
+        "Materials/M_Wood_Walnut.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "a29dbbde3af9c7d7397c3453b77bd08a0710d9c2062604dac74274e84d1d60e8",
+      "bytes": 5261821
+    },
+    "Materials/Textures/T_MacroVariation.png": {
+      "path": "Materials/Textures/T_MacroVariation.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_MacroVariation.png",
+      "referenced_by": [
+        "Materials/M_Wood_Walnut.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "1b21d33cdd6139fcd9c5d0741b71ada8109fcc7b6780718cb0ec60b87f32f632",
+      "bytes": 10720355
+    },
+    "Materials/Textures/T_Wood_Walnut_D.png": {
+      "path": "Materials/Textures/T_Wood_Walnut_D.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_Wood_Walnut_D.png",
+      "referenced_by": [
+        "Materials/M_Wood_Walnut.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "71ad075f8b2e857aba615cf4a7f03e7c07af3cd7073275ec856e1c557becf8d2",
+      "bytes": 7907189
+    },
+    "Materials/Textures/T_Default_Material_Grid_N.png": {
+      "path": "Materials/Textures/T_Default_Material_Grid_N.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_Default_Material_Grid_N.png",
+      "referenced_by": [
+        "Materials/WorldGridMaterial.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "0bc4af8129e4903b101ad10870f3036943668e96656b4eb60b4393557eea8b27",
+      "bytes": 5059
+    },
+    "Materials/Textures/T_Default_Material_Grid_M.png": {
+      "path": "Materials/Textures/T_Default_Material_Grid_M.png",
+      "type": "TEXTURE",
+      "local_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/Materials/Textures/T_Default_Material_Grid_M.png",
+      "referenced_by": [
+        "Materials/WorldGridMaterial.mdl"
+      ],
+      "exists": true,
+      "resolution_method": "mirror_relative",
+      "sha256": "9311e9d988b3fe8d40b672b80423877892a75fac45e12dd829cd8c58cc3fbc2f",
+      "bytes": 239549
+    }
+  },
+  "rounds": [
+    {
+      "round": 0,
+      "missing": 1,
+      "fetched": 1,
+      "failed": 0,
+      "results": [
+        {
+          "path": "NVIDIA/Assets/Skies/Cloudy/abandoned_parking_4k.hdr",
+          "ok": true,
+          "error": null
+        }
+      ]
+    },
+    {
+      "round": 1,
+      "missing": 0,
+      "fetched": 0,
+      "note": "fixed point reached"
+    }
+  ],
+  "initial": {
+    "mdl_referenced": 10,
+    "asset_paths_referenced": 14,
+    "missing_before": 1
+  },
+  "closure": {
+    "usd_closure_complete": true,
+    "material_closure_complete": true,
+    "texture_closure_complete": true,
+    "mdl": {
+      "required": 10,
+      "present": 10
+    },
+    "textures": {
+      "required": 20,
+      "present": 20
+    },
+    "usd": {
+      "required": 0,
+      "present": 0
+    },
+    "total_dependencies": 30,
+    "unresolved": [],
+    "full_render_closure": true
+  },
+  "render_validation_complete": "NOT_EVALUATED_HERE \u2014 see camera_view_acceptance"
+}

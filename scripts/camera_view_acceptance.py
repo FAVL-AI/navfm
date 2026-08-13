@@ -318,8 +318,16 @@ def main() -> int:
         frames.append(m)
 
     record["frames"] = frames
+    # Every metric the verdict consults must reach the aggregate. An earlier
+    # version averaged only the three geometric fractions, so `verdict()` looked
+    # up `dominant_hue_fraction`, found None, and skipped the appearance checks
+    # entirely -- the aggregate PASSed a frame whose own per-frame verdict had
+    # failed it. A gate that drops the metric proving the defect is the same
+    # error as FL-017, one layer up.
     agg = {k: round(float(np.mean([f[k] for f in frames if f.get(k) is not None])), 4)
-           for k in ("background_fraction", "floor_fraction", "structure_fraction")}
+           for k in ("background_fraction", "floor_fraction", "structure_fraction",
+                     "dominant_hue_fraction", "saturated_pixel_fraction")}
+    agg["distinct_colour_bins"] = int(np.min([f["distinct_colour_bins"] for f in frames]))
     depths = [f["median_forward_depth_m"] for f in frames if f.get("median_forward_depth_m")]
     agg["median_forward_depth_m"] = round(float(np.median(depths)), 3) if depths else None
     record["aggregate"] = agg
