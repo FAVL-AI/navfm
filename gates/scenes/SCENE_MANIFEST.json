@@ -1,0 +1,201 @@
+{
+  "schema": "navfm.scene_identity.v1",
+  "generated_utc": "2026-08-13T08:52:00.585521+00:00",
+  "isaac_version": "5.1.0.0",
+  "camera_configuration": {
+    "mount": "top_arm",
+    "viewpoint": "forward_egocentric",
+    "height_above_ground_m": 0.28,
+    "height_above_base_link_m": 0.24,
+    "forward_offset_from_base_origin_m": 0.1,
+    "optical_axis_robot_frame": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "up_axis_robot_frame": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "pitch_deg": 0.0,
+    "yaw_deg": 0.0,
+    "roll_deg": 0.0,
+    "usd_rotate_xyz_deg": [
+      90.0,
+      0.0,
+      -90.0
+    ],
+    "focal_length_mm": 18.0,
+    "horizontal_aperture_mm": 20.955,
+    "vertical_aperture_mm": 15.716,
+    "hfov_deg": 60.4,
+    "vfov_deg": 47.2,
+    "clipping_range_m": [
+      0.05,
+      100.0
+    ],
+    "resolution": [
+      320,
+      240
+    ],
+    "provenance": "PROVISIONAL_SIMULATION_VALUE \u2014 mount geometry is represented, not measured"
+  },
+  "principle": "Camera geometry and scene identity are part of the data-generating process. If either changes the observation distribution changes, so both are versioned and traceable exactly like the checkpoint and the dataset. Any change to scene identity, camera mount height, camera transform, intrinsics, resolution or lighting creates a new experimental configuration ID.",
+  "scenes": [
+    {
+      "scene_id": "control_blocks_v1",
+      "display_name": "Primitive control world",
+      "tier": "ENGINEERING_CONTROL_WORLD",
+      "indoor_outdoor": "NEITHER \u2014 unbounded void with a ground plane",
+      "environment_type": "SYNTHETIC_PRIMITIVE",
+      "source": "PROCEDURAL_IN_SCRIPT",
+      "source_asset_id": null,
+      "usd_path": null,
+      "usd_digest": null,
+      "isaac_version": "5.1.0.0",
+      "constructed_by": "scripts/collect_yahboom_vint_pilot.py L119-143",
+      "contents": {
+        "ground_plane": {
+          "prim": "/World/groundPlane",
+          "size_m": 40.0
+        },
+        "lights": [
+          {
+            "type": "DistantLight",
+            "prim": "/World/light"
+          }
+        ],
+        "obstacles": {
+          "count": 3,
+          "type": "Cube",
+          "scale_m": [
+            0.3,
+            0.3,
+            0.35
+          ]
+        },
+        "walls": 0,
+        "ceiling": 0,
+        "doors": 0,
+        "furniture": 0,
+        "sky_dome": 0
+      },
+      "scene_dimensions_m": [
+        40.0,
+        40.0,
+        "unbounded"
+      ],
+      "navigation_area_m2": 1600.0,
+      "known_limitations": [
+        "No walls, ceiling or sky dome. Every ray above the horizon terminates in nothing and renders black, which is the dominant feature of the resulting images and is a property of the world, not of the camera.",
+        "No corridor geometry, doorways, furniture, occlusion or texture, so it supplies none of the visual structure a navigation model reads.",
+        "A goal view here is a patch of floor and a primitive, not a destination."
+      ],
+      "claim_scope": "Valid evidence for physics, action scale, camera transform, loader compatibility and controller regression. NOT valid evidence of a realistic visual-navigation setup, and must never be described as an office, warehouse or corridor.",
+      "used_by": [
+        "pilot_0001",
+        "pilot_0002"
+      ],
+      "eligible_for_navigation_pilots": false,
+      "scene_digest": "35c3ad580b40e5846b39b73df647a55e93501432f9f7be6734ab74d891e05f88"
+    },
+    {
+      "scene_id": "hospital_v1",
+      "display_name": "Isaac Hospital",
+      "tier": "NAVIGATION_EXPERIMENT_WORLD",
+      "indoor_outdoor": "indoor",
+      "environment_type": "corridor",
+      "environment_subclass": "healthcare_interior",
+      "source": "NVIDIA_ISAAC_ASSET",
+      "source_base_url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital",
+      "source_asset_id": "Isaac/5.1/Isaac/Environments/Isaac Hospital",
+      "usd_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/hospital.usd",
+      "usd_exists": true,
+      "usd_root_layer": "hospital.usd",
+      "usd_digest": "9125decfca8f7809bbc5c549fa775648abd82d655855d0b53d77bab228072ac3",
+      "closure_digest": "3047146353cb01465347170994ae8fe68b1f5f8da474e891b9b5cf34f90e7c5c",
+      "closure_complete": true,
+      "closure_rounds_to_fixed_point": 3,
+      "referenced_file_count": 293,
+      "total_bytes": 10998737,
+      "unresolved_references": 0,
+      "isaac_version": "5.1.0.0",
+      "prop_count": 0,
+      "why_considered": "Long corridors, doorways, room transitions and junctions \u2014 the geometry image-goal navigation is defined on.",
+      "scene_dimensions_m": "UNMEASURED \u2014 requires stage inspection",
+      "prim_count": "UNMEASURED \u2014 requires stage inspection",
+      "material_count": "UNMEASURED \u2014 requires stage inspection",
+      "light_count": "UNMEASURED \u2014 requires stage inspection",
+      "navigation_area_m2": "UNMEASURED \u2014 requires stage inspection",
+      "semantic_objects": "UNMEASURED \u2014 requires stage inspection",
+      "known_limitations": [
+        "Geometry, lighting and navigable area are asserted by the asset, not yet measured in-stage by this repository."
+      ],
+      "claim_scope": "Eligible as a navigation-experiment world once stage inspection and the camera-view acceptance test pass. Not yet used for any collected pilot.",
+      "used_by": [],
+      "eligible_for_navigation_pilots": false,
+      "eligibility_basis": "gates/scenes/SCENE_ELIGIBILITY.json",
+      "blocking_defects": [
+        "10 MDL material modules referenced, 0 present on disk \u2014 every material falls back, so the rendered observation distribution is not the one the asset describes"
+      ],
+      "mdl_modules_referenced": 10,
+      "mdl_files_on_disk": 0,
+      "meters_per_unit": 1.0,
+      "measured_prim_count": 1917,
+      "measured_mesh_count": 23,
+      "measured_light_count": 5,
+      "closure_flag_disagrees_with_audit": true,
+      "scene_digest": "b5dfd33792c78f1c08de70d10d038edc0ea6669cfcd3796adc1a1d5b60f33844"
+    },
+    {
+      "scene_id": "simple_warehouse_v1",
+      "display_name": "Isaac Simple Warehouse",
+      "tier": "NAVIGATION_EXPERIMENT_WORLD",
+      "indoor_outdoor": "indoor",
+      "environment_type": "warehouse",
+      "environment_subclass": "industrial_interior",
+      "source": "NVIDIA_ISAAC_ASSET",
+      "source_base_url": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac",
+      "source_asset_id": "Isaac/5.1/Isaac/Environments/Isaac Simple Warehouse",
+      "usd_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Simple_Warehouse/warehouse.usd",
+      "usd_exists": true,
+      "usd_root_layer": "Environments/Simple_Warehouse/warehouse.usd",
+      "usd_digest": "0b833b2c59c18832a1fb421292c256e7ca21977961f62a2b9b4e2feee86b9903",
+      "closure_digest": "eb8b91a5b8ae04bc230b09f7d4aeda3592097c75a1bc447552b1f23029792883",
+      "closure_complete": true,
+      "closure_rounds_to_fixed_point": 3,
+      "referenced_file_count": 53,
+      "total_bytes": 3024161,
+      "unresolved_references": 0,
+      "isaac_version": "5.1.0.0",
+      "prop_count": 50,
+      "why_considered": "Aisles, racking and pillars give occlusion and repeating structure; less doorway/room-transition variety.",
+      "scene_dimensions_m": "UNMEASURED \u2014 requires stage inspection",
+      "prim_count": "UNMEASURED \u2014 requires stage inspection",
+      "material_count": "UNMEASURED \u2014 requires stage inspection",
+      "light_count": "UNMEASURED \u2014 requires stage inspection",
+      "navigation_area_m2": "UNMEASURED \u2014 requires stage inspection",
+      "semantic_objects": "UNMEASURED \u2014 requires stage inspection",
+      "known_limitations": [
+        "Geometry, lighting and navigable area are asserted by the asset, not yet measured in-stage by this repository."
+      ],
+      "claim_scope": "Eligible as a navigation-experiment world once stage inspection and the camera-view acceptance test pass. Not yet used for any collected pilot.",
+      "used_by": [],
+      "eligible_for_navigation_pilots": false,
+      "eligibility_basis": "gates/scenes/SCENE_ELIGIBILITY.json",
+      "blocking_defects": [
+        "13 MDL material modules referenced, 0 present on disk \u2014 every material falls back, so the rendered observation distribution is not the one the asset describes"
+      ],
+      "mdl_modules_referenced": 13,
+      "mdl_files_on_disk": 0,
+      "meters_per_unit": 1.0,
+      "measured_prim_count": 3432,
+      "measured_mesh_count": 781,
+      "measured_light_count": 18,
+      "closure_flag_disagrees_with_audit": true,
+      "scene_digest": "d34dbe22c32b3edb4286a43fe604414541ee3319087d5f7a76d6dee909ab4dab"
+    }
+  ],
+  "author": "Frank Asante Van Laarhoven"
+}

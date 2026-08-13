@@ -1,0 +1,88 @@
+{
+  "check": "SCENE_ELIGIBILITY",
+  "timestamp_utc": "2026-08-13T08:50:40.670057+00:00",
+  "scenes": {
+    "hospital_v1": {
+      "scene_id": "hospital_v1",
+      "usd_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/hospital.usd",
+      "exists": true,
+      "meters_per_unit": 1.0,
+      "up_axis": "Z",
+      "authored_in": "metres",
+      "mdl_modules_referenced": 10,
+      "mdl_modules_unresolved": 10,
+      "mdl_files_on_disk": 0,
+      "unresolved_examples": [
+        "../Materials/MI_Hospital_Floor.mdl",
+        "../Materials/M_Checkered.mdl",
+        "../Materials/M_Floor_Basse.mdl",
+        "../Materials/M_Floor_Black.mdl",
+        "../Materials/M_Wood_Floor.mdl",
+        "../Materials/M_Wood_Floor_Small.mdl",
+        "../Materials/M_Wood_Walnut.mdl",
+        "../Materials/Modular2.mdl"
+      ],
+      "prim_type_counts": {
+        "Xform": 1776,
+        "Material": 34,
+        "Shader": 34,
+        "Scope": 26,
+        "Mesh": 23,
+        "NavMeshVolume": 10,
+        "SphereLight": 4,
+        "": 4,
+        "DomeLight": 1,
+        "Plane": 1
+      },
+      "total_prims": 1917,
+      "mesh_count": 23,
+      "light_count": 5,
+      "blocking_defects": [
+        "10 MDL material modules referenced, 0 present on disk \u2014 every material falls back, so the rendered observation distribution is not the one the asset describes"
+      ],
+      "eligible": false,
+      "claim_scope": "Eligible for navigation pilots once every blocking defect is cleared."
+    },
+    "simple_warehouse_v1": {
+      "scene_id": "simple_warehouse_v1",
+      "usd_path": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/simple_warehouse_v1/Environments/Simple_Warehouse/warehouse.usd",
+      "exists": true,
+      "meters_per_unit": 1.0,
+      "up_axis": "Z",
+      "authored_in": "metres",
+      "mdl_modules_referenced": 13,
+      "mdl_modules_unresolved": 13,
+      "mdl_files_on_disk": 0,
+      "unresolved_examples": [
+        "../Materials/MI_Barcode_0001.mdl",
+        "../Materials/MI_CeilingA_06b.mdl",
+        "../Materials/MI_Floor_01.mdl",
+        "../Materials/MI_FrameA_01.mdl",
+        "../Materials/MI_LampCeilingA.mdl",
+        "../Materials/MI_PushcartA_01.mdl",
+        "../Materials/MI_RackShield_01.mdl",
+        "../Materials/MI_SignB.mdl"
+      ],
+      "prim_type_counts": {
+        "Mesh": 781,
+        "Material": 780,
+        "Shader": 780,
+        "Xform": 632,
+        "Scope": 425,
+        "RectLight": 17,
+        "NavMeshVolume": 6,
+        "": 4,
+        "Camera": 1,
+        "DistantLight": 1
+      },
+      "total_prims": 3432,
+      "mesh_count": 781,
+      "light_count": 18,
+      "blocking_defects": [
+        "13 MDL material modules referenced, 0 present on disk \u2014 every material falls back, so the rendered observation distribution is not the one the asset describes"
+      ],
+      "eligible": false,
+      "claim_scope": "Eligible for navigation pilots once every blocking defect is cleared."
+    }
+  }
+}

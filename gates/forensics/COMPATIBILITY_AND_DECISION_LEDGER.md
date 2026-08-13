@@ -2,7 +2,7 @@
 
 Every entry carries the chain from what was observed to what is now claimed, including the field that is easiest to leave out and hardest to reconstruct later: **why the checks that were already running did not see it**.
 
-Fourteen entries. Ten are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
+Seventeen entries. Twelve are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
 
 Author: Frank Asante Van Laarhoven · 2026-08-13
 
@@ -16,18 +16,21 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 |---|---|---|---|---|---|---|---|---|
 | 1 | `FL-001` | Waypoint un-normalisation missing; the safety clamp hid it | 5 | 5 | 4 | **100** | CRITICAL | no |
 | 2 | `FL-006` | Wheel radius inherited from a different robot | 4 | 5 | 5 | **100** | CRITICAL | no |
-| 3 | `FL-013` | optimizer.step() returning is not evidence the model changed | 4 | 5 | 4 | **80** | CRITICAL | no |
-| 4 | `FL-014` | A training smoke test could quietly mutate a released checkpoint | 5 | 4 | 4 | **80** | CRITICAL | yes |
-| 5 | `FL-002` | Wheel joints imported with zero stiffness and zero damping | 5 | 5 | 3 | **75** | CRITICAL | no |
-| 6 | `FL-009` | Installing a dependency would have broken the freeze audit before it ran | 5 | 5 | 3 | **75** | CRITICAL | yes |
-| 7 | `FL-012` | An invented loss passed the first train-path harness | 5 | 5 | 3 | **75** | CRITICAL | no |
-| 8 | `FL-007` | Corrections that did not propagate — the dominant protocol defect | 4 | 4 | 4 | **64** | CRITICAL | no |
-| 9 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
-| 10 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
-| 11 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
-| 12 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
-| 13 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
-| 14 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
+| 3 | `FL-016` | Asset mirrors report a complete closure while missing every material module | 5 | 5 | 4 | **100** | CRITICAL | no |
+| 4 | `FL-013` | optimizer.step() returning is not evidence the model changed | 4 | 5 | 4 | **80** | CRITICAL | no |
+| 5 | `FL-014` | A training smoke test could quietly mutate a released checkpoint | 5 | 4 | 4 | **80** | CRITICAL | yes |
+| 6 | `FL-002` | Wheel joints imported with zero stiffness and zero damping | 5 | 5 | 3 | **75** | CRITICAL | no |
+| 7 | `FL-009` | Installing a dependency would have broken the freeze audit before it ran | 5 | 5 | 3 | **75** | CRITICAL | yes |
+| 8 | `FL-012` | An invented loss passed the first train-path harness | 5 | 5 | 3 | **75** | CRITICAL | no |
+| 9 | `FL-007` | Corrections that did not propagate — the dominant protocol defect | 4 | 4 | 4 | **64** | CRITICAL | no |
+| 10 | `FL-015` | The poor navigation images were the world, not the camera | 4 | 4 | 4 | **64** | CRITICAL | no |
+| 11 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
+| 12 | `FL-017` | The camera-view acceptance test passed both known-bad frames | 4 | 5 | 3 | **60** | CRITICAL | no |
+| 13 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
+| 14 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
+| 15 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
+| 16 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
+| 17 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
 
 ---
 
@@ -116,6 +119,52 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Not claimed.** Not a measurement. 0.040 m has not been verified against the physical robot and must not be cited as a hardware specification.
 
 **Propagation.** Propagates to every kinematic quantity in simulation, and to the G1 physical measurement task which must resolve it.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
+## `FL-016` — Asset mirrors report a complete closure while missing every material module
+
+**Severity 100 (CRITICAL)** · impact 5 · undetectability 5 · propagation 4 · irreversible: no · status CLOSED
+
+**What was observed.** The hospital and warehouse mirrors both record `closure_complete: true` with zero unresolved references -- 293 and 53 files respectively, each with a digest. Loading the hospital renders a uniformly red frame. There are zero `.mdl` files on disk in either mirror, against 10 and 13 MDL modules referenced.
+
+**Root cause.** The closure walker followed USD-to-USD references to a fixed point but did not follow MDL material-module references. Materials are referenced by a different mechanism, so they were never enumerated and their absence was never noticed.
+
+**Why existing checks missed it.** Every check upstream of the renderer succeeds. The stage opens, 1917 prims load, geometry is present, the camera renders, depth is finite and plausible. The closure manifest is not merely silent about the problem -- it positively asserts completeness, which is worse than saying nothing.
+
+**Scientific risk had it survived.** Collecting a 'photorealistic hospital' dataset whose observation distribution is flat fallback colour. Every geometric property would be right and every appearance property wrong, and the resulting data would look like a valid indoor navigation corpus.
+
+**Alternatives considered.**
+  - Trust the closure manifest's completeness flag
+  - Collect anyway and note the appearance caveat
+  - Audit the stage directly and block on the defect
+
+**Decision.** Both scenes marked NOT eligible. `scripts/audit_scene_assets.py` opens each stage, counts referenced MDL modules against files on disk, and the manifest takes eligibility from that audit rather than from the closure flag.
+
+**Decision rule.** A provenance manifest is evidence about what a tool looked for, never proof of what an asset contains. Eligibility is decided by inspecting the loaded stage.
+
+**Rejected, and why.** Collecting with an appearance caveat was rejected: appearance is the entire input to a visual navigation model, so a caveat would not scope the defect, it would only label it.
+
+**Correction.** In-stage eligibility audit; manifest records `closure_flag_disagrees_with_audit: true` for both scenes.
+
+**Validation.** hospital_v1: 10 MDL modules referenced, 0 on disk. simple_warehouse_v1: 13 referenced, 0 on disk. Both eligible=false. The rendered hospital frame has 96% of its saturated pixels in a single hue bucket.
+
+**Regression control.** `build_scene_manifest.py` refuses to mark a scene eligible without an audit on record, and defaults to not eligible when none exists.
+
+**Evidence.**
+  - gates/scenes/SCENE_ELIGIBILITY.json
+  - gates/scenes/SCENE_MANIFEST.json
+  - gates/scenes/views/hospital_v1/pov_00.png
+
+**Impact on results.** Blocks navigation-pilot collection until materials are obtained. No data was collected in either scene, so no artefact is contaminated.
+
+**Claim boundary.** Concerns the two local mirrors at their current state on this machine, audited in-stage under Isaac Sim 5.1.0.0.
+
+**Not claimed.** Not a claim that the upstream NVIDIA assets are incomplete. The defect is in the local mirroring, not necessarily in the source.
+
+**Propagation.** Applies to every mirrored asset produced by the same closure tool, in this repository and in the sibling robotics repositories that share the mirror.
 
 **Attribution.** Frank Asante Van Laarhoven
 
@@ -387,6 +436,52 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 
 ---
 
+## `FL-015` — The poor navigation images were the world, not the camera
+
+**Severity 64 (CRITICAL)** · impact 4 · undetectability 4 · propagation 4 · irreversible: no · status CLOSED
+
+**What was observed.** Robot POV frames from pilot_0001 and pilot_0002 are dominated by black empty space above and floor below, with a few untextured primitives. The natural reading is that the camera is aimed wrongly and needs pitching down.
+
+**Root cause.** The camera is correct. Its USD rotation (90, 0, -90) maps the camera's -Z view direction onto the robot's +X with +Z up, giving optical axis [1, 0, 0], pitch 0.0 deg, and intrinsics of 60.4 x 47.2 degrees -- comparable to a RealSense D435. The world is the defect: a 40 m ground plane and one distant light in an unbounded void, with no walls, no ceiling and no sky dome. With the camera level at 0.280 m the horizon falls on the image centre, so the upper half of every frame is rays terminating in nothing (black) and the lower half is floor.
+
+**Why existing checks missed it.** The camera acceptance test asked whether the camera was mounted at the right height on the right link and pointing forward. All three were true. No check asked what the camera could see, because scene content was not modelled as part of the camera contract at all.
+
+**Scientific risk had it survived.** Pitching the camera down to 'fix' the black region would have traded void for more floor, degrading the viewpoint while appearing to address the complaint -- and would have silently changed the mount geometry that the +8.8 to +37.9 degree yaw experiment established as behaviourally significant.
+
+**Alternatives considered.**
+  - Pitch the camera down to reduce the black region
+  - Lower the camera back toward chassis height
+  - Diagnose the optical axis analytically, then test the world
+
+**Decision.** Keep the top-arm mount and the optical axis unchanged. Classify the sparse world as ENGINEERING_CONTROL_WORLD and source a real Isaac USD environment for navigation pilots.
+
+**Decision rule.** Before altering a component to fix an observation, establish that the component is the cause. Here the optical axis was computable in closed form and turned out to be exactly correct.
+
+**Rejected, and why.** Pitching down was rejected on measurement: at 0.280 m with a 47.2 degree vertical field, downward pitch increases floor fraction, which is already 41% in the control world.
+
+**Correction.** No camera change. Two-tier scene policy introduced, with the control world retained for physics and regression and explicitly barred from navigation claims.
+
+**Validation.** Same robot, same camera, same intrinsics, rendered in both worlds: background fraction 33% in the control world against 0% in a bounded interior, and median forward depth 1.65 m against 8.99 m. The camera never changed.
+
+**Regression control.** `scripts/camera_view_acceptance.py` measures composition from the depth buffer on every scene, so a viewpoint regression is a number rather than an opinion.
+
+**Evidence.**
+  - gates/scenes/camera_view_control_blocks_v1.json
+  - gates/scenes/views/control_blocks_v1/pov_00.png
+  - gates/scenes/SCENE_MANIFEST.json
+
+**Impact on results.** Prevented a change to the camera mount that would have degraded the viewpoint and invalidated comparison with the existing pilots.
+
+**Claim boundary.** The optical axis is forward and level, established analytically from the USD transform and confirmed by rendered composition in two worlds.
+
+**Not claimed.** Not a claim that 0.280 m, the mast geometry or the 18 mm focal length match the physical Yahboom. All remain PROVISIONAL_SIMULATION_VALUE.
+
+**Propagation.** Scene identity now belongs in the same versioned contract as the camera: both are part of the data-generating process, and a change to either changes the observation distribution.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
 ## `FL-003` — About 19% of the released ViNT checkpoint is never executed
 
 **Severity 60 (CRITICAL)** · impact 3 · undetectability 5 · propagation 4 · irreversible: no · status CLOSED
@@ -429,6 +524,51 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Not claimed.** Not a claim that the models were trained incorrectly. The prototype layer never participated in training either, so the released weights are exactly what the published procedure produced. It is a claim about what the files contain.
 
 **Propagation.** Affects any parameter count, memory estimate or optimizer configuration derived from these checkpoints, including our own fine-tuning plans and any figure quoting model size.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
+## `FL-017` — The camera-view acceptance test passed both known-bad frames
+
+**Severity 60 (CRITICAL)** · impact 4 · undetectability 5 · propagation 3 · irreversible: no · status CLOSED
+
+**What was observed.** The first version of the camera-view acceptance test returned PASS for the control world's black void and PASS for the uniformly red hospital render. Both frames are rejected by a human on sight.
+
+**Root cause.** Two errors. The background threshold was set at 0.35 by estimation before any measurement, and the control world reads 0.33 -- inside the limit by luck. And the metric set was entirely geometric, so a scene whose materials had all fallen back scored perfectly: background 0%, structure 53%, forward depth 8.99 m.
+
+**Why existing checks missed it.** This was the check. Nothing sits above it. It was written to measure composition rather than to be shown failing, so it was never run against a frame that should fail -- the exact omission the standing instructions name as a recurring genus.
+
+**Scientific risk had it survived.** A gate that certifies any viewpoint is worse than no gate, because it converts an open question into a recorded PASS.
+
+**Alternatives considered.**
+  - Keep the geometric metrics and rely on human review for appearance
+  - Tighten the threshold and add appearance metrics, then prove both directions
+
+**Decision.** Tighten `background_fraction_max` from 0.35 to 0.10 against measured data, add dominant-hue and colour-diversity metrics, and re-run against both known-bad frames to confirm each is rejected for its own reason.
+
+**Decision rule.** A verification must be shown to fail when its subject is defective, using a real defective input, before its passes are trusted.
+
+**Rejected, and why.** Relying on human review for appearance was rejected: it is exactly the supplementary evidence the gate is supposed to make unnecessary at scale.
+
+**Correction.** Thresholds recalibrated against measurement and recorded as recalibrated; two appearance metrics added.
+
+**Validation.** Control world now FAILS on background 33% > 10%. Hospital now FAILS on 96% of saturated pixels in one hue. Each fails for its actual defect, not incidentally.
+
+**Regression control.** Both known-bad frames are retained under `gates/scenes/views/` as the fixtures the check must keep rejecting.
+
+**Evidence.**
+  - gates/scenes/views/control_blocks_v1/pov_00.png
+  - gates/scenes/views/hospital_v1/pov_00.png
+  - scripts/camera_view_acceptance.py — THRESHOLDS
+
+**Impact on results.** No collected data affected -- the check had certified nothing before it was corrected. Second instance this session of a green check that was wrong, after FL-012.
+
+**Claim boundary.** The corrected check discriminates between these two defect classes on these fixtures.
+
+**Not claimed.** Not a claim that it detects every bad viewpoint. It is a floor, and the thresholds are engineering values recalibrated after seeing data, not pre-registered criteria.
+
+**Propagation.** Applies to every acceptance gate written in this project: each needs a known-bad fixture it demonstrably rejects.
 
 **Attribution.** Frank Asante Van Laarhoven
 

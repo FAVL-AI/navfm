@@ -1,0 +1,155 @@
+{
+  "check": "CAMERA_VIEW_ACCEPTANCE",
+  "timestamp_utc": "2026-08-13T08:47:09.092293+00:00",
+  "scene_id": "control_blocks_v1",
+  "scene_arg": "control",
+  "robot_usd": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "thresholds": {
+    "background_fraction_max": 0.35,
+    "floor_fraction_max": 0.6,
+    "structure_fraction_min": 0.15,
+    "median_forward_depth_min_m": 1.5,
+    "rationale": "A frame that is mostly nothing or mostly floor carries little navigational structure. 0.35/0.60 are engineering thresholds chosen to separate a bounded interior from an unbounded void, not scientific criteria; no experimental claim depends on them."
+  },
+  "stage": "SIMULATION_DEVELOPMENT",
+  "admission_status": "NOT_ADMITTED",
+  "world": {
+    "type": "procedural primitives",
+    "walls": 0,
+    "ceiling": 0
+  },
+  "scene_census": {
+    "prim_type_counts": {
+      "Xform": 35,
+      "": 7,
+      "PhysicsFixedJoint": 6,
+      "Camera": 5,
+      "PhysicsRevoluteJoint": 4,
+      "Cube": 3,
+      "Material": 2,
+      "Scope": 2,
+      "RenderProduct": 1,
+      "RenderSettings": 1,
+      "RenderVar": 1,
+      "PhysicsScene": 1,
+      "Mesh": 1,
+      "Plane": 1
+    },
+    "total_prims": 72,
+    "mesh_count": 1,
+    "light_count": 1,
+    "material_count": 2,
+    "bounding_box_min_m": [
+      -40.0,
+      -40.0,
+      0.0
+    ],
+    "bounding_box_max_m": [
+      40.0,
+      40.0,
+      0.0
+    ],
+    "extent_m": [
+      80.0,
+      80.0,
+      0.0
+    ]
+  },
+  "camera": {
+    "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+    "focal_length_mm": 18.0,
+    "horizontal_aperture_mm": 20.954999923706055,
+    "vertical_aperture_mm": 15.715999603271484,
+    "hfov_deg": 60.41,
+    "vfov_deg": 47.17,
+    "world_height_m": 0.28
+  },
+  "frames": [
+    {
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3298,
+      "floor_fraction": 0.414,
+      "structure_fraction": 0.2562,
+      "median_forward_depth_m": 1.647,
+      "p90_forward_depth_m": 3.261,
+      "median_centre_strip_depth_m": 2.857,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 51475,
+      "verdict": {
+        "result": "PASS",
+        "failures": []
+      },
+      "image": "gates/scenes/views/control_blocks_v1/pov_00.png"
+    },
+    {
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3297,
+      "floor_fraction": 0.414,
+      "structure_fraction": 0.2563,
+      "median_forward_depth_m": 1.647,
+      "p90_forward_depth_m": 3.262,
+      "median_centre_strip_depth_m": 2.857,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 51478,
+      "verdict": {
+        "result": "PASS",
+        "failures": []
+      },
+      "image": "gates/scenes/views/control_blocks_v1/pov_01.png"
+    },
+    {
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3289,
+      "floor_fraction": 0.414,
+      "structure_fraction": 0.2571,
+      "median_forward_depth_m": 1.647,
+      "p90_forward_depth_m": 3.261,
+      "median_centre_strip_depth_m": 2.857,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 51544,
+      "verdict": {
+        "result": "PASS",
+        "failures": []
+      },
+      "image": "gates/scenes/views/control_blocks_v1/pov_02.png"
+    },
+    {
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3297,
+      "floor_fraction": 0.4138,
+      "structure_fraction": 0.2565,
+      "median_forward_depth_m": 1.647,
+      "p90_forward_depth_m": 3.262,
+      "median_centre_strip_depth_m": 2.857,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 51477,
+      "verdict": {
+        "result": "PASS",
+        "failures": []
+      },
+      "image": "gates/scenes/views/control_blocks_v1/pov_03.png"
+    }
+  ],
+  "aggregate": {
+    "background_fraction": 0.3295,
+    "floor_fraction": 0.4139,
+    "structure_fraction": 0.2565,
+    "median_forward_depth_m": 1.647
+  },
+  "verdict": {
+    "result": "PASS",
+    "failures": []
+  }
+}
