@@ -166,32 +166,146 @@ def main() -> int:
             "missing_examples": [r["path"] for r in missing[:10]],
         }
 
-        # -- behavioural probe: does the physics scene actually answer? --------
+        # -- behavioural probe: did the INTENDED object cause the observation? --
+        # The first version fired every ray from the world origin along +X and
+        # accepted any hit. All 12 probes struck the same wall at an identical
+        # 5.9 m while declaring 12 different targets, and all 12 counted as
+        # passes. Two defects: the verdict consumed hit existence rather than
+        # collider identity, and support targets were starved because the
+        # candidate list was "first N collision-enabled prims" in a scene where
+        # blockers outnumber floors.
+        #
+        # Now each probe is aimed so the declared target is necessarily first
+        # along the ray -- launched from just outside its own bounds, toward its
+        # own centre -- and the verdict requires the returned collider to be
+        # that target.
         q = get_physx_scene_query_interface()
-        probes = []
-        for r in (blocking + support)[:40]:
-            if not r.get("collision_enabled"):
-                continue
-            zc = (r["z"][0] + r["z"][1]) / 2
-            probes.append({"expected_path": r["path"], "z": zc})
-        hits = 0
-        checked = 0
-        for pr in probes[:12]:
-            res = q.raycast_closest([0.0, 0.0, pr["z"]], [1.0, 0.0, 0.0], 200.0)
-            checked += 1
-            if res and res.get("hit"):
-                hits += 1
-                pr["hit_collider"] = str(res.get("collision", ""))
-                pr["distance"] = round(float(res["distance"]), 3)
+
+        def probe_target(row: dict[str, Any], role: str) -> dict[str, Any]:
+            r = cache.ComputeWorldBound(
+                stage.GetPrimAtPath(row["path"])).ComputeAlignedRange()
+            if r.IsEmpty():
+                return {"probe_role": role, "expected_target_prim": row["path"],
+                        "verdict": "NO_EVIDENCE", "reason": "target bounds empty"}
+            mn, mx = r.GetMin(), r.GetMax()
+            cx, cy = (mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2
+            if role == "SUPPORT":
+                # Straight down onto the target's own top face.
+                origin = [cx, cy, mx[2] + 0.5]
+                direction = [0.0, 0.0, -1.0]
+                reach = 1.5
             else:
-                pr["hit_collider"] = None
+                # In from outside the target's own -X face, toward its centre,
+                # so nothing of the target's own scale can be in front of it.
+                span = mx[0] - mn[0]
+                origin = [mn[0] - max(0.6, span * 0.25), cy, (mn[2] + mx[2]) / 2]
+                direction = [1.0, 0.0, 0.0]
+                reach = max(0.6, span * 0.25) * 2 + span
+            # Reachability preflight. Aiming from outside the target's bounds
+            # toward its centre is a large improvement on a shared origin, but it
+            # is not a guarantee: rotated, concave, nested, overlapping or
+            # instanced colliders can put something else first along the segment.
+            # A probe that cannot isolate its target is NON_PROBATIVE, which is a
+            # statement about the experiment -- not a failure of the target.
+            # A verifier cannot recover causal specificity the experiment never
+            # created, so this is checked before the verdict, not after.
+            occluders = []
+            for other in candidates_for_occlusion:
+                if other["path"] == row["path"]:
+                    continue
+                orr = cache.ComputeWorldBound(
+                    stage.GetPrimAtPath(other["path"])).ComputeAlignedRange()
+                if orr.IsEmpty():
+                    continue
+                omn, omx = orr.GetMin(), orr.GetMax()
+                # Does the other collider straddle the probe segment ahead of the
+                # target, in the two axes the ray does not travel along?
+                if role == "SUPPORT":
+                    if (omn[0] <= cx <= omx[0] and omn[1] <= cy <= omx[1]
+                            and omx[2] > mx[2] and omn[2] < origin[2]):
+                        occluders.append(other["path"])
+                elif (omn[1] <= cy <= omx[1] and omn[2] <= (mn[2] + mx[2]) / 2 <= omx[2]
+                        and omn[0] < mn[0] and omx[0] > origin[0]):
+                    occluders.append(other["path"])
+            if occluders:
+                return {"probe_role": role, "expected_target_prim": row["path"],
+                        "probe_reachability_status": "OCCLUDED",
+                        "occluders": occluders[:4],
+                        "verdict": "NON_PROBATIVE_OCCLUDED",
+                        "reason": ("another collider necessarily precedes the declared target "
+                                   "along this segment, so the probe cannot interrogate it")}
+
+            res = q.raycast_closest(origin, direction, reach)
+            hit = bool(res and res.get("hit"))
+            actual = str(res.get("collision", "")) if hit else None
+            # Identity, not category: "some wall" is not "this wall".
+            match = bool(actual and (actual == row["path"]
+                                     or actual.startswith(row["path"])
+                                     or row["path"].startswith(actual)))
+            return {
+                "probe_role": role, "expected_target_prim": row["path"],
+                "origin": [round(v, 3) for v in origin], "direction": direction,
+                "max_distance": round(reach, 3),
+                "actual_hit": hit,
+                "actual_collider_prim": actual,
+                "actual_distance": round(float(res["distance"]), 4) if hit else None,
+                "probe_reachability_status": "REACHABLE",
+                "identity_match": match,
+                "verdict": ("PASS_CORRECT_CAUSE" if match
+                            else "FAIL_WRONG_CAUSE" if hit else "FAIL_NO_HIT"),
+            }
+
+        # Stratified quotas: blockers cannot consume support slots, because the
+        # rare role is the decision-critical one.
+        QUOTA = 8
+        sup_c = [r for r in support if r.get("collision_enabled")][:QUOTA]
+        blk_c = [r for r in blocking if r.get("collision_enabled")][:QUOTA]
+        candidates_for_occlusion = (support + blocking)[:400]
+        sup_probes = [probe_target(r, "SUPPORT") for r in sup_c]
+        blk_probes = [probe_target(r, "BLOCKING") for r in blk_c]
+
+        def summarise(probes: list[dict[str, Any]], planned: int) -> dict[str, Any]:
+            fired = len(probes)
+            reachable = sum(1 for p_ in probes
+                            if p_.get("probe_reachability_status") == "REACHABLE")
+            nonprob = sum(1 for p_ in probes if str(p_["verdict"]).startswith("NON_PROBATIVE"))
+            correct = sum(1 for p_ in probes if p_["verdict"] == "PASS_CORRECT_CAUSE")
+            wrong = sum(1 for p_ in probes if p_["verdict"] == "FAIL_WRONG_CAUSE")
+            dists = [p_["actual_distance"] for p_ in probes if p_.get("actual_distance")]
+            invariant = len(dists) > 2 and len(set(round(d, 2) for d in dists)) == 1
+            return {
+                "planned": planned, "fired": fired,
+                "reachable": reachable, "non_probative": nonprob,
+                "correct_target_hits": correct, "wrong_target_hits": wrong,
+                "generic_hit_rate": (round(sum(1 for p_ in probes if p_["actual_hit"]) / fired, 3)
+                                     if fired else None),
+                # The scientifically relevant number, kept separate on purpose.
+                "correct_target_hit_rate": round(correct / fired, 3) if fired else None,
+                "unexpected_invariance": invariant,
+                "review_required": ("REVIEW_REQUIRED_UNEXPECTED_INVARIANCE" if invariant else None),
+                # Only reachable probes can carry causal evidence, so the
+                # verdict is judged over that subset, and a stratum with no
+                # reachable probe is NON_PROBATIVE rather than a pass or a fail.
+                "verdict": ("NOT_RUN" if planned and not fired
+                            else "NO_EVIDENCE" if not fired
+                            else "NON_PROBATIVE" if not reachable or invariant
+                            else "PROBATIVE_PASS" if correct == reachable
+                            else "PROBATIVE_FAIL"),
+                "probes": probes,
+            }
+
         rec["behavioural"] = {
-            "probes_fired": checked, "probes_hitting_something": hits,
-            "note": ("A hit proves the physics scene answers queries. Naming the collider is "
-                     "what proves it answered about the right object -- a count alone is the "
-                     "error that let a floor satisfy an obstacle fixture."),
-            "samples": probes[:12],
+            "contract": ("A probe passes only when the declared target caused the observation. "
+                         "Generic activity is not evidence of target-specific correctness."),
+            "support": summarise(sup_probes, len(sup_c)),
+            "blocking": summarise(blk_probes, len(blk_c)),
         }
+        sup_ok = rec["behavioural"]["support"]["verdict"] == "PROBATIVE_PASS"
+        blk_ok = rec["behavioural"]["blocking"]["verdict"] == "PROBATIVE_PASS"
+        hits = rec["behavioural"]["support"]["correct_target_hits"] + \
+            rec["behavioural"]["blocking"]["correct_target_hits"]
+        checked = (rec["behavioural"]["support"]["fired"]
+                   + rec["behavioural"]["blocking"]["fired"])
 
         live = Liveness(process_started=True, runtime_started=True,
                         subject_open_attempted=True, subject_open_succeeded=True,
@@ -210,7 +324,7 @@ def main() -> int:
             bool(support) and bool(blocking)
             and (rec["declared"]["support_coverage_fraction"] or 0) >= 0.5
             and (rec["declared"]["blocking_coverage_fraction"] or 0) >= 0.5
-            and hits > 0
+            and sup_ok and blk_ok
         )
         rec["verdict"] = {
             "physx_traversability_admissible": admissible,
@@ -232,7 +346,11 @@ def main() -> int:
               f"blocking {d['blocking_structures']}  non-blocking {d['non_blocking']}")
         print(f"  coverage: support {d['support_coverage_fraction']}  "
               f"blocking {d['blocking_coverage_fraction']}  missing {d['missing_collision']}")
-        print(f"  probes: {hits}/{checked} returned a collider")
+        bh = rec["behavioural"]
+        print(f"  support probes  {bh['support']['fired']}/{bh['support']['planned']} fired, "
+              f"correct-cause {bh['support']['correct_target_hits']} -> {bh['support']['verdict']}")
+        print(f"  blocking probes {bh['blocking']['fired']}/{bh['blocking']['planned']} fired, "
+              f"correct-cause {bh['blocking']['correct_target_hits']} -> {bh['blocking']['verdict']}")
         print(f"  ADMISSIBLE: {admissible}")
         app.close()
         return 0 if admissible else 1

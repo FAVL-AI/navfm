@@ -1,0 +1,650 @@
+{
+  "check": "COLLISION_COVERAGE_AUDIT",
+  "scene_id": "hospital",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+  "timestamp_utc": "2026-08-14T04:55:11.768726+00:00",
+  "navigation_band_m": [
+    0.02,
+    0.2803
+  ],
+  "footprint_m": [
+    0.235,
+    0.195
+  ],
+  "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
+  "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "floor_z": 0.0,
+  "declared": {
+    "meshes_total": 2058,
+    "support_surfaces": 128,
+    "blocking_structures": 1066,
+    "non_blocking": 842,
+    "decorative": 22,
+    "unknown_bounds": 0,
+    "covered": 1171,
+    "missing_collision": 23,
+    "blocking_coverage_fraction": 1.0,
+    "support_coverage_fraction": 0.8203,
+    "missing_examples": [
+      "/World/Scene/Geo_M3_Floor_396/Geo_M3_Floor",
+      "/World/Scene/Geo_M2_Floor_582/Geo_M2_Floor/Geo_M2_Floor",
+      "/World/Scene/Geo_M1_Floor_738/Geo_M1_Floor/Geo_M1_Floor",
+      "/World/Scene/Geo_o_Floor_936/Geo_o_Floor/Geo_o_Floor",
+      "/World/Scene/Geo_Floor_Costum14_5/Geo_Floor_Costum4/Geo_Floor_Costum4/Section0",
+      "/World/Scene/Geo_Floor_Costum14_5/Geo_Floor_Costum4/Geo_Floor_Costum4/Section1",
+      "/World/Scene/Geo_Floor_Costum15_8/Geo_Floor_Costum5/Geo_Floor_Costum5/Section0",
+      "/World/Scene/Geo_Floor_Costum15_8/Geo_Floor_Costum5/Geo_Floor_Costum5/Section1",
+      "/World/Scene/Geo_Floor_Costum16_14/Geo_Floor_Costum6/Geo_Floor_Costum6/Section0",
+      "/World/Scene/Geo_Floor_Costum16_14/Geo_Floor_Costum6/Geo_Floor_Costum6/Section1"
+    ]
+  },
+  "behavioural": {
+    "probes_fired": 12,
+    "probes_hitting_something": 12,
+    "note": "A hit proves the physics scene answers queries. Naming the collider is what proves it answered about the right object -- a count alone is the error that let a floor satisfy an obstacle fixture.",
+    "samples": [
+      {
+        "expected_path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+        "z": 1.501,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_W_WallBase_423/Geo_W_WallBase",
+        "z": 1.5,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      },
+      {
+        "expected_path": "/World/Scene/Geo_W_WallBase2/Geo_W_WallBase",
+        "z": 1.5,
+        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+        "distance": 11.16
+      }
+    ]
+  },
+  "verdict": {
+    "physx_traversability_admissible": true,
+    "reason": "collision coverage sufficient for support and blocking geometry, and the physics scene answers queries"
+  },
+  "measurements": [
+    {
+      "measurement": "blocking_structures_missing_collision",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1194,
+        "expected_items": 1194,
+        "complete": true
+      },
+      "value": 23,
+      "is_evidence": true,
+      "evidence": {
+        "scene_id": "hospital"
+      }
+    },
+    {
+      "measurement": "physics_probe_hit_rate",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 12,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": 1.0,
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ],
+  "rows_sample": [
+    {
+      "path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_Floor_396/Geo_M3_Floor",
+      "z": [
+        0.001,
+        0.001
+      ],
+      "size": 3.482,
+      "has_collision_api": false,
+      "collision_enabled": false,
+      "classification": "SUPPORT_SURFACE",
+      "coverage": "MISSING_COLLISION"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 3.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "z": [
+        0.001,
+        0.001
+      ],
+      "size": 3.482,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "SUPPORT_SURFACE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase_423/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase2/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase3/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase4/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase5/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase6/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase7/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase10/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_444/Geo_W_WallCornerBase1_4",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 0.6,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase11/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_448/Geo_W_WallCornerBase1_2",
+      "z": [
+        -0.009,
+        2.991
+      ],
+      "size": 1.1,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase1_10/Geo_W_WallBase1_8",
+      "z": [
+        -0.009,
+        2.991
+      ],
+      "size": 0.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase12/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase2_468/Geo_W_WallBase2_8",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 1.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase13/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase1_11/Geo_W_WallBase1_8",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 0.5,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_3/Geo_W_WallCornerBase1_2",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 1.1,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase14/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase15/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_5/Geo_W_WallCornerBase1_2",
+      "z": [
+        -0.009,
+        2.991
+      ],
+      "size": 1.1,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase17/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_487/Geo_W_WallCornerBase1_10",
+      "z": [
+        0.001,
+        3.001
+      ],
+      "size": 0.3,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallHallway_490/Geo_W_WallHallway",
+      "z": [
+        0.014,
+        3.014
+      ],
+      "size": 3.7,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallDoor_493/Geo_W_WallDoor",
+      "z": [
+        0.014,
+        3.014
+      ],
+      "size": 3.6,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase18/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase19/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallCornerBase1_6/Geo_W_WallCornerBase1_2",
+      "z": [
+        -0.009,
+        2.991
+      ],
+      "size": 1.1,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/Geo_W_WallBase20/Geo_W_WallBase",
+      "z": [
+        0.0,
+        3.0
+      ],
+      "size": 4.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    }
+  ]
+}

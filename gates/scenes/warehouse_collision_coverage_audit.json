@@ -1,0 +1,920 @@
+{
+  "check": "COLLISION_COVERAGE_AUDIT",
+  "scene_id": "warehouse",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Simple_Warehouse/warehouse.usd",
+  "timestamp_utc": "2026-08-14T05:00:43.287017+00:00",
+  "navigation_band_m": [
+    0.02,
+    0.2803
+  ],
+  "footprint_m": [
+    0.235,
+    0.195
+  ],
+  "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
+  "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "floor_z": -0.0,
+  "declared": {
+    "meshes_total": 781,
+    "support_surfaces": 36,
+    "blocking_structures": 106,
+    "non_blocking": 622,
+    "decorative": 17,
+    "unknown_bounds": 0,
+    "covered": 117,
+    "missing_collision": 25,
+    "blocking_coverage_fraction": 1.0,
+    "support_coverage_fraction": 0.3056,
+    "missing_examples": [
+      "/World/Scene/SM_floor27/SM_floor02",
+      "/World/Scene/SM_floor29/SM_floor02",
+      "/World/Scene/SM_floor32/SM_floor02",
+      "/World/Scene/SM_floor33/SM_floor02",
+      "/World/Scene/SM_floor34/SM_floor02",
+      "/World/Scene/SM_floor35/SM_floor02",
+      "/World/Scene/SM_floor36/SM_floor02",
+      "/World/Scene/SM_floor37/SM_floor02",
+      "/World/Scene/SM_floor39/SM_floor02",
+      "/World/Scene/SM_floor44/SM_floor02"
+    ]
+  },
+  "behavioural": {
+    "contract": "A probe passes only when the declared target caused the observation. Generic activity is not evidence of target-specific correctness.",
+    "support": {
+      "planned": 8,
+      "fired": 8,
+      "correct_target_hits": 6,
+      "wrong_target_hits": 2,
+      "generic_hit_rate": 1.0,
+      "correct_target_hit_rate": 0.75,
+      "unexpected_invariance": true,
+      "review_required": "REVIEW_REQUIRED_UNEXPECTED_INVARIANCE",
+      "verdict": "NON_PROBATIVE",
+      "probes": [
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_Keepclear6_446/SM_FloorDecal_Keepclear",
+          "origin": [
+            -6.695,
+            9.737,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_Keepclear6_446/SM_FloorDecal_Keepclear",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_RecRed1X15/SM_FloorDecal_RecRed1X1",
+          "origin": [
+            -9.311,
+            -3.95,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/GroundPlane/CollisionPlane",
+          "actual_distance": 0.5001,
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_RecRed1X16/SM_FloorDecal_RecRed1X1",
+          "origin": [
+            -9.311,
+            12.59,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/GroundPlane/CollisionPlane",
+          "actual_distance": 0.5001,
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m74/SM_FloorDecal_StripeFull_4m",
+          "origin": [
+            -9.886,
+            -1.41,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m74/SM_FloorDecal_StripeFull_4m",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m75/SM_FloorDecal_StripeFull_4m",
+          "origin": [
+            -9.886,
+            2.59,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m75/SM_FloorDecal_StripeFull_4m",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m76/SM_FloorDecal_StripeFull_4m",
+          "origin": [
+            -9.886,
+            6.59,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m76/SM_FloorDecal_StripeFull_4m",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m77/SM_FloorDecal_StripeFull_4m",
+          "origin": [
+            -9.886,
+            10.319,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m77/SM_FloorDecal_StripeFull_4m",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m78/SM_FloorDecal_StripeFull_4m",
+          "origin": [
+            -8.746,
+            -1.41,
+            0.5
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m78/SM_FloorDecal_StripeFull_4m",
+          "actual_distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      ]
+    },
+    "blocking": {
+      "planned": 8,
+      "fired": 8,
+      "correct_target_hits": 6,
+      "wrong_target_hits": 1,
+      "generic_hit_rate": 0.875,
+      "correct_target_hit_rate": 0.75,
+      "unexpected_invariance": false,
+      "review_required": null,
+      "verdict": "NON_PROBATIVE",
+      "probes": [
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_FuseBox_24/SM_FuseBox_01",
+          "origin": [
+            -4.943,
+            17.793,
+            0.856
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.739,
+          "actual_hit": false,
+          "actual_collider_prim": null,
+          "actual_distance": null,
+          "identity_match": false,
+          "verdict": "FAIL_NO_HIT"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_11/SM_PaletteA_01",
+          "origin": [
+            -10.423,
+            1.079,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_11/SM_PaletteA_01",
+          "actual_distance": 0.6015,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_12/SM_PaletteA_01",
+          "origin": [
+            -10.426,
+            2.302,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_12/SM_PaletteA_01",
+          "actual_distance": 0.6081,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_318/SM_PaletteA_01",
+          "origin": [
+            -10.346,
+            7.528,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_318/SM_PaletteA_01",
+          "actual_distance": 0.6081,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_319/SM_PaletteA_01",
+          "origin": [
+            -10.423,
+            3.519,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_319/SM_PaletteA_01",
+          "actual_distance": 0.6015,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_357/SM_PaletteA_01",
+          "origin": [
+            -10.451,
+            -2.812,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PillarPartA_9M5_1454/SM_PillarPartA_9M/Section0",
+          "actual_distance": 0.021,
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_358/SM_PaletteA_01",
+          "origin": [
+            -10.448,
+            -1.595,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_358/SM_PaletteA_01",
+          "actual_distance": 0.6015,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/SM_PaletteA_359/SM_PaletteA_01",
+          "origin": [
+            -10.451,
+            -0.372,
+            0.106
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 2.203,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_PaletteA_359/SM_PaletteA_01",
+          "actual_distance": 0.6081,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      ]
+    }
+  },
+  "verdict": {
+    "physx_traversability_admissible": false,
+    "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
+  },
+  "measurements": [
+    {
+      "measurement": "blocking_structures_missing_collision",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 142,
+        "expected_items": 142,
+        "complete": true
+      },
+      "value": 25,
+      "is_evidence": true,
+      "evidence": {
+        "scene_id": "warehouse"
+      }
+    },
+    {
+      "measurement": "physics_probe_hit_rate",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 16,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": 0.75,
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ],
+  "rows_sample": [
+    {
+      "path": "/World/Scene/SM_BeamA_9M25/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M26/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M27/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M29/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M30/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M31/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M33/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M34/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M35/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M37/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M38/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BeamA_9M39/SM_BeamA_9M",
+      "z": [
+        8.8,
+        9.0
+      ],
+      "size": 9.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m10/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m11/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m12/SM_BracketBeam",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 3.189,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m13/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m14/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m15/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m16/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m7/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 5.218,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m8/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketBeam_6m9/SM_BracketBeam_3m",
+      "z": [
+        6.267,
+        6.333
+      ],
+      "size": 4.783,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot10/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot12/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot13/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot14/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot15/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot16/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot17/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot18/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot19/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot20/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot21/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot22/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot23/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot24/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot26_1493/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot27/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot3/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/SM_BracketSlot41/SM_BracketSlot",
+      "z": [
+        6.184,
+        6.416
+      ],
+      "size": 0.43,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    }
+  ]
+}
