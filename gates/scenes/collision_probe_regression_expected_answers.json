@@ -1,0 +1,74 @@
+{
+  "check": "COLLISION_PROBE_REGRESSION_EXPECTED_ANSWERS",
+  "written_before_execution": true,
+  "principle": "A label identifying a target does not make an intervention target-specific. Target-specific evidence requires a target-specific intervention AND target-specific adjudication; metadata cannot supply either.",
+  "causal_requirement": "A causal verifier requires an intervention capable of changing when the declared cause changes -- which is what CAUSAL_MUTATION_REMOVED tests.",
+  "fixtures": [
+    {
+      "fixture_id": "CAUSAL_MUTATION_PRESENT",
+      "geometry": "Obstacle A at x=1.0 offset laterally; declared target B at x=3.0 directly on the probe path.",
+      "declared_target": "/World/B",
+      "expected_reachable": "REACHABLE",
+      "expected_collider": "/World/B",
+      "expected_verdict": "PASS_CORRECT_CAUSE",
+      "why_known": "B is the only collider on the segment, placed there by the fixture author."
+    },
+    {
+      "fixture_id": "CAUSAL_MUTATION_REMOVED",
+      "geometry": "Identical scene with B's collision disabled. A, probe, physics and all other state unchanged.",
+      "declared_target": "/World/B",
+      "expected_reachable": "REACHABLE",
+      "expected_collider": null,
+      "expected_verdict": "FAIL_NO_HIT",
+      "why_known": "The single intended intervention is B's presence. If the verdict does not change when B disappears, the pass never depended on B and the probe is not causal. This is the regression that proves dependence."
+    },
+    {
+      "fixture_id": "WRONG_CAUSE_BAD_PROBE",
+      "geometry": "Declared target B at x=3.0; unrelated obstacle A at x=1.0 directly in front, ray fired from origin.",
+      "declared_target": "/World/B",
+      "expected_reachable": "OCCLUDED",
+      "expected_collider": "/World/A",
+      "expected_verdict": "NON_PROBATIVE_OCCLUDED",
+      "why_known": "A necessarily precedes B on this segment. The old logic scored this PASS on hit existence. The target is not at fault -- the experiment cannot reach it -- so this is non-probative rather than a failure of B."
+    },
+    {
+      "fixture_id": "WRONG_CAUSE_GOOD_PROBE",
+      "geometry": "Same scene, probe reconstructed from just outside B's own bounds toward B's centre.",
+      "declared_target": "/World/B",
+      "expected_reachable": "REACHABLE",
+      "expected_collider": "/World/B",
+      "expected_verdict": "PASS_CORRECT_CAUSE",
+      "why_known": "Rebuilding the aim makes B first on the segment; identity then resolves correctly."
+    },
+    {
+      "fixture_id": "SUPPORT_STARVATION",
+      "geometry": "32 blocking targets and 2 support surfaces, all collision-enabled.",
+      "declared_target": "stratified population",
+      "expected_reachable": "n/a",
+      "expected_collider": null,
+      "expected_verdict": "support_fired>0 AND blocker_fired>0",
+      "why_known": "First-N sampling over a 32:2 imbalance yields zero support probes, which is how Office's support stratum vanished. Independent quotas must populate both."
+    },
+    {
+      "fixture_id": "OCCLUDED_TARGET",
+      "geometry": "Declared target B fully enclosed behind collider A on every approach used by the constructor.",
+      "declared_target": "/World/B",
+      "expected_reachable": "OCCLUDED",
+      "expected_collider": null,
+      "expected_verdict": "NON_PROBATIVE_OCCLUDED",
+      "why_known": "Probe incapability must be distinguishable from target defect."
+    },
+    {
+      "fixture_id": "DISTANCE_DIVERSITY",
+      "geometry": "Three declared targets at approximately 1 m, 3 m and 5 m from their own probe origins.",
+      "declared_target": "/World/B1,/World/B2,/World/B3",
+      "expected_reachable": "REACHABLE",
+      "expected_collider": "each its own",
+      "expected_verdict": "distances differ in expected order",
+      "why_known": "Three targets at three ranges must produce three distances. Identical values would reproduce the 12x5.9 m signature and must raise REVIEW_REQUIRED_UNEXPECTED_INVARIANCE."
+    }
+  ],
+  "written_at": "2026-08-14T05:08:47.739548+00:00",
+  "git_head": "0b8645eed76ba7d873d9771421c911beef8eed96",
+  "expected_answers_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008"
+}
