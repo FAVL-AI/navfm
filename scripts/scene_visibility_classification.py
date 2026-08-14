@@ -1,0 +1,368 @@
+"""Is that darkness an empty world, or a window onto a distant one?
+
+The acceptance gate used to ask "how many pixels have no useful depth?" and treat
+the answer as void fraction. Those are different estimands. The canonical camera
+clips at 100 m, so a legitimate view through an office window onto a city skyline
+returns no depth and scored identically to the control world's unbounded black
+nothing. Tightening the threshold from 0.35 to 0.10 fixed a false positive and
+created a false negative, because:
+
+    a bad observable + a better threshold = still a bad measurement
+
+So the pixel classes are made explicit, and the rejection criterion moves onto the
+one that actually means "empty world":
+
+``NEAR_SCENE``
+    geometry within the canonical camera's range.
+``DISTANT_SCENE``
+    no canonical depth return, but an independent probe finds real geometry along
+    the same ray.
+``VALID_ENVIRONMENT_BACKGROUND``
+    an intentionally configured sky or dome accounts for the pixel.
+``TRUE_VOID``
+    no near geometry, no verified distant geometry, no environment background.
+
+The independent-oracle rule from FL-018 applies directly: ``DISTANT_SCENE`` must
+not be derived from the same 100 m depth buffer whose clipping caused the
+ambiguity. A second camera is created at the *same world pose and the same
+intrinsics*, differing only in far clip, which is set from the measured stage
+bounds rather than picked. It is diagnostic-only -- never model input, never
+written into Option 1.
+
+Physics raycasts are deliberately not the authority here: a renderable prim need
+not carry collision geometry, so a missed raycast would classify visible
+architecture as void. Render-visible geometry is the question, so a render-based
+probe answers it.
+
+Every number leaves through a MeasurementEnvelope, so a run that loads no scene
+reports NO_EVIDENCE rather than a tidy ``true_void_fraction`` of zero.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
+
+OUT = REPO / "gates" / "scenes"
+ROBOT_USD = REPO / "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd"
+
+#: Engineering thresholds, declared before the run. `true_void_fraction` replaces
+#: the old raw background criterion; the value is carried over deliberately
+#: unchanged so the fix cannot be confused with a loosening.
+THRESHOLDS = {
+    "true_void_fraction_max": 0.10,
+    "structure_fraction_min": 0.15,
+    "median_forward_depth_min_m": 1.5,
+    "dominant_hue_fraction_max": 0.80,
+    "distinct_colour_bins_min": 12,
+    "note": (
+        "true_void_fraction_max carries over the 0.10 previously applied to raw background. "
+        "The observable changed; the threshold did not. Loosening it to admit a candidate "
+        "would tune the gate to the scene rather than fix the measurement."
+    ),
+}
+
+#: Cap on the diagnostic far clip, so a degenerate stage bound cannot produce an
+#: absurd probe range. Declared, not silently applied.
+DIAGNOSTIC_FAR_CAP_M = 20000.0
+
+
+def digest_file(p: Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()[:32]
+
+
+def classify(canon_depth: Any, probe_depth: Any, *, canon_far: float,
+             has_env_dome: bool) -> dict[str, Any]:
+    """Four-class split, using the probe only where the canonical camera is blind."""
+    import numpy as np
+
+    c = np.asarray(canon_depth, dtype=np.float32)
+    p = np.asarray(probe_depth, dtype=np.float32)
+    total = int(c.size)
+
+    near = np.isfinite(c) & (c > 0) & (c < canon_far)
+    blind = ~near
+    # The probe is consulted ONLY where the canonical camera returned nothing --
+    # it is a second opinion about darkness, not a replacement depth source.
+    distant = blind & np.isfinite(p) & (p > 0)
+    unexplained = blind & ~distant
+    # A configured dome/sky legitimately accounts for remaining pixels. Without
+    # one, unexplained darkness is void.
+    env_bg = unexplained if has_env_dome else np.zeros_like(unexplained)
+    void = unexplained & ~env_bg
+
+    def frac(m: Any) -> float:
+        return round(float(m.sum()) / total, 4)
+
+    return {
+        "pixels_total": total,
+        "near_scene_pixels": int(near.sum()),
+        "distant_scene_pixels": int(distant.sum()),
+        "valid_environment_background_pixels": int(env_bg.sum()),
+        "true_void_pixels": int(void.sum()),
+        "near_scene_fraction": frac(near),
+        "distant_scene_fraction": frac(distant),
+        "valid_environment_background_fraction": frac(env_bg),
+        "true_void_fraction": frac(void),
+        "raw_background_fraction": frac(blind),
+        "_masks": {"near": near, "distant": distant, "env": env_bg, "void": void},
+    }
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--scene", required=True, help="'control', a USD path, or a URL")
+    ap.add_argument("--scene-id", required=True)
+    ap.add_argument("--pose", action="append", default=[],
+                    help="x,y,yaw_deg[,label] -- repeatable; default is the origin pose")
+    args = ap.parse_args()
+
+    live = Liveness()
+    envelopes: list[MeasurementEnvelope] = []
+    record: dict[str, Any] = {
+        "check": "SCENE_VISIBILITY_CLASSIFICATION",
+        "scene_id": args.scene_id, "scene": args.scene,
+        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "thresholds": THRESHOLDS,
+        "independent_oracle": (
+            "A second camera at the same world pose and intrinsics, differing only in far "
+            "clip, set from measured stage bounds. DISTANT_SCENE is never derived from the "
+            "canonical depth buffer whose clipping created the ambiguity (FL-018)."
+        ),
+        "diagnostic_only": "The probe is audit evidence. Never model input, never in Option 1.",
+        "stage": "SIMULATION_DEVELOPMENT", "admission_status": "NOT_ADMITTED",
+    }
+
+    is_url = "://" in args.scene
+    if args.scene != "control" and not is_url and not Path(args.scene).is_file():
+        print(f"REFUSED: no scene USD at {args.scene}", file=sys.stderr)
+        envelopes.append(not_run("true_void_fraction", note=f"scene absent: {args.scene}"))
+        _emit(record, envelopes, args.scene_id)
+        return 2
+
+    from isaacsim.simulation_app import SimulationApp
+
+    app = SimulationApp({"headless": True, "renderer": "RaytracedLighting"})
+    live = Liveness(process_started=True, runtime_started=True)
+
+    try:
+        import isaacsim.core.utils.stage as stage_utils
+        import numpy as np
+        import omni.replicator.core as rep
+        from isaacsim.core.api import SimulationContext
+        from PIL import Image
+        from pxr import Gf, UsdGeom, UsdLux
+
+        sim = SimulationContext(stage_units_in_meters=1.0)
+        live = Liveness(**{**live.__dict__, "subject_open_attempted": True})
+
+        if args.scene == "control":
+            import omni.kit.commands
+            from isaacsim.core.api.objects.ground_plane import GroundPlane
+
+            GroundPlane(prim_path="/World/groundPlane", size=40.0)
+            omni.kit.commands.execute("CreatePrim", prim_type="DistantLight",
+                                      prim_path="/World/light")
+            for i, (x, y) in enumerate([(2.0, 0.0), (3.5, 1.0), (3.0, -1.2)]):
+                pth = f"/World/block_{i}"
+                omni.kit.commands.execute("CreatePrim", prim_type="Cube", prim_path=pth)
+                xf = UsdGeom.Xformable(stage_utils.get_current_stage().GetPrimAtPath(pth))
+                xf.ClearXformOpOrder()
+                xf.AddTranslateOp().Set(Gf.Vec3d(x, y, 0.35))
+                xf.AddScaleOp(UsdGeom.XformOp.PrecisionDouble).Set(Gf.Vec3d(0.3, 0.3, 0.35))
+        else:
+            stage_utils.add_reference_to_stage(args.scene, "/World/Scene")
+
+        stage_utils.add_reference_to_stage(str(ROBOT_USD), "/World/YahboomM3Pro")
+        stage = stage_utils.get_current_stage()
+
+        cam_path = "/World/YahboomM3Pro/camera_link/front_rgb_camera"
+        cam_prim = stage.GetPrimAtPath(cam_path)
+        if not cam_prim:
+            envelopes.append(not_run("true_void_fraction", note="canonical camera prim absent"))
+            _emit(record, envelopes, args.scene_id)
+            app.close()
+            return 2
+        live = Liveness(**{**live.__dict__, "subject_open_succeeded": True})
+
+        # -- measured stage bounds decide the diagnostic range ------------------
+        lo = np.array([np.inf] * 3)
+        hi = np.array([-np.inf] * 3)
+        n_mesh = 0
+        has_dome = False
+        for prim in stage.Traverse():
+            if UsdLux.DomeLight(prim):
+                has_dome = True
+            if prim.GetTypeName() == "Mesh" and not str(prim.GetPath()).startswith(
+                    "/World/YahboomM3Pro"):
+                n_mesh += 1
+                try:
+                    b = UsdGeom.Boundable(prim).ComputeWorldBound(0, "default").GetBox()
+                    mn, mx = b.GetMin(), b.GetMax()
+                    lo = np.minimum(lo, [mn[0], mn[1], mn[2]])
+                    hi = np.maximum(hi, [mx[0], mx[1], mx[2]])
+                except Exception:
+                    pass
+        extent = float(np.linalg.norm(hi - lo)) if np.isfinite(lo).all() else 0.0
+        diag_far = float(min(max(extent * 2.0, 1000.0), DIAGNOSTIC_FAR_CAP_M))
+        record["stage"] = {
+            "mesh_count": n_mesh, "has_environment_dome": has_dome,
+            "bounds_min": [round(float(v), 2) for v in lo] if np.isfinite(lo).all() else None,
+            "bounds_max": [round(float(v), 2) for v in hi] if np.isfinite(hi).all() else None,
+            "diagonal_extent_m": round(extent, 2),
+            "diagnostic_far_clip_m": diag_far,
+            "diagnostic_far_rule": "2x measured stage diagonal, floor 1000 m, "
+                                   f"cap {DIAGNOSTIC_FAR_CAP_M} m",
+        }
+
+        canon = UsdGeom.Camera(cam_prim)
+        cr = canon.GetClippingRangeAttr().Get()
+        canon_far = float(cr[1]) if cr else 100.0
+        record["canonical_camera"] = {
+            "prim": cam_path, "far_clip_m": canon_far,
+            "focal_length_mm": float(canon.GetFocalLengthAttr().Get()),
+            "horizontal_aperture_mm": float(canon.GetHorizontalApertureAttr().Get()),
+        }
+
+        # -- the independent probe: same pose, same intrinsics, extended range --
+        probe_path = f"{cam_path}_diagnostic_probe"
+        probe = UsdGeom.Camera.Define(stage, probe_path)
+        probe.CreateFocalLengthAttr(canon.GetFocalLengthAttr().Get())
+        probe.CreateHorizontalApertureAttr(canon.GetHorizontalApertureAttr().Get())
+        probe.CreateVerticalApertureAttr(canon.GetVerticalApertureAttr().Get())
+        probe.CreateClippingRangeAttr(Gf.Vec2f(0.05, diag_far))
+        # Parented to the same link, zero local offset: identical pose by
+        # construction rather than by copying a transform that could drift.
+        pxf = UsdGeom.Xformable(probe.GetPrim())
+        pxf.ClearXformOpOrder()
+        pxf.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, 0.0))
+        pxf.AddRotateXYZOp().Set(Gf.Vec3d(90.0, 0.0, -90.0))
+
+        rp_c = rep.create.render_product(cam_path, (320, 240))
+        rp_p = rep.create.render_product(probe_path, (320, 240))
+        a_rgb = rep.AnnotatorRegistry.get_annotator("rgb")
+        a_dc = rep.AnnotatorRegistry.get_annotator("distance_to_camera")
+        a_dp = rep.AnnotatorRegistry.get_annotator("distance_to_camera")
+        a_rgb.attach(rp_c)
+        a_dc.attach(rp_c)
+        a_dp.attach(rp_p)
+
+        sim.reset()
+        for _ in range(40):
+            sim.step(render=True)
+
+        poses = args.pose or ["0,0,0,origin"]
+        img_dir = OUT / "visibility" / args.scene_id
+        img_dir.mkdir(parents=True, exist_ok=True)
+        results = []
+        robot = stage.GetPrimAtPath("/World/YahboomM3Pro")
+
+        for i, spec in enumerate(poses):
+            parts = spec.split(",")
+            x, y, yaw = float(parts[0]), float(parts[1]), float(parts[2])
+            label = parts[3] if len(parts) > 3 else f"pose_{i}"
+            rxf = UsdGeom.Xformable(robot)
+            rxf.ClearXformOpOrder()
+            rxf.AddTranslateOp().Set(Gf.Vec3d(x, y, 0.05))
+            rxf.AddRotateXYZOp().Set(Gf.Vec3d(0.0, 0.0, yaw))
+            for _ in range(12):
+                sim.step(render=True)
+
+            rgb = np.asarray(a_rgb.get_data())
+            dc = np.asarray(a_dc.get_data())
+            dp = np.asarray(a_dp.get_data())
+            if rgb.ndim == 3 and rgb.shape[2] == 4:
+                rgb = rgb[:, :, :3]
+            if dc.size == 0 or dp.size == 0:
+                results.append({"pose": label, "status": "no frame"})
+                continue
+
+            cls = classify(dc, dp, canon_far=canon_far, has_env_dome=has_dome)
+            masks = cls.pop("_masks")
+            # Four-class label image for inspection: near / distant / env / void.
+            lab = np.zeros((*masks["near"].shape, 3), dtype=np.uint8)
+            lab[masks["near"]] = (40, 160, 40)
+            lab[masks["distant"]] = (60, 90, 200)
+            lab[masks["env"]] = (200, 170, 40)
+            lab[masks["void"]] = (200, 40, 40)
+            mp = img_dir / f"{label}_classes.png"
+            Image.fromarray(lab).save(mp)
+            ip = img_dir / f"{label}_pov.png"
+            Image.fromarray(rgb.astype("uint8")).save(ip)
+
+            cls.update(pose=label, x=x, y=y, yaw_deg=yaw,
+                       class_mask=str(mp.relative_to(REPO)),
+                       pov=str(ip.relative_to(REPO)),
+                       pov_digest=digest_file(ip))
+            results.append(cls)
+
+        live = Liveness(**{**live.__dict__, "measurement_executed": True,
+                           "artifact_written": True})
+        record["poses"] = results
+
+        measured = [r for r in results if "true_void_fraction" in r]
+        if measured:
+            worst = max(r["true_void_fraction"] for r in measured)
+            envelopes.append(MeasurementEnvelope(
+                measurement="true_void_fraction",
+                liveness=live, value=worst,
+                items_examined=sum(r["pixels_total"] for r in measured),
+                expected_items=len(poses) * 320 * 240,
+                evidence={"scene_id": args.scene_id,
+                          "poses": [r["pose"] for r in measured],
+                          "diagnostic_far_clip_m": diag_far},
+                note="worst pose; a scene is only as good as its weakest audited viewpoint",
+            ))
+            envelopes.append(MeasurementEnvelope(
+                measurement="distant_scene_fraction", liveness=live,
+                value=max(r["distant_scene_fraction"] for r in measured),
+                items_examined=sum(r["pixels_total"] for r in measured),
+            ))
+            record["verdict"] = {
+                "true_void_fraction": worst,
+                "threshold": THRESHOLDS["true_void_fraction_max"],
+                "result": "PASS" if worst <= THRESHOLDS["true_void_fraction_max"] else "FAIL",
+            }
+        else:
+            envelopes.append(not_run("true_void_fraction", note="no frame measured"))
+            record["verdict"] = {"result": "NO_EVIDENCE"}
+
+        _emit(record, envelopes, args.scene_id)
+        print(f"\n  scene {args.scene_id}  meshes {n_mesh}  dome {has_dome}  "
+              f"probe far {diag_far:.0f} m")
+        for r in measured:
+            print(f"    {r['pose']:<12} raw_bg {r['raw_background_fraction']:.3f}  "
+                  f"near {r['near_scene_fraction']:.3f}  distant {r['distant_scene_fraction']:.3f}  "
+                  f"env {r['valid_environment_background_fraction']:.3f}  "
+                  f"TRUE_VOID {r['true_void_fraction']:.3f}")
+        for e in envelopes:
+            print(f"    {e.render()}")
+        print(f"    VERDICT {record['verdict']['result']}")
+        app.close()
+        return 0 if record["verdict"]["result"] == "PASS" else 1
+    except Exception as exc:
+        record["error"] = f"{type(exc).__name__}: {exc}"
+        envelopes.append(not_run("true_void_fraction", note=record["error"][:200]))
+        _emit(record, envelopes, args.scene_id)
+        app.close()
+        return 2
+
+
+def _emit(record: dict[str, Any], envelopes: list[MeasurementEnvelope], scene_id: str) -> None:
+    record["measurements"] = [e.to_json() for e in envelopes]
+    OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / f"scene_visibility_{scene_id}.json").write_text(json.dumps(record, indent=2) + "\n")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

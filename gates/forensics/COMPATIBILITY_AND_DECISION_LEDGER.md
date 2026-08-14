@@ -2,7 +2,7 @@
 
 Every entry carries the chain from what was observed to what is now claimed, including the field that is easiest to leave out and hardest to reconstruct later: **why the checks that were already running did not see it**.
 
-Twenty entries. Fifteen are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
+Twenty-one entries. Sixteen are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
 
 Author: Frank Asante Van Laarhoven · 2026-08-13
 
@@ -26,14 +26,15 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 | 10 | `FL-012` | An invented loss passed the first train-path harness | 5 | 5 | 3 | **75** | CRITICAL | no |
 | 11 | `FL-007` | Corrections that did not propagate — the dominant protocol defect | 4 | 4 | 4 | **64** | CRITICAL | no |
 | 12 | `FL-015` | The poor navigation images were the world, not the camera | 4 | 4 | 4 | **64** | CRITICAL | no |
-| 13 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
-| 14 | `FL-017` | The camera-view acceptance test passed both known-bad frames | 4 | 5 | 3 | **60** | CRITICAL | no |
-| 15 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
-| 16 | `FL-020` | A URL validated as a filesystem path, refused before anything ran | 4 | 4 | 3 | **48** | HIGH | no |
-| 17 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
-| 18 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
-| 19 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
-| 20 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
+| 13 | `FL-021` | Tightening a threshold fixed a false positive and created a false negative | 4 | 4 | 4 | **64** | CRITICAL | no |
+| 14 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
+| 15 | `FL-017` | The camera-view acceptance test passed both known-bad frames | 4 | 5 | 3 | **60** | CRITICAL | no |
+| 16 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
+| 17 | `FL-020` | A URL validated as a filesystem path, refused before anything ran | 4 | 4 | 3 | **48** | HIGH | no |
+| 18 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
+| 19 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
+| 20 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
+| 21 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
 
 ---
 
@@ -570,6 +571,52 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Not claimed.** Not a claim that 0.280 m, the mast geometry or the 18 mm focal length match the physical Yahboom. All remain PROVISIONAL_SIMULATION_VALUE.
 
 **Propagation.** Scene identity now belongs in the same versioned contract as the camera: both are part of the data-generating process, and a change to either changes the observation distribution.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
+## `FL-021` — Tightening a threshold fixed a false positive and created a false negative
+
+**Severity 64 (CRITICAL)** · impact 4 · undetectability 4 · propagation 4 · irreversible: no · status CLOSED
+
+**What was observed.** After `background_fraction_max` was tightened from 0.35 to 0.10 to stop the control world passing, the Office scene failed on 33.9% background -- while rendering a legible interior with carpet, a structural pillar and a window wall, under 185 correctly resolved materials and zero runtime errors.
+
+**Root cause.** The observable was semantically wrong, not badly calibrated. It asked 'how many pixels have no depth return inside the canonical 100 m clip?' while the scientific question was 'how much of the forward view is genuinely an unbounded, non-environment void?'. Those are different estimands. A window onto a city skyline beyond the far clip scored identically to the control world's black nothing.
+
+**Why existing checks missed it.** The metric was doing exactly what it was written to do, and its first recalibration was driven by a scene where the two estimands happened to coincide -- in an unbounded void, missing depth really is void. The divergence only appears in a bounded scene with a window, which is the case the metric was never tested against.
+
+**Scientific risk had it survived.** Rejecting every architecturally realistic environment -- offices, warehouses and hospitals all have windows and openings -- and thereby selecting a canonical world biased toward sealed, windowless geometry for a reason having nothing to do with navigation.
+
+**Alternatives considered.**
+  - Loosen the threshold until Office passes
+  - Exclude the upper image region from the background measurement
+  - Split the observable into four classes and reject on true void alone
+
+**Decision.** Classify every pixel as NEAR_SCENE, DISTANT_SCENE, VALID_ENVIRONMENT_BACKGROUND or TRUE_VOID, and move the rejection criterion onto true void. DISTANT_SCENE is established by an independent probe -- a second camera parented to the same link with identical intrinsics, differing only in far clip, which is set from the measured stage diagonal rather than chosen. The threshold stays at 0.10.
+
+**Decision rule.** A threshold cannot repair a semantically wrong observable. Missing depth within a sensor's range is not equivalent to absence of scene geometry, and negative evidence requires proof that the observable was capable of seeing the thing claimed absent.
+
+**Rejected, and why.** Loosening the threshold until Office passed was rejected outright: it tunes the gate to the candidate in front of it, and would have left the metric unable to distinguish a void from a window in every future scene. Masking the upper image region was rejected for the same reason -- it hides the disagreement rather than resolving it.
+
+**Correction.** `scripts/scene_visibility_classification.py`, emitting MeasurementEnvelope.
+
+**Validation.** Control world, the discriminating case: true void 0.3894, distant scene 0.0, still FAIL -- the classifier does not rescue a genuine void, because DISTANT can only be earned by a positive observation. Office pose A decomposes its 33.9% background into 8.7% distant scene and 25.3% environment dome with 0.000 true void; pose B facing inward is 100% near scene. The class mask shows blue aligning with the skyline buildings and yellow with the sky above them.
+
+**Regression control.** The control-world frame is retained as a negative fixture that must keep failing on true void while Office must not, so a future change collapsing the classes breaks one of the two.
+
+**Evidence.**
+  - gates/scenes/scene_visibility_control_blocks_v1.json
+  - gates/scenes/scene_visibility_office.json
+  - gates/scenes/visibility/office/A_window_classes.png
+
+**Impact on results.** No scene was selected under the wrong metric, and no data collected. Office's original rejection is now demonstrated to have been a false negative rather than assumed to be one.
+
+**Claim boundary.** Establishes that Office's apparent background is distant geometry and sky rather than void, at two audited poses under Isaac Sim 5.1.0.0.
+
+**Not claimed.** Not a claim that Office is eligible. Only two poses were measured, no corridor or goal-style viewpoint, and the material, hue, structure and depth checks have not yet been run through this gate. The environment-background rule is also currently coarse: every unexplained pixel is forgiven whenever the stage has any dome light, so a scene with a dome could in principle launder a real void. That is a known weakness, not a validated criterion.
+
+**Propagation.** Applies to every scene that will ever be audited, and to any future metric where sensor range limits are mistaken for absence -- including collision clearance and goal visibility.
 
 **Attribution.** Frank Asante Van Laarhoven
 

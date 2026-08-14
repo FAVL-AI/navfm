@@ -1,0 +1,135 @@
+{
+  "check": "SCENE_VISIBILITY_CLASSIFICATION",
+  "scene_id": "office",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
+  "timestamp_utc": "2026-08-14T03:52:31.095649+00:00",
+  "thresholds": {
+    "true_void_fraction_max": 0.1,
+    "structure_fraction_min": 0.15,
+    "median_forward_depth_min_m": 1.5,
+    "dominant_hue_fraction_max": 0.8,
+    "distinct_colour_bins_min": 12,
+    "note": "true_void_fraction_max carries over the 0.10 previously applied to raw background. The observable changed; the threshold did not. Loosening it to admit a candidate would tune the gate to the scene rather than fix the measurement."
+  },
+  "independent_oracle": "A second camera at the same world pose and intrinsics, differing only in far clip, set from measured stage bounds. DISTANT_SCENE is never derived from the canonical depth buffer whose clipping created the ambiguity (FL-018).",
+  "diagnostic_only": "The probe is audit evidence. Never model input, never in Option 1.",
+  "stage": {
+    "mesh_count": 140,
+    "has_environment_dome": true,
+    "bounds_min": [
+      -2500.0,
+      -2500.0,
+      -0.04
+    ],
+    "bounds_max": [
+      2500.0,
+      2500.0,
+      230.0
+    ],
+    "diagonal_extent_m": 7074.81,
+    "diagnostic_far_clip_m": 14149.617715150258,
+    "diagnostic_far_rule": "2x measured stage diagonal, floor 1000 m, cap 20000.0 m"
+  },
+  "admission_status": "NOT_ADMITTED",
+  "canonical_camera": {
+    "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+    "far_clip_m": 100.0,
+    "focal_length_mm": 18.0,
+    "horizontal_aperture_mm": 20.954999923706055
+  },
+  "poses": [
+    {
+      "pixels_total": 76800,
+      "near_scene_pixels": 50741,
+      "distant_scene_pixels": 6669,
+      "valid_environment_background_pixels": 19390,
+      "true_void_pixels": 0,
+      "near_scene_fraction": 0.6607,
+      "distant_scene_fraction": 0.0868,
+      "valid_environment_background_fraction": 0.2525,
+      "true_void_fraction": 0.0,
+      "raw_background_fraction": 0.3393,
+      "pose": "A_window",
+      "x": 0.0,
+      "y": 0.0,
+      "yaw_deg": 0.0,
+      "class_mask": "gates/scenes/visibility/office/A_window_classes.png",
+      "pov": "gates/scenes/visibility/office/A_window_pov.png",
+      "pov_digest": "c9cf8ac8d81511cbfc03c7aeb1109398"
+    },
+    {
+      "pixels_total": 76800,
+      "near_scene_pixels": 76800,
+      "distant_scene_pixels": 0,
+      "valid_environment_background_pixels": 0,
+      "true_void_pixels": 0,
+      "near_scene_fraction": 1.0,
+      "distant_scene_fraction": 0.0,
+      "valid_environment_background_fraction": 0.0,
+      "true_void_fraction": 0.0,
+      "raw_background_fraction": 0.0,
+      "pose": "B_inward",
+      "x": 0.0,
+      "y": 0.0,
+      "yaw_deg": 180.0,
+      "class_mask": "gates/scenes/visibility/office/B_inward_classes.png",
+      "pov": "gates/scenes/visibility/office/B_inward_pov.png",
+      "pov_digest": "4773326bdc62c9b9d644f9666b4a70d4"
+    }
+  ],
+  "verdict": {
+    "true_void_fraction": 0.0,
+    "threshold": 0.1,
+    "result": "PASS"
+  },
+  "measurements": [
+    {
+      "measurement": "true_void_fraction",
+      "status": "MEASURED_ZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 153600,
+        "expected_items": 153600,
+        "complete": true
+      },
+      "value": 0.0,
+      "is_evidence": true,
+      "evidence": {
+        "scene_id": "office",
+        "poses": [
+          "A_window",
+          "B_inward"
+        ],
+        "diagnostic_far_clip_m": 14149.617715150258
+      },
+      "note": "worst pose; a scene is only as good as its weakest audited viewpoint"
+    },
+    {
+      "measurement": "distant_scene_fraction",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 153600,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": 0.0868,
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ]
+}

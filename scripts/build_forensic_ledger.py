@@ -1515,6 +1515,107 @@ ENTRIES: list[ForensicEntry] = [
         ),
         tags=["asset-addressing", "false-negative"],
     ),
+    E(
+        issue_id="FL-021",
+        title="Tightening a threshold fixed a false positive and created a false negative",
+        observation=(
+            "After `background_fraction_max` was tightened from 0.35 to 0.10 to stop the "
+            "control world passing, the Office scene failed on 33.9% background -- while "
+            "rendering a legible interior with carpet, a structural pillar and a window wall, "
+            "under 185 correctly resolved materials and zero runtime errors."
+        ),
+        root_cause=(
+            "The observable was semantically wrong, not badly calibrated. It asked 'how many "
+            "pixels have no depth return inside the canonical 100 m clip?' while the "
+            "scientific question was 'how much of the forward view is genuinely an unbounded, "
+            "non-environment void?'. Those are different estimands. A window onto a city "
+            "skyline beyond the far clip scored identically to the control world's black "
+            "nothing."
+        ),
+        why_existing_checks_missed_it=(
+            "The metric was doing exactly what it was written to do, and its first "
+            "recalibration was driven by a scene where the two estimands happened to "
+            "coincide -- in an unbounded void, missing depth really is void. The divergence "
+            "only appears in a bounded scene with a window, which is the case the metric was "
+            "never tested against."
+        ),
+        scientific_risk=(
+            "Rejecting every architecturally realistic environment -- offices, warehouses and "
+            "hospitals all have windows and openings -- and thereby selecting a canonical "
+            "world biased toward sealed, windowless geometry for a reason having nothing to "
+            "do with navigation."
+        ),
+        alternatives_considered=[
+            "Loosen the threshold until Office passes",
+            "Exclude the upper image region from the background measurement",
+            "Split the observable into four classes and reject on true void alone",
+        ],
+        decision=(
+            "Classify every pixel as NEAR_SCENE, DISTANT_SCENE, VALID_ENVIRONMENT_BACKGROUND "
+            "or TRUE_VOID, and move the rejection criterion onto true void. DISTANT_SCENE is "
+            "established by an independent probe -- a second camera parented to the same link "
+            "with identical intrinsics, differing only in far clip, which is set from the "
+            "measured stage diagonal rather than chosen. The threshold stays at 0.10."
+        ),
+        decision_rule=(
+            "A threshold cannot repair a semantically wrong observable. Missing depth within "
+            "a sensor's range is not equivalent to absence of scene geometry, and negative "
+            "evidence requires proof that the observable was capable of seeing the thing "
+            "claimed absent."
+        ),
+        rejected_alternative=(
+            "Loosening the threshold until Office passed was rejected outright: it tunes the "
+            "gate to the candidate in front of it, and would have left the metric unable to "
+            "distinguish a void from a window in every future scene. Masking the upper image "
+            "region was rejected for the same reason -- it hides the disagreement rather than "
+            "resolving it."
+        ),
+        correction="`scripts/scene_visibility_classification.py`, emitting MeasurementEnvelope.",
+        validation=(
+            "Control world, the discriminating case: true void 0.3894, distant scene 0.0, "
+            "still FAIL -- the classifier does not rescue a genuine void, because DISTANT "
+            "can only be earned by a positive observation. Office pose A decomposes its "
+            "33.9% background into 8.7% distant scene and 25.3% environment dome with "
+            "0.000 true void; pose B facing inward is 100% near scene. The class mask shows "
+            "blue aligning with the skyline buildings and yellow with the sky above them."
+        ),
+        regression_control=(
+            "The control-world frame is retained as a negative fixture that must keep failing "
+            "on true void while Office must not, so a future change collapsing the classes "
+            "breaks one of the two."
+        ),
+        evidence=[
+            "gates/scenes/scene_visibility_control_blocks_v1.json",
+            "gates/scenes/scene_visibility_office.json",
+            "gates/scenes/visibility/office/A_window_classes.png",
+        ],
+        impact=(
+            "No scene was selected under the wrong metric, and no data collected. Office's "
+            "original rejection is now demonstrated to have been a false negative rather than "
+            "assumed to be one."
+        ),
+        impact_score=4,
+        detectability_score=4,
+        propagation_score=4,
+        claim_boundary=(
+            "Establishes that Office's apparent background is distant geometry and sky rather "
+            "than void, at two audited poses under Isaac Sim 5.1.0.0."
+        ),
+        non_claim=(
+            "Not a claim that Office is eligible. Only two poses were measured, no corridor or "
+            "goal-style viewpoint, and the material, hue, structure and depth checks have not "
+            "yet been run through this gate. The environment-background rule is also currently "
+            "coarse: every unexplained pixel is forgiven whenever the stage has any dome light, "
+            "so a scene with a dome could in principle launder a real void. That is a known "
+            "weakness, not a validated criterion."
+        ),
+        propagation=(
+            "Applies to every scene that will ever be audited, and to any future metric where "
+            "sensor range limits are mistaken for absence -- including collision clearance and "
+            "goal visibility."
+        ),
+        tags=["observable-semantics", "false-negative", "threshold-discipline"],
+    ),
 ]
 
 
@@ -1528,7 +1629,7 @@ def main() -> int:
             "Every entry carries the chain from what was observed to what is now claimed, "
             "including the field that is easiest to leave out and hardest to reconstruct "
             "later: **why the checks that were already running did not see it**.\n\n"
-            "Twenty entries. Fifteen are defects caught before any admitted result existed; two "
+            "Twenty-one entries. Sixteen are defects caught before any admitted result existed; two "
             "(`FL-003`, `FL-011`) are findings about the released upstream artefacts and their "
             "sampling semantics rather than about this work; one (`FL-008`) is an open gate "
             "scope issue awaiting a decision that is not engineering's to make; one "
