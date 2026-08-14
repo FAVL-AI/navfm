@@ -2,7 +2,7 @@
   "check": "COLLISION_COVERAGE_AUDIT",
   "scene_id": "hospital",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
-  "timestamp_utc": "2026-08-14T04:55:11.768726+00:00",
+  "timestamp_utc": "2026-08-14T05:28:06.778633+00:00",
   "navigation_band_m": [
     0.02,
     0.2803
@@ -13,6 +13,9 @@
   ],
   "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
   "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18",
+  "probe_contract_regressions": "9/9 causality regressions PASS",
+  "evidence_channels_kept_separate": "authored CollisionAPI state and live behavioural response are reported as independent lines and never merged into one percentage",
   "floor_z": 0.0,
   "declared": {
     "meshes_total": 2058,
@@ -39,87 +42,372 @@
     ]
   },
   "behavioural": {
-    "probes_fired": 12,
-    "probes_hitting_something": 12,
-    "note": "A hit proves the physics scene answers queries. Naming the collider is what proves it answered about the right object -- a count alone is the error that let a floor satisfy an obstacle fixture.",
-    "samples": [
-      {
-        "expected_path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
-        "z": 1.501,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_W_WallBase_423/Geo_W_WallBase",
-        "z": 1.5,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      },
-      {
-        "expected_path": "/World/Scene/Geo_W_WallBase2/Geo_W_WallBase",
-        "z": 1.5,
-        "hit_collider": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-        "distance": 11.16
-      }
-    ]
+    "contract": "A probe passes only when the declared target caused the observation. Generic activity is not evidence of target-specific correctness.",
+    "support": {
+      "planned": 8,
+      "fired": 8,
+      "reachable": 7,
+      "non_probative": 1,
+      "correct_target_hits": 7,
+      "wrong_target_hits": 0,
+      "generic_hit_rate": 0.875,
+      "correct_target_hit_rate": 0.875,
+      "unexpected_invariance": true,
+      "review_required": "REVIEW_REQUIRED_UNEXPECTED_INVARIANCE",
+      "reachable_fraction": 0.875,
+      "min_reachable_fraction": 0.5,
+      "verdict": "REVIEW_REQUIRED_INVARIANCE",
+      "probes": [
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/Geo_Floor_Costum17_21/Geo_Floor_Costum/Geo_Floor_Costum/Section0",
+            "/World/Scene/Geo_Floor_Costum17_21/Geo_Floor_Costum/Geo_Floor_Costum/Section1"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -2.09,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -5.589,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -9.089,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -12.589,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -16.089,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -19.59,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
+          "origin": [
+            -23.09,
+            7.101,
+            0.501
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      ]
+    },
+    "blocking": {
+      "planned": 8,
+      "fired": 8,
+      "reachable": 8,
+      "non_probative": 0,
+      "correct_target_hits": 3,
+      "wrong_target_hits": 5,
+      "generic_hit_rate": 1.0,
+      "correct_target_hit_rate": 0.375,
+      "unexpected_invariance": false,
+      "review_required": null,
+      "reachable_fraction": 1.0,
+      "min_reachable_fraction": 0.5,
+      "verdict": "CONTRADICTION",
+      "probes": [
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+          "origin": [
+            13.45,
+            2.401,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+          "origin": [
+            13.45,
+            2.401,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+          "origin": [
+            10.41,
+            0.701,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 4.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+          "actual_distance": 0.75,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+          "origin": [
+            10.41,
+            0.701,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 4.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+          "actual_distance": 0.75,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+          "origin": [
+            10.56,
+            -1.1,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+          "origin": [
+            10.56,
+            -1.1,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+          "origin": [
+            13.45,
+            -1.099,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+          "origin": [
+            13.45,
+            -1.099,
+            1.501
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.31,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+          "actual_distance": 0.6,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        }
+      ]
+    }
   },
+  "scientific_status": "HOLD_CONTRADICTION",
   "verdict": {
-    "physx_traversability_admissible": true,
-    "reason": "collision coverage sufficient for support and blocking geometry, and the physics scene answers queries"
+    "physx_traversability_admissible": false,
+    "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
   },
   "measurements": [
     {
@@ -156,11 +444,11 @@
         "artifact_written": true
       },
       "population": {
-        "items_examined": 12,
+        "items_examined": 16,
         "expected_items": null,
         "complete": null
       },
-      "value": 1.0,
+      "value": 0.625,
       "is_evidence": true,
       "evidence": {}
     }

@@ -2,7 +2,7 @@
   "check": "COLLISION_COVERAGE_AUDIT",
   "scene_id": "office",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
-  "timestamp_utc": "2026-08-14T04:51:43.900612+00:00",
+  "timestamp_utc": "2026-08-14T05:27:48.341426+00:00",
   "navigation_band_m": [
     0.02,
     0.2803
@@ -13,6 +13,9 @@
   ],
   "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
   "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18",
+  "probe_contract_regressions": "9/9 causality regressions PASS",
+  "evidence_channels_kept_separate": "authored CollisionAPI state and live behavioural response are reported as independent lines and never merged into one percentage",
   "floor_z": -3.3,
   "declared": {
     "meshes_total": 3785,
@@ -39,84 +42,189 @@
     ]
   },
   "behavioural": {
-    "probes_fired": 12,
-    "probes_hitting_something": 12,
-    "note": "A hit proves the physics scene answers queries. Naming the collider is what proves it answered about the right object -- a count alone is the error that let a floor satisfy an obstacle fixture.",
-    "samples": [
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
-        "z": -1.7999999999999998,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/InstancedSM_DoorEntrance_door_R/SM_DoorEntrance_door_R",
-        "z": -1.8675,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/SM_DoorEntrance_glass_door_R/SM_DoorEntrance_glass_door",
-        "z": -1.841,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R",
-        "z": -1.8675,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/SM_DoorEntrance_glass_door_L/SM_DoorEntrance_glass_door",
-        "z": -1.841,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_R/SM_DoorEntrance_glass_main",
-        "z": -1.841,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_L/SM_DoorEntrance_glass_main",
-        "z": -1.841,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorC_Security_350/InstancedBP_DoorC_Security_350/SM_DoorB/SM_DoorB",
-        "z": -2.2385,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_DoorC_Security_350/SM_DoorB_Door/InstancedSM_DoorB_Door/SM_DoorB_Door/SM_DoorB_Door",
-        "z": -2.2625,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_PanicDoor4/InstancedBP_PanicDoor4/SM_PanicDoor",
-        "z": -2.0425,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_PanicDoor4/SM_PanicDoor_L/SM_PanicDoor_L",
-        "z": -2.0665,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      },
-      {
-        "expected_path": "/World/Scene/BP_PanicDoor4/SM_PanicDoor_R/SM_PanicDoor_R",
-        "z": -2.0665,
-        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
-        "distance": 5.9
-      }
-    ]
+    "contract": "A probe passes only when the declared target caused the observation. Generic activity is not evidence of target-specific correctness.",
+    "support": {
+      "planned": 2,
+      "fired": 2,
+      "reachable": 2,
+      "non_probative": 0,
+      "correct_target_hits": 1,
+      "wrong_target_hits": 1,
+      "generic_hit_rate": 1.0,
+      "correct_target_hit_rate": 0.5,
+      "unexpected_invariance": false,
+      "review_required": null,
+      "reachable_fraction": 1.0,
+      "min_reachable_fraction": 0.5,
+      "verdict": "CONTRADICTION",
+      "probes": [
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_Buildings/SM_Building_55/SM_Building_01",
+          "origin": [
+            77.6,
+            219.0,
+            -26.6
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_Buildings/SM_Building_134/SM_Building_01",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "SUPPORT",
+          "expected_target_prim": "/World/Scene/SM_Buildings/SM_Building_134/SM_Building_01",
+          "origin": [
+            77.6,
+            219.0,
+            -26.6
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/SM_Buildings/SM_Building_134/SM_Building_01",
+          "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      ]
+    },
+    "blocking": {
+      "planned": 8,
+      "fired": 8,
+      "reachable": 2,
+      "non_probative": 6,
+      "correct_target_hits": 0,
+      "wrong_target_hits": 1,
+      "generic_hit_rate": 0.125,
+      "correct_target_hit_rate": 0.0,
+      "unexpected_invariance": false,
+      "review_required": null,
+      "reachable_fraction": 0.25,
+      "min_reachable_fraction": 0.5,
+      "verdict": "NON_PROBATIVE_SAMPLE",
+      "probes": [
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
+          "origin": [
+            -6.719,
+            -3.0,
+            -1.8
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.438,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R",
+          "actual_distance": 0.7186,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_WRONG_CAUSE"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/InstancedSM_DoorEntrance_door_R/SM_DoorEntrance_door_R",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/SM_DoorEntrance_glass_door_R/SM_DoorEntrance_glass_door",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
+            "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/InstancedSM_DoorEntrance_door_R/SM_DoorEntrance_door_R"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/SM_DoorEntrance_glass_door_L/SM_DoorEntrance_glass_door",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
+            "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_R/SM_DoorEntrance_glass_main",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_L/SM_DoorEntrance_glass_main",
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+        },
+        {
+          "probe_role": "BLOCKING",
+          "expected_target_prim": "/World/Scene/BP_DoorC_Security_350/InstancedBP_DoorC_Security_350/SM_DoorB/SM_DoorB",
+          "origin": [
+            -12.731,
+            7.5,
+            -2.239
+          ],
+          "direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "max_distance": 1.458,
+          "actual_hit": false,
+          "actual_collider_prim": null,
+          "actual_distance": null,
+          "probe_reachability_status": "REACHABLE",
+          "identity_match": false,
+          "verdict": "FAIL_NO_HIT"
+        }
+      ]
+    }
   },
+  "scientific_status": "HOLD_CONTRADICTION",
   "verdict": {
     "physx_traversability_admissible": false,
     "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
@@ -156,11 +264,11 @@
         "artifact_written": true
       },
       "population": {
-        "items_examined": 12,
+        "items_examined": 10,
         "expected_items": null,
         "complete": null
       },
-      "value": 1.0,
+      "value": 0.1,
       "is_evidence": true,
       "evidence": {}
     }

@@ -2,7 +2,7 @@
   "check": "COLLISION_COVERAGE_AUDIT",
   "scene_id": "warehouse",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Simple_Warehouse/warehouse.usd",
-  "timestamp_utc": "2026-08-14T05:00:43.287017+00:00",
+  "timestamp_utc": "2026-08-14T05:28:37.671464+00:00",
   "navigation_band_m": [
     0.02,
     0.2803
@@ -13,6 +13,9 @@
   ],
   "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
   "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18",
+  "probe_contract_regressions": "9/9 causality regressions PASS",
+  "evidence_channels_kept_separate": "authored CollisionAPI state and live behavioural response are reported as independent lines and never merged into one percentage",
   "floor_z": -0.0,
   "declared": {
     "meshes_total": 781,
@@ -43,13 +46,17 @@
     "support": {
       "planned": 8,
       "fired": 8,
+      "reachable": 8,
+      "non_probative": 0,
       "correct_target_hits": 6,
       "wrong_target_hits": 2,
       "generic_hit_rate": 1.0,
       "correct_target_hit_rate": 0.75,
       "unexpected_invariance": true,
       "review_required": "REVIEW_REQUIRED_UNEXPECTED_INVARIANCE",
-      "verdict": "NON_PROBATIVE",
+      "reachable_fraction": 1.0,
+      "min_reachable_fraction": 0.5,
+      "verdict": "REVIEW_REQUIRED_INVARIANCE",
       "probes": [
         {
           "probe_role": "SUPPORT",
@@ -68,6 +75,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_Keepclear6_446/SM_FloorDecal_Keepclear",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         },
@@ -88,6 +96,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/GroundPlane/CollisionPlane",
           "actual_distance": 0.5001,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": false,
           "verdict": "FAIL_WRONG_CAUSE"
         },
@@ -108,6 +117,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/GroundPlane/CollisionPlane",
           "actual_distance": 0.5001,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": false,
           "verdict": "FAIL_WRONG_CAUSE"
         },
@@ -128,6 +138,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m74/SM_FloorDecal_StripeFull_4m",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         },
@@ -148,6 +159,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m75/SM_FloorDecal_StripeFull_4m",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         },
@@ -168,6 +180,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m76/SM_FloorDecal_StripeFull_4m",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         },
@@ -188,6 +201,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m77/SM_FloorDecal_StripeFull_4m",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         },
@@ -208,6 +222,7 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/SM_FloorDecal_StripeFull_4m78/SM_FloorDecal_StripeFull_4m",
           "actual_distance": 0.5,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": true,
           "verdict": "PASS_CORRECT_CAUSE"
         }
@@ -216,13 +231,17 @@
     "blocking": {
       "planned": 8,
       "fired": 8,
-      "correct_target_hits": 6,
-      "wrong_target_hits": 1,
-      "generic_hit_rate": 0.875,
-      "correct_target_hit_rate": 0.75,
+      "reachable": 1,
+      "non_probative": 7,
+      "correct_target_hits": 0,
+      "wrong_target_hits": 0,
+      "generic_hit_rate": 0.0,
+      "correct_target_hit_rate": 0.0,
       "unexpected_invariance": false,
       "review_required": null,
-      "verdict": "NON_PROBATIVE",
+      "reachable_fraction": 0.125,
+      "min_reachable_fraction": 0.5,
+      "verdict": "NON_PROBATIVE_SAMPLE",
       "probes": [
         {
           "probe_role": "BLOCKING",
@@ -241,152 +260,92 @@
           "actual_hit": false,
           "actual_collider_prim": null,
           "actual_distance": null,
+          "probe_reachability_status": "REACHABLE",
           "identity_match": false,
           "verdict": "FAIL_NO_HIT"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_11/SM_PaletteA_01",
-          "origin": [
-            -10.423,
-            1.079,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_11/SM_PaletteA_01",
-          "actual_distance": 0.6015,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_12/SM_PaletteA_01",
-          "origin": [
-            -10.426,
-            2.302,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_12/SM_PaletteA_01",
-          "actual_distance": 0.6081,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_318/SM_PaletteA_01",
-          "origin": [
-            -10.346,
-            7.528,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M11/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M11/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_318/SM_PaletteA_01",
-          "actual_distance": 0.6081,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_319/SM_PaletteA_01",
-          "origin": [
-            -10.423,
-            3.519,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M11/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M11/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_319/SM_PaletteA_01",
-          "actual_distance": 0.6015,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_357/SM_PaletteA_01",
-          "origin": [
-            -10.451,
-            -2.812,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_PillarPartA_9M5_1454/SM_PillarPartA_9M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PillarPartA_9M5_1454/SM_PillarPartA_9M/Section0",
-          "actual_distance": 0.021,
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_358/SM_PaletteA_01",
-          "origin": [
-            -10.448,
-            -1.595,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_358/SM_PaletteA_01",
-          "actual_distance": 0.6015,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/SM_PaletteA_359/SM_PaletteA_01",
-          "origin": [
-            -10.451,
-            -0.372,
-            0.106
+          "probe_reachability_status": "OCCLUDED",
+          "occluders": [
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section0",
+            "/World/Scene/SM_WallA_6M10/SM_WallA_6M/Section1"
           ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 2.203,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/SM_PaletteA_359/SM_PaletteA_01",
-          "actual_distance": 0.6081,
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
         }
       ]
     }
   },
+  "scientific_status": "HOLD_INVARIANCE",
   "verdict": {
     "physx_traversability_admissible": false,
     "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
@@ -430,7 +389,7 @@
         "expected_items": null,
         "complete": null
       },
-      "value": 0.75,
+      "value": 0.375,
       "is_evidence": true,
       "evidence": {}
     }

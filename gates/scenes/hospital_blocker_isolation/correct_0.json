@@ -1,0 +1,113 @@
+{
+  "group": "correct",
+  "declared_target": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+  "original_actual_collider": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+  "original_verdict": "PASS_CORRECT_CAUSE",
+  "original_relation": "SAME_PRIM",
+  "ownership": {
+    "exists": true,
+    "has_collision_api": true,
+    "collision_enabled": true,
+    "nearest_collision_owner": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+    "nearest_rigid_body": null,
+    "is_instance": false,
+    "is_instance_proxy": true,
+    "prototype": null,
+    "ancestor_chain": [
+      "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall",
+      "/World/Scene/Geo_M3_DoorWall_386",
+      "/World/Scene",
+      "/World"
+    ]
+  },
+  "local_isolation": {
+    "bounds": [
+      [
+        14.05,
+        0.651,
+        0.001
+      ],
+      [
+        14.16,
+        4.151,
+        3.001
+      ]
+    ],
+    "directions": [
+      {
+        "direction": "+X",
+        "origin": [
+          13.75,
+          2.401,
+          1.501
+        ],
+        "ray": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "range": 0.56,
+        "hit": true,
+        "actual_collider": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+        "distance": 0.3,
+        "relation_to_target": "SAME_PRIM"
+      },
+      {
+        "direction": "-X",
+        "origin": [
+          14.46,
+          2.401,
+          1.501
+        ],
+        "ray": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "range": 0.56,
+        "hit": true,
+        "actual_collider": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+        "distance": 0.3,
+        "relation_to_target": "DISTINCT_OBJECT"
+      },
+      {
+        "direction": "+Y",
+        "origin": [
+          14.105,
+          0.351,
+          1.501
+        ],
+        "ray": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "range": 3.95,
+        "hit": true,
+        "actual_collider": "/World/Scene/Geo_M_DoorFrame35/Geo_M_DoorFrame/Geo_M_DoorFrame",
+        "distance": 0.0284,
+        "relation_to_target": "DISTINCT_OBJECT"
+      },
+      {
+        "direction": "-Y",
+        "origin": [
+          14.105,
+          4.451,
+          1.501
+        ],
+        "ray": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "range": 3.95,
+        "hit": true,
+        "actual_collider": "/World/Scene/Geo_M3_SideWall12/Geo_M3_SideWall/Geo_M3_SideWall/Section0",
+        "distance": 0.3008,
+        "relation_to_target": "DISTINCT_OBJECT"
+      }
+    ]
+  },
+  "causal_targetability": "TARGET_CAUSALLY_ISOLATABLE"
+}
