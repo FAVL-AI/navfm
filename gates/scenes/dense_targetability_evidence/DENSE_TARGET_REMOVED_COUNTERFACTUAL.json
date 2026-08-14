@@ -1,0 +1,27 @@
+{
+  "B_present": {
+    "targetability": "TARGET_ISOLATABLE",
+    "candidate_digest": "a71356c6f9f05dbb",
+    "observation": {
+      "query_fired": true,
+      "generic_hit": true,
+      "actual_collider": "/World/B",
+      "distance": 0.3,
+      "identity_match": true
+    }
+  },
+  "B_disabled": {
+    "targetability": "TARGET_ISOLATABLE",
+    "candidate_digest": "a71356c6f9f05dbb",
+    "observation": {
+      "query_fired": true,
+      "generic_hit": false,
+      "actual_collider": null,
+      "distance": null,
+      "identity_match": false
+    }
+  },
+  "targetability_unchanged": true,
+  "observation_changed": true,
+  "interpretation": "targetability is a property of the intervention; if it moved with the outcome it would be a renamed outcome"
+}

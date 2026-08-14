@@ -1,0 +1,26 @@
+{
+  "observation": {
+    "query_fired": true,
+    "generic_hit": true,
+    "actual_collider": "/World/A",
+    "distance": 1.8,
+    "identity_match": false
+  },
+  "structural_distinctness": {
+    "a": {
+      "collision_owner": "/World/A",
+      "rigid_body": null,
+      "prototype": null
+    },
+    "b": {
+      "collision_owner": "/World/B",
+      "rigid_body": null,
+      "prototype": null
+    },
+    "distinct": true,
+    "violations": [],
+    "note": "asserted before any query; without it this becomes an identity test"
+  },
+  "unrelated_accepted": false,
+  "interpretation": "A must never be accepted as B; accepting it would turn a visible failure into a silent pass"
+}

@@ -1,0 +1,331 @@
+{
+  "check": "DENSE_TARGETABILITY_REGRESSION",
+  "timestamp_utc": "2026-08-14T05:53:34.809095+00:00",
+  "parent_contract_digest": "480d9f07770eaf2a95446793639e9aad",
+  "dense_expectations_digest": "49c5418859e3d6b5850e0018f718eb4a",
+  "amendment_digest": "6451a1f5cc799d6faebba002b70b5d87",
+  "effective_expectations_digest": "03ebdbc0f1c89d87c1b2813de157d1b7",
+  "no_hospital_content": "No Hospital path, prim, distance or observed answer is used. Hospital supplied the mechanism; these fixtures reproduce it from first principles. wrong_1 is evidence for nothing here.",
+  "fixtures": {
+    "DENSE_LONG_RAY_NOT_TARGETABLE": {
+      "structural_distinctness": {
+        "a": {
+          "collision_owner": "/World/A",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "b": {
+          "collision_owner": "/World/B",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "distinct": true,
+        "violations": [],
+        "note": "asserted before any query; without it this becomes an identity test"
+      },
+      "fixture_validity": {
+        "target_interval": [
+          3.8,
+          4.2
+        ],
+        "competing_intervals": {
+          "/World/A": [
+            1.8,
+            2.2
+          ]
+        },
+        "target_present": true,
+        "expected_interceptor": "/World/A",
+        "interceptor_present": true,
+        "ordering_holds": true,
+        "valid": true
+      },
+      "geometric_reachability": "REACHABLE",
+      "targetability": {
+        "declared_target": "/World/B",
+        "causal_targetability": "TARGET_NOT_ISOLATABLE",
+        "reason": "no candidate isolates the target; nearest failure: /World/A is expected to respond before the declared target",
+        "probative": false,
+        "candidates_considered": 1,
+        "candidate_digest": "7130657d348e85ce",
+        "per_candidate": [
+          {
+            "digest": "1d448041ca3c30d7",
+            "state": "TARGET_OCCLUDED"
+          }
+        ],
+        "chosen_origin": null,
+        "chosen_direction": null
+      },
+      "targetability_decided_at": "2026-08-14T05:53:35.008884+00:00",
+      "candidate_digest_before": "7130657d348e85ce",
+      "candidate_digest_after": "7130657d348e85ce",
+      "observation": {
+        "query_fired": true,
+        "generic_hit": true,
+        "actual_collider": "/World/A",
+        "distance": 1.8,
+        "identity_match": false
+      },
+      "observed_at": "2026-08-14T05:53:35.008973+00:00",
+      "interpretation": "non-probative: the intervention never isolated B, so the hit on A is not evidence against B"
+    },
+    "DENSE_LOCAL_RAY_TARGETABLE": {
+      "geometric_reachability": "REACHABLE",
+      "targetability": {
+        "declared_target": "/World/B",
+        "causal_targetability": "TARGET_ISOLATABLE",
+        "reason": "no structurally distinct body is expected to respond before the target",
+        "probative": true,
+        "candidates_considered": 2,
+        "candidate_digest": "a71356c6f9f05dbb",
+        "per_candidate": [
+          {
+            "digest": "91301245f9b5a4bf",
+            "state": "TARGET_ISOLATABLE"
+          },
+          {
+            "digest": "db4cf18079042f87",
+            "state": "TARGET_ISOLATABLE"
+          }
+        ],
+        "chosen_origin": [
+          3.5,
+          0.0,
+          0.5
+        ],
+        "chosen_direction": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "fixture_validity": {
+        "target_interval": [
+          0.2999999999999998,
+          0.7000000000000002
+        ],
+        "competing_intervals": {},
+        "target_present": true,
+        "nothing_ahead_of_target": true,
+        "bodies_ahead": [],
+        "valid": true
+      },
+      "structural_distinctness": {
+        "a": {
+          "collision_owner": "/World/A",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "b": {
+          "collision_owner": "/World/B",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "distinct": true,
+        "violations": [],
+        "note": "asserted before any query; without it this becomes an identity test"
+      },
+      "candidate_digest_before": "a71356c6f9f05dbb",
+      "candidate_digest_after": "a71356c6f9f05dbb",
+      "targetability_decided_at": "2026-08-14T05:53:35.368062+00:00",
+      "observation": {
+        "query_fired": true,
+        "generic_hit": true,
+        "actual_collider": "/World/B",
+        "distance": 0.3,
+        "identity_match": true
+      },
+      "target_digest": "c9063153b896dd8c"
+    },
+    "DENSE_UNRELATED_NOT_ACCEPTED": {
+      "observation": {
+        "query_fired": true,
+        "generic_hit": true,
+        "actual_collider": "/World/A",
+        "distance": 1.8,
+        "identity_match": false
+      },
+      "structural_distinctness": {
+        "a": {
+          "collision_owner": "/World/A",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "b": {
+          "collision_owner": "/World/B",
+          "rigid_body": null,
+          "prototype": null
+        },
+        "distinct": true,
+        "violations": [],
+        "note": "asserted before any query; without it this becomes an identity test"
+      },
+      "unrelated_accepted": false,
+      "interpretation": "A must never be accepted as B; accepting it would turn a visible failure into a silent pass"
+    },
+    "DENSE_NONISOLATABLE_TARGET": {
+      "geometric_reachability": "REACHABLE",
+      "targetability": {
+        "declared_target": "/World/C",
+        "causal_targetability": "TARGET_NOT_ISOLATABLE",
+        "reason": "no candidate isolates the target; nearest failure: intervention begins inside competing geometry: /World/shell_0",
+        "probative": false,
+        "candidates_considered": 2,
+        "candidate_digest": "00fc176c727f1aa5",
+        "per_candidate": [
+          {
+            "digest": "b0f16834084c21aa",
+            "state": "TARGET_OCCLUDED"
+          },
+          {
+            "digest": "4266e5285b98c7a3",
+            "state": "TARGET_OCCLUDED"
+          }
+        ],
+        "chosen_origin": null,
+        "chosen_direction": null
+      },
+      "query_fired": false,
+      "interpretation": "shell on every face; a gate that finds a working ray here is searching, not testing adequacy"
+    },
+    "DENSE_TARGET_REMOVED_COUNTERFACTUAL": {
+      "B_present": {
+        "targetability": "TARGET_ISOLATABLE",
+        "candidate_digest": "a71356c6f9f05dbb",
+        "observation": {
+          "query_fired": true,
+          "generic_hit": true,
+          "actual_collider": "/World/B",
+          "distance": 0.3,
+          "identity_match": true
+        }
+      },
+      "B_disabled": {
+        "targetability": "TARGET_ISOLATABLE",
+        "candidate_digest": "a71356c6f9f05dbb",
+        "observation": {
+          "query_fired": true,
+          "generic_hit": false,
+          "actual_collider": null,
+          "distance": null,
+          "identity_match": false
+        }
+      },
+      "targetability_unchanged": true,
+      "observation_changed": true,
+      "interpretation": "targetability is a property of the intervention; if it moved with the outcome it would be a renamed outcome"
+    }
+  },
+  "verdicts": {
+    "DENSE_LONG_RAY_NOT_TARGETABLE": "PASS",
+    "DENSE_LOCAL_RAY_TARGETABLE": "PASS",
+    "DENSE_UNRELATED_NOT_ACCEPTED": "PASS",
+    "DENSE_NONISOLATABLE_TARGET": "PASS",
+    "DENSE_TARGET_REMOVED_COUNTERFACTUAL": "PASS"
+  },
+  "measurements": [
+    {
+      "measurement": "dense_DENSE_LONG_RAY_NOT_TARGETABLE",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {}
+    },
+    {
+      "measurement": "dense_DENSE_LOCAL_RAY_TARGETABLE",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {}
+    },
+    {
+      "measurement": "dense_DENSE_UNRELATED_NOT_ACCEPTED",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {}
+    },
+    {
+      "measurement": "dense_DENSE_NONISOLATABLE_TARGET",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {}
+    },
+    {
+      "measurement": "dense_DENSE_TARGET_REMOVED_COUNTERFACTUAL",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ],
+  "all_pass": true,
+  "results_digest": "3f1a1567caf9f3b44ddff62a5a13ae1488f8eb22c480ec2260325428ad736ead"
+}

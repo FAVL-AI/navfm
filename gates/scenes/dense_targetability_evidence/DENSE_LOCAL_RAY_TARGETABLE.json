@@ -1,0 +1,68 @@
+{
+  "geometric_reachability": "REACHABLE",
+  "targetability": {
+    "declared_target": "/World/B",
+    "causal_targetability": "TARGET_ISOLATABLE",
+    "reason": "no structurally distinct body is expected to respond before the target",
+    "probative": true,
+    "candidates_considered": 2,
+    "candidate_digest": "a71356c6f9f05dbb",
+    "per_candidate": [
+      {
+        "digest": "91301245f9b5a4bf",
+        "state": "TARGET_ISOLATABLE"
+      },
+      {
+        "digest": "db4cf18079042f87",
+        "state": "TARGET_ISOLATABLE"
+      }
+    ],
+    "chosen_origin": [
+      3.5,
+      0.0,
+      0.5
+    ],
+    "chosen_direction": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "fixture_validity": {
+    "target_interval": [
+      0.2999999999999998,
+      0.7000000000000002
+    ],
+    "competing_intervals": {},
+    "target_present": true,
+    "nothing_ahead_of_target": true,
+    "bodies_ahead": [],
+    "valid": true
+  },
+  "structural_distinctness": {
+    "a": {
+      "collision_owner": "/World/A",
+      "rigid_body": null,
+      "prototype": null
+    },
+    "b": {
+      "collision_owner": "/World/B",
+      "rigid_body": null,
+      "prototype": null
+    },
+    "distinct": true,
+    "violations": [],
+    "note": "asserted before any query; without it this becomes an identity test"
+  },
+  "candidate_digest_before": "a71356c6f9f05dbb",
+  "candidate_digest_after": "a71356c6f9f05dbb",
+  "targetability_decided_at": "2026-08-14T05:53:35.368062+00:00",
+  "observation": {
+    "query_fired": true,
+    "generic_hit": true,
+    "actual_collider": "/World/B",
+    "distance": 0.3,
+    "identity_match": true
+  },
+  "target_digest": "c9063153b896dd8c"
+}

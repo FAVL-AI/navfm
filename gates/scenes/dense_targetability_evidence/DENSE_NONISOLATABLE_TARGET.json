@@ -1,0 +1,25 @@
+{
+  "geometric_reachability": "REACHABLE",
+  "targetability": {
+    "declared_target": "/World/C",
+    "causal_targetability": "TARGET_NOT_ISOLATABLE",
+    "reason": "no candidate isolates the target; nearest failure: intervention begins inside competing geometry: /World/shell_0",
+    "probative": false,
+    "candidates_considered": 2,
+    "candidate_digest": "00fc176c727f1aa5",
+    "per_candidate": [
+      {
+        "digest": "b0f16834084c21aa",
+        "state": "TARGET_OCCLUDED"
+      },
+      {
+        "digest": "4266e5285b98c7a3",
+        "state": "TARGET_OCCLUDED"
+      }
+    ],
+    "chosen_origin": null,
+    "chosen_direction": null
+  },
+  "query_fired": false,
+  "interpretation": "shell on every face; a gate that finds a working ray here is searching, not testing adequacy"
+}

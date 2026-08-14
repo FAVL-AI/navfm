@@ -42,6 +42,19 @@ from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E4
 
 OUT = REPO / "gates" / "scenes"
 
+#: Target reachability and sample representativeness are different questions. A
+#: probe that reaches 1 of 8 targets can be perfectly causal about that one
+#: collider and still say almost nothing about the scene. Below this fraction the
+#: stratum reports NON_PROBATIVE_SAMPLE rather than a scene-level verdict --
+#: a strong failure claim needs a sample capable of supporting it.
+MIN_REACHABLE_FRACTION = 0.5
+
+#: The probe may only judge a candidate scene after earning the right to, which
+#: is what 9/9 causality regressions established. The digest is mandatory
+#: provenance: a behavioural row without it is not admissible evidence, because
+#: nothing would distinguish it from the retired probe's output.
+REQUIRED_CONTRACT_DIGEST = "480d9f07770eaf2a95446793639e9aad"
+
 #: The robot's own band. Geometry outside it cannot block a Yahboom, so its
 #: collision state is irrelevant and must not count against coverage.
 NAV_Z_MIN, NAV_Z_MAX = 0.02, 0.2803
@@ -66,6 +79,18 @@ def main() -> int:
     ap.add_argument("--scene-id", required=True)
     args = ap.parse_args()
 
+    contract_p = OUT / "collision_probe_contract.json"
+    if not contract_p.is_file():
+        print("REFUSED: no frozen probe contract; the probe has not earned adjudication rights",
+              file=sys.stderr)
+        return 2
+    contract = json.loads(contract_p.read_text())
+    cd = contract.get("probe_contract_digest", "")
+    if cd[:32] != REQUIRED_CONTRACT_DIGEST:
+        print(f"REFUSED: contract digest\n  got    {cd}\n  required {REQUIRED_CONTRACT_DIGEST}",
+              file=sys.stderr)
+        return 2
+
     from isaacsim.simulation_app import SimulationApp
 
     app = SimulationApp({"headless": True})
@@ -82,6 +107,11 @@ def main() -> int:
                      "real asset."),
         "risk_direction": ("Missing collision never invents an obstacle; it invents free "
                            "space, precisely where the robot would collide."),
+        "probe_contract_digest": cd,
+        "probe_contract_regressions": contract.get("gate"),
+        "evidence_channels_kept_separate": (
+            "authored CollisionAPI state and live behavioural response are reported as "
+            "independent lines and never merged into one percentage"),
     }
 
     try:
@@ -271,14 +301,15 @@ def main() -> int:
             nonprob = sum(1 for p_ in probes if str(p_["verdict"]).startswith("NON_PROBATIVE"))
             correct = sum(1 for p_ in probes if p_["verdict"] == "PASS_CORRECT_CAUSE")
             wrong = sum(1 for p_ in probes if p_["verdict"] == "FAIL_WRONG_CAUSE")
-            dists = [p_["actual_distance"] for p_ in probes if p_.get("actual_distance")]
+            dists = [p_.get("actual_distance") for p_ in probes if p_.get("actual_distance")]
             invariant = len(dists) > 2 and len(set(round(d, 2) for d in dists)) == 1
             return {
                 "planned": planned, "fired": fired,
                 "reachable": reachable, "non_probative": nonprob,
                 "correct_target_hits": correct, "wrong_target_hits": wrong,
-                "generic_hit_rate": (round(sum(1 for p_ in probes if p_["actual_hit"]) / fired, 3)
-                                     if fired else None),
+                "generic_hit_rate": (
+                    round(sum(1 for p_ in probes if p_.get("actual_hit")) / fired, 3)
+                    if fired else None),
                 # The scientifically relevant number, kept separate on purpose.
                 "correct_target_hit_rate": round(correct / fired, 3) if fired else None,
                 "unexpected_invariance": invariant,
@@ -286,10 +317,18 @@ def main() -> int:
                 # Only reachable probes can carry causal evidence, so the
                 # verdict is judged over that subset, and a stratum with no
                 # reachable probe is NON_PROBATIVE rather than a pass or a fail.
+                "reachable_fraction": round(reachable / fired, 3) if fired else None,
+                "min_reachable_fraction": MIN_REACHABLE_FRACTION,
+                # Order matters: an unrepresentative sample is disqualified before
+                # its contents are judged, so a 1-of-8 result cannot become a
+                # scene-level failure claim.
                 "verdict": ("NOT_RUN" if planned and not fired
                             else "NO_EVIDENCE" if not fired
-                            else "NON_PROBATIVE" if not reachable or invariant
+                            else "NON_PROBATIVE_SAMPLE"
+                            if reachable / fired < MIN_REACHABLE_FRACTION
+                            else "REVIEW_REQUIRED_INVARIANCE" if invariant
                             else "PROBATIVE_PASS" if correct == reachable
+                            else "CONTRADICTION" if correct and correct < reachable
                             else "PROBATIVE_FAIL"),
                 "probes": probes,
             }
@@ -326,6 +365,18 @@ def main() -> int:
             and (rec["declared"]["blocking_coverage_fraction"] or 0) >= 0.5
             and sup_ok and blk_ok
         )
+        # HOLD is not BLOCKED. A scene whose evidence lines disagree, or whose
+        # sample cannot support a claim, has not been shown deficient -- the
+        # measurement has. Recording it as BLOCKED would attribute an
+        # instrumentation failure to the asset.
+        states = {rec["behavioural"]["support"]["verdict"],
+                  rec["behavioural"]["blocking"]["verdict"]}
+        rec["scientific_status"] = (
+            "ADMISSIBLE" if admissible
+            else "HOLD_CONTRADICTION" if "CONTRADICTION" in states
+            else "HOLD_INVARIANCE" if "REVIEW_REQUIRED_INVARIANCE" in states
+            else "HOLD_INSUFFICIENT_SAMPLE" if "NON_PROBATIVE_SAMPLE" in states
+            else "BLOCKED")
         rec["verdict"] = {
             "physx_traversability_admissible": admissible,
             "reason": ("collision coverage sufficient for support and blocking geometry, and "
