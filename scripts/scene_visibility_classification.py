@@ -86,11 +86,21 @@ def digest_file(p: Path) -> str:
 #: both, whatever the tonemapper does.
 SENTINEL_A = (1.0, 0.0, 0.0)
 SENTINEL_B = (0.0, 1.0, 0.0)
-SENTINEL_MIN_DELTA = 12  # 8-bit levels; above sensor and denoiser noise
+SENTINEL_MIN_DELTA = 12       # 8-bit levels, LDR fallback only
+SENTINEL_MIN_REL_DELTA = 0.02  # HDR: 2% relative response, above renderer noise
+
+#: LdrColor is uint8 and clips at 255, which destroys the differential exactly
+#: where a bright sky lives -- a blown-out window would show zero delta under both
+#: sentinels and be scored TRUE_VOID. HdrColor is float16 and retains the signal:
+#: measured on a saturation fixture, 99.98% of the LDR frame sat at 255 while HDR
+#: spanned 5.17 to 44.22 across those same pixels. So HDR is the oracle when the
+#: renderer exposes it, and its absence is recorded rather than worked around.
+PREFERRED_COLOUR_AOV = "HdrColor"
 
 
 def classify(canon_depth: Any, probe_depth: Any, sentinel_a: Any, sentinel_b: Any, *,
-             canon_far: float) -> dict[str, Any]:
+             canon_far: float, hdr: bool = False,
+             environment_exists: bool = True) -> dict[str, Any]:
     """Four-class split. Every class is earned by a positive observation.
 
     The precedence is strict, so no pixel can hold two classes:
@@ -125,19 +135,51 @@ def classify(canon_depth: Any, probe_depth: Any, sentinel_a: Any, sentinel_b: An
     distant = blind & np.isfinite(p) & (p > 0)
     unexplained = blind & ~distant
 
-    if sentinel_a is None or sentinel_b is None:
-        # No sentinel evidence: unexplained pixels stay void. Absence of the
-        # test is never treated as a pass for the class it would have granted.
+    if not environment_exists:
+        # The stage contains no environment light at all, established by
+        # traversal. There is nothing whose contribution could be measured, so
+        # the environment class is positively ruled out and unexplained pixels
+        # are void. This is NOT the same as a sentinel that failed to run:
+        # "nothing to measure" is a determination, "could not measure" is
+        # missing evidence. Conflating them turned the control world's genuine
+        # 38.9% void into INDETERMINATE and weakened a negative control.
         env_bg = np.zeros_like(unexplained)
+        unresolved = np.zeros_like(unexplained)
         delta_max = None
+        mode = "no_environment_in_stage"
+    elif sentinel_a is None or sentinel_b is None:
+        # An environment exists but the differential did not execute. That is
+        # missing evidence, not negative evidence: UNRESOLVED, never void.
+        env_bg = np.zeros_like(unexplained)
+        unresolved = unexplained.copy()
+        delta_max = None
+        mode = "NO_SENTINEL_EVIDENCE"
     else:
-        a = np.asarray(sentinel_a, dtype=np.int16)[..., :3]
-        b = np.asarray(sentinel_b, dtype=np.int16)[..., :3]
-        delta = np.abs(a - b).max(axis=-1)
-        env_bg = unexplained & (delta >= SENTINEL_MIN_DELTA)
-        delta_max = int(delta.max())
+        a = np.asarray(sentinel_a, dtype=np.float32)[..., :3]
+        b = np.asarray(sentinel_b, dtype=np.float32)[..., :3]
+        if hdr:
+            # Relative response: HDR is unbounded, so an absolute level would
+            # mean different things in a dim corridor and a bright atrium.
+            denom = np.maximum(np.maximum(np.abs(a), np.abs(b)).max(axis=-1), 1e-6)
+            rel = np.abs(a - b).max(axis=-1) / denom
+            env_bg = unexplained & (rel >= SENTINEL_MIN_REL_DELTA)
+            # With HDR there is no clipping, so every unexplained pixel is
+            # decidable and nothing is left unresolved on saturation grounds.
+            unresolved = np.zeros_like(unexplained)
+            delta_max = float(rel.max())
+            mode = "differential_sentinel_hdr"
+        else:
+            delta = np.abs(a - b).max(axis=-1)
+            env_bg = unexplained & (delta >= SENTINEL_MIN_DELTA)
+            # LDR clips: a pixel saturated in BOTH passes cannot show a delta,
+            # so its environment response is unobservable and it must not be
+            # convicted of being void.
+            sat = (a >= 254).all(axis=-1) & (b >= 254).all(axis=-1)
+            unresolved = unexplained & ~env_bg & sat
+            delta_max = float(delta.max())
+            mode = "differential_sentinel_ldr"
 
-    void = unexplained & ~env_bg
+    void = unexplained & ~env_bg & ~unresolved
 
     def frac(m: Any) -> float:
         return round(float(m.sum()) / total, 4)
@@ -147,6 +189,7 @@ def classify(canon_depth: Any, probe_depth: Any, sentinel_a: Any, sentinel_b: An
         "distant_scene_pixels": int(distant.sum()),
         "valid_environment_background_pixels": int(env_bg.sum()),
         "true_void_pixels": int(void.sum()),
+        "saturation_unresolved_pixels": int(unresolved.sum()),
     }
     # Exact integer accounting: a pixel the classifier forgot is a pixel it
     # cannot vouch for, so the shortfall is reported rather than absorbed.
@@ -161,10 +204,15 @@ def classify(canon_depth: Any, probe_depth: Any, sentinel_a: Any, sentinel_b: An
         "valid_environment_background_fraction": frac(env_bg),
         "true_void_fraction": frac(void),
         "raw_background_fraction": frac(blind),
+        "saturation_unresolved_fraction": frac(unresolved),
+        # Bound the quantity instead of forcing a point estimate. Unresolved
+        # pixels could be either, so they widen the interval rather than being
+        # silently assigned to whichever class is convenient.
+        "void_lower_bound": frac(void),
+        "void_upper_bound": round(float((void.sum() + unresolved.sum()) / total), 4),
         "sentinel_max_delta": delta_max,
         "sentinel_min_delta_required": SENTINEL_MIN_DELTA,
-        "environment_attribution": ("differential_sentinel" if delta_max is not None
-                                    else "NO_SENTINEL_EVIDENCE"),
+        "environment_attribution": mode,
         "_masks": {"near": near, "distant": distant, "env": env_bg, "void": void},
     }
 
@@ -321,10 +369,26 @@ def main() -> int:
 
         rp_c = rep.create.render_product(cam_path, (320, 240))
         rp_p = rep.create.render_product(probe_path, (320, 240))
+        available = set(rep.AnnotatorRegistry.get_registered_annotators())
+        use_hdr = PREFERRED_COLOUR_AOV in available
+        a_hdr = rep.AnnotatorRegistry.get_annotator(PREFERRED_COLOUR_AOV) if use_hdr else None
         a_rgb = rep.AnnotatorRegistry.get_annotator("rgb")
         a_dc = rep.AnnotatorRegistry.get_annotator("distance_to_camera")
         a_dp = rep.AnnotatorRegistry.get_annotator("distance_to_camera")
         a_rgb.attach(rp_c)
+        if a_hdr is not None:
+            a_hdr.attach(rp_c)
+        record["colour_aov"] = {
+            "preferred": PREFERRED_COLOUR_AOV,
+            "available": sorted(n for n in available
+                                if any(k in n.lower() for k in ("color", "hdr", "ldr"))),
+            "using_hdr": use_hdr,
+            "why": ("HdrColor is float16 and does not clip, so the environment differential "
+                    "stays observable in a blown-out sky where LdrColor saturates at 255."
+                    if use_hdr else
+                    "HdrColor absent; falling back to LDR, where saturated pixels are "
+                    "reported SATURATION_UNRESOLVED rather than convicted as void."),
+        }
         a_dc.attach(rp_c)
         a_dp.attach(rp_p)
 
@@ -380,7 +444,8 @@ def main() -> int:
                             d.CreateColorAttr().Set(Gf.Vec3f(*col))
                         for _ in range(10):
                             sim.step(render=True)
-                        f = np.asarray(a_rgb.get_data())
+                        src = a_hdr if a_hdr is not None else a_rgb
+                        f = np.asarray(src.get_data())
                         frames.append(f[:, :, :3] if f.ndim == 3 and f.shape[2] == 4 else f)
                     sa, sb = frames
                 finally:
@@ -396,7 +461,8 @@ def main() -> int:
                     for _ in range(6):
                         sim.step(render=True)
 
-            cls = classify(dc, dp, sa, sb, canon_far=canon_far)
+            cls = classify(dc, dp, sa, sb, canon_far=canon_far, hdr=use_hdr,
+                           environment_exists=bool(domes))
             masks = cls.pop("_masks")
             # Four-class label image for inspection: near / distant / env / void.
             lab = np.zeros((*masks["near"].shape, 3), dtype=np.uint8)
@@ -437,10 +503,17 @@ def main() -> int:
                 value=max(r["distant_scene_fraction"] for r in measured),
                 items_examined=sum(r["pixels_total"] for r in measured),
             ))
+            lo = max(r["void_lower_bound"] for r in measured)
+            hi = max(r["void_upper_bound"] for r in measured)
+            t = THRESHOLDS["true_void_fraction_max"]
+            # Bound the decision, do not force it. An interval straddling the
+            # threshold is an honest INDETERMINATE, not a coin toss dressed as
+            # a verdict.
+            result = ("PASS" if hi <= t else "FAIL" if lo > t else "INDETERMINATE")
             record["verdict"] = {
-                "true_void_fraction": worst,
-                "threshold": THRESHOLDS["true_void_fraction_max"],
-                "result": "PASS" if worst <= THRESHOLDS["true_void_fraction_max"] else "FAIL",
+                "void_lower_bound": lo, "void_upper_bound": hi,
+                "true_void_fraction": worst, "threshold": t, "result": result,
+                "rule": "PASS if upper<=t; FAIL if lower>t; else INDETERMINATE",
             }
         else:
             envelopes.append(not_run("true_void_fraction", note="no frame measured"))

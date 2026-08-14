@@ -2,7 +2,7 @@
   "check": "SCENE_VISIBILITY_CLASSIFICATION",
   "scene_id": "office",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
-  "timestamp_utc": "2026-08-14T04:07:49.274962+00:00",
+  "timestamp_utc": "2026-08-14T04:21:21.530829+00:00",
   "thresholds": {
     "true_void_fraction_max": 0.1,
     "structure_fraction_min": 0.15,
@@ -37,30 +37,45 @@
     "focal_length_mm": 18.0,
     "horizontal_aperture_mm": 20.954999923706055
   },
+  "colour_aov": {
+    "preferred": "HdrColor",
+    "available": [
+      "DepthSensorPointCloudColor",
+      "HdrColor",
+      "LdrColor",
+      "LdrColorSDIsaacConvertRGBAToRGB"
+    ],
+    "using_hdr": true,
+    "why": "HdrColor is float16 and does not clip, so the environment differential stays observable in a blown-out sky where LdrColor saturates at 255."
+  },
   "poses": [
     {
       "pixels_total": 76800,
       "near_scene_pixels": 50741,
       "distant_scene_pixels": 6669,
-      "valid_environment_background_pixels": 7147,
-      "true_void_pixels": 12243,
+      "valid_environment_background_pixels": 10677,
+      "true_void_pixels": 8713,
+      "saturation_unresolved_pixels": 0,
       "unclassified_pixels": 0,
       "accounting_exact": true,
       "near_scene_fraction": 0.6607,
       "distant_scene_fraction": 0.0868,
-      "valid_environment_background_fraction": 0.0931,
-      "true_void_fraction": 0.1594,
+      "valid_environment_background_fraction": 0.139,
+      "true_void_fraction": 0.1135,
       "raw_background_fraction": 0.3393,
-      "sentinel_max_delta": 205,
+      "saturation_unresolved_fraction": 0.0,
+      "void_lower_bound": 0.1135,
+      "void_upper_bound": 0.1135,
+      "sentinel_max_delta": 0.9998186826705933,
       "sentinel_min_delta_required": 12,
-      "environment_attribution": "differential_sentinel",
+      "environment_attribution": "differential_sentinel_hdr",
       "pose": "A_window",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 0.0,
       "class_mask": "gates/scenes/visibility/office/A_window_classes.png",
       "pov": "gates/scenes/visibility/office/A_window_pov.png",
-      "pov_digest": "5793a5d61e6bfaf993d67f2004df479e"
+      "pov_digest": "6502a81bbb0b6329cb13efb82f0f870e"
     },
     {
       "pixels_total": 76800,
@@ -68,6 +83,7 @@
       "distant_scene_pixels": 0,
       "valid_environment_background_pixels": 0,
       "true_void_pixels": 0,
+      "saturation_unresolved_pixels": 0,
       "unclassified_pixels": 0,
       "accounting_exact": true,
       "near_scene_fraction": 1.0,
@@ -75,22 +91,28 @@
       "valid_environment_background_fraction": 0.0,
       "true_void_fraction": 0.0,
       "raw_background_fraction": 0.0,
-      "sentinel_max_delta": 83,
+      "saturation_unresolved_fraction": 0.0,
+      "void_lower_bound": 0.0,
+      "void_upper_bound": 0.0,
+      "sentinel_max_delta": 0.8256940841674805,
       "sentinel_min_delta_required": 12,
-      "environment_attribution": "differential_sentinel",
+      "environment_attribution": "differential_sentinel_hdr",
       "pose": "B_inward",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 180.0,
       "class_mask": "gates/scenes/visibility/office/B_inward_classes.png",
       "pov": "gates/scenes/visibility/office/B_inward_pov.png",
-      "pov_digest": "48cb7bf75710898d8efcc27f0bfb3e0f"
+      "pov_digest": "3ee68b08383c9ddf1ef6740e1e365625"
     }
   ],
   "verdict": {
-    "true_void_fraction": 0.1594,
+    "void_lower_bound": 0.1135,
+    "void_upper_bound": 0.1135,
+    "true_void_fraction": 0.1135,
     "threshold": 0.1,
-    "result": "FAIL"
+    "result": "FAIL",
+    "rule": "PASS if upper<=t; FAIL if lower>t; else INDETERMINATE"
   },
   "measurements": [
     {
@@ -109,7 +131,7 @@
         "expected_items": 153600,
         "complete": true
       },
-      "value": 0.1594,
+      "value": 0.1135,
       "is_evidence": true,
       "evidence": {
         "scene_id": "office",

@@ -2,7 +2,7 @@
   "check": "SCENE_VISIBILITY_CLASSIFICATION",
   "scene_id": "dome_launder_fixture",
   "scene": "dome_launder",
-  "timestamp_utc": "2026-08-14T04:07:13.308121+00:00",
+  "timestamp_utc": "2026-08-14T04:20:50.758523+00:00",
   "thresholds": {
     "true_void_fraction_max": 0.1,
     "structure_fraction_min": 0.15,
@@ -37,36 +37,54 @@
     "focal_length_mm": 18.0,
     "horizontal_aperture_mm": 20.954999923706055
   },
+  "colour_aov": {
+    "preferred": "HdrColor",
+    "available": [
+      "DepthSensorPointCloudColor",
+      "HdrColor",
+      "LdrColor",
+      "LdrColorSDIsaacConvertRGBAToRGB"
+    ],
+    "using_hdr": true,
+    "why": "HdrColor is float16 and does not clip, so the environment differential stays observable in a blown-out sky where LdrColor saturates at 255."
+  },
   "poses": [
     {
       "pixels_total": 76800,
-      "near_scene_pixels": 34240,
+      "near_scene_pixels": 33949,
       "distant_scene_pixels": 0,
-      "valid_environment_background_pixels": 451,
-      "true_void_pixels": 42109,
+      "valid_environment_background_pixels": 1362,
+      "true_void_pixels": 41489,
+      "saturation_unresolved_pixels": 0,
       "unclassified_pixels": 0,
       "accounting_exact": true,
-      "near_scene_fraction": 0.4458,
+      "near_scene_fraction": 0.442,
       "distant_scene_fraction": 0.0,
-      "valid_environment_background_fraction": 0.0059,
-      "true_void_fraction": 0.5483,
-      "raw_background_fraction": 0.5542,
-      "sentinel_max_delta": 124,
+      "valid_environment_background_fraction": 0.0177,
+      "true_void_fraction": 0.5402,
+      "raw_background_fraction": 0.558,
+      "saturation_unresolved_fraction": 0.0,
+      "void_lower_bound": 0.5402,
+      "void_upper_bound": 0.5402,
+      "sentinel_max_delta": 0.9753411412239075,
       "sentinel_min_delta_required": 12,
-      "environment_attribution": "differential_sentinel",
+      "environment_attribution": "differential_sentinel_hdr",
       "pose": "origin",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 0.0,
       "class_mask": "gates/scenes/visibility/dome_launder_fixture/origin_classes.png",
       "pov": "gates/scenes/visibility/dome_launder_fixture/origin_pov.png",
-      "pov_digest": "ef051f1e7211db73c9a37bb6dc94b577"
+      "pov_digest": "1bfb00499140cedb82406fd5cc4cfde1"
     }
   ],
   "verdict": {
-    "true_void_fraction": 0.5483,
+    "void_lower_bound": 0.5402,
+    "void_upper_bound": 0.5402,
+    "true_void_fraction": 0.5402,
     "threshold": 0.1,
-    "result": "FAIL"
+    "result": "FAIL",
+    "rule": "PASS if upper<=t; FAIL if lower>t; else INDETERMINATE"
   },
   "measurements": [
     {
@@ -85,7 +103,7 @@
         "expected_items": 76800,
         "complete": true
       },
-      "value": 0.5483,
+      "value": 0.5402,
       "is_evidence": true,
       "evidence": {
         "scene_id": "dome_launder_fixture",

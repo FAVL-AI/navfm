@@ -2,7 +2,7 @@
   "check": "SCENE_VISIBILITY_CLASSIFICATION",
   "scene_id": "control_blocks_v1",
   "scene": "control",
-  "timestamp_utc": "2026-08-14T03:51:27.237529+00:00",
+  "timestamp_utc": "2026-08-14T04:20:41.704300+00:00",
   "thresholds": {
     "true_void_fraction_max": 0.1,
     "structure_fraction_min": 0.15,
@@ -37,31 +37,54 @@
     "focal_length_mm": 18.0,
     "horizontal_aperture_mm": 20.954999923706055
   },
+  "colour_aov": {
+    "preferred": "HdrColor",
+    "available": [
+      "DepthSensorPointCloudColor",
+      "HdrColor",
+      "LdrColor",
+      "LdrColorSDIsaacConvertRGBAToRGB"
+    ],
+    "using_hdr": true,
+    "why": "HdrColor is float16 and does not clip, so the environment differential stays observable in a blown-out sky where LdrColor saturates at 255."
+  },
   "poses": [
     {
       "pixels_total": 76800,
-      "near_scene_pixels": 46895,
+      "near_scene_pixels": 45884,
       "distant_scene_pixels": 0,
       "valid_environment_background_pixels": 0,
-      "true_void_pixels": 29905,
-      "near_scene_fraction": 0.6106,
+      "true_void_pixels": 30916,
+      "saturation_unresolved_pixels": 0,
+      "unclassified_pixels": 0,
+      "accounting_exact": true,
+      "near_scene_fraction": 0.5974,
       "distant_scene_fraction": 0.0,
       "valid_environment_background_fraction": 0.0,
-      "true_void_fraction": 0.3894,
-      "raw_background_fraction": 0.3894,
+      "true_void_fraction": 0.4026,
+      "raw_background_fraction": 0.4026,
+      "saturation_unresolved_fraction": 0.0,
+      "void_lower_bound": 0.4026,
+      "void_upper_bound": 0.4026,
+      "sentinel_max_delta": null,
+      "sentinel_min_delta_required": 12,
+      "environment_attribution": "no_environment_in_stage",
       "pose": "origin",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 0.0,
       "class_mask": "gates/scenes/visibility/control_blocks_v1/origin_classes.png",
       "pov": "gates/scenes/visibility/control_blocks_v1/origin_pov.png",
-      "pov_digest": "cd6fbc43621cc4900c6412e2d01041e7"
+      "pov_digest": "e283d1c39bb1906c8075da6436ec1548"
     }
   ],
   "verdict": {
-    "true_void_fraction": 0.3894,
+    "void_lower_bound": 0.4026,
+    "void_upper_bound": 0.4026,
+    "true_void_fraction": 0.4026,
     "threshold": 0.1,
-    "result": "FAIL"
+    "result": "FAIL",
+    "rule": "PASS if upper<=t; FAIL if lower>t; else INDETERMINATE"
   },
   "measurements": [
     {
@@ -80,7 +103,7 @@
         "expected_items": 76800,
         "complete": true
       },
-      "value": 0.3894,
+      "value": 0.4026,
       "is_evidence": true,
       "evidence": {
         "scene_id": "control_blocks_v1",
