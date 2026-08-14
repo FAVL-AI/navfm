@@ -81,9 +81,37 @@ def digest_file(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()[:32]
 
 
-def classify(canon_depth: Any, probe_depth: Any, *, canon_far: float,
-             has_env_dome: bool) -> dict[str, Any]:
-    """Four-class split, using the probe only where the canonical camera is blind."""
+#: Two environment colours for the differential sentinel pass. Far apart in every
+#: channel so a pixel receiving environment light cannot render identically under
+#: both, whatever the tonemapper does.
+SENTINEL_A = (1.0, 0.0, 0.0)
+SENTINEL_B = (0.0, 1.0, 0.0)
+SENTINEL_MIN_DELTA = 12  # 8-bit levels; above sensor and denoiser noise
+
+
+def classify(canon_depth: Any, probe_depth: Any, sentinel_a: Any, sentinel_b: Any, *,
+             canon_far: float) -> dict[str, Any]:
+    """Four-class split. Every class is earned by a positive observation.
+
+    The precedence is strict, so no pixel can hold two classes:
+
+    1. ``NEAR_SCENE``   geometry inside the canonical camera's range.
+    2. ``DISTANT_SCENE`` the extended probe sees geometry the canonical camera
+       clipped away.
+    3. ``VALID_ENVIRONMENT_BACKGROUND`` the pixel *demonstrably responds* to the
+       environment.
+    4. ``TRUE_VOID``    nothing accounts for it.
+
+    The third class used to be granted whenever the stage contained a DomeLight
+    anywhere -- a scene-level fact standing in for a pixel-level claim, so adding
+    a dome to an empty world would have laundered its void into a pass. It is now
+    differential: the environment is rendered twice in two very different
+    colours, and only pixels whose value *changes* are attributed to it. A void
+    pixel is black under both and does not move. This distinguishes
+    ``ENVIRONMENT_LIGHT_PRESENT`` from ``PIXEL_ENVIRONMENT_VISIBLE``, which are
+    different facts: a dome can illuminate geometry without being the visible
+    background for any particular ray.
+    """
     import numpy as np
 
     c = np.asarray(canon_depth, dtype=np.float32)
@@ -96,32 +124,54 @@ def classify(canon_depth: Any, probe_depth: Any, *, canon_far: float,
     # it is a second opinion about darkness, not a replacement depth source.
     distant = blind & np.isfinite(p) & (p > 0)
     unexplained = blind & ~distant
-    # A configured dome/sky legitimately accounts for remaining pixels. Without
-    # one, unexplained darkness is void.
-    env_bg = unexplained if has_env_dome else np.zeros_like(unexplained)
+
+    if sentinel_a is None or sentinel_b is None:
+        # No sentinel evidence: unexplained pixels stay void. Absence of the
+        # test is never treated as a pass for the class it would have granted.
+        env_bg = np.zeros_like(unexplained)
+        delta_max = None
+    else:
+        a = np.asarray(sentinel_a, dtype=np.int16)[..., :3]
+        b = np.asarray(sentinel_b, dtype=np.int16)[..., :3]
+        delta = np.abs(a - b).max(axis=-1)
+        env_bg = unexplained & (delta >= SENTINEL_MIN_DELTA)
+        delta_max = int(delta.max())
+
     void = unexplained & ~env_bg
 
     def frac(m: Any) -> float:
         return round(float(m.sum()) / total, 4)
 
-    return {
-        "pixels_total": total,
+    counts = {
         "near_scene_pixels": int(near.sum()),
         "distant_scene_pixels": int(distant.sum()),
         "valid_environment_background_pixels": int(env_bg.sum()),
         "true_void_pixels": int(void.sum()),
+    }
+    # Exact integer accounting: a pixel the classifier forgot is a pixel it
+    # cannot vouch for, so the shortfall is reported rather than absorbed.
+    unclassified = total - sum(counts.values())
+    return {
+        "pixels_total": total,
+        **counts,
+        "unclassified_pixels": unclassified,
+        "accounting_exact": unclassified == 0,
         "near_scene_fraction": frac(near),
         "distant_scene_fraction": frac(distant),
         "valid_environment_background_fraction": frac(env_bg),
         "true_void_fraction": frac(void),
         "raw_background_fraction": frac(blind),
+        "sentinel_max_delta": delta_max,
+        "sentinel_min_delta_required": SENTINEL_MIN_DELTA,
+        "environment_attribution": ("differential_sentinel" if delta_max is not None
+                                    else "NO_SENTINEL_EVIDENCE"),
         "_masks": {"near": near, "distant": distant, "env": env_bg, "void": void},
     }
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--scene", required=True, help="'control', a USD path, or a URL")
+    ap.add_argument("--scene", required=True, help="control, dome_launder, a USD path, or a URL")
     ap.add_argument("--scene-id", required=True)
     ap.add_argument("--pose", action="append", default=[],
                     help="x,y,yaw_deg[,label] -- repeatable; default is the origin pose")
@@ -144,7 +194,7 @@ def main() -> int:
     }
 
     is_url = "://" in args.scene
-    if args.scene != "control" and not is_url and not Path(args.scene).is_file():
+    if args.scene not in ("control", "dome_launder") and not is_url and not Path(args.scene).is_file():
         print(f"REFUSED: no scene USD at {args.scene}", file=sys.stderr)
         envelopes.append(not_run("true_void_fraction", note=f"scene absent: {args.scene}"))
         _emit(record, envelopes, args.scene_id)
@@ -166,7 +216,26 @@ def main() -> int:
         sim = SimulationContext(stage_units_in_meters=1.0)
         live = Liveness(**{**live.__dict__, "subject_open_attempted": True})
 
-        if args.scene == "control":
+        if args.scene == "dome_launder":
+            # The fixture that proves FL-021 is closed. A genuine unbounded void
+            # PLUS a DomeLight: under the old scene-level rule every empty pixel
+            # was forgiven because a dome existed somewhere. The dome here is
+            # deliberately invisible to the camera -- zero intensity, so it
+            # cannot be the visible background for any ray -- while remaining a
+            # DomeLight the old test would have accepted.
+            import omni.kit.commands
+            from isaacsim.core.api.objects.ground_plane import GroundPlane
+            from pxr import UsdLux as _UL
+
+            GroundPlane(prim_path="/World/groundPlane", size=40.0)
+            omni.kit.commands.execute("CreatePrim", prim_type="DistantLight",
+                                      prim_path="/World/light")
+            omni.kit.commands.execute("CreatePrim", prim_type="DomeLight",
+                                      prim_path="/World/invisible_dome")
+            dl = _UL.DomeLight(stage_utils.get_current_stage().GetPrimAtPath(
+                "/World/invisible_dome"))
+            dl.CreateIntensityAttr().Set(0.0)
+        elif args.scene == "control":
             import omni.kit.commands
             from isaacsim.core.api.objects.ground_plane import GroundPlane
 
@@ -199,10 +268,12 @@ def main() -> int:
         lo = np.array([np.inf] * 3)
         hi = np.array([-np.inf] * 3)
         n_mesh = 0
-        has_dome = False
+        domes = []
         for prim in stage.Traverse():
             if UsdLux.DomeLight(prim):
-                has_dome = True
+                domes.append(UsdLux.DomeLight(prim))
+        has_dome = bool(domes)
+        for prim in stage.Traverse():
             if prim.GetTypeName() == "Mesh" and not str(prim.GetPath()).startswith(
                     "/World/YahboomM3Pro"):
                 n_mesh += 1
@@ -287,7 +358,45 @@ def main() -> int:
                 results.append({"pose": label, "status": "no frame"})
                 continue
 
-            cls = classify(dc, dp, canon_far=canon_far, has_env_dome=has_dome)
+            # -- differential sentinel: the environment, twice, in two colours.
+            # Only pixels whose value MOVES between them are receiving the
+            # environment. A void pixel is black under both and does not move,
+            # so a dome can no longer forgive a void merely by existing.
+            sa = sb = None
+            if domes:
+                originals = [(d, d.GetColorAttr().Get(), d.GetIntensityAttr().Get(),
+                              d.GetTextureFileAttr().Get()) for d in domes]
+                try:
+                    frames = []
+                    for col in (SENTINEL_A, SENTINEL_B):
+                        for d in domes:
+                            # Colour ONLY. Intensity is preserved deliberately:
+                            # an earlier version forced it to 3000 and thereby
+                            # made an invisible dome visible, manufacturing the
+                            # very contribution it was testing for. A dome that
+                            # does not light the scene must stay dark in both
+                            # passes so its pixels remain TRUE_VOID.
+                            d.GetTextureFileAttr().Clear()
+                            d.CreateColorAttr().Set(Gf.Vec3f(*col))
+                        for _ in range(10):
+                            sim.step(render=True)
+                        f = np.asarray(a_rgb.get_data())
+                        frames.append(f[:, :, :3] if f.ndim == 3 and f.shape[2] == 4 else f)
+                    sa, sb = frames
+                finally:
+                    # Restore before anything else reads the stage, so the
+                    # diagnostic cannot leak into the canonical render.
+                    for d, c0, i0, t0 in originals:
+                        if c0 is not None:
+                            d.CreateColorAttr().Set(c0)
+                        if i0 is not None:
+                            d.CreateIntensityAttr().Set(i0)
+                        if t0 is not None:
+                            d.CreateTextureFileAttr().Set(t0)
+                    for _ in range(6):
+                        sim.step(render=True)
+
+            cls = classify(dc, dp, sa, sb, canon_far=canon_far)
             masks = cls.pop("_masks")
             # Four-class label image for inspection: near / distant / env / void.
             lab = np.zeros((*masks["near"].shape, 3), dtype=np.uint8)

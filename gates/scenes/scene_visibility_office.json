@@ -2,7 +2,7 @@
   "check": "SCENE_VISIBILITY_CLASSIFICATION",
   "scene_id": "office",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
-  "timestamp_utc": "2026-08-14T03:52:31.095649+00:00",
+  "timestamp_utc": "2026-08-14T04:07:49.274962+00:00",
   "thresholds": {
     "true_void_fraction_max": 0.1,
     "structure_fraction_min": 0.15,
@@ -42,20 +42,25 @@
       "pixels_total": 76800,
       "near_scene_pixels": 50741,
       "distant_scene_pixels": 6669,
-      "valid_environment_background_pixels": 19390,
-      "true_void_pixels": 0,
+      "valid_environment_background_pixels": 7147,
+      "true_void_pixels": 12243,
+      "unclassified_pixels": 0,
+      "accounting_exact": true,
       "near_scene_fraction": 0.6607,
       "distant_scene_fraction": 0.0868,
-      "valid_environment_background_fraction": 0.2525,
-      "true_void_fraction": 0.0,
+      "valid_environment_background_fraction": 0.0931,
+      "true_void_fraction": 0.1594,
       "raw_background_fraction": 0.3393,
+      "sentinel_max_delta": 205,
+      "sentinel_min_delta_required": 12,
+      "environment_attribution": "differential_sentinel",
       "pose": "A_window",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 0.0,
       "class_mask": "gates/scenes/visibility/office/A_window_classes.png",
       "pov": "gates/scenes/visibility/office/A_window_pov.png",
-      "pov_digest": "c9cf8ac8d81511cbfc03c7aeb1109398"
+      "pov_digest": "5793a5d61e6bfaf993d67f2004df479e"
     },
     {
       "pixels_total": 76800,
@@ -63,29 +68,34 @@
       "distant_scene_pixels": 0,
       "valid_environment_background_pixels": 0,
       "true_void_pixels": 0,
+      "unclassified_pixels": 0,
+      "accounting_exact": true,
       "near_scene_fraction": 1.0,
       "distant_scene_fraction": 0.0,
       "valid_environment_background_fraction": 0.0,
       "true_void_fraction": 0.0,
       "raw_background_fraction": 0.0,
+      "sentinel_max_delta": 83,
+      "sentinel_min_delta_required": 12,
+      "environment_attribution": "differential_sentinel",
       "pose": "B_inward",
       "x": 0.0,
       "y": 0.0,
       "yaw_deg": 180.0,
       "class_mask": "gates/scenes/visibility/office/B_inward_classes.png",
       "pov": "gates/scenes/visibility/office/B_inward_pov.png",
-      "pov_digest": "4773326bdc62c9b9d644f9666b4a70d4"
+      "pov_digest": "48cb7bf75710898d8efcc27f0bfb3e0f"
     }
   ],
   "verdict": {
-    "true_void_fraction": 0.0,
+    "true_void_fraction": 0.1594,
     "threshold": 0.1,
-    "result": "PASS"
+    "result": "FAIL"
   },
   "measurements": [
     {
       "measurement": "true_void_fraction",
-      "status": "MEASURED_ZERO",
+      "status": "MEASURED_NONZERO",
       "liveness": {
         "process_started": true,
         "runtime_started": true,
@@ -99,7 +109,7 @@
         "expected_items": 153600,
         "complete": true
       },
-      "value": 0.0,
+      "value": 0.1594,
       "is_evidence": true,
       "evidence": {
         "scene_id": "office",

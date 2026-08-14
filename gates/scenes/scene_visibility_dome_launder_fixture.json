@@ -1,0 +1,120 @@
+{
+  "check": "SCENE_VISIBILITY_CLASSIFICATION",
+  "scene_id": "dome_launder_fixture",
+  "scene": "dome_launder",
+  "timestamp_utc": "2026-08-14T04:07:13.308121+00:00",
+  "thresholds": {
+    "true_void_fraction_max": 0.1,
+    "structure_fraction_min": 0.15,
+    "median_forward_depth_min_m": 1.5,
+    "dominant_hue_fraction_max": 0.8,
+    "distinct_colour_bins_min": 12,
+    "note": "true_void_fraction_max carries over the 0.10 previously applied to raw background. The observable changed; the threshold did not. Loosening it to admit a candidate would tune the gate to the scene rather than fix the measurement."
+  },
+  "independent_oracle": "A second camera at the same world pose and intrinsics, differing only in far clip, set from measured stage bounds. DISTANT_SCENE is never derived from the canonical depth buffer whose clipping created the ambiguity (FL-018).",
+  "diagnostic_only": "The probe is audit evidence. Never model input, never in Option 1.",
+  "stage": {
+    "mesh_count": 1,
+    "has_environment_dome": true,
+    "bounds_min": [
+      -40.0,
+      -40.0,
+      0.0
+    ],
+    "bounds_max": [
+      40.0,
+      40.0,
+      0.0
+    ],
+    "diagonal_extent_m": 113.14,
+    "diagnostic_far_clip_m": 1000.0,
+    "diagnostic_far_rule": "2x measured stage diagonal, floor 1000 m, cap 20000.0 m"
+  },
+  "admission_status": "NOT_ADMITTED",
+  "canonical_camera": {
+    "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+    "far_clip_m": 100.0,
+    "focal_length_mm": 18.0,
+    "horizontal_aperture_mm": 20.954999923706055
+  },
+  "poses": [
+    {
+      "pixels_total": 76800,
+      "near_scene_pixels": 34240,
+      "distant_scene_pixels": 0,
+      "valid_environment_background_pixels": 451,
+      "true_void_pixels": 42109,
+      "unclassified_pixels": 0,
+      "accounting_exact": true,
+      "near_scene_fraction": 0.4458,
+      "distant_scene_fraction": 0.0,
+      "valid_environment_background_fraction": 0.0059,
+      "true_void_fraction": 0.5483,
+      "raw_background_fraction": 0.5542,
+      "sentinel_max_delta": 124,
+      "sentinel_min_delta_required": 12,
+      "environment_attribution": "differential_sentinel",
+      "pose": "origin",
+      "x": 0.0,
+      "y": 0.0,
+      "yaw_deg": 0.0,
+      "class_mask": "gates/scenes/visibility/dome_launder_fixture/origin_classes.png",
+      "pov": "gates/scenes/visibility/dome_launder_fixture/origin_pov.png",
+      "pov_digest": "ef051f1e7211db73c9a37bb6dc94b577"
+    }
+  ],
+  "verdict": {
+    "true_void_fraction": 0.5483,
+    "threshold": 0.1,
+    "result": "FAIL"
+  },
+  "measurements": [
+    {
+      "measurement": "true_void_fraction",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 76800,
+        "expected_items": 76800,
+        "complete": true
+      },
+      "value": 0.5483,
+      "is_evidence": true,
+      "evidence": {
+        "scene_id": "dome_launder_fixture",
+        "poses": [
+          "origin"
+        ],
+        "diagnostic_far_clip_m": 1000.0
+      },
+      "note": "worst pose; a scene is only as good as its weakest audited viewpoint"
+    },
+    {
+      "measurement": "distant_scene_fraction",
+      "status": "MEASURED_ZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 76800,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": 0.0,
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ]
+}
