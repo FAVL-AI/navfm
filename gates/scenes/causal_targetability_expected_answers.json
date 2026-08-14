@@ -1,0 +1,54 @@
+{
+  "check": "CAUSAL_TARGETABILITY_AMENDMENT_EXPECTATIONS",
+  "amends_contract": "480d9f07770eaf2a95446793639e9aad",
+  "written_before_implementation": true,
+  "reason": "Contract 480d9f07 is bounded, not invalid. Its nine fixtures were sparse and deterministic; none embedded a target in competing structure, so none could have exposed that geometric reachability does not imply causal targetability. A fixture suite certifies the conditions it contains.",
+  "new_preflight_stage": "CAUSAL_TARGETABILITY, between GEOMETRIC_REACHABILITY and QUERY",
+  "chain": [
+    "GEOMETRIC_REACHABILITY",
+    "CAUSAL_TARGETABILITY",
+    "QUERY",
+    "IDENTITY",
+    "INVARIANCE",
+    "REPRESENTATIVENESS",
+    "SCENE_VERDICT"
+  ],
+  "key_requirement": "A construction that cannot isolate its target must be refused BEFORE the query, and reported as an experimental limit, never as a target failure.",
+  "fixtures": [
+    {
+      "fixture_id": "DENSE_LONG_RAY_NOT_TARGETABLE",
+      "version": 1,
+      "geometry": "Declared target B at x=4.0. Competing object A at x=2.0, structurally unrelated: separate prim, no shared collision owner, no shared rigid body, no shared prototype. Probe constructed the old way -- long ray from outside B's bounds, crossing A.",
+      "question": "Does the preflight refuse a construction that cannot isolate its target?",
+      "expected_geometric_reachability": "REACHABLE",
+      "expected_causal_targetability": "NOT_TARGETABLE",
+      "expected_verdict": "NON_PROBATIVE_NOT_TARGETABLE",
+      "forbidden_verdict": "FAIL_WRONG_CAUSE",
+      "why_known": "A sits on the segment ahead of B by construction, so B cannot be the object that answers. The old preflight called this REACHABLE and let the query run, which is how five Hospital walls were recorded as target failures when the experiment had never reached them. Geometric access to the region is not isolation of the target.",
+      "discriminates": "Must differ from DENSE_LOCAL_RAY_TARGETABLE, which has the same scene and the same target and differs only in probe construction."
+    },
+    {
+      "fixture_id": "DENSE_LOCAL_RAY_TARGETABLE",
+      "version": 1,
+      "geometry": "Identical scene. Short local probe from just outside B's own near face.",
+      "question": "Does the same target become targetable when the construction isolates it?",
+      "expected_geometric_reachability": "REACHABLE",
+      "expected_causal_targetability": "TARGETABLE",
+      "expected_verdict": "PASS_CORRECT_CAUSE",
+      "expected_collider": "/World/B",
+      "why_known": "Nothing lies between the local origin and B. Same scene, same target, same physics -- only the intervention changes, which is what makes this pair a discriminator rather than two separate observations."
+    },
+    {
+      "fixture_id": "DENSE_UNRELATED_NOT_ACCEPTED",
+      "version": 1,
+      "geometry": "A and B as above; probe declares B, adjudication offered A's identity.",
+      "question": "Is a structurally unrelated collider ever accepted as the declared target?",
+      "expected_relation": "DISTINCT_OBJECT",
+      "expected_verdict": "not PASS_CORRECT_CAUSE",
+      "why_known": "A and B share no collision owner, rigid body or prototype. Accepting A would be the failure mode the rejected Hospital identity-map fix would have introduced: unrelated objects counted as successful target hits, turning a detectable failure into a silent pass."
+    }
+  ],
+  "written_at": "2026-08-14T05:39:20.675279+00:00",
+  "git_head": "38b4c49d0b63fa14aa87018e1653c53262021550",
+  "expected_answers_digest": "49c5418859e3d6b5850e0018f718eb4aad6785fc3f05f046b5fb56a666227f31"
+}
