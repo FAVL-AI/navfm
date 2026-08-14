@@ -1,0 +1,650 @@
+{
+  "check": "COLLISION_COVERAGE_AUDIT",
+  "scene_id": "office",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
+  "timestamp_utc": "2026-08-14T04:51:43.900612+00:00",
+  "navigation_band_m": [
+    0.02,
+    0.2803
+  ],
+  "footprint_m": [
+    0.235,
+    0.195
+  ],
+  "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
+  "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
+  "floor_z": -3.3,
+  "declared": {
+    "meshes_total": 3785,
+    "support_surfaces": 36,
+    "blocking_structures": 285,
+    "non_blocking": 3455,
+    "decorative": 9,
+    "unknown_bounds": 0,
+    "covered": 287,
+    "missing_collision": 34,
+    "blocking_coverage_fraction": 1.0,
+    "support_coverage_fraction": 0.0556,
+    "missing_examples": [
+      "/World/Scene/SM_Floor_3m11_213/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_6m_17/SM_Floor_6m/SM_Floor_6m",
+      "/World/Scene/SM_Floor_3m12_214/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_3m13_215/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_3m14_216/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_3m15_217/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_3m16_218/SM_Floor_3m/SM_Floor_3m",
+      "/World/Scene/SM_Floor_6m2/SM_Floor_6m/SM_Floor_6m",
+      "/World/Scene/SM_Floor_6m3/SM_Floor_6m/SM_Floor_6m",
+      "/World/Scene/SM_Floor_3m17_219/SM_Floor_3m/SM_Floor_3m"
+    ]
+  },
+  "behavioural": {
+    "probes_fired": 12,
+    "probes_hitting_something": 12,
+    "note": "A hit proves the physics scene answers queries. Naming the collider is what proves it answered about the right object -- a count alone is the error that let a floor satisfy an obstacle fixture.",
+    "samples": [
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
+        "z": -1.7999999999999998,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/InstancedSM_DoorEntrance_door_R/SM_DoorEntrance_door_R",
+        "z": -1.8675,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/SM_DoorEntrance_glass_door_R/SM_DoorEntrance_glass_door",
+        "z": -1.841,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R",
+        "z": -1.8675,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/SM_DoorEntrance_glass_door_L/SM_DoorEntrance_glass_door",
+        "z": -1.841,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_R/SM_DoorEntrance_glass_main",
+        "z": -1.841,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_L/SM_DoorEntrance_glass_main",
+        "z": -1.841,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorC_Security_350/InstancedBP_DoorC_Security_350/SM_DoorB/SM_DoorB",
+        "z": -2.2385,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_DoorC_Security_350/SM_DoorB_Door/InstancedSM_DoorB_Door/SM_DoorB_Door/SM_DoorB_Door",
+        "z": -2.2625,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_PanicDoor4/InstancedBP_PanicDoor4/SM_PanicDoor",
+        "z": -2.0425,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_PanicDoor4/SM_PanicDoor_L/SM_PanicDoor_L",
+        "z": -2.0665,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      },
+      {
+        "expected_path": "/World/Scene/BP_PanicDoor4/SM_PanicDoor_R/SM_PanicDoor_R",
+        "z": -2.0665,
+        "hit_collider": "/World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m",
+        "distance": 5.9
+      }
+    ]
+  },
+  "verdict": {
+    "physx_traversability_admissible": false,
+    "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
+  },
+  "measurements": [
+    {
+      "measurement": "blocking_structures_missing_collision",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 321,
+        "expected_items": 321,
+        "complete": true
+      },
+      "value": 34,
+      "is_evidence": true,
+      "evidence": {
+        "scene_id": "office"
+      }
+    },
+    {
+      "measurement": "physics_probe_hit_rate",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 12,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": 1.0,
+      "is_evidence": true,
+      "evidence": {}
+    }
+  ],
+  "rows_sample": [
+    {
+      "path": "/World/Scene/SM_Wall_corner_outside6/SM_Wall_corner_outside",
+      "z": [
+        -0.0,
+        3.0
+      ],
+      "size": 3.112,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/InstancedBP_PencilBox_filled_933/SM_PencilBox",
+      "z": [
+        -2.553,
+        -2.44
+      ],
+      "size": 0.1,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_Pencil_Brown/SM_Pencil_Brown",
+      "z": [
+        -2.551,
+        -2.416
+      ],
+      "size": 0.067,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_Pencil_Black/SM_Pencil_Black",
+      "z": [
+        -2.554,
+        -2.412
+      ],
+      "size": 0.044,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_Pencil_White/SM_Pencil_White",
+      "z": [
+        -2.553,
+        -2.412
+      ],
+      "size": 0.048,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_MarkerBlue/SM_MarkerBlue",
+      "z": [
+        -2.552,
+        -2.449
+      ],
+      "size": 0.075,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_Felt__Pen_Ultramarin/SM_Felt__Pen_Ultramarin",
+      "z": [
+        -2.552,
+        -2.44
+      ],
+      "size": 0.066,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilBox_filled_933/SM_Felt__Pen_Pink/SM_Felt__Pen_Pink",
+      "z": [
+        -2.539,
+        -2.42
+      ],
+      "size": 0.035,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/InstancedBP_PencilCase_filled_1226/SM_PencilCase",
+      "z": [
+        0.76,
+        0.87
+      ],
+      "size": 0.073,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Black/SM_Pencil_Black",
+      "z": [
+        0.762,
+        0.904
+      ],
+      "size": 0.047,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Black1/SM_Pencil_Black",
+      "z": [
+        0.762,
+        0.904
+      ],
+      "size": 0.047,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Blue/SM_Pencil_Blue",
+      "z": [
+        0.763,
+        0.906
+      ],
+      "size": 0.038,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Red/SM_Pencil_Red",
+      "z": [
+        0.763,
+        0.904
+      ],
+      "size": 0.047,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_White/SM_Pencil_White",
+      "z": [
+        0.764,
+        0.904
+      ],
+      "size": 0.045,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Gray/SM_Pencil_Gray",
+      "z": [
+        0.763,
+        0.906
+      ],
+      "size": 0.038,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Brown/SM_Pencil_Brown",
+      "z": [
+        0.763,
+        0.904
+      ],
+      "size": 0.047,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PencilCase_filled_1226/SM_Pencil_Red1/SM_Pencil_Red",
+      "z": [
+        0.763,
+        0.904
+      ],
+      "size": 0.047,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/InstancedBP_DoorEntrance_2651/SM_DoorEntrance",
+      "z": [
+        -3.3,
+        -0.3
+      ],
+      "size": 6.0,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/InstancedSM_DoorEntrance_door_R/SM_DoorEntrance_door_R",
+      "z": [
+        -3.296,
+        -0.439
+      ],
+      "size": 1.452,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_R/SM_DoorEntrance_glass_door_R/SM_DoorEntrance_glass_door",
+      "z": [
+        -3.242,
+        -0.44
+      ],
+      "size": 1.362,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/InstancedSM_DoorEntrance_door_L/SM_DoorEntrance_door_R",
+      "z": [
+        -3.296,
+        -0.439
+      ],
+      "size": 1.452,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_door_L/SM_DoorEntrance_glass_door_L/SM_DoorEntrance_glass_door",
+      "z": [
+        -3.242,
+        -0.44
+      ],
+      "size": 1.362,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_R/SM_DoorEntrance_glass_main",
+      "z": [
+        -3.242,
+        -0.44
+      ],
+      "size": 1.362,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorEntrance_2651/SM_DoorEntrance_glass_main_L/SM_DoorEntrance_glass_main",
+      "z": [
+        -3.242,
+        -0.44
+      ],
+      "size": 1.362,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "BLOCKING_STRUCTURE",
+      "coverage": "COVERED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase2/InstancedBP_PaperCase2/SM_PaperCase_Case",
+      "z": [
+        -0.0,
+        2.039
+      ],
+      "size": 1.909,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase2/SM_PaperCase_door_L/InstancedSM_PaperCase_door_L/SM_PaperCase_door_L",
+      "z": [
+        0.902,
+        1.909
+      ],
+      "size": 0.413,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase2/SM_PaperCase_door_L/SM_PaperCase_glass_L/SM_PaperCase_glass_L",
+      "z": [
+        0.829,
+        1.965
+      ],
+      "size": 0.447,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase2/SM_PaperCase_door_R/InstancedSM_PaperCase_door_R/SM_PaperCase_door_R",
+      "z": [
+        0.902,
+        1.909
+      ],
+      "size": 0.412,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase2/SM_PaperCase_door_R/SM_PaperCase_glass_R/SM_PaperCase_glass_R",
+      "z": [
+        0.829,
+        1.965
+      ],
+      "size": 0.447,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase_822/InstancedBP_PaperCase_822/SM_PaperCase_Case",
+      "z": [
+        -0.0,
+        2.039
+      ],
+      "size": 1.909,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase_822/SM_PaperCase_door_L/InstancedSM_PaperCase_door_L/SM_PaperCase_door_L",
+      "z": [
+        0.902,
+        1.909
+      ],
+      "size": 0.413,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase_822/SM_PaperCase_door_L/SM_PaperCase_glass_L/SM_PaperCase_glass_L",
+      "z": [
+        0.829,
+        1.965
+      ],
+      "size": 0.447,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase_822/SM_PaperCase_door_R/InstancedSM_PaperCase_door_R/SM_PaperCase_door_R",
+      "z": [
+        0.902,
+        1.909
+      ],
+      "size": 0.412,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_PaperCase_822/SM_PaperCase_door_R/SM_PaperCase_glass_R/SM_PaperCase_glass_R",
+      "z": [
+        0.829,
+        1.965
+      ],
+      "size": 0.447,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_Clock_A_4787/InstancedBP_Clock_A_4787/SM_Clock_A/Section0",
+      "z": [
+        1.748,
+        2.048
+      ],
+      "size": 0.3,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_Clock_A_4787/InstancedBP_Clock_A_4787/SM_Clock_A/Section1",
+      "z": [
+        1.756,
+        2.04
+      ],
+      "size": 0.284,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_Clock_A_4787/SM_Clock_A_Hour/SM_Clock_A_Hour",
+      "z": [
+        1.881,
+        1.988
+      ],
+      "size": 0.004,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_Clock_A_4787/SM_Clock_A_Minute/SM_Clock_A_Minute",
+      "z": [
+        1.881,
+        2.014
+      ],
+      "size": 0.004,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_Clock_A_4787/SM_Clock_A_Second/SM_Clock_A_Second",
+      "z": [
+        1.868,
+        2.028
+      ],
+      "size": 0.001,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    },
+    {
+      "path": "/World/Scene/BP_DoorMrSmith_3041/InstancedBP_DoorMrSmith_3041/SM_DoorA_Frame",
+      "z": [
+        -0.0,
+        2.123
+      ],
+      "size": 1.046,
+      "has_collision_api": true,
+      "collision_enabled": true,
+      "classification": "NON_BLOCKING_VISUAL_GEOMETRY",
+      "coverage": "NOT_REQUIRED"
+    }
+  ]
+}
