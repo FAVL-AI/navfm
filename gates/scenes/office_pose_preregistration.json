@@ -1,0 +1,117 @@
+{
+  "check": "POSE_PREREGISTRATION",
+  "scene_id": "office",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
+  "roles_declared_before_selection": [
+    "CORRIDOR_START",
+    "ROOM_ENTRANCE",
+    "JUNCTION_OR_TURN",
+    "GOAL_STYLE"
+  ],
+  "selection_inputs": [
+    "mesh world bounds",
+    "floor plane",
+    "free-space occupancy",
+    "clearance transform",
+    "directional traversable runs"
+  ],
+  "selection_inputs_excluded": [
+    "true_void_fraction",
+    "environment_fraction",
+    "background_fraction",
+    "dominant hue",
+    "colour diversity",
+    "forward depth",
+    "structure",
+    "any render output whatsoever"
+  ],
+  "occupancy_note": "Occupancy is mesh bounding boxes projected onto the floor band, which overestimates obstacles. The bias is one-directional: it can only make an accepted pose more conservatively clear, never less.",
+  "topology": {
+    "floor_z": -11.608566665649413,
+    "grid_m": 0.25,
+    "shape": [
+      1235,
+      684
+    ],
+    "mesh_count": 3785,
+    "free_fraction": 0.013164997514027985,
+    "usable_fraction": 0.013164997514027985
+  },
+  "poses": [
+    {
+      "pose_id": "OFFICE_NAV_01",
+      "role": "CORRIDOR_START",
+      "x": -302.75,
+      "y": -2.75,
+      "yaw_deg": 0.0,
+      "selection_method": "longest unobstructed forward run with bounded lateral clearance",
+      "selection_rationale": "Usable floor with a 20.0 m forward run and 0.50 m lateral clearance, so the robot sits in a corridor-like channel rather than open floor. Yaw follows the principal travel axis.",
+      "geometric_evidence": {
+        "forward_run_m": 20.0,
+        "lateral_clearance_m": 0.5,
+        "open_directions": 3
+      },
+      "z": -11.559,
+      "semantic_source": "GEOMETRIC_INTERPRETATION",
+      "semantic_evidence_if_available": "none \u2014 the Isaac Office asset carries no navigation semantic labels",
+      "robot_footprint_clearance_m": 0.25,
+      "selected_before_measurement": true,
+      "render_metrics_consulted": false
+    },
+    {
+      "pose_id": "OFFICE_NAV_02",
+      "role": "ROOM_ENTRANCE",
+      "x": -283.0,
+      "y": -3.0,
+      "yaw_deg": 0.0,
+      "selection_method": "local clearance minimum with traversable floor on both sides",
+      "selection_rationale": "Clearance narrows to 0.25 m while the floor stays open 20.0 m ahead and 20.0 m behind -- the signature of an opening between two navigable spaces. Yaw is the traversal normal.",
+      "geometric_evidence": {
+        "pinch_clearance_m": 0.25,
+        "run_ahead_m": 20.0,
+        "run_behind_m": 20.0
+      },
+      "z": -11.559,
+      "semantic_source": "GEOMETRIC_INTERPRETATION",
+      "semantic_evidence_if_available": "none \u2014 the Isaac Office asset carries no navigation semantic labels",
+      "robot_footprint_clearance_m": 0.25,
+      "selected_before_measurement": true,
+      "render_metrics_consulted": false
+    },
+    {
+      "pose_id": "OFFICE_NAV_03",
+      "role": "JUNCTION_OR_TURN",
+      "x": -300.0,
+      "y": -1.5,
+      "yaw_deg": 0.0,
+      "selection_method": "maximal count of independent traversable headings",
+      "selection_rationale": "7 of 8 headings remain traversable for at least 1.5 m, so a robot arriving here must choose. Yaw is the approach heading along the longest branch.",
+      "geometric_evidence": {
+        "open_headings": 7,
+        "longest_branch_m": 20.0
+      },
+      "z": -11.559,
+      "semantic_source": "GEOMETRIC_INTERPRETATION",
+      "semantic_evidence_if_available": "none \u2014 the Isaac Office asset carries no navigation semantic labels",
+      "robot_footprint_clearance_m": 0.25,
+      "selected_before_measurement": true,
+      "render_metrics_consulted": false
+    }
+  ],
+  "roles_missing": [
+    "GOAL_STYLE"
+  ],
+  "route_coherent": false,
+  "route_note": "roles not satisfiable from this topology: ['GOAL_STYLE']",
+  "git_head": "412da0c1ad245c5b726494ea391c0375de7028db",
+  "pose_set_frozen_at": "2026-08-14T04:29:15.453092+00:00",
+  "pose_set_digest": "66bcd41441da8d5825d176ef7e5313ddb8fc5ecb2618ec2009d717524c37dc80",
+  "ordering_contract": "pose_set_frozen_at must precede measurement_started_at in the gate artefact. A pose may not be replaced after its render result is known; that requires a dated amendment stating why, with the replacement chosen without inspecting its scores.",
+  "status": "REJECTED_BEFORE_MEASUREMENT",
+  "rejection_reason": "The occupancy model is inadequate for this scene and its poses are artefacts, not navigable locations. Only 1.3% of the floor grid was marked usable, and all three selected poses report a forward run of exactly 20.0 m -- the search cap -- at clearances of 0.25-0.50 m, which is one to two grid cells. Those are slivers between bounding boxes, not corridors. Mesh bounding boxes are a sound conservative model for sparse geometry, but an office is dense with furniture and every desk's box occludes the aisle beside it, so the union of boxes swallows the navigable space.",
+  "rejected_at": "2026-08-14T05:35:00+00:00",
+  "what_the_bias_analysis_missed": "The one-directional bias argument was correct and insufficient. A bounding box is never smaller than its mesh, so an accepted pose is genuinely clear -- that still holds. What it does not bound is how much true free space is destroyed. At 98.7% occupancy the surviving 1.3% is not a conservative subset of the navigable floor, it is quantisation noise, and 'conservative' stops being a defence once the signal is gone.",
+  "poses_are_binding": false,
+  "next_method": "Triangle-level occupancy or a physics scene-query sweep of the robot footprint. Isaac's occupancy map generator was checked first and is not present in this installation (isaacsim.asset.gen.omap and omni.isaac.occupancy_map both absent), so it is not an available shortcut.",
+  "ordering_note": "Rejected on geometric grounds alone. No render metric was consulted for these poses before or after rejection, so the preregistration discipline is intact: this is a method being discarded, not a result being avoided."
+}
