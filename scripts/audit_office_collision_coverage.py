@@ -39,6 +39,15 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
+from navfm.targetability import Interval, TargetabilityInput, choose  # noqa: E402
+
+
+def _x_iv(mn, mx, ox: float, sgn: float, ry: float, rz: float):
+    """Ray/body interval along X, requiring the ray to pass through in Y and Z."""
+    if not (mn[1] <= ry <= mx[1] and mn[2] <= rz <= mx[2]):
+        return None
+    lo, hi = ((mn[0] - ox, mx[0] - ox) if sgn > 0 else (ox - mx[0], ox - mn[0]))
+    return Interval(max(0.0, lo), hi) if hi > 0 else None
 
 OUT = REPO / "gates" / "scenes"
 
@@ -53,7 +62,11 @@ MIN_REACHABLE_FRACTION = 0.5
 #: is what 9/9 causality regressions established. The digest is mandatory
 #: provenance: a behavioural row without it is not admissible evidence, because
 #: nothing would distinguish it from the retired probe's output.
-REQUIRED_CONTRACT_DIGEST = "480d9f07770eaf2a95446793639e9aad"
+REQUIRED_CONTRACT_DIGEST = "24bf0a8c09ab96d6d961b823c8f69c16"
+#: The effective contract, not the sparse parent. 480d9f07 certified probe
+#: semantics in geometry that contained no competing structure, so it could not
+#: license a claim about a dense authored scene. Behavioural rows measured under
+#: the parent are retired.
 
 #: The robot's own band. Geometry outside it cannot block a Yahboom, so its
 #: collision state is irrelevant and must not count against coverage.
@@ -84,8 +97,13 @@ def main() -> int:
         print("REFUSED: no frozen probe contract; the probe has not earned adjudication rights",
               file=sys.stderr)
         return 2
-    contract = json.loads(contract_p.read_text())
-    cd = contract.get("probe_contract_digest", "")
+    amd_p = OUT / "collision_probe_contract_amendments.jsonl"
+    if not amd_p.is_file():
+        print("REFUSED: no causal-targetability amendment; the parent contract cannot "
+              "license a dense-scene behavioural claim", file=sys.stderr)
+        return 2
+    contract = json.loads(amd_p.read_text().strip().splitlines()[-1])
+    cd = contract.get("effective_contract_digest", "")
     if cd[:32] != REQUIRED_CONTRACT_DIGEST:
         print(f"REFUSED: contract digest\n  got    {cd}\n  required {REQUIRED_CONTRACT_DIGEST}",
               file=sys.stderr)
@@ -108,7 +126,8 @@ def main() -> int:
         "risk_direction": ("Missing collision never invents an obstacle; it invents free "
                            "space, precisely where the robot would collide."),
         "probe_contract_digest": cd,
-        "probe_contract_regressions": contract.get("gate"),
+        "probe_contract_regressions": contract.get("dense_result"),
+        "parent_contract_digest": contract.get("parent_contract_digest"),
         "evidence_channels_kept_separate": (
             "authored CollisionAPI state and live behavioural response are reported as "
             "independent lines and never merged into one percentage"),
@@ -265,6 +284,42 @@ def main() -> int:
                         "reason": ("another collider necessarily precedes the declared target "
                                    "along this segment, so the probe cannot interrogate it")}
 
+            # CAUSAL_TARGETABILITY, decided before the query. A target that no
+            # candidate can isolate is not queried at all, so it can never be
+            # recorded as a target failure for an experiment that never reached
+            # it -- which is what produced five phantom Hospital wall failures.
+            cands = []
+            for ox, sgn in ((mn[0] - 0.30, 1.0), (mx[0] + 0.30, -1.0)):
+                rch = abs((mx[0] if sgn > 0 else mn[0]) - ox) + 0.2
+                ti = _x_iv(mn, mx, ox, sgn, cy, (mn[2] + mx[2]) / 2)
+                comp = []
+                for other in candidates_for_occlusion:
+                    if other["path"] == row["path"]:
+                        continue
+                    orr = cache.ComputeWorldBound(
+                        stage.GetPrimAtPath(other["path"])).ComputeAlignedRange()
+                    if orr.IsEmpty():
+                        continue
+                    oi = _x_iv(orr.GetMin(), orr.GetMax(), ox, sgn, cy,
+                               (mn[2] + mx[2]) / 2)
+                    if oi and oi.enter <= rch:
+                        comp.append((other["path"], oi))
+                cands.append(TargetabilityInput(
+                    declared_target=row["path"], origin=(ox, cy, (mn[2] + mx[2]) / 2),
+                    direction=(sgn, 0.0, 0.0), max_range=rch, target_interval=ti,
+                    competing=tuple(comp),
+                    origin_inside=tuple(c for c, ci in comp if ci.enter <= 0.0 < ci.exit)))
+            tdec = choose(cands)
+            if not tdec.state.probative:
+                return {"probe_role": role, "expected_target_prim": row["path"],
+                        "probe_reachability_status": "REACHABLE",
+                        "causal_targetability": tdec.state.value,
+                        "targetability_reason": tdec.reason,
+                        "candidate_digest": tdec.candidate_digest,
+                        "verdict": "NON_PROBATIVE_NOT_TARGETABLE"}
+            origin = list(tdec.chosen.origin)
+            direction = list(tdec.chosen.direction)
+            reach = tdec.chosen.max_range
             res = q.raycast_closest(origin, direction, reach)
             hit = bool(res and res.get("hit"))
             actual = str(res.get("collision", "")) if hit else None
@@ -280,6 +335,8 @@ def main() -> int:
                 "actual_collider_prim": actual,
                 "actual_distance": round(float(res["distance"]), 4) if hit else None,
                 "probe_reachability_status": "REACHABLE",
+                "causal_targetability": tdec.state.value,
+                "candidate_digest": tdec.candidate_digest,
                 "identity_match": match,
                 "verdict": ("PASS_CORRECT_CAUSE" if match
                             else "FAIL_WRONG_CAUSE" if hit else "FAIL_NO_HIT"),
@@ -299,6 +356,8 @@ def main() -> int:
             reachable = sum(1 for p_ in probes
                             if p_.get("probe_reachability_status") == "REACHABLE")
             nonprob = sum(1 for p_ in probes if str(p_["verdict"]).startswith("NON_PROBATIVE"))
+            not_targetable = sum(1 for p_ in probes
+                                 if p_["verdict"] == "NON_PROBATIVE_NOT_TARGETABLE")
             correct = sum(1 for p_ in probes if p_["verdict"] == "PASS_CORRECT_CAUSE")
             wrong = sum(1 for p_ in probes if p_["verdict"] == "FAIL_WRONG_CAUSE")
             dists = [p_.get("actual_distance") for p_ in probes if p_.get("actual_distance")]
@@ -306,6 +365,8 @@ def main() -> int:
             return {
                 "planned": planned, "fired": fired,
                 "reachable": reachable, "non_probative": nonprob,
+                "not_targetable": not_targetable,
+                "probative_population": reachable - nonprob,
                 "correct_target_hits": correct, "wrong_target_hits": wrong,
                 "generic_hit_rate": (
                     round(sum(1 for p_ in probes if p_.get("actual_hit")) / fired, 3)
@@ -325,10 +386,10 @@ def main() -> int:
                 "verdict": ("NOT_RUN" if planned and not fired
                             else "NO_EVIDENCE" if not fired
                             else "NON_PROBATIVE_SAMPLE"
-                            if reachable / fired < MIN_REACHABLE_FRACTION
+                            if (reachable - nonprob) / fired < MIN_REACHABLE_FRACTION
                             else "REVIEW_REQUIRED_INVARIANCE" if invariant
-                            else "PROBATIVE_PASS" if correct == reachable
-                            else "CONTRADICTION" if correct and correct < reachable
+                            else "PROBATIVE_PASS" if correct == (reachable - nonprob)
+                            else "CONTRADICTION" if correct and correct < (reachable - nonprob)
                             else "PROBATIVE_FAIL"),
                 "probes": probes,
             }
