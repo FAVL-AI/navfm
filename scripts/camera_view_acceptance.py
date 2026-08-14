@@ -194,7 +194,13 @@ def main() -> int:
     if not ROBOT_USD.is_file():
         print(f"REFUSED: no robot twin at {ROBOT_USD}", file=sys.stderr)
         return 2
-    if args.scene != "control" and not Path(args.scene).is_file():
+    # A scene may be a local file or a URL the Omniverse resolver fetches. An
+    # earlier version tested `Path(...).is_file()` for both, so every URL was
+    # refused before Isaac started -- and the run reported zero MDL errors,
+    # because nothing had loaded. A zero produced by an inert run is the most
+    # dangerous number in this repository, so the two cases are distinguished.
+    is_url = "://" in args.scene
+    if args.scene != "control" and not is_url and not Path(args.scene).is_file():
         print(f"REFUSED: no scene USD at {args.scene}", file=sys.stderr)
         return 2
 

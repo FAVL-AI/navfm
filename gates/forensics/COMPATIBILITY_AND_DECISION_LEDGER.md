@@ -2,7 +2,7 @@
 
 Every entry carries the chain from what was observed to what is now claimed, including the field that is easiest to leave out and hardest to reconstruct later: **why the checks that were already running did not see it**.
 
-Seventeen entries. Twelve are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
+Twenty entries. Fifteen are defects caught before any admitted result existed; two (`FL-003`, `FL-011`) are findings about the released upstream artefacts and their sampling semantics rather than about this work; one (`FL-008`) is an open gate scope issue awaiting a decision that is not engineering's to make; one (`FL-012`) is an error in this work's own verification harness, caught by review rather than by any check here — which is why it is recorded at full severity rather than quietly fixed.
 
 Author: Frank Asante Van Laarhoven · 2026-08-13
 
@@ -14,23 +14,71 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 
 | Rank | ID | Finding | Impact | Undetectability | Propagation | Severity | Band | Irreversible |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `FL-001` | Waypoint un-normalisation missing; the safety clamp hid it | 5 | 5 | 4 | **100** | CRITICAL | no |
-| 2 | `FL-006` | Wheel radius inherited from a different robot | 4 | 5 | 5 | **100** | CRITICAL | no |
-| 3 | `FL-016` | Asset mirrors report a complete closure while missing every material module | 5 | 5 | 4 | **100** | CRITICAL | no |
-| 4 | `FL-013` | optimizer.step() returning is not evidence the model changed | 4 | 5 | 4 | **80** | CRITICAL | no |
-| 5 | `FL-014` | A training smoke test could quietly mutate a released checkpoint | 5 | 4 | 4 | **80** | CRITICAL | yes |
-| 6 | `FL-002` | Wheel joints imported with zero stiffness and zero damping | 5 | 5 | 3 | **75** | CRITICAL | no |
-| 7 | `FL-009` | Installing a dependency would have broken the freeze audit before it ran | 5 | 5 | 3 | **75** | CRITICAL | yes |
-| 8 | `FL-012` | An invented loss passed the first train-path harness | 5 | 5 | 3 | **75** | CRITICAL | no |
-| 9 | `FL-007` | Corrections that did not propagate — the dominant protocol defect | 4 | 4 | 4 | **64** | CRITICAL | no |
-| 10 | `FL-015` | The poor navigation images were the world, not the camera | 4 | 4 | 4 | **64** | CRITICAL | no |
-| 11 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
-| 12 | `FL-017` | The camera-view acceptance test passed both known-bad frames | 4 | 5 | 3 | **60** | CRITICAL | no |
-| 13 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
-| 14 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
-| 15 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
-| 16 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
-| 17 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
+| 1 | `FL-019` | A zero produced by a run that never started, reported as a clean result | 5 | 5 | 5 | **125** | CRITICAL | no |
+| 2 | `FL-001` | Waypoint un-normalisation missing; the safety clamp hid it | 5 | 5 | 4 | **100** | CRITICAL | no |
+| 3 | `FL-006` | Wheel radius inherited from a different robot | 4 | 5 | 5 | **100** | CRITICAL | no |
+| 4 | `FL-016` | Asset mirrors report a complete closure while missing every material module | 5 | 5 | 4 | **100** | CRITICAL | no |
+| 5 | `FL-018` | A repair verified by the same defective discovery that caused the fault | 5 | 5 | 4 | **100** | CRITICAL | no |
+| 6 | `FL-013` | optimizer.step() returning is not evidence the model changed | 4 | 5 | 4 | **80** | CRITICAL | no |
+| 7 | `FL-014` | A training smoke test could quietly mutate a released checkpoint | 5 | 4 | 4 | **80** | CRITICAL | yes |
+| 8 | `FL-002` | Wheel joints imported with zero stiffness and zero damping | 5 | 5 | 3 | **75** | CRITICAL | no |
+| 9 | `FL-009` | Installing a dependency would have broken the freeze audit before it ran | 5 | 5 | 3 | **75** | CRITICAL | yes |
+| 10 | `FL-012` | An invented loss passed the first train-path harness | 5 | 5 | 3 | **75** | CRITICAL | no |
+| 11 | `FL-007` | Corrections that did not propagate — the dominant protocol defect | 4 | 4 | 4 | **64** | CRITICAL | no |
+| 12 | `FL-015` | The poor navigation images were the world, not the camera | 4 | 4 | 4 | **64** | CRITICAL | no |
+| 13 | `FL-003` | About 19% of the released ViNT checkpoint is never executed | 3 | 5 | 4 | **60** | CRITICAL | no |
+| 14 | `FL-017` | The camera-view acceptance test passed both known-bad frames | 4 | 5 | 3 | **60** | CRITICAL | no |
+| 15 | `FL-004` | Camera parented to a prim named top_arm_mount but sitting at chassis height | 4 | 4 | 3 | **48** | HIGH | no |
+| 16 | `FL-020` | A URL validated as a filesystem path, refused before anything ran | 4 | 4 | 3 | **48** | HIGH | no |
+| 17 | `FL-008` | G2 mis-scoped in both directions | 4 | 3 | 3 | **36** | HIGH | no |
+| 18 | `FL-005` | Stale pilots reported as fresh output | 3 | 4 | 2 | **24** | MODERATE | no |
+| 19 | `FL-011` | NoMaD produces 29 samples where GNM and ViNT produce 30 | 2 | 4 | 3 | **24** | MODERATE | no |
+| 20 | `FL-010` | A pre-execution gate audit run after execution, reported as failure | 2 | 3 | 2 | **12** | MODERATE | no |
+
+---
+
+## `FL-019` — A zero produced by a run that never started, reported as a clean result
+
+**Severity 125 (CRITICAL)** · impact 5 · undetectability 5 · propagation 5 · irreversible: no · status CLOSED
+
+**What was observed.** Three times in one session a null result was read as a clean one. A `pgrep -f` wait loop matched its own wrapper's command line, so a background job waited a day, ran nothing and wrote a 0-byte file while every status check said 'in progress'. A closure repair reported FULL_RENDER_CLOSURE true using the same traversal that caused the defect. And a scene test reported `mdl_error_count = 0` because its preflight had refused the URL and exited before Isaac started.
+
+**Root cause.** Measurements were represented as bare values. A value carries no record of whether the machinery that produces it ever ran, so `0` from a live measurement and `0` from an inert one are the same token. Every consumer then reads the second as the first, because that is the reading that requires no further work.
+
+**Why existing checks missed it.** There was nothing to miss: the artefacts were well-formed and their values were the values a healthy run produces. Detection requires a fact the artefact did not carry -- whether the measurement executed over a non-empty population. No amount of care applied to the value can recover it.
+
+**Scientific risk had it survived.** The general form is severe. `0 collisions` from a robot that never moved, `0 invalid rows` from a validator over an empty input, `0 NaN gradients` from a backward pass that did not run -- each is a safety or correctness claim supported by an absence of observation rather than an observation of absence.
+
+**Alternatives considered.**
+  - Add liveness assertions to each gate individually
+  - Require reviewers to check that a run produced output
+  - Make liveness part of the measurement's type, enforced at construction
+
+**Decision.** `src/navfm/measurement.py`: a `MeasurementEnvelope` carrying liveness, value and provenance together. It refuses at construction to hold a value while liveness is incomplete, and reports RUN_LIVE_NO_MEASUREMENT rather than MEASURED_ZERO when the examined population is empty. Status is five-valued -- NOT_RUN, RUN_FAILED, RUN_LIVE_NO_MEASUREMENT, MEASURED_ZERO, MEASURED_NONZERO -- because the four ways of lacking an answer need different responses and a boolean collapses them into the one that resembles success.
+
+**Decision rule.** MEASUREMENT = LIVENESS + VALUE + PROVENANCE, never MEASUREMENT = VALUE. A reported zero is a conclusion only after liveness is established; otherwise it is missing evidence wearing the appearance of success. Null execution and zero outcome must never share a representation.
+
+**Rejected, and why.** Per-gate liveness assertions and reviewer discipline were both rejected: this failure occurred three times in one session inside an audit explicitly built around the declared-versus-observed distinction. Intent is demonstrably not the control; the type is.
+
+**Correction.** Envelope type with `require_evidence()` that raises rather than returning a value, `not_run()` for the honest empty case, and pessimistic liveness defaults so a forgotten field yields NOT_RUN rather than a silent pass.
+
+**Validation.** 28 tests, each of the three incidents encoded as a case that must not pass: a scene that never loaded, a job that never ran, and a validator over an empty population. A stationary robot is asserted not to prove zero collisions.
+
+**Regression control.** `value` is refused at construction when liveness is incomplete, so a gate cannot emit a bare number without the proof that it measured anything.
+
+**Evidence.**
+  - src/navfm/measurement.py
+  - tests/test_measurement.py
+
+**Impact on results.** No published result rested on one of the three: the closure repair was caught by an unchanged render, the inert job by an empty output file, the unloaded scene by a REFUSED line. All three were caught by observation, none by a check.
+
+**Claim boundary.** The type is in place with tests. Migration of the gates is staged: scene load, render, dependency audit, training smoke and evaluation first.
+
+**Not claimed.** Not a claim that existing gates already emit envelopes. Until a gate is migrated, its zeros carry the same ambiguity described here.
+
+**Propagation.** Applies to every gate in the repository and to future safety metrics, where the failure mode is worst -- a stationary robot produces a perfect collision record.
+
+**Attribution.** Frank Asante Van Laarhoven
 
 ---
 
@@ -165,6 +213,51 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Not claimed.** Not a claim that the upstream NVIDIA assets are incomplete. The defect is in the local mirroring, not necessarily in the source.
 
 **Propagation.** Applies to every mirrored asset produced by the same closure tool, in this repository and in the sibling robotics repositories that share the mirror.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
+## `FL-018` — A repair verified by the same defective discovery that caused the fault
+
+**Severity 100 (CRITICAL)** · impact 5 · undetectability 5 · propagation 4 · irreversible: no · status CLOSED
+
+**What was observed.** After fetching the 10 MDL modules the dependency walk reported as missing, the mirror recorded FULL_RENDER_CLOSURE true with zero unresolved, and the scene rendered exactly as before -- still hue-collapsed, byte-identical composition. The repair verified itself as complete while changing nothing observable.
+
+**Root cause.** `Usd.Stage.Traverse()` does not descend into instance prototypes. These scenes are heavily instanced: most walls and doors live under `/__Prototype_*`. The walk therefore enumerated 10 material modules and 20 textures where the scene actually requires 69 and 252 -- it was hiding roughly 85% of the material graph. Both the original closure manifest and my repair used that same walk, so the repair's completeness check asked the identical narrowed question and got the identical reassuring answer.
+
+**Why existing checks missed it.** The completeness check and the discovery step shared an implementation. A verification derived from the same enumeration as the fix cannot detect an enumeration fault -- it will report success precisely when the enumeration is wrong in the same way for both. The MDL compiler was the only component with an independent view, and its errors were being read as noise.
+
+**Scientific risk had it survived.** A scene certified render-complete, collected in, and published as a photorealistic interior while the majority of its materials never resolved. Every provenance field would be present and correct, and the observation distribution would still be wrong.
+
+**Alternatives considered.**
+  - Trust FULL_RENDER_CLOSURE and proceed to collection
+  - Treat the unchanged render as a caching artefact and re-run
+  - Take the renderer's own compile errors as the independent oracle
+
+**Decision.** Treat the MDL compiler's `could not find module` errors as the authority over the dependency walk, and fix the traversal to include instance proxies and every prototype explicitly. Recount: 69 modules and 252 textures, all present.
+
+**Decision rule.** A repair must be verified by an oracle independent of the discovery that produced it. When the fix and its check share an enumeration, the check confirms the enumeration, not the fix.
+
+**Rejected, and why.** Accepting FULL_RENDER_CLOSURE was rejected because the render had not changed. An unchanged observable after a repair claimed complete is evidence against the claim, not an anomaly to explain away.
+
+**Correction.** Traversal now uses `Usd.TraverseInstanceProxies` and walks `stage.GetPrototypes()` directly; relative paths resolve against the authoring layer rather than the root.
+
+**Validation.** Referenced counts moved from 10 to 69 MDL modules and 20 to 252 textures, with 321/321 present and zero unresolved, reproduced across two independent runs.
+
+**Regression control.** The mirror manifest records referenced counts per class, so a future traversal regression appears as a drop in what is asked for rather than as a clean pass.
+
+**Evidence.**
+  - gates/scenes/mirror_manifest_hospital_v1.json
+  - scripts/mirror_scene_closure.py — discover_usd_dependencies
+
+**Impact on results.** No data collected under the false completeness. It converts FL-016 from a small gap into an order-of-magnitude error: the original mirror was not missing 10 files but 321, while asserting completeness throughout.
+
+**Claim boundary.** Concerns dependency discovery for instanced USD scenes under Isaac Sim 5.1.0.0.
+
+**Not claimed.** Complete closure is not a claim that the scene renders correctly. Whether 321/321 clears the hue collapse is a separate gate and was unresolved when this entry was written.
+
+**Propagation.** Applies to every mirrored asset produced by the same walk, and to any audit whose completeness check reuses the enumeration under test.
 
 **Attribution.** Frank Asante Van Laarhoven
 
@@ -613,6 +706,50 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Not claimed.** Not verified against the physical Yahboom's actual mast height. The URDF mast is a represented structure, not a measured one.
 
 **Propagation.** Invalidated the earlier pilots as evidence of the corrected viewpoint. Those are retained as a separate camera-domain experiment rather than deleted, since they are evidence of the domain effect.
+
+**Attribution.** Frank Asante Van Laarhoven
+
+---
+
+## `FL-020` — A URL validated as a filesystem path, refused before anything ran
+
+**Severity 48 (HIGH)** · impact 4 · undetectability 4 · propagation 3 · irreversible: no · status CLOSED
+
+**What was observed.** `camera_view_acceptance.py` preflighted its scene argument with `Path(args.scene).is_file()`. Given an Omniverse asset URL that is always false, so the script printed REFUSED and exited -- and the surrounding measurement reported zero MDL errors for a scene that had never been opened.
+
+**Root cause.** Local filesystem paths and remote asset URIs were treated as one namespace. They are different addressing schemes with different resolvers, and only one of them answers `is_file()`.
+
+**Why existing checks missed it.** The preflight behaved exactly as designed and its refusal was printed. The defect was that the refusal was invisible to the measurement wrapped around it, which counted error lines in output that was never produced.
+
+**Scientific risk had it survived.** Any scene addressed by URI would be silently excluded from evaluation while the run reported a clean result -- and the native asset root is the correct way to reference these scenes, so the defect specifically blocked the working path.
+
+**Alternatives considered.**
+  - Require all scenes to be local files
+  - Validate by addressing scheme, deferring URI existence to the runtime resolver
+
+**Decision.** Detect the scheme and validate with the resolver appropriate to it: filesystem for local paths, the Omniverse runtime for URIs. URI existence is never tested with `Path.is_file()`.
+
+**Decision rule.** An identifier is validated by the resolver that owns its namespace. A check that cannot succeed for a valid input is not a strict check, it is a broken one.
+
+**Rejected, and why.** Requiring local files was rejected: it is what forced the hand-built mirror, which produced FL-016 and FL-018 and never resolved MDL correctly.
+
+**Correction.** Scheme detection in the preflight, with the incident recorded at the call site.
+
+**Validation.** With the fix, the Office scene loads from the asset root: 4713 prims, 140 meshes, 121 lights, 185 materials, zero MDL errors and zero error lines -- against 138 MDL errors from the local mirror.
+
+**Regression control.** The gate now reports whether an artefact was written alongside its error count, so a refused run cannot present as a clean one.
+
+**Evidence.**
+  - scripts/camera_view_acceptance.py
+  - gates/scenes/camera_view_office_remote.json
+
+**Impact on results.** Established that the native resolver handles the full USD, MDL and texture graph correctly, and that the hand-built mirror was the defect rather than the assets.
+
+**Claim boundary.** Concerns scene addressing in the acceptance gate under Isaac Sim 5.1.0.0.
+
+**Not claimed.** Not a claim that the Office scene is eligible. That run FAILED its own gate on background fraction, and the metric cannot yet distinguish an unbounded void from a legitimate view through a window.
+
+**Propagation.** Applies to every script taking a scene or asset argument, and retires the local mirror as the acquisition path.
 
 **Attribution.** Frank Asante Van Laarhoven
 

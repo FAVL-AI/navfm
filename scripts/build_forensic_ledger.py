@@ -1258,6 +1258,263 @@ ENTRIES: list[ForensicEntry] = [
         ),
         tags=["verification-philosophy", "false-pass"],
     ),
+    E(
+        issue_id="FL-018",
+        title="A repair verified by the same defective discovery that caused the fault",
+        observation=(
+            "After fetching the 10 MDL modules the dependency walk reported as missing, the "
+            "mirror recorded FULL_RENDER_CLOSURE true with zero unresolved, and the scene "
+            "rendered exactly as before -- still hue-collapsed, byte-identical composition. "
+            "The repair verified itself as complete while changing nothing observable."
+        ),
+        root_cause=(
+            "`Usd.Stage.Traverse()` does not descend into instance prototypes. These scenes "
+            "are heavily instanced: most walls and doors live under `/__Prototype_*`. The "
+            "walk therefore enumerated 10 material modules and 20 textures where the scene "
+            "actually requires 69 and 252 -- it was hiding roughly 85% of the material graph. "
+            "Both the original closure manifest and my repair used that same walk, so the "
+            "repair's completeness check asked the identical narrowed question and got the "
+            "identical reassuring answer."
+        ),
+        why_existing_checks_missed_it=(
+            "The completeness check and the discovery step shared an implementation. A "
+            "verification derived from the same enumeration as the fix cannot detect an "
+            "enumeration fault -- it will report success precisely when the enumeration is "
+            "wrong in the same way for both. The MDL compiler was the only component with an "
+            "independent view, and its errors were being read as noise."
+        ),
+        scientific_risk=(
+            "A scene certified render-complete, collected in, and published as a "
+            "photorealistic interior while the majority of its materials never resolved. "
+            "Every provenance field would be present and correct, and the observation "
+            "distribution would still be wrong."
+        ),
+        alternatives_considered=[
+            "Trust FULL_RENDER_CLOSURE and proceed to collection",
+            "Treat the unchanged render as a caching artefact and re-run",
+            "Take the renderer's own compile errors as the independent oracle",
+        ],
+        decision=(
+            "Treat the MDL compiler's `could not find module` errors as the authority over "
+            "the dependency walk, and fix the traversal to include instance proxies and every "
+            "prototype explicitly. Recount: 69 modules and 252 textures, all present."
+        ),
+        decision_rule=(
+            "A repair must be verified by an oracle independent of the discovery that "
+            "produced it. When the fix and its check share an enumeration, the check confirms "
+            "the enumeration, not the fix."
+        ),
+        rejected_alternative=(
+            "Accepting FULL_RENDER_CLOSURE was rejected because the render had not changed. "
+            "An unchanged observable after a repair claimed complete is evidence against the "
+            "claim, not an anomaly to explain away."
+        ),
+        correction=(
+            "Traversal now uses `Usd.TraverseInstanceProxies` and walks `stage.GetPrototypes()` "
+            "directly; relative paths resolve against the authoring layer rather than the root."
+        ),
+        validation=(
+            "Referenced counts moved from 10 to 69 MDL modules and 20 to 252 textures, with "
+            "321/321 present and zero unresolved, reproduced across two independent runs."
+        ),
+        regression_control=(
+            "The mirror manifest records referenced counts per class, so a future traversal "
+            "regression appears as a drop in what is asked for rather than as a clean pass."
+        ),
+        evidence=[
+            "gates/scenes/mirror_manifest_hospital_v1.json",
+            "scripts/mirror_scene_closure.py — discover_usd_dependencies",
+        ],
+        impact=(
+            "No data collected under the false completeness. It converts FL-016 from a small "
+            "gap into an order-of-magnitude error: the original mirror was not missing 10 "
+            "files but 321, while asserting completeness throughout."
+        ),
+        impact_score=5,
+        detectability_score=5,
+        propagation_score=4,
+        claim_boundary=(
+            "Concerns dependency discovery for instanced USD scenes under Isaac Sim 5.1.0.0."
+        ),
+        non_claim=(
+            "Complete closure is not a claim that the scene renders correctly. Whether 321/321 "
+            "clears the hue collapse is a separate gate and was unresolved when this entry "
+            "was written."
+        ),
+        propagation=(
+            "Applies to every mirrored asset produced by the same walk, and to any audit whose "
+            "completeness check reuses the enumeration under test."
+        ),
+        tags=["asset-provenance", "self-verification", "silent-failure"],
+    ),
+    E(
+        issue_id="FL-019",
+        title="A zero produced by a run that never started, reported as a clean result",
+        observation=(
+            "Three times in one session a null result was read as a clean one. A `pgrep -f` "
+            "wait loop matched its own wrapper's command line, so a background job waited a "
+            "day, ran nothing and wrote a 0-byte file while every status check said 'in "
+            "progress'. A closure repair reported FULL_RENDER_CLOSURE true using the same "
+            "traversal that caused the defect. And a scene test reported `mdl_error_count = "
+            "0` because its preflight had refused the URL and exited before Isaac started."
+        ),
+        root_cause=(
+            "Measurements were represented as bare values. A value carries no record of "
+            "whether the machinery that produces it ever ran, so `0` from a live measurement "
+            "and `0` from an inert one are the same token. Every consumer then reads the "
+            "second as the first, because that is the reading that requires no further work."
+        ),
+        why_existing_checks_missed_it=(
+            "There was nothing to miss: the artefacts were well-formed and their values were "
+            "the values a healthy run produces. Detection requires a fact the artefact did "
+            "not carry -- whether the measurement executed over a non-empty population. No "
+            "amount of care applied to the value can recover it."
+        ),
+        scientific_risk=(
+            "The general form is severe. `0 collisions` from a robot that never moved, `0 "
+            "invalid rows` from a validator over an empty input, `0 NaN gradients` from a "
+            "backward pass that did not run -- each is a safety or correctness claim "
+            "supported by an absence of observation rather than an observation of absence."
+        ),
+        alternatives_considered=[
+            "Add liveness assertions to each gate individually",
+            "Require reviewers to check that a run produced output",
+            "Make liveness part of the measurement's type, enforced at construction",
+        ],
+        decision=(
+            "`src/navfm/measurement.py`: a `MeasurementEnvelope` carrying liveness, value and "
+            "provenance together. It refuses at construction to hold a value while liveness is "
+            "incomplete, and reports RUN_LIVE_NO_MEASUREMENT rather than MEASURED_ZERO when "
+            "the examined population is empty. Status is five-valued -- NOT_RUN, RUN_FAILED, "
+            "RUN_LIVE_NO_MEASUREMENT, MEASURED_ZERO, MEASURED_NONZERO -- because the four ways "
+            "of lacking an answer need different responses and a boolean collapses them into "
+            "the one that resembles success."
+        ),
+        decision_rule=(
+            "MEASUREMENT = LIVENESS + VALUE + PROVENANCE, never MEASUREMENT = VALUE. A "
+            "reported zero is a conclusion only after liveness is established; otherwise it "
+            "is missing evidence wearing the appearance of success. Null execution and zero "
+            "outcome must never share a representation."
+        ),
+        rejected_alternative=(
+            "Per-gate liveness assertions and reviewer discipline were both rejected: this "
+            "failure occurred three times in one session inside an audit explicitly built "
+            "around the declared-versus-observed distinction. Intent is demonstrably not the "
+            "control; the type is."
+        ),
+        correction=(
+            "Envelope type with `require_evidence()` that raises rather than returning a "
+            "value, `not_run()` for the honest empty case, and pessimistic liveness defaults "
+            "so a forgotten field yields NOT_RUN rather than a silent pass."
+        ),
+        validation=(
+            "28 tests, each of the three incidents encoded as a case that must not pass: a "
+            "scene that never loaded, a job that never ran, and a validator over an empty "
+            "population. A stationary robot is asserted not to prove zero collisions."
+        ),
+        regression_control=(
+            "`value` is refused at construction when liveness is incomplete, so a gate cannot "
+            "emit a bare number without the proof that it measured anything."
+        ),
+        evidence=["src/navfm/measurement.py", "tests/test_measurement.py"],
+        impact=(
+            "No published result rested on one of the three: the closure repair was caught by "
+            "an unchanged render, the inert job by an empty output file, the unloaded scene by "
+            "a REFUSED line. All three were caught by observation, none by a check."
+        ),
+        impact_score=5,
+        detectability_score=5,
+        propagation_score=5,
+        claim_boundary=(
+            "The type is in place with tests. Migration of the gates is staged: scene load, "
+            "render, dependency audit, training smoke and evaluation first."
+        ),
+        non_claim=(
+            "Not a claim that existing gates already emit envelopes. Until a gate is migrated, "
+            "its zeros carry the same ambiguity described here."
+        ),
+        propagation=(
+            "Applies to every gate in the repository and to future safety metrics, where the "
+            "failure mode is worst -- a stationary robot produces a perfect collision record."
+        ),
+        tags=["verification-philosophy", "liveness", "silent-failure"],
+    ),
+    E(
+        issue_id="FL-020",
+        title="A URL validated as a filesystem path, refused before anything ran",
+        observation=(
+            "`camera_view_acceptance.py` preflighted its scene argument with "
+            "`Path(args.scene).is_file()`. Given an Omniverse asset URL that is always false, "
+            "so the script printed REFUSED and exited -- and the surrounding measurement "
+            "reported zero MDL errors for a scene that had never been opened."
+        ),
+        root_cause=(
+            "Local filesystem paths and remote asset URIs were treated as one namespace. They "
+            "are different addressing schemes with different resolvers, and only one of them "
+            "answers `is_file()`."
+        ),
+        why_existing_checks_missed_it=(
+            "The preflight behaved exactly as designed and its refusal was printed. The defect "
+            "was that the refusal was invisible to the measurement wrapped around it, which "
+            "counted error lines in output that was never produced."
+        ),
+        scientific_risk=(
+            "Any scene addressed by URI would be silently excluded from evaluation while the "
+            "run reported a clean result -- and the native asset root is the correct way to "
+            "reference these scenes, so the defect specifically blocked the working path."
+        ),
+        alternatives_considered=[
+            "Require all scenes to be local files",
+            "Validate by addressing scheme, deferring URI existence to the runtime resolver",
+        ],
+        decision=(
+            "Detect the scheme and validate with the resolver appropriate to it: filesystem "
+            "for local paths, the Omniverse runtime for URIs. URI existence is never tested "
+            "with `Path.is_file()`."
+        ),
+        decision_rule=(
+            "An identifier is validated by the resolver that owns its namespace. A check that "
+            "cannot succeed for a valid input is not a strict check, it is a broken one."
+        ),
+        rejected_alternative=(
+            "Requiring local files was rejected: it is what forced the hand-built mirror, "
+            "which produced FL-016 and FL-018 and never resolved MDL correctly."
+        ),
+        correction="Scheme detection in the preflight, with the incident recorded at the call site.",
+        validation=(
+            "With the fix, the Office scene loads from the asset root: 4713 prims, 140 meshes, "
+            "121 lights, 185 materials, zero MDL errors and zero error lines -- against 138 MDL "
+            "errors from the local mirror."
+        ),
+        regression_control=(
+            "The gate now reports whether an artefact was written alongside its error count, "
+            "so a refused run cannot present as a clean one."
+        ),
+        evidence=[
+            "scripts/camera_view_acceptance.py",
+            "gates/scenes/camera_view_office_remote.json",
+        ],
+        impact=(
+            "Established that the native resolver handles the full USD, MDL and texture graph "
+            "correctly, and that the hand-built mirror was the defect rather than the assets."
+        ),
+        impact_score=4,
+        detectability_score=4,
+        propagation_score=3,
+        claim_boundary=(
+            "Concerns scene addressing in the acceptance gate under Isaac Sim 5.1.0.0."
+        ),
+        non_claim=(
+            "Not a claim that the Office scene is eligible. That run FAILED its own gate on "
+            "background fraction, and the metric cannot yet distinguish an unbounded void from "
+            "a legitimate view through a window."
+        ),
+        propagation=(
+            "Applies to every script taking a scene or asset argument, and retires the local "
+            "mirror as the acquisition path."
+        ),
+        tags=["asset-addressing", "false-negative"],
+    ),
 ]
 
 
@@ -1271,7 +1528,7 @@ def main() -> int:
             "Every entry carries the chain from what was observed to what is now claimed, "
             "including the field that is easiest to leave out and hardest to reconstruct "
             "later: **why the checks that were already running did not see it**.\n\n"
-            "Seventeen entries. Twelve are defects caught before any admitted result existed; two "
+            "Twenty entries. Fifteen are defects caught before any admitted result existed; two "
             "(`FL-003`, `FL-011`) are findings about the released upstream artefacts and their "
             "sampling semantics rather than about this work; one (`FL-008`) is an open gate "
             "scope issue awaiting a decision that is not engineering's to make; one "

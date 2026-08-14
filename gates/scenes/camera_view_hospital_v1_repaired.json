@@ -1,6 +1,6 @@
 {
   "check": "CAMERA_VIEW_ACCEPTANCE",
-  "timestamp_utc": "2026-08-13T09:09:50.843192+00:00",
+  "timestamp_utc": "2026-08-14T02:57:16.071757+00:00",
   "scene_id": "hospital_v1_repaired",
   "scene_arg": "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/hospital.usd",
   "robot_usd": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
@@ -68,9 +68,9 @@
   },
   "frames": [
     {
-      "dominant_hue_fraction": 0.9643,
+      "dominant_hue_fraction": 0.9625,
       "saturated_pixel_fraction": 1.0,
-      "distinct_colour_bins": 36,
+      "distinct_colour_bins": 39,
       "resolution": [
         320,
         240
@@ -92,9 +92,9 @@
       "image": "gates/scenes/views/hospital_v1_repaired/pov_00.png"
     },
     {
-      "dominant_hue_fraction": 0.9634,
+      "dominant_hue_fraction": 0.9627,
       "saturated_pixel_fraction": 1.0,
-      "distinct_colour_bins": 36,
+      "distinct_colour_bins": 39,
       "resolution": [
         320,
         240
@@ -116,9 +116,9 @@
       "image": "gates/scenes/views/hospital_v1_repaired/pov_01.png"
     },
     {
-      "dominant_hue_fraction": 0.964,
+      "dominant_hue_fraction": 0.9629,
       "saturated_pixel_fraction": 1.0,
-      "distinct_colour_bins": 31,
+      "distinct_colour_bins": 34,
       "resolution": [
         320,
         240
@@ -142,7 +142,7 @@
     {
       "dominant_hue_fraction": 0.9633,
       "saturated_pixel_fraction": 1.0,
-      "distinct_colour_bins": 26,
+      "distinct_colour_bins": 29,
       "resolution": [
         320,
         240
@@ -168,10 +168,15 @@
     "background_fraction": 0.0,
     "floor_fraction": 0.47,
     "structure_fraction": 0.53,
+    "dominant_hue_fraction": 0.9628,
+    "saturated_pixel_fraction": 1.0,
+    "distinct_colour_bins": 29,
     "median_forward_depth_m": 8.99
   },
   "verdict": {
-    "result": "PASS",
-    "failures": []
+    "result": "FAIL",
+    "failures": [
+      "96% of saturated pixels share one hue \u2014 consistent with MDL material fallback, not with an authored interior"
+    ]
   }
 }

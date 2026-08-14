@@ -1,0 +1,158 @@
+{
+  "check": "CAMERA_VIEW_ACCEPTANCE",
+  "timestamp_utc": "2026-08-14T03:00:03.619586+00:00",
+  "scene_id": "office_remote",
+  "scene_arg": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
+  "robot_usd": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "thresholds": {
+    "background_fraction_max": 0.1,
+    "floor_fraction_max": 0.6,
+    "structure_fraction_min": 0.15,
+    "median_forward_depth_min_m": 1.5,
+    "dominant_hue_fraction_max": 0.8,
+    "distinct_colour_bins_min": 12,
+    "rationale": "A frame that is mostly nothing, mostly floor, or a single flat hue carries little navigational structure. The hue and colour-diversity limits exist because a scene whose MDL materials fail to resolve still renders geometry, still reports finite depth and still passes every geometric check -- while showing a colour that is not in the asset.",
+    "calibration": "background_fraction_max tightened from 0.35 to 0.10 after both known-bad frames passed the original table. Measured: bounded interior 0.00, unbounded void 0.33."
+  },
+  "stage": "SIMULATION_DEVELOPMENT",
+  "admission_status": "NOT_ADMITTED",
+  "world": {
+    "type": "usd_reference",
+    "usd": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd"
+  },
+  "scene_census": {
+    "prim_type_counts": {
+      "Xform": 3857,
+      "Scope": 187,
+      "Material": 185,
+      "Shader": 185,
+      "Mesh": 140,
+      "SphereLight": 119,
+      "Camera": 7,
+      "PhysicsFixedJoint": 6,
+      "": 5,
+      "SkelRoot": 5,
+      "Skeleton": 5,
+      "PhysicsRevoluteJoint": 4,
+      "RenderProduct": 1,
+      "RenderSettings": 1
+    },
+    "total_prims": 4713,
+    "mesh_count": 140,
+    "light_count": 121,
+    "material_count": 185,
+    "bounding_box_min_m": [
+      -2500.0,
+      -2500.0,
+      -0.044
+    ],
+    "bounding_box_max_m": [
+      2500.0,
+      2500.0,
+      230.0
+    ],
+    "extent_m": [
+      5000.0,
+      5000.0,
+      230.044
+    ]
+  },
+  "camera": {
+    "prim": "/World/YahboomM3Pro/camera_link/front_rgb_camera",
+    "focal_length_mm": 18.0,
+    "horizontal_aperture_mm": 20.954999923706055,
+    "vertical_aperture_mm": 15.715999603271484,
+    "hfov_deg": 60.41,
+    "vfov_deg": 47.17,
+    "world_height_m": 0.28
+  },
+  "frames": [
+    {
+      "dominant_hue_fraction": 0.3503,
+      "saturated_pixel_fraction": 0.5923,
+      "distinct_colour_bins": 52,
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3393,
+      "floor_fraction": 0.452,
+      "structure_fraction": 0.2086,
+      "median_forward_depth_m": 6.085,
+      "p90_forward_depth_m": 68.376,
+      "median_centre_strip_depth_m": 6.53,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 50741,
+      "verdict": {
+        "result": "FAIL",
+        "failures": [
+          "background 33.9% exceeds 10% \u2014 the world is unbounded, not the camera aimed wrong"
+        ]
+      },
+      "image": "gates/scenes/views/office_remote/pov_00.png"
+    },
+    {
+      "dominant_hue_fraction": 0.3494,
+      "saturated_pixel_fraction": 0.5936,
+      "distinct_colour_bins": 53,
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3393,
+      "floor_fraction": 0.452,
+      "structure_fraction": 0.2086,
+      "median_forward_depth_m": 6.085,
+      "p90_forward_depth_m": 68.376,
+      "median_centre_strip_depth_m": 6.53,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 50741,
+      "verdict": {
+        "result": "FAIL",
+        "failures": [
+          "background 33.9% exceeds 10% \u2014 the world is unbounded, not the camera aimed wrong"
+        ]
+      },
+      "image": "gates/scenes/views/office_remote/pov_01.png"
+    },
+    {
+      "dominant_hue_fraction": 0.3506,
+      "saturated_pixel_fraction": 0.5932,
+      "distinct_colour_bins": 52,
+      "resolution": [
+        320,
+        240
+      ],
+      "background_fraction": 0.3393,
+      "floor_fraction": 0.452,
+      "structure_fraction": 0.2086,
+      "median_forward_depth_m": 6.085,
+      "p90_forward_depth_m": 68.376,
+      "median_centre_strip_depth_m": 6.53,
+      "horizon_row_fraction": 0.5,
+      "pixels_with_geometry": 50741,
+      "verdict": {
+        "result": "FAIL",
+        "failures": [
+          "background 33.9% exceeds 10% \u2014 the world is unbounded, not the camera aimed wrong"
+        ]
+      },
+      "image": "gates/scenes/views/office_remote/pov_02.png"
+    }
+  ],
+  "aggregate": {
+    "background_fraction": 0.3393,
+    "floor_fraction": 0.452,
+    "structure_fraction": 0.2086,
+    "dominant_hue_fraction": 0.3501,
+    "saturated_pixel_fraction": 0.593,
+    "distinct_colour_bins": 52,
+    "median_forward_depth_m": 6.085
+  },
+  "verdict": {
+    "result": "FAIL",
+    "failures": [
+      "background 33.9% exceeds 10% \u2014 the world is unbounded, not the camera aimed wrong"
+    ]
+  }
+}
