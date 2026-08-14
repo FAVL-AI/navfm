@@ -1,0 +1,116 @@
+{
+  "check": "PHYSX_QUERY_CAPABILITIES_AND_ROBOT_FOOTPRINT",
+  "isaac_version": "5.1.0.0",
+  "scene_query_primitives_present": {
+    "overlap_box": true,
+    "overlap_box_any": true,
+    "overlap_shape": true,
+    "overlap_sphere": true,
+    "sweep_box_any": true,
+    "sweep_box_closest": true,
+    "sweep_box_all": true,
+    "sweep_shape_any": true,
+    "sweep_shape_closest": true,
+    "sweep_sphere_closest": true,
+    "raycast_closest": true,
+    "raycast_any": true,
+    "raycast_all": true
+  },
+  "scene_query_primitives_absent": [],
+  "signature_introspection": "unavailable \u2014 native bindings raise ValueError under inspect.signature. Behaviour will be established by known-answer fixtures rather than by documented form.",
+  "footprint": {
+    "source": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "method": "UsdGeom.BBoxCache over default+render+proxy+guide purposes, union of prims carrying UsdPhysics.CollisionAPI",
+    "collider_count": 8,
+    "collider_extents_m": [
+      [
+        "mesh_0/box",
+        [
+          0.0841,
+          0.0552,
+          0.0064
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.08,
+          0.025,
+          0.08
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.08,
+          0.025,
+          0.08
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.076,
+          0.076,
+          0.04
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.08,
+          0.025,
+          0.08
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.08,
+          0.025,
+          0.08
+        ]
+      ],
+      [
+        "mesh_0/cylinder",
+        [
+          0.024,
+          0.024,
+          0.16
+        ]
+      ],
+      [
+        "mesh_0/box",
+        [
+          0.0006,
+          0.0081,
+          0.0006
+        ]
+      ]
+    ],
+    "union_extent_m": [
+      0.235,
+      0.195,
+      0.2803
+    ],
+    "planar_length_x_m": 0.235,
+    "planar_width_y_m": 0.195,
+    "height_z_m": 0.2803,
+    "half_extents_m": [
+      0.1175,
+      0.0975
+    ],
+    "circumscribed_radius_m": 0.1527,
+    "representation": "BOX",
+    "representation_justification": "The platform footprint is approximately rectangular and PhysX provides oriented box overlap and sweep primitives directly. sweep_shape_* remains available if a box proves inadequate, but switching would be recorded, not silent.",
+    "note_default_purpose_returned_nothing": "ComputeWorldBound with the default purpose alone returned empty ranges for every collider \u2014 inverted FLT_MAX sentinels that a careless reader would take as a valid huge box. Collision geometry here carries a non-default purpose, so the cache must span default+render+proxy+guide."
+  },
+  "supersedes": {
+    "invented_clearance_radius_m": 0.25,
+    "actual_circumscribed_radius_m": 0.1527,
+    "error_factor": 1.64,
+    "consequence": "The rejected AABB pose selection used ROBOT_RADIUS_M = 0.25, invented rather than read from the robot. The true circumscribed radius is 0.152 m, so every candidate was required to clear a footprint about 1.6x too large in radius \u2014 roughly 2.7x in area. That compounded with bounding-box over-occupancy to produce the 1.3% usable floor. Two independent inventions in one estimator, each individually plausible."
+  },
+  "claim_boundary": "Establishes the collision footprint of the CANONICAL_SIMULATION_ROBOT_COLLISION_MODEL under Isaac Sim 5.1.0.0. Not a measured physical Yahboom: wheel radius and related dimensions remain PROVISIONAL_SIMULATION_VALUE.",
+  "git_head": "25d2110047a4dc3b4a801e1cd6d8bccd1fd83b22"
+}
