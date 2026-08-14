@@ -1,0 +1,530 @@
+{
+  "check": "COLLISION_PROBE_CAUSALITY_REGRESSIONS",
+  "timestamp_utc": "2026-08-14T05:13:26.050424+00:00",
+  "expected_answers_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
+  "digest_verified_against_frozen": true,
+  "results": {
+    "CAUSAL_MUTATION_PRESENT": {
+      "target": "/World/B",
+      "reachability": "REACHABLE",
+      "origin": [
+        2.3,
+        0.0,
+        0.3
+      ],
+      "max_distance": 1.1,
+      "generic_hit": true,
+      "actual_collider": "/World/B",
+      "distance": 0.5,
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    "CAUSAL_MUTATION_REMOVED": {
+      "target": "/World/B",
+      "reachability": "REACHABLE",
+      "origin": [
+        2.3,
+        0.0,
+        0.3
+      ],
+      "max_distance": 1.1,
+      "generic_hit": false,
+      "actual_collider": null,
+      "distance": null,
+      "identity_match": false,
+      "verdict": "FAIL_NO_HIT"
+    },
+    "WRONG_CAUSE_BAD_PROBE": {
+      "target": "/World/B",
+      "reachability": "OCCLUDED",
+      "occluders": [
+        "/World/A"
+      ],
+      "verdict": "NON_PROBATIVE_OCCLUDED",
+      "old_generic_logic_would_say": "FAIL"
+    },
+    "WRONG_CAUSE_GOOD_PROBE": {
+      "target": "/World/B",
+      "reachability": "REACHABLE",
+      "origin": [
+        2.3,
+        0.0,
+        0.3
+      ],
+      "max_distance": 1.1,
+      "generic_hit": true,
+      "actual_collider": "/World/B",
+      "distance": 0.5,
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    "SUPPORT_STARVATION": {
+      "support_available": 2,
+      "blocker_available": 32,
+      "support_planned": 2,
+      "blocker_planned": 8,
+      "support_fired": 2,
+      "blocker_fired": 8,
+      "old_first_n_support_selected": 2,
+      "note": "Independent quotas: support selection does not depend on blocker population size. First-N over a 32:2 imbalance is what starved Office.",
+      "verdict": "PASS"
+    },
+    "OCCLUDED_TARGET": {
+      "target": "/World/B_hidden",
+      "reachability": "OCCLUDED",
+      "occluders": [
+        "/World/A_wall"
+      ],
+      "verdict": "NON_PROBATIVE_OCCLUDED"
+    },
+    "REACHABLE_TARGET": {
+      "target": "/World/B_open",
+      "reachability": "REACHABLE",
+      "origin": [
+        2.3,
+        5.0,
+        0.3
+      ],
+      "max_distance": 1.1,
+      "generic_hit": true,
+      "actual_collider": "/World/B_open",
+      "distance": 0.5,
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    "PHYSICAL_OWNER_IDENTITY": {
+      "target": "/World/Group/Leaf",
+      "reachability": "REACHABLE",
+      "origin": [
+        2.3,
+        0.0,
+        0.3
+      ],
+      "max_distance": 1.1,
+      "generic_hit": true,
+      "actual_collider": "/World/Group/Leaf",
+      "distance": 0.5,
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE",
+      "adjacent_same_class_rejected": true
+    },
+    "DISTANCE_DIVERSITY": {
+      "near": {
+        "target": "/World/T_NEAR",
+        "reachability": "REACHABLE",
+        "origin": [
+          0.3,
+          0.0,
+          0.3
+        ],
+        "max_distance": 1.1,
+        "generic_hit": true,
+        "actual_collider": "/World/T_NEAR",
+        "distance": 0.5,
+        "identity_match": true,
+        "verdict": "PASS_CORRECT_CAUSE"
+      },
+      "mid": {
+        "target": "/World/T_MID",
+        "reachability": "REACHABLE",
+        "origin": [
+          2.1,
+          4.0,
+          0.3
+        ],
+        "max_distance": 1.5,
+        "generic_hit": true,
+        "actual_collider": "/World/T_MID",
+        "distance": 0.5,
+        "identity_match": true,
+        "verdict": "PASS_CORRECT_CAUSE"
+      },
+      "far": {
+        "target": "/World/T_FAR",
+        "reachability": "REACHABLE",
+        "origin": [
+          3.6,
+          8.0,
+          0.3
+        ],
+        "max_distance": 2.3,
+        "generic_hit": true,
+        "actual_collider": "/World/T_FAR",
+        "distance": 0.7,
+        "identity_match": true,
+        "verdict": "PASS_CORRECT_CAUSE"
+      },
+      "distances": [
+        0.5,
+        0.5,
+        0.7
+      ],
+      "all_identities_correct": true,
+      "unexpected_invariance": false,
+      "review_required": null
+    }
+  },
+  "verdicts": {
+    "CAUSAL_MUTATION_PRESENT": "PASS",
+    "CAUSAL_MUTATION_REMOVED": "PASS",
+    "WRONG_CAUSE_BAD_PROBE": "PASS",
+    "WRONG_CAUSE_GOOD_PROBE": "PASS",
+    "SUPPORT_STARVATION": "PASS",
+    "OCCLUDED_TARGET": "PASS",
+    "REACHABLE_TARGET": "PASS",
+    "PHYSICAL_OWNER_IDENTITY": "PASS",
+    "DISTANCE_DIVERSITY": "FAIL"
+  },
+  "measurements": [
+    {
+      "measurement": "probe_regression_CAUSAL_MUTATION_PRESENT",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B",
+          "reachability": "REACHABLE",
+          "origin": [
+            2.3,
+            0.0,
+            0.3
+          ],
+          "max_distance": 1.1,
+          "generic_hit": true,
+          "actual_collider": "/World/B",
+          "distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_CAUSAL_MUTATION_REMOVED",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B",
+          "reachability": "REACHABLE",
+          "origin": [
+            2.3,
+            0.0,
+            0.3
+          ],
+          "max_distance": 1.1,
+          "generic_hit": false,
+          "actual_collider": null,
+          "distance": null,
+          "identity_match": false,
+          "verdict": "FAIL_NO_HIT"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_WRONG_CAUSE_BAD_PROBE",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B",
+          "reachability": "OCCLUDED",
+          "occluders": [
+            "/World/A"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED",
+          "old_generic_logic_would_say": "FAIL"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_WRONG_CAUSE_GOOD_PROBE",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B",
+          "reachability": "REACHABLE",
+          "origin": [
+            2.3,
+            0.0,
+            0.3
+          ],
+          "max_distance": 1.1,
+          "generic_hit": true,
+          "actual_collider": "/World/B",
+          "distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_SUPPORT_STARVATION",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support_available": 2,
+          "blocker_available": 32,
+          "support_planned": 2,
+          "blocker_planned": 8,
+          "support_fired": 2,
+          "blocker_fired": 8,
+          "old_first_n_support_selected": 2,
+          "note": "Independent quotas: support selection does not depend on blocker population size. First-N over a 32:2 imbalance is what starved Office.",
+          "verdict": "PASS"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_OCCLUDED_TARGET",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B_hidden",
+          "reachability": "OCCLUDED",
+          "occluders": [
+            "/World/A_wall"
+          ],
+          "verdict": "NON_PROBATIVE_OCCLUDED"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_REACHABLE_TARGET",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/B_open",
+          "reachability": "REACHABLE",
+          "origin": [
+            2.3,
+            5.0,
+            0.3
+          ],
+          "max_distance": 1.1,
+          "generic_hit": true,
+          "actual_collider": "/World/B_open",
+          "distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE"
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_PHYSICAL_OWNER_IDENTITY",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "target": "/World/Group/Leaf",
+          "reachability": "REACHABLE",
+          "origin": [
+            2.3,
+            0.0,
+            0.3
+          ],
+          "max_distance": 1.1,
+          "generic_hit": true,
+          "actual_collider": "/World/Group/Leaf",
+          "distance": 0.5,
+          "identity_match": true,
+          "verdict": "PASS_CORRECT_CAUSE",
+          "adjacent_same_class_rejected": true
+        }
+      }
+    },
+    {
+      "measurement": "probe_regression_DISTANCE_DIVERSITY",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "FAIL",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "near": {
+            "target": "/World/T_NEAR",
+            "reachability": "REACHABLE",
+            "origin": [
+              0.3,
+              0.0,
+              0.3
+            ],
+            "max_distance": 1.1,
+            "generic_hit": true,
+            "actual_collider": "/World/T_NEAR",
+            "distance": 0.5,
+            "identity_match": true,
+            "verdict": "PASS_CORRECT_CAUSE"
+          },
+          "mid": {
+            "target": "/World/T_MID",
+            "reachability": "REACHABLE",
+            "origin": [
+              2.1,
+              4.0,
+              0.3
+            ],
+            "max_distance": 1.5,
+            "generic_hit": true,
+            "actual_collider": "/World/T_MID",
+            "distance": 0.5,
+            "identity_match": true,
+            "verdict": "PASS_CORRECT_CAUSE"
+          },
+          "far": {
+            "target": "/World/T_FAR",
+            "reachability": "REACHABLE",
+            "origin": [
+              3.6,
+              8.0,
+              0.3
+            ],
+            "max_distance": 2.3,
+            "generic_hit": true,
+            "actual_collider": "/World/T_FAR",
+            "distance": 0.7,
+            "identity_match": true,
+            "verdict": "PASS_CORRECT_CAUSE"
+          },
+          "distances": [
+            0.5,
+            0.5,
+            0.7
+          ],
+          "all_identities_correct": true,
+          "unexpected_invariance": false,
+          "review_required": null
+        }
+      }
+    }
+  ],
+  "all_pass": false,
+  "gate": "7/7 required before any candidate scene may consume this probe. A candidate must never be adjudicated by an unproven instrument."
+}
