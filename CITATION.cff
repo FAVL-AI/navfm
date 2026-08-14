@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+title: "NavFM: evidence-governed reproduction, data-contract validation and simulator admissibility for visual robot navigation"
+message: "If you cite this repository before a formal paper release, please state the exact commit used."
+type: software
+authors:
+  - family-names: "Van Laarhoven"
+    given-names: "Frank Asante"
+    affiliation: "School of Computing, Newcastle University"
+repository-code: "https://github.com/FAVL-AI/navfm"
+abstract: >-
+  A visual-navigation experiment can complete successfully while changing what
+  the experiment means. A checkpoint may load without all parameters executing;
+  a loss may be finite while optimising the wrong objective; a scene may render
+  correctly while missing floor collision; a physics query may return a plausible
+  hit while interrogating the wrong object; and a non-empty sample may still be
+  too small to support a scene-level claim. NavFM treats these as research
+  problems rather than implementation details, establishing a reproducible path
+  from published model release to model-ready trajectory data and then to
+  physics-valid simulation. Claims are admitted only after their measurement is
+  live, causally relevant, reproducible and bound to immutable provenance.
+keywords:
+  - visual navigation
+  - reproducibility
+  - embodied AI
+  - robot learning
+  - Isaac Sim
+  - simulator validation
+  - measurement validity
+  - evidence gating
+license: MIT
