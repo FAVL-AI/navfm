@@ -1,0 +1,10 @@
+{
+  "resolves": "original manifest + dated amendments, without mutating the original",
+  "original_manifest_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
+  "amendment_digests": [
+    "7fd477c706313b555504e11b05f88957b01fc7daece09d4f0a1a4188634e8e4d"
+  ],
+  "effective_expectation_digest": "47e54f586dfbb0203a90f495865aae5675e1d902e1951f56b1434517ccc27eaa",
+  "frozen_at": "2026-08-14T05:17:19.610416+00:00",
+  "ordering_contract": "amendment_frozen_at must precede regression_execution_started_at"
+}
