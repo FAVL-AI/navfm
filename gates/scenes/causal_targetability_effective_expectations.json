@@ -1,0 +1,9 @@
+{
+  "parent_expectations_digest": "49c5418859e3d6b5850e0018f718eb4aad6785fc3f05f046b5fb56a666227f31",
+  "amendment_digests": [
+    "6451a1f5cc799d6faebba002b70b5d872a0b1acfa0b8df05d67f0556db7c337d"
+  ],
+  "effective_expectations_digest": "03ebdbc0f1c89d87c1b2813de157d1b7adc36d54ff3b457184aaf3d5b6279701",
+  "total_fixtures": 5,
+  "frozen_at": "2026-08-14T05:40:09.466483+00:00"
+}
