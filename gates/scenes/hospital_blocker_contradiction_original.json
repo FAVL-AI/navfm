@@ -1,0 +1,356 @@
+{
+  "check": "HOSPITAL_BLOCKER_CONTRADICTION_ORIGINAL",
+  "statement": "CollisionAPI inspection reports 1066/1066 Hospital blockers authored for collision. Eight target-specific live PhysX probes, all classified REACHABLE, returned 3 correct-target and 5 wrong-target hits. Two independent evidence channels disagree. The contradiction is the result until its cause is known.",
+  "not_yet_established": [
+    "Hospital is deficient",
+    "the probe is defective",
+    "the two channels measure the same physical unit"
+  ],
+  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18",
+  "correct_target_cases": [
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "origin": [
+        13.45,
+        2.401,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "origin": [
+        10.56,
+        -1.1,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "origin": [
+        13.45,
+        -1.099,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    }
+  ],
+  "wrong_target_cases": [
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "origin": [
+        13.45,
+        2.401,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+      "origin": [
+        10.41,
+        0.701,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 4.5,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.75,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+      "origin": [
+        10.41,
+        0.701,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 4.5,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.75,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "origin": [
+        10.56,
+        -1.1,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "origin": [
+        13.45,
+        -1.099,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    }
+  ],
+  "all_eight": [
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "origin": [
+        13.45,
+        2.401,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "origin": [
+        13.45,
+        2.401,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+      "origin": [
+        10.41,
+        0.701,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 4.5,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.75,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+      "origin": [
+        10.41,
+        0.701,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 4.5,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.75,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "origin": [
+        10.56,
+        -1.1,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "origin": [
+        10.56,
+        -1.1,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "origin": [
+        13.45,
+        -1.099,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": true,
+      "verdict": "PASS_CORRECT_CAUSE"
+    },
+    {
+      "probe_role": "BLOCKING",
+      "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "origin": [
+        13.45,
+        -1.099,
+        1.501
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "max_distance": 1.31,
+      "actual_hit": true,
+      "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "actual_distance": 0.6,
+      "probe_reachability_status": "REACHABLE",
+      "identity_match": false,
+      "verdict": "FAIL_WRONG_CAUSE"
+    }
+  ],
+  "frozen_at": "2026-08-14T05:30:14.074069+00:00",
+  "git_head": "7a09713ee0d3658de01ade16feae7874f03b2949",
+  "reproducibility_note": "The eight targets are frozen so the contradiction remains reproducible against the same cases. Regenerating the sample would dissolve the disagreement without explaining it.",
+  "evidence_digest": "63a63fccec638bbd1e31e5a25e4e8cda7d47626a6fe8d2dbf60d105803472d30"
+}

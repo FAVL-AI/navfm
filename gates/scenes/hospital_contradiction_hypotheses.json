@@ -1,0 +1,64 @@
+{
+  "check": "HOSPITAL_CONTRADICTION_HYPOTHESES",
+  "written_before_diagnostics": true,
+  "discrimination_requirement": "Any accepted explanation must distinguish the 5 wrong cases from the 3 correct ones in the same scene. An account that applies equally to both explains neither.",
+  "four_distinct_claims": [
+    "authored: this prim has CollisionAPI",
+    "runtime: PhysX exposes a physical shape",
+    "targetability: our intervention can isolate that shape",
+    "observation: that shape caused the hit"
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "name": "PROBE_GEOMETRY",
+      "claim": "The ray cannot isolate the declared target in dense geometry.",
+      "supports": "A nearer collider lies on the segment ahead of the target.",
+      "falsifies": "No collider intersects the segment before the target's own bounds."
+    },
+    {
+      "id": "H2",
+      "name": "PHYSICAL_OWNER_MAPPING",
+      "claim": "PhysX returns a different USD prim for the same physical object.",
+      "supports": "Returned prim and target share a collision-owning ancestor and one collision shape.",
+      "falsifies": "They are separate collision shapes with separate rigid-body owners."
+    },
+    {
+      "id": "H3",
+      "name": "AUTHORED_RUNTIME_MISMATCH",
+      "claim": "CollisionAPI is authored but no queryable runtime shape exists.",
+      "supports": "Target unhittable from every valid local direction while neighbours are hit.",
+      "falsifies": "Target is hit cleanly from at least one short-range local direction."
+    },
+    {
+      "id": "H4",
+      "name": "BOUNDS_MISMATCH",
+      "claim": "Probe built from render bounds that differ from the collision shape.",
+      "supports": "Collision hit location lies substantially outside the render bounds used.",
+      "falsifies": "Hit location falls within the bounds the probe was constructed from."
+    },
+    {
+      "id": "H5",
+      "name": "COMPOUND_COLLIDER",
+      "claim": "Collision is owned by a compound parent, not the authored child.",
+      "supports": "Authored count enumerates children while PhysX exposes one parent shape.",
+      "falsifies": "Each authored child has its own distinct runtime shape."
+    },
+    {
+      "id": "H6",
+      "name": "QUERY_FILTER",
+      "claim": "The target is excluded by scene-query filtering.",
+      "supports": "Target unhittable under this filter and hittable with filtering relaxed.",
+      "falsifies": "Filter state is identical for the 3 correct and 5 wrong cases."
+    },
+    {
+      "id": "H7",
+      "name": "INSTANCE_IDENTITY",
+      "claim": "Hit is correct but returned under an instance/prototype identity.",
+      "supports": "Returned path resolves through an instance proxy to the declared target.",
+      "falsifies": "Returned path resolves to a distinct authored object."
+    }
+  ],
+  "written_at": "2026-08-14T05:30:14.075714+00:00",
+  "hypotheses_digest": "12e4359e2a7e03004635dabe7083c28416d9d3957f841b0965ab261d912ceee8"
+}
