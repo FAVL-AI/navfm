@@ -1,8 +1,10 @@
 {
   "check": "COLLISION_PROBE_CAUSALITY_REGRESSIONS",
-  "timestamp_utc": "2026-08-14T05:13:26.050424+00:00",
-  "expected_answers_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
-  "digest_verified_against_frozen": true,
+  "timestamp_utc": "2026-08-14T05:18:06.621511+00:00",
+  "original_manifest_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
+  "amendment_digest": "7fd477c706313b555504e11b05f88957b01fc7daece09d4f0a1a4188634e8e4d",
+  "effective_expectation_digest": "47e54f586dfbb0203a90f495865aae5675e1d902e1951f56b1434517ccc27eaa",
+  "digests_verified_before_execution": true,
   "results": {
     "CAUSAL_MUTATION_PRESENT": {
       "target": "/World/B",
@@ -109,11 +111,17 @@
       "adjacent_same_class_rejected": true
     },
     "DISTANCE_DIVERSITY": {
+      "fixture_version": 2,
+      "declared_standoffs_m": [
+        0.5,
+        1.0,
+        1.5
+      ],
       "near": {
         "target": "/World/T_NEAR",
         "reachability": "REACHABLE",
         "origin": [
-          0.3,
+          5.3,
           0.0,
           0.3
         ],
@@ -122,43 +130,47 @@
         "actual_collider": "/World/T_NEAR",
         "distance": 0.5,
         "identity_match": true,
-        "verdict": "PASS_CORRECT_CAUSE"
+        "verdict": "PASS_CORRECT_CAUSE",
+        "declared_standoff_m": 0.5
       },
       "mid": {
         "target": "/World/T_MID",
         "reachability": "REACHABLE",
         "origin": [
-          2.1,
+          4.8,
           4.0,
           0.3
         ],
-        "max_distance": 1.5,
+        "max_distance": 1.6,
         "generic_hit": true,
         "actual_collider": "/World/T_MID",
-        "distance": 0.5,
+        "distance": 1.0,
         "identity_match": true,
-        "verdict": "PASS_CORRECT_CAUSE"
+        "verdict": "PASS_CORRECT_CAUSE",
+        "declared_standoff_m": 1.0
       },
       "far": {
         "target": "/World/T_FAR",
         "reachability": "REACHABLE",
         "origin": [
-          3.6,
+          4.3,
           8.0,
           0.3
         ],
-        "max_distance": 2.3,
+        "max_distance": 2.1,
         "generic_hit": true,
         "actual_collider": "/World/T_FAR",
-        "distance": 0.7,
+        "distance": 1.5,
         "identity_match": true,
-        "verdict": "PASS_CORRECT_CAUSE"
+        "verdict": "PASS_CORRECT_CAUSE",
+        "declared_standoff_m": 1.5
       },
       "distances": [
         0.5,
-        0.5,
-        0.7
+        1.0,
+        1.5
       ],
+      "matches_declared_standoffs": true,
       "all_identities_correct": true,
       "unexpected_invariance": false,
       "review_required": null
@@ -173,7 +185,7 @@
     "OCCLUDED_TARGET": "PASS",
     "REACHABLE_TARGET": "PASS",
     "PHYSICAL_OWNER_IDENTITY": "PASS",
-    "DISTANCE_DIVERSITY": "FAIL"
+    "DISTANCE_DIVERSITY": "PASS"
   },
   "measurements": [
     {
@@ -464,15 +476,21 @@
         "expected_items": null,
         "complete": null
       },
-      "value": "FAIL",
+      "value": "PASS",
       "is_evidence": true,
       "evidence": {
         "observed": {
+          "fixture_version": 2,
+          "declared_standoffs_m": [
+            0.5,
+            1.0,
+            1.5
+          ],
           "near": {
             "target": "/World/T_NEAR",
             "reachability": "REACHABLE",
             "origin": [
-              0.3,
+              5.3,
               0.0,
               0.3
             ],
@@ -481,43 +499,47 @@
             "actual_collider": "/World/T_NEAR",
             "distance": 0.5,
             "identity_match": true,
-            "verdict": "PASS_CORRECT_CAUSE"
+            "verdict": "PASS_CORRECT_CAUSE",
+            "declared_standoff_m": 0.5
           },
           "mid": {
             "target": "/World/T_MID",
             "reachability": "REACHABLE",
             "origin": [
-              2.1,
+              4.8,
               4.0,
               0.3
             ],
-            "max_distance": 1.5,
+            "max_distance": 1.6,
             "generic_hit": true,
             "actual_collider": "/World/T_MID",
-            "distance": 0.5,
+            "distance": 1.0,
             "identity_match": true,
-            "verdict": "PASS_CORRECT_CAUSE"
+            "verdict": "PASS_CORRECT_CAUSE",
+            "declared_standoff_m": 1.0
           },
           "far": {
             "target": "/World/T_FAR",
             "reachability": "REACHABLE",
             "origin": [
-              3.6,
+              4.3,
               8.0,
               0.3
             ],
-            "max_distance": 2.3,
+            "max_distance": 2.1,
             "generic_hit": true,
             "actual_collider": "/World/T_FAR",
-            "distance": 0.7,
+            "distance": 1.5,
             "identity_match": true,
-            "verdict": "PASS_CORRECT_CAUSE"
+            "verdict": "PASS_CORRECT_CAUSE",
+            "declared_standoff_m": 1.5
           },
           "distances": [
             0.5,
-            0.5,
-            0.7
+            1.0,
+            1.5
           ],
+          "matches_declared_standoffs": true,
           "all_identities_correct": true,
           "unexpected_invariance": false,
           "review_required": null
@@ -525,6 +547,6 @@
       }
     }
   ],
-  "all_pass": false,
+  "all_pass": true,
   "gate": "7/7 required before any candidate scene may consume this probe. A candidate must never be adjudicated by an unproven instrument."
 }

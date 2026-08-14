@@ -1,0 +1,32 @@
+{
+  "contract_version": 1,
+  "frozen_at": "2026-08-14T05:18:06.621511+00:00",
+  "gate": "9/9 causality regressions PASS",
+  "implementation": "scripts/audit_office_collision_coverage.py",
+  "implementation_digest": "5b9f9fd58fa673f04120efd047bfad29538abf5f74577c90966f1d89767de36a",
+  "harness": "scripts/validate_collision_probe_causality.py",
+  "harness_digest": "c0bbc4837991bee9251bfaf57aa8317226c76118f1150a6d2778408800fa0758",
+  "original_expectation_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
+  "amendment_digests": [
+    "7fd477c706313b555504e11b05f88957b01fc7daece09d4f0a1a4188634e8e4d"
+  ],
+  "effective_expectation_digest": "47e54f586dfbb0203a90f495865aae5675e1d902e1951f56b1434517ccc27eaa",
+  "regression_results_digest": "ea1ee61a130c493c57d314069bc130202f37526ef2260049d6b3b7ff046090ed",
+  "semantics": {
+    "target_aiming": "origin placed relative to each target's own near face, so the declared target is first along the segment; never a shared world origin",
+    "reachability": "preflight classifies REACHABLE / OCCLUDED / AMBIGUOUS / INVALID_GEOMETRY before any verdict; only REACHABLE probes carry causal evidence",
+    "identity": "returned collider must BE the declared target or a preregistered physical owner; same-class neighbours are rejected",
+    "sampling": "support and blocker strata quota-ed independently, 8 each",
+    "invariance": "identical values across deliberately different targets raise REVIEW_REQUIRED_UNEXPECTED_INVARIANCE and force NON_PROBATIVE",
+    "reporting": "generic_hit_rate and correct_target_hit_rate reported separately, never merged",
+    "envelope": "navfm.measurement.MeasurementEnvelope"
+  },
+  "proven_properties": {
+    "intervention_sensitivity": "disabling the declared target changes the verdict from PASS_CORRECT_CAUSE to FAIL_NO_HIT with all else fixed",
+    "state_discrimination": "standoffs 0.50/1.00/1.50 m measured as 0.50/1.00/1.50 m",
+    "probe_incapability_distinguished": "occluded targets are NON_PROBATIVE, not failures"
+  },
+  "claim_boundary": "Validates target-specific causal probing under Isaac Sim 5.1.0.0. Does NOT establish absolute world-range measurement from a shared origin, nor anything about scene quality.",
+  "git_head": "9d28c61b9ce2edb8cdf866a523b5cdf6f73a3c64",
+  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18"
+}

@@ -45,7 +45,14 @@ EXPECTED = OUT / "collision_probe_regression_expected_answers.json"
 #: every run while printing two truncated strings that looked identical. The
 #: refusal was right and its message was misleading -- a comparison must be
 #: displayed at the width it is performed at.
-FROZEN_DIGEST = "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008"
+ORIGINAL_DIGEST = "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008"
+AMENDMENT_DIGEST = "7fd477c706313b555504e11b05f88957"
+EFFECTIVE_DIGEST = "47e54f586dfbb0203a90f495865aae56"
+#: Three digests, all verified at startup. The original manifest is immutable;
+#: amendment 1 supersedes only DISTANCE_DIVERSITY, whose v1 expected the measured
+#: distance to track world range -- a quantity a target-relative probe normalises
+#: away by construction. The effective digest binds the two together so neither
+#: can move without detection.
 
 HX, HY, HZ = 0.1175, 0.0975, 0.13
 
@@ -56,13 +63,23 @@ def main() -> int:
         return 2
     exp_doc = json.loads(EXPECTED.read_text())
     got = exp_doc.get("expected_answers_digest", "")
-    if got != FROZEN_DIGEST:
-        # The manifest is the independent oracle. If it has moved, either it was
-        # regenerated to fit an implementation or this harness is stale; both
-        # invalidate the comparison, so neither is silently absorbed.
-        print(f"REFUSED: expectations digest\n  got    {got}\n  frozen {FROZEN_DIGEST}",
-              file=sys.stderr)
+    amd_p = OUT / "collision_probe_regression_expected_answers_amendments.jsonl"
+    eff_p = OUT / "collision_probe_effective_expectations.json"
+    amd = json.loads(amd_p.read_text().strip().splitlines()[-1]) if amd_p.is_file() else {}
+    eff = json.loads(eff_p.read_text()) if eff_p.is_file() else {}
+    checks = {
+        "original": (got, ORIGINAL_DIGEST),
+        "amendment": (amd.get("amendment_digest", "")[:32], AMENDMENT_DIGEST),
+        "effective": (eff.get("effective_expectation_digest", "")[:32], EFFECTIVE_DIGEST),
+    }
+    bad = {k: v for k, v in checks.items() if v[0] != v[1]}
+    if bad:
+        for k, (g, w) in bad.items():
+            print(f"REFUSED: {k} digest\n  got    {g}\n  frozen {w}", file=sys.stderr)
         return 2
+    # Standoffs come from the frozen amendment, never from this file: an
+    # instrument must not supply the numbers its oracle checks it against.
+    STANDOFFS = amd["preregistered_standoffs_m"]
 
     from isaacsim.simulation_app import SimulationApp
 
@@ -112,7 +129,7 @@ def main() -> int:
             stage_utils.get_current_stage().GetPrimAtPath(path)).ComputeAlignedRange()
 
     def probe(q: Any, target: str, owners: list[str], others: list[str],
-              *, from_origin: bool = False) -> dict[str, Any]:
+              *, from_origin: bool = False, standoff: float | None = None) -> dict[str, Any]:
         """One target-specific probe, with reachability decided before the verdict."""
         r = bounds(target)
         if r.IsEmpty():
@@ -125,8 +142,11 @@ def main() -> int:
             origin, reach = [0.0, cy, cz], 40.0
         else:
             span = mx[0] - mn[0]
-            origin = [mn[0] - max(0.5, span * 0.5), cy, cz]
-            reach = (mn[0] - origin[0]) + span + 0.2
+            # Standoff is the only thing that can vary the reported distance,
+            # since the origin is placed relative to the target's own near face.
+            back = standoff if standoff is not None else max(0.5, span * 0.5)
+            origin = [mn[0] - back, cy, cz]
+            reach = back + span + 0.2
 
         occluders = []
         for o in others:
@@ -234,19 +254,27 @@ def main() -> int:
     # ---- 9. DISTANCE_DIVERSITY: different states, different numbers ---------
     sim = fresh()
     make_box("/World/floor", 0, 0, -0.05, 60, 20, 0.1)
-    for name, x, y, spanx in (("NEAR", 1.0, 0.0, 0.4), ("MID", 3.0, 4.0, 0.8),
-                              ("FAR", 5.0, 8.0, 1.4)):
-        make_box(f"/World/T_{name}", x, y, 0.3, spanx, 0.4, 0.6)
+    # Identical spans, explicitly different standoffs. Span is held constant so
+    # it cannot confound the measurement, which is how v1 produced 0.5/0.5/0.7.
+    # Standoffs come from the frozen amendment, never from this file.
+    for i, name in enumerate(("NEAR", "MID", "FAR")):
+        make_box(f"/World/T_{name}", 6.0, i * 4.0, 0.3, 0.4, 0.4, 0.6)
     q = settle(sim)
     dd = {}
     for name in ("NEAR", "MID", "FAR"):
-        dd[name] = probe(q, f"/World/T_{name}", [], [])
+        dd[name] = probe(q, f"/World/T_{name}", [], [], standoff=STANDOFFS[name])
+        dd[name]["declared_standoff_m"] = STANDOFFS[name]
     dists = [dd[k].get("distance") for k in ("NEAR", "MID", "FAR")]
     ok = all(d is not None for d in dists)
     invariant = ok and len({round(d, 2) for d in dists}) == 1
     results["DISTANCE_DIVERSITY"] = {
+        "fixture_version": 2,
+        "declared_standoffs_m": [STANDOFFS[k] for k in ("NEAR", "MID", "FAR")],
         "near": dd["NEAR"], "mid": dd["MID"], "far": dd["FAR"],
         "distances": dists,
+        "matches_declared_standoffs": ok and all(
+            abs(dists[i] - STANDOFFS[k]) <= float(amd["tolerance_m"])
+            for i, k in enumerate(("NEAR", "MID", "FAR"))),
         "all_identities_correct": all(
             dd[k].get("verdict") == "PASS_CORRECT_CAUSE" for k in dd),
         "unexpected_invariance": invariant,
@@ -276,6 +304,7 @@ def main() -> int:
             d = r["distances"]
             ordered = all(x is not None for x in d) and d[0] < d[1] < d[2]
             return "PASS" if (ordered and r["all_identities_correct"]
+                              and r["matches_declared_standoffs"]
                               and not r["unexpected_invariance"]) else "FAIL"
         if fid == "SUPPORT_STARVATION":
             return "PASS" if (r["support_fired"] > 0 and r["blocker_fired"] > 0) else "FAIL"
@@ -294,8 +323,10 @@ def main() -> int:
     doc = {
         "check": "COLLISION_PROBE_CAUSALITY_REGRESSIONS",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "expected_answers_digest": got,
-        "digest_verified_against_frozen": True,
+        "original_manifest_digest": got,
+        "amendment_digest": amd.get("amendment_digest"),
+        "effective_expectation_digest": eff.get("effective_expectation_digest"),
+        "digests_verified_before_execution": True,
         "results": results, "verdicts": verdicts,
         "measurements": [e.to_json() for e in envelopes],
         "all_pass": all_pass,
