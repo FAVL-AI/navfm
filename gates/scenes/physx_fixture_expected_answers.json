@@ -1,0 +1,141 @@
+{
+  "check": "PHYSX_FIXTURE_EXPECTED_ANSWERS",
+  "written_before_execution": true,
+  "independence_rule": "Every expectation below is derived from the fixture's own construction geometry, not from running the query implementation. The harness must compare against this file and must not compute its own expectations (FL-018: a check sharing an implementation with the thing under test verifies the implementation, not the thing).",
+  "footprint": {
+    "source": "measured from canonical Yahboom colliders",
+    "planar_m": [
+      0.235,
+      0.195
+    ],
+    "half_extents_m": [
+      0.1175,
+      0.0975
+    ],
+    "margin_policy": "No inflation is applied. A safety margin, if ever wanted, must be declared as physical_footprint + planning_margin, never by substituting a larger unexplained robot dimension -- which is exactly how ROBOT_RADIUS_M=0.25 entered the rejected selector."
+  },
+  "sweep_cap_m": 20.0,
+  "censoring_rule": "Hitting a measurement boundary does not measure the quantity at that boundary. No hit before the cap means clear distance >= cap, and the distance field must be null, never the cap value.",
+  "fixtures": [
+    {
+      "fixture_id": "NO_FLOOR",
+      "priority": "MANDATORY",
+      "construction": "Footprint placed over a gap in the floor: no support surface beneath, and no obstacle intersecting the footprint.",
+      "question": "Does absence of obstacle overlap imply a valid standing pose?",
+      "expected": {
+        "support_valid": false,
+        "overlap_hits": 0,
+        "occupiable": false
+      },
+      "why_known_independently": "The fixture author removes the floor. A body with nothing beneath it cannot stand, regardless of how clear its sides are. This is the distinction the whole oracle rests on: NO OVERLAP != VALID POSE."
+    },
+    {
+      "fixture_id": "OPEN_FLOOR",
+      "priority": "MANDATORY",
+      "construction": "Large flat floor, no obstacle anywhere along the forward sweep.",
+      "question": "Does an unobstructed sweep report censoring rather than a measured distance?",
+      "expected": {
+        "support_valid": true,
+        "overlap_hits": 0,
+        "occupiable": true,
+        "sweep_status": "CENSORED_AT_CAP",
+        "clear_run_lower_bound_m": 20.0,
+        "distance": null
+      },
+      "why_known_independently": "No obstacle was placed, so no hit can occur within any range. Reporting distance == cap would state a wall exists exactly at the search limit, which the fixture guarantees is false."
+    },
+    {
+      "fixture_id": "BLOCKED_POSE",
+      "priority": "MANDATORY",
+      "construction": "Floor present; a 0.4 m cube centred on the candidate pose, overlapping the footprint.",
+      "question": "Does valid floor support override an obstacle intersection?",
+      "expected": {
+        "support_valid": true,
+        "overlap_hits": ">0",
+        "occupiable": false
+      },
+      "why_known_independently": "The obstacle is placed at the pose centre and is wider than the footprint, so intersection is geometric fact."
+    },
+    {
+      "fixture_id": "NARROW_GAP",
+      "priority": "MANDATORY",
+      "construction": "Two walls forming a passage 0.150 m wide. Robot footprint width is 0.195 m.",
+      "question": "Is passage decided by the swept footprint rather than by point clearance?",
+      "expected": {
+        "support_valid": true,
+        "occupiable": true,
+        "sweep_status": "MEASURED_HIT",
+        "traversable": false
+      },
+      "why_known_independently": "0.150 m < 0.195 m. The body is physically wider than the aperture, so it cannot pass. A point at the gap centre would be clear, which is exactly why a point test is insufficient."
+    },
+    {
+      "fixture_id": "WIDE_GAP",
+      "priority": "MANDATORY",
+      "construction": "Two walls forming a passage 0.400 m wide, with a terminal wall 6.0 m beyond the gap.",
+      "question": "Does an adequately wide aperture permit passage?",
+      "expected": {
+        "support_valid": true,
+        "occupiable": true,
+        "sweep_status": "MEASURED_HIT",
+        "traversable": true,
+        "first_hit_distance_m_approx": 5.883,
+        "tolerance_m": 0.15
+      },
+      "why_known_independently": "0.400 m > 0.195 m so the body fits. The sweep should then run to the terminal wall at 6.0 m, contacting when the footprint front face reaches it, i.e. about 5.883 m of centre travel."
+    },
+    {
+      "fixture_id": "WALL_HIT",
+      "priority": "MANDATORY",
+      "construction": "Floor with a wall whose near face is 3.0 m ahead of the pose centre.",
+      "question": "Is first-hit distance reported in metres of centre travel, accounting for footprint half-extent?",
+      "expected": {
+        "support_valid": true,
+        "occupiable": true,
+        "sweep_status": "MEASURED_HIT",
+        "first_hit_distance_m_approx": 2.882,
+        "tolerance_m": 0.1
+      },
+      "why_known_independently": "Wall face at 3.0 m; the footprint front face leads the centre by 0.1175 m, so contact occurs after about 2.882 m of centre travel. Comparing wall-centre distance to centre travel directly would be wrong by the half-extent."
+    },
+    {
+      "fixture_id": "WALL_BEYOND_CAP",
+      "priority": "MANDATORY",
+      "construction": "Floor with a wall 30.0 m ahead; sweep cap 20.0 m.",
+      "question": "Is a boundary-limited result represented as censored rather than measured?",
+      "expected": {
+        "support_valid": true,
+        "occupiable": true,
+        "sweep_status": "CENSORED_AT_CAP",
+        "clear_run_lower_bound_m": 20.0,
+        "distance": null
+      },
+      "why_known_independently": "The wall is beyond the cap by construction, so no hit is findable. 'No hit before 20.0 m' means clear distance >= 20.0 m, never == 20.0 m."
+    },
+    {
+      "fixture_id": "ROTATED_BOX",
+      "priority": "MANDATORY",
+      "construction": "Passage 0.220 m wide. Footprint is 0.235 m long by 0.195 m wide, so it fits sideways-on but not lengthways-on.",
+      "question": "Are the box half-extents and yaw actually applied, in the right order?",
+      "expected": {
+        "traversable_at_yaw_aligned": true,
+        "traversable_at_yaw_perpendicular": false
+      },
+      "why_known_independently": "0.195 < 0.220 < 0.235. The same aperture must admit one orientation and refuse the other. If x/y half-extents were swapped or yaw ignored, both orientations would agree -- which no correct implementation can produce."
+    },
+    {
+      "fixture_id": "FILTERING",
+      "priority": "MANDATORY",
+      "construction": "Robot body present at the pose, plus a separate obstacle intersecting the footprint.",
+      "question": "Does self-exclusion hide scene obstacles?",
+      "expected": {
+        "overlap_hits": ">0",
+        "obstacle_detected": true
+      },
+      "why_known_independently": "An overbroad filter that excludes the robot would also swallow the obstacle and return zero hits. A non-zero hit on the obstacle proves the filter is specific rather than blanket."
+    }
+  ],
+  "written_at": "2026-08-14T04:42:55.824582+00:00",
+  "git_head": "12df80c7eb1b0b8413fd6d74ba447bc910c5a177",
+  "expected_answers_digest": "944d2dff69d50d9fbf49423136a05c11d6b8f477488c35a47f1763d05990da3d"
+}

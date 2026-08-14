@@ -1,0 +1,675 @@
+{
+  "check": "PHYSX_FOOTPRINT_ORACLE_VALIDATION",
+  "timestamp_utc": "2026-08-14T04:46:22.687677+00:00",
+  "expectations_digest": "944d2dff69d50d9fbf49423136a05c11d6b8f477488c35a47f1763d05990da3d",
+  "expectations_written_at": "2026-08-14T04:42:55.824582+00:00",
+  "footprint_half_extents_m": [
+    0.1175,
+    0.0975,
+    0.13015
+  ],
+  "sweep_cap_m": 20.0,
+  "support_tolerance_m": 0.05,
+  "results": {
+    "NO_FLOOR": {
+      "support": {
+        "samples": 5,
+        "hits": 0,
+        "heights": [],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": false
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "occupiable": false
+    },
+    "OPEN_FLOOR": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "sweep": {
+        "sweep_status": "CENSORED_AT_CAP",
+        "distance": null,
+        "clear_run_lower_bound_m": 20.0,
+        "note": "no hit within the search cap; clear distance >= cap, never == cap"
+      },
+      "occupiable": true
+    },
+    "BLOCKED_POSE": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.4,
+          0.4,
+          0.4,
+          0.4,
+          0.4
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 1
+      },
+      "occupiable": false
+    },
+    "NARROW_GAP": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "sweep": {
+        "sweep_status": "MEASURED_HIT",
+        "distance": 1.682,
+        "collider": "/World/wall_r",
+        "clear_run_lower_bound_m": null
+      },
+      "occupiable": true,
+      "traversable": false
+    },
+    "WIDE_GAP": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "sweep": {
+        "sweep_status": "MEASURED_HIT",
+        "distance": 5.782,
+        "collider": "/World/terminal",
+        "clear_run_lower_bound_m": null
+      },
+      "occupiable": true,
+      "traversable": true
+    },
+    "WALL_HIT": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "sweep": {
+        "sweep_status": "MEASURED_HIT",
+        "distance": 2.882,
+        "collider": "/World/wall",
+        "clear_run_lower_bound_m": null
+      },
+      "occupiable": true
+    },
+    "WALL_BEYOND_CAP": {
+      "support": {
+        "samples": 5,
+        "hits": 5,
+        "heights": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "height_spread_m": 0.0,
+        "tolerance_m": 0.05,
+        "support_valid": true
+      },
+      "overlap": {
+        "hits": 0
+      },
+      "sweep": {
+        "sweep_status": "CENSORED_AT_CAP",
+        "distance": null,
+        "clear_run_lower_bound_m": 20.0,
+        "note": "no hit within the search cap; clear distance >= cap, never == cap"
+      },
+      "occupiable": true
+    },
+    "ROTATED_BOX": {
+      "aligned": {
+        "sweep_status": "CENSORED_AT_CAP",
+        "distance": null,
+        "clear_run_lower_bound_m": 20.0,
+        "note": "no hit within the search cap; clear distance >= cap, never == cap"
+      },
+      "perpendicular": {
+        "sweep_status": "MEASURED_HIT",
+        "distance": 1.702,
+        "collider": "/World/wall_l",
+        "clear_run_lower_bound_m": null
+      },
+      "traversable_at_yaw_aligned": true,
+      "traversable_at_yaw_perpendicular": false
+    },
+    "FILTERING": {
+      "overlap": {
+        "hits": 1
+      },
+      "obstacle_detected": true
+    }
+  },
+  "verdicts": {
+    "NO_FLOOR": {
+      "result": "PASS",
+      "failures": []
+    },
+    "OPEN_FLOOR": {
+      "result": "PASS",
+      "failures": []
+    },
+    "BLOCKED_POSE": {
+      "result": "PASS",
+      "failures": []
+    },
+    "NARROW_GAP": {
+      "result": "PASS",
+      "failures": []
+    },
+    "WIDE_GAP": {
+      "result": "PASS",
+      "failures": []
+    },
+    "WALL_HIT": {
+      "result": "PASS",
+      "failures": []
+    },
+    "WALL_BEYOND_CAP": {
+      "result": "PASS",
+      "failures": []
+    },
+    "ROTATED_BOX": {
+      "result": "PASS",
+      "failures": []
+    },
+    "FILTERING": {
+      "result": "PASS",
+      "failures": []
+    }
+  },
+  "measurements": [
+    {
+      "measurement": "physx_fixture_NO_FLOOR",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 0,
+            "heights": [],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": false
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "occupiable": false
+        },
+        "expected": {
+          "support_valid": false,
+          "overlap_hits": 0,
+          "occupiable": false
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_OPEN_FLOOR",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "sweep": {
+            "sweep_status": "CENSORED_AT_CAP",
+            "distance": null,
+            "clear_run_lower_bound_m": 20.0,
+            "note": "no hit within the search cap; clear distance >= cap, never == cap"
+          },
+          "occupiable": true
+        },
+        "expected": {
+          "support_valid": true,
+          "overlap_hits": 0,
+          "occupiable": true,
+          "sweep_status": "CENSORED_AT_CAP",
+          "clear_run_lower_bound_m": 20.0,
+          "distance": null
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_BLOCKED_POSE",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.4,
+              0.4,
+              0.4,
+              0.4,
+              0.4
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 1
+          },
+          "occupiable": false
+        },
+        "expected": {
+          "support_valid": true,
+          "overlap_hits": ">0",
+          "occupiable": false
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_NARROW_GAP",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "sweep": {
+            "sweep_status": "MEASURED_HIT",
+            "distance": 1.682,
+            "collider": "/World/wall_r",
+            "clear_run_lower_bound_m": null
+          },
+          "occupiable": true,
+          "traversable": false
+        },
+        "expected": {
+          "support_valid": true,
+          "occupiable": true,
+          "sweep_status": "MEASURED_HIT",
+          "traversable": false
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_WIDE_GAP",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "sweep": {
+            "sweep_status": "MEASURED_HIT",
+            "distance": 5.782,
+            "collider": "/World/terminal",
+            "clear_run_lower_bound_m": null
+          },
+          "occupiable": true,
+          "traversable": true
+        },
+        "expected": {
+          "support_valid": true,
+          "occupiable": true,
+          "sweep_status": "MEASURED_HIT",
+          "traversable": true,
+          "first_hit_distance_m_approx": 5.883,
+          "tolerance_m": 0.15
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_WALL_HIT",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "sweep": {
+            "sweep_status": "MEASURED_HIT",
+            "distance": 2.882,
+            "collider": "/World/wall",
+            "clear_run_lower_bound_m": null
+          },
+          "occupiable": true
+        },
+        "expected": {
+          "support_valid": true,
+          "occupiable": true,
+          "sweep_status": "MEASURED_HIT",
+          "first_hit_distance_m_approx": 2.882,
+          "tolerance_m": 0.1
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_WALL_BEYOND_CAP",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "support": {
+            "samples": 5,
+            "hits": 5,
+            "heights": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "height_spread_m": 0.0,
+            "tolerance_m": 0.05,
+            "support_valid": true
+          },
+          "overlap": {
+            "hits": 0
+          },
+          "sweep": {
+            "sweep_status": "CENSORED_AT_CAP",
+            "distance": null,
+            "clear_run_lower_bound_m": 20.0,
+            "note": "no hit within the search cap; clear distance >= cap, never == cap"
+          },
+          "occupiable": true
+        },
+        "expected": {
+          "support_valid": true,
+          "occupiable": true,
+          "sweep_status": "CENSORED_AT_CAP",
+          "clear_run_lower_bound_m": 20.0,
+          "distance": null
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_ROTATED_BOX",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "aligned": {
+            "sweep_status": "CENSORED_AT_CAP",
+            "distance": null,
+            "clear_run_lower_bound_m": 20.0,
+            "note": "no hit within the search cap; clear distance >= cap, never == cap"
+          },
+          "perpendicular": {
+            "sweep_status": "MEASURED_HIT",
+            "distance": 1.702,
+            "collider": "/World/wall_l",
+            "clear_run_lower_bound_m": null
+          },
+          "traversable_at_yaw_aligned": true,
+          "traversable_at_yaw_perpendicular": false
+        },
+        "expected": {
+          "traversable_at_yaw_aligned": true,
+          "traversable_at_yaw_perpendicular": false
+        }
+      }
+    },
+    {
+      "measurement": "physx_fixture_FILTERING",
+      "status": "MEASURED_NONZERO",
+      "liveness": {
+        "process_started": true,
+        "runtime_started": true,
+        "subject_open_attempted": true,
+        "subject_open_succeeded": true,
+        "measurement_executed": true,
+        "artifact_written": true
+      },
+      "population": {
+        "items_examined": 1,
+        "expected_items": null,
+        "complete": null
+      },
+      "value": "PASS",
+      "is_evidence": true,
+      "evidence": {
+        "observed": {
+          "overlap": {
+            "hits": 1
+          },
+          "obstacle_detected": true
+        },
+        "expected": {
+          "overlap_hits": ">0",
+          "obstacle_detected": true
+        }
+      }
+    }
+  ],
+  "all_pass": true
+}
