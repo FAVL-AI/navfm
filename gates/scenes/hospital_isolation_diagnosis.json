@@ -230,7 +230,9 @@
           }
         ]
       },
-      "causal_targetability": "TARGET_OCCLUDED_BY_NEIGHBOUR"
+      "causal_targetability": "UNRESOLVED",
+      "reported_classification": "TARGET_OCCLUDED_BY_NEIGHBOUR",
+      "reclassification_reason": "TARGET_OCCLUDED_BY_NEIGHBOUR asserts a mechanism this run did not establish. What was observed is that no local direction returned the declared target. Absence of a hit is absence of evidence about that target, not proof that a neighbour caused it. Folding it into the four explained cases would let a resolved-sounding count carry an unexplained member."
     },
     "wrong_2": {
       "group": "wrong",
@@ -955,6 +957,38 @@
       "evidence": {}
     }
   ],
-  "root_cause": "PENDING_ADJUDICATION",
-  "contradiction_resolved": false
+  "root_cause": "REACHABILITY_MODEL_DEFECT",
+  "contradiction_resolved": "PRIMARILY \u2014 4/5 explained, 1 open",
+  "root_cause_scope": "4 of 5 wrong cases; 1 UNRESOLVED",
+  "hypotheses_outcome": {
+    "H1_probe_construction": "SUPPORTED \u2014 and discriminates controls from failures",
+    "H2_physical_owner": "FALSIFIED \u2014 wrong hits share no collision owner",
+    "H3_authored_runtime": "FALSIFIED as general explanation \u2014 4/5 causally queryable",
+    "H4_bounds": "NOT IDENTIFIED as root cause by this run",
+    "H5_compound": "FALSIFIED \u2014 no shared physical ownership",
+    "H6_filter": "NOT IDENTIFIED as root cause by this run",
+    "H7_instance": "FALSIFIED \u2014 no shared prototype identity"
+  },
+  "distinction_established": {
+    "geometric_reachability": "can I aim toward the target region?",
+    "causal_targetability": "can I isolate the target so it is necessarily the object answering the query?",
+    "note": "The old preflight established only the first. All 8 were geometrically reachable."
+  },
+  "contract_consequence": {
+    "contract": "480d9f07770eaf2a",
+    "status": "BOUNDED, NOT INVALID",
+    "valid_for": "the sparse deterministic geometry its nine fixtures contained",
+    "not_covered": "dense-scene target isolation \u2014 no fixture embedded a target in competing structure, so none could have exposed this",
+    "amendment_required": true,
+    "required_preflight_chain": [
+      "GEOMETRIC_REACHABILITY",
+      "CAUSAL_TARGETABILITY",
+      "QUERY",
+      "IDENTITY",
+      "INVARIANCE",
+      "REPRESENTATIVENESS",
+      "SCENE_VERDICT"
+    ]
+  },
+  "what_would_have_gone_wrong": "Had the five returned prims been added to the acceptable-owner set as I first proposed, the probe would have begun accepting collisions with structurally unrelated objects as successful target hits \u2014 converting a detectable failure into a silent one."
 }
