@@ -24,6 +24,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[1]
 _SPEC = importlib.util.spec_from_file_location(
     "protocol_freeze_audit", REPO / "scripts" / "protocol_freeze_audit.py"
@@ -131,19 +133,27 @@ class TestDeclarationEnforcement:
             timeout=300,
         )
 
+    @pytest.mark.torch
+    @pytest.mark.upstream
     def test_contradicting_batch_size_is_refused_by_name(self) -> None:
         out = self._run("--batch-size", "32")
         assert "gate execution invalid" in out.stdout + out.stderr
         assert "batch_size: supplied 32, declared 400" in out.stdout + out.stderr
 
+    @pytest.mark.torch
+    @pytest.mark.upstream
     def test_contradicting_population_seed_is_refused(self) -> None:
         out = self._run("--population-seed", "7")
         assert "population_seed" in out.stdout + out.stderr
 
+    @pytest.mark.torch
+    @pytest.mark.upstream
     def test_undeclared_model_seed_is_refused(self) -> None:
         out = self._run("--model-seed", "99")
         assert "model_seed" in out.stdout + out.stderr
 
+    @pytest.mark.torch
+    @pytest.mark.upstream
     def test_conforming_arguments_pass_the_declaration_gate(self) -> None:
         """Proves the control can pass: it must fail later, on the missing
         dataset, not on the declaration."""

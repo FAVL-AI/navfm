@@ -46,6 +46,7 @@ class TestVisuals:
         with PILImage.open(out) as im:
             assert im.n_frames == 4
 
+    @pytest.mark.plot
     def test_the_path_plot_is_drawn_from_recorded_poses(self, tmp_path) -> None:
         pos = np.stack([np.linspace(0, 5, 40), np.linspace(0, 0.8, 40)], axis=1)
         yaw = np.linspace(0.0, 0.66, 40)

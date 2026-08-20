@@ -92,6 +92,7 @@ class TestPreflightRefusals:
         assert "Amendment 5" in message
         assert "not authorised" in message
 
+    @pytest.mark.torch
     def test_accepts_once_amendment_5_is_committed(self, monkeypatch) -> None:
         """The other direction: without this, the refusal above proves nothing."""
         monkeypatch.setattr(
@@ -134,12 +135,14 @@ class TestFiniteCensus:
 
         return _M()
 
+    @pytest.mark.torch
     def test_a_clean_model_reports_all_finite(self) -> None:
         torch = pytest.importorskip("torch")
         census = r6.finite_census(self._model({"w": torch.ones(3)}))
         assert census["all_finite"] is True
         assert census["tensors_checked"] == 1
 
+    @pytest.mark.torch
     @pytest.mark.parametrize("bad", ["inf", "-inf", "nan"])
     def test_a_non_finite_value_is_caught_and_named(self, bad: str) -> None:
         torch = pytest.importorskip("torch")
@@ -148,6 +151,7 @@ class TestFiniteCensus:
         assert census["all_finite"] is False
         assert census["non_finite_tensors"] == ["layer.weight"]
 
+    @pytest.mark.torch
     def test_integer_buffers_are_skipped_not_counted_as_checked(self) -> None:
         """Counting them would inflate the census with values never examined."""
         torch = pytest.importorskip("torch")
@@ -173,6 +177,7 @@ class TestTheHarnessDoesNotSmuggleInR7:
         assert '"frozen_input_batch_used": False' in source
         assert '"inference_run": False' in source
 
+    @pytest.mark.upstream
     def test_nomad_evaluation_path_is_not_enabled_by_this_harness(self) -> None:
         """`upstream.build_model` must keep refusing NoMaD: R6 reconstructs the
         architecture for loading, and must not hand any evaluator a NoMaD."""

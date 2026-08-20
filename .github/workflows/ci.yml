@@ -7,6 +7,16 @@ on:
 
 jobs:
   test:
+    # Hermetic legs. These are explicitly NOT the owner of the resource-dependent
+    # population: they deselect it by marker and then prove, by node-id set and
+    # digest, that exactly the pinned hermetic population executed.
+    #
+    # Deselection here is declared ownership recorded in tests/population_manifest.json,
+    # not a skip, and it cannot drift: a resource-dependent test that lost its marker
+    # lands in this population and breaks the set. That is the only way ownership
+    # drift is visible from inside a job that cannot import the resource at all --
+    # a module that fails to import appears in no key of the population report, so
+    # a count would never notice it. See gates/failures/F-M2-1.md.
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -25,22 +35,59 @@ jobs:
           python -m pip install -U pip
           pip install -e ".[dev]"
 
+      - name: Record resource versions
+        run: |
+          mkdir -p population
+          python -c "import json, sys, numpy; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}, indent=2))" \
+            > "population/versions-hermetic-${{ matrix.python-version }}.json"
+          cat "population/versions-hermetic-${{ matrix.python-version }}.json"
+
       - name: Lint
         run: ruff check src tests scripts
 
       - name: Typecheck
         run: mypy
 
-      - name: Unit tests
-        run: python -m pytest -q --cov=navfm --cov-report=term-missing
+      - name: Unit tests (hermetic population)
+        run: |
+          python -m pytest -q -m "not torch and not upstream and not plot" \
+            --cov=navfm --cov-report=term-missing \
+            --population-report="population/hermetic-${{ matrix.python-version }}.json"
+
+      # Runs even when pytest fails, so a contracted population is still reported.
+      # It can only add a failure, never remove one: GitHub keeps the job failed
+      # once any step has failed, and no step here uses continue-on-error.
+      - name: Population ownership gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py \
+            "population/hermetic-${{ matrix.python-version }}.json" \
+            --mode ordinary-hermetic \
+            --versions "population/versions-hermetic-${{ matrix.python-version }}.json"
+
+      - name: Upload population evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: population-hermetic-${{ matrix.python-version }}
+          path: population/
+          if-no-files-found: error
 
   upstream-compat:
-    # The claim that generated data loads through the reference ViNT_Dataset is
-    # the central claim of this repo, so it is tested against the real thing,
-    # not a mock. This job runs every `upstream`-marked test, which now also
-    # covers the model geometry and the loss/metric definitions -- each of those
-    # is a place where our reading of upstream could be wrong, so each is
-    # settled against upstream rather than against our own tests.
+    # Unchanged external identity, widened role. This job is now the declared
+    # owner of every torch / upstream / plot marked node id and executes the
+    # complete pinned population; its former marker-selected proof (`-m upstream`)
+    # is a strict subset of what the ownership gate checks here.
+    #
+    # The job key and check name are deliberately left as `upstream-compat`.
+    # Documentation, historical run evidence and any future branch-protection
+    # rule address this job by that name, and a check name is an external
+    # identifier: widening what a job proves is not a reason to rename it.
+    #
+    # The clone is deliberately left unpatched: applying scripts/patch_upstream.py
+    # is Repair 4, a separate defect with its own commit. Until it lands, this job
+    # is expected to fail with exactly seven missing tests/test_rng_domains.py node
+    # ids, named by the gate. That failure is the evidence, not a nuisance.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,16 +106,40 @@ jobs:
         run: |
           python -m pip install -U pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -e ".[dev]" lmdb tqdm
-          # vint_train.training.train_utils -- the loss oracle -- imports the
-          # whole visualisation stack transitively. headless opencv per
-          # docs/REPRODUCTION.md (the pinned 4.6.0.66 has no wheels past 3.10).
-          pip install efficientnet_pytorch wandb prettytable matplotlib diffusers \
-                      opencv-python-headless
+          pip install -e ".[dev,plot]" lmdb tqdm
+          # vint_train.training.train_utils -- the loss oracle -- imports the whole
+          # visualisation stack transitively. headless opencv per docs/REPRODUCTION.md
+          # (the pinned 4.6.0.66 has no wheels past 3.10).
+          pip install efficientnet_pytorch wandb prettytable diffusers opencv-python-headless
 
-      - name: Compatibility proof
+      - name: Record resource versions and upstream pin
+        run: |
+          mkdir -p population
+          UPSTREAM_SHA="$(git -C third_party/visualnav-transformer rev-parse HEAD)"
+          python -c "import json, sys, numpy, torch, matplotlib; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__, 'torch': torch.__version__, 'matplotlib': matplotlib.__version__, 'upstream_commit': '$UPSTREAM_SHA'}, indent=2))" \
+            > population/versions-owner.json
+          cat population/versions-owner.json
+
+      - name: Unit tests (complete population)
         env:
           NAVFM_UPSTREAM: third_party/visualnav-transformer
           MPLBACKEND: Agg
           WANDB_MODE: disabled
-        run: python -m pytest -m upstream -q
+        run: |
+          python -m pytest -q --population-report=population/owner.json
+
+      - name: Population ownership gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py population/owner.json \
+            --mode provisioned-owner \
+            --versions population/versions-owner.json \
+            --upstream-path third_party/visualnav-transformer
+
+      - name: Upload population evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: population-upstream-compat
+          path: population/
+          if-no-files-found: error

@@ -32,12 +32,14 @@ def _draw() -> tuple[float, float, float]:
 
 
 class TestReplay:
+    @pytest.mark.torch
     def test_same_seed_replays_exactly(self) -> None:
         seed_model_rng(1234)
         first = _draw()
         seed_model_rng(1234)
         assert _draw() == first
 
+    @pytest.mark.torch
     def test_different_seeds_diverge(self) -> None:
         """Three control arms must be three genuinely different initialisations,
         not three shuffles of one."""
@@ -49,6 +51,7 @@ class TestReplay:
         assert len({d[1] for d in draws}) == 3, "numpy stream did not vary with the seed"
         assert len({d[2] for d in draws}) == 3, "python stream did not vary with the seed"
 
+    @pytest.mark.torch
     @pytest.mark.parametrize("stream", ["torch", "numpy", "python"])
     def test_every_stream_is_covered(self, stream: str) -> None:
         """A stream left unseeded is a channel through which the control arm
@@ -59,6 +62,7 @@ class TestReplay:
         seed_model_rng(7)
         assert _draw()[index] == a
 
+    @pytest.mark.torch
     def test_seeding_survives_intervening_consumption(self) -> None:
         """Re-seeding must reset the streams, not merely offset them."""
         seed_model_rng(99)
