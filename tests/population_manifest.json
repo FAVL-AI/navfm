@@ -6,7 +6,7 @@
     "matplotlib": "3.11.1",
     "numpy": "2.4.6",
     "upstream_patched": true,
-    "note": "Pinned from a fully provisioned environment with scripts/patch_upstream.py applied. Until Repair 4 lands, CI does not patch the clone, so the owner job will fall 7 node ids short of the upstream set. That shortfall is a tracked defect, not a baseline."
+    "note": "Pinned from a fully provisioned environment: scripts/patch_upstream.py applied to the clone at upstream_commit, torch and matplotlib installed, and the GO Stanford corpus present. CI reproduces that environment across three jobs -- the hermetic matrix, upstream-compat, and go-stanford-corpus -- whose populations partition this one."
   },
   "required_marker": "upstream",
   "expected_required_count": 39,
@@ -56,12 +56,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 692,
-      "sha256": "9eea9243c7e13a173f1470daedfdf4ad1b5b60ccce95f54e93c3e83b111261e6"
+      "count": 705,
+      "sha256": "60da2a9c97adb6e83e7a90c4ef7f0d3cbc69f949188fb3e5f1f2e091bbc9b95b"
     },
     "hermetic": {
-      "count": 620,
-      "sha256": "a507a7976f8ff9a041c6dfd411a19dfb8b11f054e9b0ebcfb5b91cf3a41bd5b1"
+      "count": 633,
+      "sha256": "c485889bf0333afe42af4a23b022618e0e801995b9c935543d14ceb3b2854822"
     },
     "resource_union": {
       "count": 72,
@@ -92,8 +92,8 @@
     "go_stanford_and_any_other": 0
   },
   "ordinary_leg": {
-    "_comment": "Hermetic legs are explicitly NOT the owner of the resource population. Of the 71 resource node ids, 19 are collectable without provisioning and are DESELECTED by marker; the other 52 live in modules that cannot import at all without their resource, so they are never collected here. Deselected and not-collected are different states and are pinned separately.",
-    "selects": "not torch and not upstream and not plot"
+    "_comment": "Hermetic legs are explicitly NOT the owner of the resource population. Of the 72 resource node ids, 20 are collectable without provisioning and are DESELECTED by marker; the other 52 live in modules that cannot import at all without their resource, so they are never collected here. Deselected and not-collected are different states and are pinned separately. The 20/52 split is read from the population report a hermetic job uploads, not assumed.",
+    "selects": "not torch and not upstream and not plot and not go_stanford"
   },
   "open_evidence_gaps": [
     {
@@ -122,6 +122,9 @@
     "tests/test_candidate_policy.py::TestRolesAreNotInterchangeable::test_blocker_gets_four_lateral_faces": [],
     "tests/test_candidate_policy.py::TestRolesAreNotInterchangeable::test_support_is_interrogated_from_above": [],
     "tests/test_candidate_policy.py::TestRolesAreNotInterchangeable::test_the_two_policies_differ": [],
+    "tests/test_check_test_population.py::TestAJobMustNameItself::test_an_unnamed_run_does_not_inherit_the_unowned_marker": [],
+    "tests/test_check_test_population.py::TestAJobMustNameItself::test_naming_the_job_is_enough_to_be_checked": [],
+    "tests/test_check_test_population.py::TestAJobMustNameItself::test_owner_mode_without_a_job_id_refuses_rather_than_guessing": [],
     "tests/test_check_test_population.py::TestCli::test_exit_codes": [],
     "tests/test_check_test_population.py::TestConditions::test_a_collection_error_fails_even_if_everything_else_passed": [],
     "tests/test_check_test_population.py::TestConditions::test_a_deselected_required_test_fails": [],
@@ -141,6 +144,10 @@
     "tests/test_check_test_population.py::TestCorpusOwnership::test_open_evidence_gaps_cannot_baseline_the_missing_owner": [],
     "tests/test_check_test_population.py::TestCorpusOwnership::test_removing_the_corpus_marker_puts_the_node_in_the_hermetic_set": [],
     "tests/test_check_test_population.py::TestCorpusOwnership::test_the_corpus_node_is_in_the_resource_union_not_the_hermetic_set": [],
+    "tests/test_check_test_population.py::TestJobOwnershipSchema::test_a_missing_ownership_map_is_a_schema_error": [],
+    "tests/test_check_test_population.py::TestJobOwnershipSchema::test_an_empty_owner_name_is_not_a_quiet_null": [],
+    "tests/test_check_test_population.py::TestJobOwnershipSchema::test_an_unknown_marker_is_refused": [],
+    "tests/test_check_test_population.py::TestJobOwnershipSchema::test_an_unmentioned_marker_is_refused": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_missing_owned_node_is_named": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_stale_stored_digest_is_refused": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_substituted_node_is_caught_though_the_count_is_right": [],
@@ -162,6 +169,12 @@
     "tests/test_check_test_population.py::TestPin::test_one_missing_or_one_extra_node_is_caught[True]": [],
     "tests/test_check_test_population.py::TestPin::test_the_repository_manifest_matches_the_repository": [],
     "tests/test_check_test_population.py::TestPin::test_upstream_drift_is_a_violation": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_a_corpus_owner_is_never_asked_for_a_torch_it_does_not_use": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_a_corpus_owner_must_record_which_corpus_it_read": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_a_corpus_owner_that_records_the_digest_passes": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_a_torch_owner_must_still_record_torch_and_matplotlib": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_required_versions_is_derived_not_declared": [],
+    "tests/test_check_test_population.py::TestProvenanceFollowsOwnership::test_the_corpus_digest_is_not_demanded_of_a_hermetic_leg": [],
     "tests/test_check_test_population.py::TestSchemaAndCli::test_a_malformed_manifest_is_refused": [],
     "tests/test_check_test_population.py::TestSchemaAndCli::test_a_malformed_report_is_refused": [],
     "tests/test_check_test_population.py::TestSchemaAndCli::test_a_missing_manifest_exits_non_zero": [],
@@ -968,19 +981,23 @@
     "upstream": "upstream-compat",
     "torch": "upstream-compat",
     "plot": "upstream-compat",
-    "go_stanford": null
+    "go_stanford": "go-stanford-corpus"
   },
   "required_owners": {
     "go_stanford": {
-      "status": "OPEN -- BLOCKING -- NOT BASELINED -- NOT A PERMITTED SKIP",
-      "owner_job": null,
+      "status": "CLOSED -- owned and executed by a provisioned job",
+      "owner_job": "go-stanford-corpus",
       "tracked_as": "Repair 6",
       "deselection_from_non_owners": "EXPECTED",
-      "execution_anywhere": "NONE -- unacceptable as evidence",
+      "execution_anywhere": "go-stanford-corpus, which fails rather than skips when the corpus is absent",
       "source": "huggingface.co/datasets/franciszzj/GoStanford2",
-      "licence": "CC BY-NC-SA 3.0 (non-commercial); this repository is MIT, so corpus bytes are not committed",
-      "size_bytes": 781700000,
-      "corpus_digest": null
+      "source_url": "https://huggingface.co/datasets/franciszzj/GoStanford2/resolve/main/go_stanford.zip",
+      "licence": "CC BY-NC-SA 3.0 (non-commercial); this repository is MIT, so corpus bytes are never committed and are fetched at test time",
+      "size_bytes": 781698396,
+      "corpus_digest": "1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4",
+      "corpus_digest_provenance": "sha256 of the released zip; equals the LFS oid the dataset host reports, and equals the local copy the F13 shape finding was measured on",
+      "members_required": "*/traj_data.pkl -- 3696 files, 15.9 MB of the 781.7 MB archive. The owned node never opens an image, so the job extracts only these and caches them under the archive digest.",
+      "provenance_recorded_as": "go_stanford_sha256"
     }
   }
 }

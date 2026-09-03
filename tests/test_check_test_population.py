@@ -423,6 +423,11 @@ def _corpus_manifest(owner: str | None = None, **overrides: Any) -> dict[str, An
     return manifest
 
 
+CORPUS_SHA = "1fe1411945abd9cd0f335e845fe40d3477aac641aeb5669c961ec9debc4fb8a4"
+# An owner records provenance for what it owns, so a corpus owner's versions
+# file carries the corpus digest alongside python and numpy.
+OWNER_VERSIONS = {**VERSIONS, "go_stanford_sha256": CORPUS_SHA}
+
 OWNED_BY_OWNER = HERMETIC + RESOURCE
 # A corpus-owner job runs the hermetic population plus the one node it owns; the
 # upstream/torch/plot nodes belong to a different job and are deselected there.
@@ -474,7 +479,9 @@ class TestCorpusOwnership:
     def test_a_declared_owner_that_executes_the_node_passes(self) -> None:
         report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
         assert (
-            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, VERSIONS, job_id="corpus-job")
+            cps.check(
+                report, _corpus_manifest(owner="corpus-job"), cps.OWNER, OWNER_VERSIONS, job_id="corpus-job"
+            )
             == []
         )
 
@@ -498,7 +505,12 @@ class TestCorpusOwnership:
         unmarked = {**_corpus_pop(), CORPUS_NODE: []}
         report = _sets_report(HERMETIC, [*RESOURCE, CORPUS_NODE])
         manifest = _sets_manifest(population=unmarked)
-        manifest["job_ownership"] = {"upstream": "owner", "torch": "owner", "plot": "owner"}
+        manifest["job_ownership"] = {
+            "upstream": "owner",
+            "torch": "owner",
+            "plot": "owner",
+            "go_stanford": None,
+        }
         failures = "\n".join(cps.check(report, manifest, cps.ORDINARY, VERSIONS))
         assert CORPUS_NODE in failures
 
@@ -507,3 +519,135 @@ class TestCorpusOwnership:
         manifest.write_text(json.dumps(_corpus_manifest()))
         assert cps.main([str(tmp_path / "absent.json"), "--mode", cps.COMPLETENESS,
                          "--manifest", str(manifest)]) == 1
+
+
+# ---------------------------------------- provenance follows ownership (Repair 6)
+
+CORPUS_VERSIONS = {"python": "3.11.15", "numpy": "2.4.6", "go_stanford_sha256": CORPUS_SHA}
+
+
+class TestProvenanceFollowsOwnership:
+    """What a job must record is decided by what it owns, in both directions.
+
+    A blanket requirement is wrong twice over: it lets a corpus job pass while
+    saying nothing about which corpus it read, and it fails that same job for
+    lacking a torch version it never used. Provenance describes the measurement
+    or it is decoration.
+    """
+
+    def test_a_corpus_owner_must_record_which_corpus_it_read(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        versions = {"python": "3.11.15", "numpy": "2.4.6"}
+        failures = "\n".join(
+            cps.check(
+                report, _corpus_manifest(owner="corpus-job"), cps.OWNER, versions, job_id="corpus-job"
+            )
+        )
+        assert "go_stanford_sha256" in failures
+
+    def test_a_corpus_owner_that_records_the_digest_passes(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        assert (
+            cps.check(
+                report,
+                _corpus_manifest(owner="corpus-job"),
+                cps.OWNER,
+                CORPUS_VERSIONS,
+                job_id="corpus-job",
+            )
+            == []
+        )
+
+    def test_a_corpus_owner_is_never_asked_for_a_torch_it_does_not_use(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        failures = "\n".join(
+            cps.check(
+                report,
+                _corpus_manifest(owner="corpus-job"),
+                cps.OWNER,
+                CORPUS_VERSIONS,
+                job_id="corpus-job",
+            )
+        )
+        assert "torch" not in failures and "matplotlib" not in failures
+
+    def test_a_torch_owner_must_still_record_torch_and_matplotlib(self) -> None:
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        versions = {"python": "3.11.15", "numpy": "2.4.6"}
+        failures = "\n".join(
+            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, versions, job_id="owner")
+        )
+        assert "torch" in failures and "matplotlib" in failures
+
+    def test_the_corpus_digest_is_not_demanded_of_a_hermetic_leg(self) -> None:
+        report = _sets_report(HERMETIC, [*RESOURCE, CORPUS_NODE])
+        versions = {"python": "3.11.15", "numpy": "2.4.6"}
+        assert cps.check(report, _corpus_manifest(owner="corpus-job"), cps.ORDINARY, versions) == []
+
+    def test_required_versions_is_derived_not_declared(self) -> None:
+        assert cps.required_versions(cps.ORDINARY, {"go_stanford"}) == ("python", "numpy")
+        assert cps.required_versions(cps.COMPLETENESS, {"torch"}) == ()
+        assert cps.required_versions(cps.OWNER, set()) == ("python", "numpy")
+        assert cps.required_versions(cps.OWNER, {"go_stanford"}) == (
+            "python",
+            "numpy",
+            "go_stanford_sha256",
+        )
+        assert cps.required_versions(cps.OWNER, {"upstream", "torch", "plot"}) == (
+            "python",
+            "numpy",
+            "matplotlib",
+            "torch",
+        )
+
+
+class TestAJobMustNameItself:
+    """F-M1-1: a gate that infers execution state cannot certify it.
+
+    The concrete hazard is arithmetic, not stylistic. ``job == job_id`` with an
+    absent ``--job-id`` compares None to None, so an unnamed run would claim
+    ownership of exactly the markers that nobody owns -- and then pass, because
+    it deselected them.
+    """
+
+    def test_owner_mode_without_a_job_id_refuses_rather_than_guessing(self) -> None:
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        failures = "\n".join(cps.check(report, _corpus_manifest(), cps.OWNER, VERSIONS))
+        assert "requires --job-id" in failures
+
+    def test_an_unnamed_run_does_not_inherit_the_unowned_marker(self) -> None:
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        failures = "\n".join(cps.check(report, _corpus_manifest(), cps.OWNER, VERSIONS))
+        assert "go_stanford_sha256" not in failures, "an unnamed run claimed the unowned marker"
+
+    def test_naming_the_job_is_enough_to_be_checked(self) -> None:
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        assert cps.check(report, _corpus_manifest(), cps.OWNER, VERSIONS, job_id="owner") == []
+
+
+class TestJobOwnershipSchema:
+    """The ownership map is validated, not trusted: a typo must not read as null."""
+
+    def test_a_missing_ownership_map_is_a_schema_error(self) -> None:
+        manifest = _sets_manifest()
+        del manifest["job_ownership"]
+        with pytest.raises(cps.SchemaError, match="job_ownership"):
+            cps.check(_sets_report(HERMETIC, RESOURCE), manifest, cps.ORDINARY, VERSIONS)
+
+    def test_an_unknown_marker_is_refused(self) -> None:
+        manifest = _sets_manifest()
+        manifest["job_ownership"]["go_stanfrod"] = "typo-job"
+        with pytest.raises(cps.SchemaError, match="unknown resource marker"):
+            cps.check(_sets_report(HERMETIC, RESOURCE), manifest, cps.ORDINARY, VERSIONS)
+
+    def test_an_unmentioned_marker_is_refused(self) -> None:
+        manifest = _sets_manifest()
+        del manifest["job_ownership"]["go_stanford"]
+        with pytest.raises(cps.SchemaError, match="does not mention"):
+            cps.check(_sets_report(HERMETIC, RESOURCE), manifest, cps.ORDINARY, VERSIONS)
+
+    def test_an_empty_owner_name_is_not_a_quiet_null(self) -> None:
+        manifest = _sets_manifest()
+        manifest["job_ownership"]["go_stanford"] = "   "
+        with pytest.raises(cps.SchemaError, match="job name or null"):
+            cps.check(_sets_report(HERMETIC, RESOURCE), manifest, cps.ORDINARY, VERSIONS)

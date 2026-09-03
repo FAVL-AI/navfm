@@ -51,16 +51,29 @@ OWNER = "provisioned-owner"
 COMPLETENESS = "owner-completeness"
 
 # Provenance a job must record for its population report to mean anything: the
-# same node ids under a different torch are a different measurement.
-REQUIRED_VERSIONS = {
-    ORDINARY: ("python", "numpy"),
-    OWNER: ("python", "numpy", "torch", "matplotlib"),
-    COMPLETENESS: (),
+# same node ids under a different torch are a different measurement. Which
+# provenance applies follows from what the job OWNS. A corpus job that never
+# imports torch has no torch version to describe, and demanding one would make
+# provenance a ritual rather than a record of what produced the result; the
+# corpus digest is that job's torch.
+BASE_VERSIONS = ("python", "numpy")
+MARKER_VERSIONS = {
+    "upstream": (),  # pinned separately, by --upstream-path against upstream_commit
+    "torch": ("torch",),
+    "plot": ("matplotlib",),
+    "go_stanford": ("go_stanford_sha256",),
 }
-RESOURCE_MARKERS = ("upstream", "torch", "plot", "go_stanford")
+RESOURCE_MARKERS = tuple(MARKER_VERSIONS)
 
 _REPORT_KEYS = ("collected", "deselected", "collection_errors", "outcomes", "skip_reasons")
-_MANIFEST_KEYS = ("population", "digests", "upstream_commit", "upstream_path", "open_evidence_gaps")
+_MANIFEST_KEYS = (
+    "population",
+    "digests",
+    "upstream_commit",
+    "upstream_path",
+    "open_evidence_gaps",
+    "job_ownership",
+)
 
 
 class SchemaError(Exception):
@@ -94,6 +107,17 @@ def validate_manifest(manifest: Any) -> dict[str, list[str]]:
             raise SchemaError(f"manifest population entry is malformed: {node!r} -> {markers!r}")
         if not all(isinstance(m, str) for m in markers):
             raise SchemaError(f"manifest population markers must be strings: {node!r}")
+    ownership = manifest["job_ownership"]
+    if not isinstance(ownership, dict):
+        raise SchemaError("manifest 'job_ownership' must be a JSON object")
+    for marker, job in ownership.items():
+        if marker not in MARKER_VERSIONS:
+            raise SchemaError(f"job_ownership names an unknown resource marker: {marker!r}")
+        if job is not None and not (isinstance(job, str) and job.strip()):
+            raise SchemaError(f"job_ownership[{marker!r}] must be a job name or null, not {job!r}")
+    missing = [m for m in MARKER_VERSIONS if m not in ownership]
+    if missing:
+        raise SchemaError(f"job_ownership does not mention resource marker(s): {missing}")
     return population
 
 
@@ -131,10 +155,19 @@ def _diff(name: str, actual: set[str], expected: set[str]) -> list[str]:
     return lines
 
 
-def check_versions(versions: Any, mode: str) -> list[str]:
+def required_versions(mode: str, owns: set[str]) -> tuple[str, ...]:
+    """The provenance this run must record, given the resources it owns."""
+    if mode == COMPLETENESS:
+        return ()
+    if mode == ORDINARY:
+        return BASE_VERSIONS
+    return (*BASE_VERSIONS, *sorted({k for m in owns for k in MARKER_VERSIONS.get(m, ())}))
+
+
+def check_versions(versions: Any, required: tuple[str, ...]) -> list[str]:
     if not isinstance(versions, dict):
         return ["resource-version provenance must be a JSON object"]
-    absent = [k for k in REQUIRED_VERSIONS[mode] if not str(versions.get(k, "")).strip()]
+    absent = [k for k in required if not str(versions.get(k, "")).strip()]
     return [f"resource-version provenance is missing: {', '.join(absent)}"] if absent else []
 
 
@@ -163,6 +196,10 @@ def check(
         raise SchemaError(f"unknown ownership mode {mode!r}")
 
     pinned = sets_from(population)
+    # Which job is running is declared, never inferred (F-M1-1). Without it a
+    # null owner would compare equal to an absent --job-id and the run would
+    # claim ownership of precisely the markers nobody owns.
+    owns = {m for m, job in manifest["job_ownership"].items() if job is not None and job == job_id}
     # A stored digest that is never recomputed certifies only itself.
     failures = [
         f"manifest digests['{name}'] is stale: records {entry.get('sha256', '')[:16]} / "
@@ -205,8 +242,12 @@ def check(
         stray = deselected - pinned["resource_union"]
         if stray:
             failures.append(f"deselected outside the pinned resource population: {sorted(stray)}")
+    elif job_id is None:
+        failures.append(
+            "provisioned-owner mode requires --job-id: a job that does not name itself "
+            "cannot be checked against what it declares it owns"
+        )
     else:
-        owns = {m for m, job in manifest["job_ownership"].items() if job == job_id}
         # Nodes owned by another job -- or by no job at all -- are legitimately
         # deselected here. Only what this job declares it owns must execute.
         foreign = {n for m in RESOURCE_MARKERS if m not in owns for n in pinned[m]}
@@ -223,7 +264,7 @@ def check(
         failures.append(f"unexpected skips: {unexpected}")
 
     if versions is not None:
-        failures += check_versions(versions, mode)
+        failures += check_versions(versions, required_versions(mode, owns))
 
     if upstream_path is not None:
         actual = upstream_head(upstream_path)
