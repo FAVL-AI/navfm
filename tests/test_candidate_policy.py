@@ -20,7 +20,6 @@ import pytest
 from navfm.candidate_policy import (
     BLOCKER,
     DEFAULT_POLICY,
-    FOOTPRINT,
     POLICY_VERSION,
     RETIRED_POLICY_DIGESTS,
     SUPPORT,
@@ -29,7 +28,6 @@ from navfm.candidate_policy import (
     CandidateSet,
     Policy,
     PolicyError,
-    Pose,
     Role,
     Variant,
     causality_control,
@@ -47,7 +45,6 @@ VALUES: dict[str, Any] = EXPECT["expected_values"]
 
 TARGET = VALUES["target_id"]
 BOX = Aabb(tuple(VALUES["box"]["bounds_min"]), tuple(VALUES["box"]["bounds_max"]))  # type: ignore[arg-type]
-POSE = Pose(*VALUES["FOOTPRINT_SUPPORT_DEFAULT"]["pose"])
 
 TOL = 1e-9
 
@@ -151,28 +148,6 @@ class TestSupportGeneration:
         assert _close(SUPPORT.probe_length_m, 1.50)
 
 
-class TestFootprintSupport:
-    def test_five_samples_in_the_frozen_order(self) -> None:
-        cs = generate_candidates(TARGET, Role.FOOTPRINT_SUPPORT, POSE)
-        e = VALUES["FOOTPRINT_SUPPORT_DEFAULT"]["candidates"]
-        assert len(cs.candidates) == len(e) == 5
-        for c, want in zip(cs.candidates, e, strict=True):
-            assert all(_close(a, b) for a, b in zip(c.origin, want["origin"], strict=True))
-            assert list(c.direction) == want["direction"]
-            assert _close(c.max_range, want["max_range"])
-
-    def test_the_footprint_carries_no_inflation(self) -> None:
-        assert list(FOOTPRINT.half_extents_m) == EXPECT["roles"]["FOOTPRINT_SUPPORT"]["half_extents_m"]
-
-    def test_a_pose_role_refuses_target_bounds(self) -> None:
-        with pytest.raises(PolicyError, match="robot pose"):
-            generate_candidates(TARGET, Role.FOOTPRINT_SUPPORT, BOX)
-
-    def test_a_target_role_refuses_a_pose(self) -> None:
-        with pytest.raises(PolicyError, match="declared target"):
-            generate_candidates(TARGET, Role.BLOCKER, POSE)
-
-
 class TestControlVariants:
     @pytest.mark.parametrize("case", VALUES["BLOCKER_CAUSALITY_CONTROL_PLUS_X"],
                              ids=lambda c: f"standoff-{c['standoff_m']}")
@@ -247,12 +222,6 @@ class TestDigestSensitivity:
     def test_changing_the_variant_changes_the_digest(self) -> None:
         assert shared_origin_control(40.0).digest() != policy_digest()
 
-    def test_changing_the_footprint_changes_the_digest(self) -> None:
-        fatter = dataclasses.replace(
-            DEFAULT_POLICY,
-            footprint=dataclasses.replace(DEFAULT_POLICY.footprint, half_extents_m=(0.25, 0.25)))
-        assert fatter.digest() != policy_digest()
-
     def test_role_changes_evidence_identity_even_at_one_policy(self) -> None:
         b = generate_candidates(TARGET, Role.BLOCKER, BOX)
         s = generate_candidates(TARGET, Role.SUPPORT, BOX)
@@ -289,7 +258,6 @@ class TestObservationIndependence:
     def test_generation_is_unaffected_by_anything_that_happened_before(self) -> None:
         first = generate_candidates(TARGET, Role.BLOCKER, BOX).digest
         generate_candidates("/W/OTHER", Role.BLOCKER, Aabb((9.0, 9.0, 9.0), (10.0, 10.0, 10.0)))
-        generate_candidates(TARGET, Role.FOOTPRINT_SUPPORT, POSE)
         generate_candidates(TARGET, Role.BLOCKER, BOX, policy=causality_control(1.5))
         assert generate_candidates(TARGET, Role.BLOCKER, BOX).digest == first
 
@@ -316,8 +284,6 @@ class TestFiniteness:
             EXPECT["roles"]["BLOCKER"]["logical_population"]
         assert len(generate_candidates(TARGET, Role.SUPPORT, BOX).candidates) == \
             EXPECT["roles"]["SUPPORT"]["logical_population"]
-        assert len(generate_candidates(TARGET, Role.FOOTPRINT_SUPPORT, POSE).candidates) == \
-            EXPECT["roles"]["FOOTPRINT_SUPPORT"]["logical_population"]
 
 
 class TestCanonicalRecord:
@@ -330,7 +296,7 @@ class TestCanonicalRecord:
         j = generate_candidates(TARGET, Role.SUPPORT, BOX, policy=DEFAULT_POLICY).to_json()
         assert j["candidate_policy_digest"] == policy_digest()
         assert j["variant"] == "DEFAULT"
-        assert j["policy_version"] == POLICY_VERSION == 3
+        assert j["policy_version"] == POLICY_VERSION == 4
 
     def test_a_control_record_is_distinguishable_from_a_production_one(self) -> None:
         prod = generate_candidates(TARGET, Role.BLOCKER, BOX).to_json()
@@ -352,3 +318,130 @@ class TestCanonicalRecord:
         p = provenance("24bf0a8c", causality_control(0.5))
         assert p["variant"] == "CAUSALITY_CONTROL"
         assert p["candidate_policy_digest"] == causality_control(0.5).digest()
+
+
+# ------------------------------------------- SD-001 scope correction (Sprint 2C)
+
+AMENDMENT = json.loads(
+    (Path(__file__).resolve().parents[1] / "gates" / "scenes"
+     / "candidate_policy_expected_semantics_amendments.jsonl").read_text().splitlines()[0]
+)
+
+
+class TestFootprintRoleIsGone:
+    """SD-001 applied: the volumetric question is not this module's to ask.
+
+    These assert an ABSENCE, which is the hardest kind of expectation to keep
+    honest -- a later reader must be able to tell "decided against" from "not got
+    round to", and a future contributor must trip over this rather than quietly
+    re-adding a Pose-shaped role.
+    """
+
+    def test_the_public_role_set_is_target_directed_only(self) -> None:
+        assert {r.value for r in Role} == {"BLOCKER", "SUPPORT"}
+        assert not hasattr(Role, "FOOTPRINT_SUPPORT")
+
+    def test_no_pose_subject_type_remains(self) -> None:
+        import navfm.candidate_policy as cp
+        assert not hasattr(cp, "Pose")
+        assert not hasattr(cp, "FootprintPolicy")
+        assert not hasattr(cp, "FOOTPRINT")
+
+    def test_no_policy_field_describes_a_robot_volume(self) -> None:
+        names = {f.name for f in dataclasses.fields(Policy)}
+        assert "footprint" not in names
+        assert names == {"variant", "blocker", "support", "shared_origin"}
+
+    def test_the_serialized_record_carries_no_volumetric_block(self) -> None:
+        assert "footprint" not in DEFAULT_POLICY.to_json()
+
+    def test_a_robot_pose_shaped_subject_is_refused_rather_than_guessed(self) -> None:
+        """The boundary is enforced, not merely documented."""
+        with pytest.raises(PolicyError, match="out of scope"):
+            generate_candidates(TARGET, Role.BLOCKER, (2.0, 0.0, 0.5))  # type: ignore[arg-type]
+
+
+class TestTheScopeCorrectionIsAProvenanceEvent:
+    def test_the_digest_changed(self) -> None:
+        assert policy_digest() == AMENDMENT["new_policy_digest"]
+        assert policy_digest() != AMENDMENT["old_policy_digest"]
+
+    def test_every_superseded_digest_is_retired_and_none_reused(self) -> None:
+        assert set(RETIRED_POLICY_DIGESTS) == set(AMENDMENT["retired_digests_after_this_amendment"])
+        assert policy_digest() not in RETIRED_POLICY_DIGESTS
+
+    def test_the_version_moved_with_the_semantics(self) -> None:
+        assert POLICY_VERSION == AMENDMENT["policy_version_after"] == 4
+
+    def test_the_digest_change_is_attributable_to_the_removal_alone(self) -> None:
+        """The whole diff, not a sample of it.
+
+        Reconstructs the v3 record from the v4 one plus the amendment's declared
+        delta. If anything else moved, this fails -- which is the point: a scope
+        correction that also perturbed an unrelated parameter would otherwise be
+        indistinguishable from a clean one.
+        """
+        delta = AMENDMENT["serialization_delta"]
+        assert delta["removed_keys"] == ["footprint"]
+        assert delta["added_keys"] == []
+        assert delta["changed_values"] == {"policy_version": [3, 4]}
+        new = DEFAULT_POLICY.to_json()
+        assert set(new) == {"policy_name", "policy_version", "variant",
+                            "blocker", "support", "shared_origin"}
+
+    def test_the_amendment_names_the_scope_decision_not_a_refactor(self) -> None:
+        assert AMENDMENT["kind"] == "SCOPE_CORRECTION"
+        assert "SD-001" in AMENDMENT["decision"]
+        assert "SD-001" in AMENDMENT["reason"] or "outside candidate_policy.py" in AMENDMENT["reason"]
+
+
+class TestRemainingSemanticsSurvivedTheRemoval:
+    """Nothing that stayed may have moved. Checked against the frozen record."""
+
+    def test_blocker_population_is_untouched(self) -> None:
+        got = generate_candidates(TARGET, Role.BLOCKER, BOX).candidates
+        assert len(got) == 4
+        for c, e in zip(got, VALUES["BLOCKER_DEFAULT"], strict=True):
+            assert c.face == e["face"]
+            assert all(_close(a, b) for a, b in zip(c.origin, e["origin"], strict=True))
+            assert list(c.direction) == e["direction"]
+            assert _close(c.max_range, e["max_range"])
+
+    def test_support_population_is_untouched(self) -> None:
+        c = generate_candidates(TARGET, Role.SUPPORT, BOX).candidates[0]
+        e = VALUES["SUPPORT_DEFAULT"][0]
+        assert all(_close(a, b) for a, b in zip(c.origin, e["origin"], strict=True))
+        assert list(c.direction) == e["direction"]
+        assert _close(c.max_range, e["max_range"])
+
+    @pytest.mark.parametrize("case", VALUES["BLOCKER_CAUSALITY_CONTROL_PLUS_X"],
+                             ids=lambda c: f"standoff-{c['standoff_m']}")
+    def test_causality_controls_are_untouched(self, case: dict[str, Any]) -> None:
+        c = generate_candidates(TARGET, Role.BLOCKER, BOX,
+                                policy=causality_control(case["standoff_m"])).candidates[0]
+        assert all(_close(a, b) for a, b in zip(c.origin, case["origin"], strict=True))
+        assert _close(c.max_range, case["max_range"])
+
+    def test_shared_origin_control_is_untouched(self) -> None:
+        e = VALUES["BLOCKER_SHARED_ORIGIN_CONTROL"][0]
+        c = generate_candidates(TARGET, Role.BLOCKER, BOX,
+                                policy=shared_origin_control(e["max_range_m"])).candidates[0]
+        assert all(_close(a, b) for a, b in zip(c.origin, e["origin"], strict=True))
+        assert _close(c.max_range, e["max_range"])
+
+    def test_invalid_geometry_semantics_are_untouched(self) -> None:
+        d = VALUES["DEGENERATE_BOX"]
+        cs = generate_candidates(TARGET, Role.BLOCKER,
+                                 Aabb(tuple(d["bounds_min"]), tuple(d["bounds_max"])))  # type: ignore[arg-type]
+        assert len(cs.candidates) == d["logical_population"]
+        assert len(cs.valid_candidates) == d["valid_count"]
+
+    def test_no_consumer_physics_changed_because_no_consumer_calls_this_yet(self) -> None:
+        """Guards the claim boundary of this tranche, not the code.
+
+        If a consumer starts calling the policy in the same commit as the scope
+        correction, a later digest change becomes ambiguous between the two.
+        """
+        root = Path(__file__).resolve().parents[1] / "scripts"
+        callers = [p.name for p in root.glob("*.py") if "candidate_policy" in p.read_text()]
+        assert callers == [], f"consumer migration must not ride along with the scope correction: {callers}"

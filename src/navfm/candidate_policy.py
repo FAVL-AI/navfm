@@ -3,7 +3,7 @@
 Five consumers independently generated probe candidates: a production audit
 producing two lateral directions, a diagnostic producing four, a dense harness
 producing one or two, a causality harness producing one at an adaptive standoff,
-and an oracle probing the robot's own footprint. All of them recorded results
+and an oracle probing the robot's own volume. All of them recorded results
 under one behavioural contract digest, so measurements of *different physical
 experiments* were compared as though equivalent. That is not an implementation
 slip; it is a gap in what the contract specified.
@@ -18,9 +18,15 @@ would have been more dangerous than the ``-1`` that exposed the accounting bug,
 because an impossible number announces itself while a plausible one does not.
 
 So generation lives here, once, and every consumer calls it. The policy is
-role-specific because a floor, a wall and the robot's own footprint are not
-interrogated the same way, and it is finite because an intervention set that can
-grow is a search that stops when the answer looks right.
+role-specific because a floor and a wall are not interrogated the same way, and
+it is finite because an intervention set that can grow is a search that stops
+when the answer looks right.
+
+Scope is set by SD-001 (gates/scenes/candidate_policy_scope_decision.md): this
+module owns TARGET-DIRECTED interventions only. Volumetric overlap, footprint
+occupancy and traversability sweeps declare no target and adjudicate no collider
+identity, so they keep their own contract. Their absence here is a decision, not
+an omission -- do not add them back.
 
 Controls are first-class rather than script-local. A harness that needs a
 deliberately wrong intervention -- a shared world origin, a non-production
@@ -48,12 +54,17 @@ POLICY_NAME = "navfm.candidate_policy"
 
 #: Version 2 froze a support probe length of 1.00 m that matched the robot-pose
 #: oracle's constant rather than the target-local probe every archived audit
-#: actually fired at 1.50 m, and it could express neither the footprint role nor
-#: the harness controls. Version 3 corrects the range against that evidence and
-#: adds both. Digest 7136993d04151369 is retired and never reused.
-POLICY_VERSION = 3
+#: actually fired at 1.50 m, and it could express neither a footprint role nor
+#: the harness controls. Version 3 corrected the range and added both. Version 4
+#: removes the footprint role again -- not a reversal of 3, but SD-001 applied:
+#: it declared no target, so it was never this module's to own. Every superseded
+#: digest is listed and none is ever reused.
+POLICY_VERSION = 4
 
-RETIRED_POLICY_DIGESTS = ("7136993d04151369",)
+RETIRED_POLICY_DIGESTS = (
+    "7136993d04151369",   # v2: unsourced support range, no controls
+    "2cec5cf6bc23edb8",   # v3: carried the out-of-scope footprint role
+)
 
 
 class PolicyError(ValueError):
@@ -65,7 +76,6 @@ class Role(str, Enum):
 
     BLOCKER = "BLOCKER"
     SUPPORT = "SUPPORT"
-    FOOTPRINT_SUPPORT = "FOOTPRINT_SUPPORT"
 
 
 class Variant(str, Enum):
@@ -98,23 +108,6 @@ class Aabb:
 
 
 @dataclass(frozen=True)
-class Pose:
-    """A robot query pose. The subject of ``FOOTPRINT_SUPPORT``.
-
-    Deliberately not an ``Aabb``: this role declares no target and adjudicates no
-    collider identity, so giving it target bounds would imply a question it does
-    not ask.
-    """
-
-    x: float
-    y: float
-    z_start: float
-
-
-Subject = Aabb | Pose
-
-
-@dataclass(frozen=True)
 class BlockerPolicy:
     """Finite target-local lateral faces for a body that obstructs the robot.
 
@@ -134,6 +127,10 @@ class BlockerPolicy:
 class SupportPolicy:
     """Downward interrogation of a surface the robot would stand on.
 
+    Target-directed: it names a surface and asks whether that surface answers.
+    Distinct from the robot-footprint occupancy question, which declares no
+    target and lives outside this module (SD-001).
+
     Deliberately not the blocker set. A support surface is met from above, and
     approaching a floor edge-on asks whether its rim obstructs, not whether it
     bears weight. Every parameter is read off the target-local support probe that
@@ -145,25 +142,6 @@ class SupportPolicy:
     faces: tuple[str, ...] = ("-Z",)
     start_height_m: float = 0.50
     probe_length_m: float = 1.50
-
-
-@dataclass(frozen=True)
-class FootprintPolicy:
-    """Downward interrogation of the robot's own footprint at a pose.
-
-    A different question from ``SUPPORT``: not "does this surface bear weight"
-    but "is the robot supported where it stands". Half extents are the measured
-    Yahboom collider footprint and carry no inflation -- a safety margin, if ever
-    wanted, is declared as footprint plus planning margin and never by
-    substituting a larger unexplained robot dimension.
-
-    Whether the samples together constitute support -- all of them hitting,
-    within a height tolerance -- is adjudication and stays downstream.
-    """
-
-    faces: tuple[str, ...] = ("-Z",)
-    half_extents_m: tuple[float, float] = (0.1175, 0.0975)
-    probe_length_m: float = 1.00
 
 
 @dataclass(frozen=True)
@@ -194,7 +172,6 @@ class Policy:
     variant: Variant = Variant.DEFAULT
     blocker: BlockerPolicy = BlockerPolicy()
     support: SupportPolicy = SupportPolicy()
-    footprint: FootprintPolicy = FootprintPolicy()
     shared_origin: SharedOriginPolicy = SharedOriginPolicy()
 
     def to_json(self) -> dict[str, Any]:
@@ -208,9 +185,6 @@ class Policy:
             "support": {"faces": list(self.support.faces),
                         "start_height_m": self.support.start_height_m,
                         "probe_length_m": self.support.probe_length_m},
-            "footprint": {"faces": list(self.footprint.faces),
-                          "half_extents_m": list(self.footprint.half_extents_m),
-                          "probe_length_m": self.footprint.probe_length_m},
             "shared_origin": {"origin_x": self.shared_origin.origin_x,
                               "direction": list(self.shared_origin.direction),
                               "max_range_m": self.shared_origin.max_range_m},
@@ -233,7 +207,6 @@ DEFAULT_POLICY = Policy()
 #: Retained for callers that read the production parameters directly.
 BLOCKER = DEFAULT_POLICY.blocker
 SUPPORT = DEFAULT_POLICY.support
-FOOTPRINT = DEFAULT_POLICY.footprint
 
 
 def causality_control(standoff_m: float) -> Policy:
@@ -329,15 +302,9 @@ _BLOCKER_FACES: tuple[tuple[str, int, bool], ...] = (
     ("+X", 0, False), ("-X", 0, True), ("+Y", 1, False), ("-Y", 1, True),
 )
 
-#: (label, dx sign, dy sign) -- centre first, then the four corners. Ordering is
-#: semantically significant wherever a consumer takes the first usable candidate.
-_FOOTPRINT_SAMPLES: tuple[tuple[str, float, float], ...] = (
-    ("C", 0.0, 0.0), ("PP", 1.0, 1.0), ("PM", 1.0, -1.0), ("MP", -1.0, 1.0), ("MM", -1.0, -1.0),
-)
-
 _TARGET_ROLES = (Role.BLOCKER, Role.SUPPORT)
 _VARIANT_ROLES: dict[Variant, tuple[Role, ...]] = {
-    Variant.DEFAULT: (Role.BLOCKER, Role.SUPPORT, Role.FOOTPRINT_SUPPORT),
+    Variant.DEFAULT: (Role.BLOCKER, Role.SUPPORT),
     Variant.CAUSALITY_CONTROL: (Role.BLOCKER,),
     Variant.SHARED_ORIGIN_CONTROL: (Role.BLOCKER,),
 }
@@ -348,7 +315,7 @@ def _candidate_id(target_id: str, role: Role, label: str, policy: Policy) -> str
     return f"{target_id}#{role.value}#{label}#{policy.digest()}"
 
 
-def generate_candidates(target_id: str, role: Role, subject: Subject,
+def generate_candidates(target_id: str, role: Role, subject: Aabb,
                         *, policy: Policy = DEFAULT_POLICY) -> CandidateSet:
     """The one generator. Audits, diagnostics, harnesses and oracles all call this.
 
@@ -361,13 +328,11 @@ def generate_candidates(target_id: str, role: Role, subject: Subject,
         raise PolicyError(
             f"variant {policy.variant.value} does not define an intervention for role "
             f"{role.value}; it applies to {', '.join(r.value for r in allowed)}")
-    if role in _TARGET_ROLES and not isinstance(subject, Aabb):
-        raise PolicyError(f"role {role.value} interrogates a declared target and needs Aabb bounds")
-    if role is Role.FOOTPRINT_SUPPORT and not isinstance(subject, Pose):
-        raise PolicyError(f"role {role.value} interrogates a robot pose and needs a Pose")
+    if not isinstance(subject, Aabb):
+        raise PolicyError(
+            f"role {role.value} interrogates a declared target and needs Aabb bounds; "
+            "volumetric operations on a robot pose are out of scope here (SD-001)")
 
-    if isinstance(subject, Pose):
-        return _footprint_set(target_id, subject, policy)
     if role is Role.SUPPORT:
         return _support_set(target_id, subject, policy)
     if policy.variant is Variant.SHARED_ORIGIN_CONTROL:
@@ -409,18 +374,6 @@ def _support_set(target_id: str, box: Aabb, policy: Policy) -> CandidateSet:
         direction=(0.0, 0.0, -1.0), max_range=cfg.probe_length_m),), policy)
 
 
-def _footprint_set(target_id: str, pose: Pose, policy: Policy) -> CandidateSet:
-    cfg = policy.footprint
-    hx, hy = cfg.half_extents_m
-    out = [Candidate(
-        candidate_id=_candidate_id(target_id, Role.FOOTPRINT_SUPPORT, label, policy),
-        target_id=target_id, role=Role.FOOTPRINT_SUPPORT, face="-Z",
-        origin=(pose.x + sx * hx, pose.y + sy * hy, pose.z_start),
-        direction=(0.0, 0.0, -1.0), max_range=cfg.probe_length_m)
-        for label, sx, sy in _FOOTPRINT_SAMPLES]
-    return CandidateSet(target_id, Role.FOOTPRINT_SUPPORT, tuple(out), policy)
-
-
 def _shared_origin_set(target_id: str, box: Aabb, policy: Policy) -> CandidateSet:
     cfg, centre = policy.shared_origin, box.centre
     return CandidateSet(target_id, Role.BLOCKER, (Candidate(
@@ -440,7 +393,6 @@ def provenance(effective_contract_digest: str, policy: Policy = DEFAULT_POLICY) 
         "effective_contract_digest": effective_contract_digest,
         "blocker_faces": list(policy.blocker.faces),
         "support_faces": list(policy.support.faces),
-        "footprint_faces": list(policy.footprint.faces),
         "retired_policy_digests": list(RETIRED_POLICY_DIGESTS),
         "note": ("a result recording only a contract digest is incomplete provenance; "
                  "two runs can share a contract and ask different physical questions"),
