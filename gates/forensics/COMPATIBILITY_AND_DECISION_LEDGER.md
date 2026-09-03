@@ -977,3 +977,45 @@ Severity is `impact x detectability x propagation`, each 1-5, with **detectabili
 **Attribution.** Frank Asante Van Laarhoven
 
 ---
+
+# Scope decisions
+
+Distinct from the findings above, and deliberately kept separate: a finding
+records something that went wrong, a scope decision records a boundary chosen
+on purpose. Conflating them would make "we decided not to" indistinguishable
+from "we failed to", which is the ambiguity these records exist to remove.
+
+| ID | Decision | Date | Digest effect |
+|---|---|---|---|
+| `SD-001` | [`candidate_policy.py` owns target-directed interventions only; volumetric overlap and footprint sweep stay under the footprint/oracle contract](../scenes/candidate_policy_scope_decision.md) | 2026-09-03 | none — no implementation or serialization changed |
+
+## `SD-001` — Target-directed interventions and volumetric operations are different measurements
+
+**Observed.** Sprint 2A found five consumers running five different physical
+interventions under one contract label. Sprint 2B extended the shared policy to
+express them, and the compatibility matrix then reported the footprint oracle as
+only PARTIAL, because its `overlap_box` and `sweep_box_closest` calls could not
+be represented as ray candidates.
+
+**Why the checks that were already running did not see it.** They could not: this
+is not a defect any check can detect. The matrix asked "is every operation
+representable?", which silently assumed every collision operation belonged in one
+policy. The question itself was wrong, and a passing or failing test would have
+been equally uninformative about that.
+
+**Decision.** The gap is not a missing implementation. A target-directed probe
+asks whether a declared object caused an observation; a footprint sweep asks
+whether a robot volume can occupy a space. Different estimands, different
+contracts. No `VolumetricPolicy` is added.
+
+**Evidence.** `scripts/validate_physx_footprint_oracle.py` declares no target in
+any of its three operations, and `check()` adjudicates occupancy and traversability
+rather than collider identity. The word `target` does not occur in the harness.
+
+**Impact on results.** None. No consumer routes through the shared policy yet, and
+the policy digest is unchanged at `2cec5cf6bc23edb8`.
+
+**Claim boundary.** Concerns ownership of measurement semantics only. Establishes
+nothing about any scene.
+
+**Attribution.** Frank Asante Van Laarhoven
