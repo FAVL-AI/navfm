@@ -200,9 +200,70 @@ class TestCoerceScalar:
             coerce_scalar(np.array(["not-a-number"], dtype=object), field="yaw", where="t[0]")
 
 
-@pytest.mark.skipif(not GO_STANFORD.is_dir(), reason="GO Stanford corpus not present")
-class TestAgainstTheRealCorpus:
-    def test_representative_released_records_convert(self) -> None:
+def _f13_record(T: int = 6, seed: int = 0) -> dict:
+    """A record in the shape F13 records the released corpus uses.
+
+    Object-dtype ``position`` of shape ``(T, 2)`` whose cells are scalars, and
+    object-dtype ``yaw`` of shape ``(T,)`` whose cells are length-1 arrays. The
+    values are arbitrary and carry no provenance: what is being asserted is that
+    conversion preserves whatever values it is given, not that these particular
+    numbers were measured anywhere. The empirical claim that the released corpus
+    has this shape is TestReleasedGoStanfordCorpus's, not this fixture's.
+    """
+    rng = np.random.default_rng(seed)
+    position = np.empty((T, 2), dtype=object)
+    yaw = np.empty(T, dtype=object)
+    for i in range(T):
+        position[i, 0] = float(rng.normal())
+        position[i, 1] = float(rng.normal())
+        yaw[i] = np.array([float(rng.normal())])
+    return {"position": position, "yaw": yaw}
+
+
+class TestConversionMechanics:
+    """Hermetic. No corpus, no home directory, no network, no skip."""
+
+    def test_object_cell_values_survive_conversion(self) -> None:
+        """Bit-identical to the element-wise read the measurement used."""
+        raw = _f13_record()
+        expected_yaw = np.array([float(np.ravel(v)[0]) for v in raw["yaw"]], dtype=float)
+        expected_pos = np.array([[float(c) for c in row] for row in raw["position"]], dtype=float)
+        out = normalise_traj_data(raw, trajectory="f13-fixture")
+        assert np.array_equal(out["yaw"], expected_yaw)
+        assert np.array_equal(out["position"], expected_pos)
+
+    def test_representative_record_shapes_convert(self) -> None:
+        for seed in range(25):
+            raw = _f13_record(seed=seed)
+            out = normalise_traj_data(raw, trajectory=f"f13-fixture-{seed}")
+            assert out["position"].ndim == 2 and out["position"].shape[1] == 2
+            assert out["yaw"].ndim == 1
+            assert out["position"].shape[0] == out["yaw"].shape[0]
+            assert np.isfinite(out["position"]).all() and np.isfinite(out["yaw"]).all()
+
+    def test_a_multi_valued_cell_is_still_refused(self) -> None:
+        raw = _f13_record()
+        raw["yaw"][0] = np.array([1.0, 2.0])
+        with pytest.raises(TrajectoryContractError):
+            normalise_traj_data(raw, trajectory="f13-fixture")
+
+
+class TestReleasedGoStanfordCorpus:
+    """The empirical claim no fixture can witness: the *released* bytes convert.
+
+    Owned by a corpus-provisioned job that does not exist yet (Repair 6). It is
+    deselected from every non-owning job by its marker, and its owning job must
+    fail -- never skip -- if the corpus is absent.
+    """
+
+    @pytest.mark.go_stanford
+    def test_released_records_convert(self) -> None:
+        if not GO_STANFORD.is_dir():
+            raise AssertionError(
+                f"GO Stanford corpus absent at {GO_STANFORD}. This node is corpus-owned: "
+                "its owner job must provision the corpus, and a missing corpus is a failure, "
+                "not a skip -- a skip here would assert nothing about the released records."
+            )
         names = sorted(p.name for p in GO_STANFORD.iterdir() if p.is_dir())[:25]
         for name in names:
             with open(GO_STANFORD / name / "traj_data.pkl", "rb") as fh:
@@ -212,15 +273,6 @@ class TestAgainstTheRealCorpus:
             assert out["yaw"].ndim == 1
             assert out["position"].shape[0] == out["yaw"].shape[0]
             assert np.isfinite(out["position"]).all() and np.isfinite(out["yaw"]).all()
-
-    def test_conversion_preserves_the_measured_values(self) -> None:
-        """Bit-identical to the element-wise read the measurement used."""
-        name = sorted(p.name for p in GO_STANFORD.iterdir() if p.is_dir())[0]
-        with open(GO_STANFORD / name / "traj_data.pkl", "rb") as fh:
-            raw = pickle.load(fh)
-        expected_yaw = np.array([float(np.ravel(v)[0]) for v in raw["yaw"]], dtype=float)
-        out = normalise_traj_data(raw, trajectory=name)
-        assert np.array_equal(out["yaw"], expected_yaw)
 
 
 class TestToleranceCounterIsReachable:

@@ -50,7 +50,7 @@ jobs:
 
       - name: Unit tests (hermetic population)
         run: |
-          python -m pytest -q -m "not torch and not upstream and not plot" \
+          python -m pytest -q -m "not torch and not upstream and not plot and not go_stanford" \
             --cov=navfm --cov-report=term-missing \
             --population-report="population/hermetic-${{ matrix.python-version }}.json"
 
@@ -83,6 +83,11 @@ jobs:
     # Documentation, historical run evidence and any future branch-protection
     # rule address this job by that name, and a check name is an external
     # identifier: widening what a job proves is not a reason to rename it.
+    #
+    # It does NOT own the go_stanford corpus: that resource has no owner job yet
+    # (Repair 6), so the node is deselected here and reported by the separate
+    # completeness gate rather than quietly absorbed by a job already provisioned
+    # for different resources.
     #
     # The clone is deliberately left unpatched: applying scripts/patch_upstream.py
     # is Repair 4, a separate defect with its own commit. Until it lands, this job
@@ -126,15 +131,26 @@ jobs:
           MPLBACKEND: Agg
           WANDB_MODE: disabled
         run: |
-          python -m pytest -q --population-report=population/owner.json
+          python -m pytest -q -m "not go_stanford" --population-report=population/owner.json
 
       - name: Population ownership gate
         if: always()
         run: |
           python scripts/check_population_sets.py population/owner.json \
             --mode provisioned-owner \
+            --job-id upstream-compat \
             --versions population/versions-owner.json \
             --upstream-path third_party/visualnav-transformer
+
+      # Separate from the ownership gate above, and deliberately not suppressible
+      # by open_evidence_gaps: a resource whose marker names no owner job has node
+      # ids that execute nowhere, and recording that truthfully is not the same as
+      # having the evidence. Currently red for go_stanford -- that is Repair 6.
+      - name: Owner completeness gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py population/owner.json \
+            --mode owner-completeness
 
       - name: Upload population evidence
         if: always()

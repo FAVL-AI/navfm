@@ -48,10 +48,16 @@ MANIFEST = Path(__file__).resolve().parents[1] / "tests" / "population_manifest.
 
 ORDINARY = "ordinary-hermetic"
 OWNER = "provisioned-owner"
+COMPLETENESS = "owner-completeness"
 
 # Provenance a job must record for its population report to mean anything: the
 # same node ids under a different torch are a different measurement.
-REQUIRED_VERSIONS = {ORDINARY: ("python", "numpy"), OWNER: ("python", "numpy", "torch", "matplotlib")}
+REQUIRED_VERSIONS = {
+    ORDINARY: ("python", "numpy"),
+    OWNER: ("python", "numpy", "torch", "matplotlib"),
+    COMPLETENESS: (),
+}
+RESOURCE_MARKERS = ("upstream", "torch", "plot", "go_stanford")
 
 _REPORT_KEYS = ("collected", "deselected", "collection_errors", "outcomes", "skip_reasons")
 _MANIFEST_KEYS = ("population", "digests", "upstream_commit", "upstream_path", "open_evidence_gaps")
@@ -111,6 +117,7 @@ def sets_from(population: dict[str, list[str]]) -> dict[str, set[str]]:
         "upstream": {n for n, m in population.items() if "upstream" in m},
         "torch": {n for n, m in population.items() if "torch" in m},
         "plot": {n for n, m in population.items() if "plot" in m},
+        "go_stanford": {n for n, m in population.items() if "go_stanford" in m},
     }
 
 
@@ -147,11 +154,12 @@ def check(
     mode: str,
     versions: Any = None,
     upstream_path: Path | None = None,
+    job_id: str | None = None,
 ) -> list[str]:
     """Return every violation. An empty list is the only passing result."""
     population = validate_manifest(manifest)
     validate_report(report)
-    if mode not in (ORDINARY, OWNER):
+    if mode not in (ORDINARY, OWNER, COMPLETENESS):
         raise SchemaError(f"unknown ownership mode {mode!r}")
 
     pinned = sets_from(population)
@@ -176,6 +184,19 @@ def check(
     if report["collection_errors"]:
         failures.append(f"collection errors present: {sorted(report['collection_errors'])}")
 
+    if mode == COMPLETENESS:
+        # Manifest-only: does every declared resource have a job that runs it?
+        # Deliberately NOT suppressible by open_evidence_gaps -- recording that a
+        # node executes nowhere is not the same as having its evidence.
+        for marker in RESOURCE_MARKERS:
+            nodes = sorted(pinned[marker])
+            if nodes and not manifest["job_ownership"].get(marker):
+                failures.append(
+                    f"marker '{marker}' has no owner job: {len(nodes)} node id(s) execute nowhere.\n"
+                    + "\n".join(f"    unexecuted: {n}" for n in nodes)
+                )
+        return failures
+
     if mode == ORDINARY:
         # This leg owns the hermetic population and nothing else. An unmarked
         # resource-dependent test lands here and breaks the set, which is the
@@ -185,11 +206,16 @@ def check(
         if stray:
             failures.append(f"deselected outside the pinned resource population: {sorted(stray)}")
     else:
-        failures += _diff("owner executed", executed, pinned["total"])
-        orphaned = sorted(pinned["resource_union"] & deselected)
+        owns = {m for m, job in manifest["job_ownership"].items() if job == job_id}
+        # Nodes owned by another job -- or by no job at all -- are legitimately
+        # deselected here. Only what this job declares it owns must execute.
+        foreign = {n for m in RESOURCE_MARKERS if m not in owns for n in pinned[m]}
+        expected = pinned["total"] - (foreign - {n for m in owns for n in pinned[m]})
+        failures += _diff("owner executed", executed, expected)
+        orphaned = sorted({n for m in owns for n in pinned[m]} & deselected)
         if orphaned:
             failures.append(f"owned node ids deselected from their owner job: {orphaned}")
-        for name in ("upstream", "torch", "plot"):
+        for name in sorted(owns):
             failures += _diff(f"{name} executed", executed & pinned[name], pinned[name])
 
     unexpected = sorted(skipped - gaps)
@@ -215,7 +241,8 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("report", help="population report JSON from --population-report")
-    parser.add_argument("--mode", required=True, choices=[ORDINARY, OWNER])
+    parser.add_argument("--mode", required=True, choices=[ORDINARY, OWNER, COMPLETENESS])
+    parser.add_argument("--job-id", help="which job is running, for owner-mode ownership lookup")
     parser.add_argument("--manifest", default=str(MANIFEST))
     parser.add_argument("--versions", help="JSON file recording the resource versions in use")
     parser.add_argument("--upstream-path", help="checkout whose HEAD must equal the manifest pin")
@@ -231,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
             args.mode,
             versions,
             Path(args.upstream_path) if args.upstream_path else None,
+            args.job_id,
         )
     except SchemaError as exc:
         print("POPULATION OWNERSHIP INVARIANT VIOLATED", file=sys.stderr)

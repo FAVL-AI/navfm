@@ -90,6 +90,7 @@ markers = [
   "torch: requires PyTorch",
   "upstream: requires the reference visualnav-transformer package",
   "plot: requires matplotlib (navfm.wandb_ledger imports it lazily)",
+  "go_stanford: requires the released GO Stanford corpus (CC BY-NC-SA 3.0, 781.7 MB)",
   "slow: long-running",
 ]
 

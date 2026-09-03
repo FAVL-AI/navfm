@@ -254,6 +254,7 @@ def _sets_manifest(**overrides: Any) -> dict[str, Any]:
         "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
         "upstream_path": "third_party/visualnav-transformer",
         "open_evidence_gaps": [],
+        "job_ownership": {"upstream": "owner", "torch": "owner", "plot": "owner", "go_stanford": None},
     }
     manifest.update(overrides)
     return manifest
@@ -284,11 +285,11 @@ class TestOwnershipModes:
 
     def test_a_valid_owner_report_passes(self) -> None:
         report = _sets_report(HERMETIC + RESOURCE, [])
-        assert cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS) == []
+        assert cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS, job_id="owner") == []
 
     def test_a_missing_owned_node_is_named(self) -> None:
         report = _sets_report(HERMETIC + RESOURCE[:-1], [])
-        failures = "\n".join(cps.check(report, _sets_manifest(), cps.OWNER))
+        failures = "\n".join(cps.check(report, _sets_manifest(), cps.OWNER, job_id="owner"))
         assert "tests/p.py::e" in failures and "missing" in failures
 
     def test_an_extra_node_is_named(self) -> None:
@@ -317,7 +318,7 @@ class TestOwnershipModes:
 
     def test_an_owned_node_deselected_from_its_owner_fails(self) -> None:
         report = _sets_report(HERMETIC + RESOURCE[:-1], [RESOURCE[-1]])
-        failures = "\n".join(cps.check(report, _sets_manifest(), cps.OWNER))
+        failures = "\n".join(cps.check(report, _sets_manifest(), cps.OWNER, job_id="owner"))
         assert "deselected from their owner job" in failures
 
     def test_deselecting_a_hermetic_node_from_an_ordinary_leg_fails(self) -> None:
@@ -338,7 +339,7 @@ class TestOwnershipModes:
 
     def test_missing_resource_version_provenance_fails(self) -> None:
         report = _sets_report(HERMETIC + RESOURCE, [])
-        failures = cps.check(report, _sets_manifest(), cps.OWNER, {"python": "3.11.15"})
+        failures = cps.check(report, _sets_manifest(), cps.OWNER, {"python": "3.11.15"}, job_id="owner")
         assert any("resource-version provenance is missing" in f for f in failures)
         assert "torch" in "\n".join(failures)
 
@@ -351,12 +352,12 @@ class TestOwnershipModes:
         subprocess.run(["git", "-C", str(tmp_path), "add", "-A"], check=True, capture_output=True)
         subprocess.run(["git", "-C", str(tmp_path), "commit", "-qm", "c"], check=True, capture_output=True)
         report = _sets_report(HERMETIC + RESOURCE, [])
-        failures = cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS, tmp_path)
+        failures = cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS, tmp_path, job_id="owner")
         assert any("manifest pins" in f for f in failures)
 
     def test_an_unreadable_upstream_checkout_fails(self, tmp_path: Path) -> None:
         report = _sets_report(HERMETIC + RESOURCE, [])
-        failures = cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS, tmp_path / "absent")
+        failures = cps.check(report, _sets_manifest(), cps.OWNER, VERSIONS, tmp_path / "absent", job_id="owner")
         assert any("not readable" in f for f in failures)
 
 
@@ -400,3 +401,109 @@ class TestSchemaAndCli:
 
         report.write_text(json.dumps(_sets_report(["tests/h.py::a"], RESOURCE)))
         assert cps.main([str(report), "--mode", cps.ORDINARY, "--manifest", str(manifest)]) == 1
+
+
+# ------------------------------------------- go_stanford corpus ownership (Repair 6)
+
+CORPUS_NODE = "tests/c.py::TestReleasedGoStanfordCorpus::test_released_records_convert"
+
+
+def _corpus_pop() -> dict[str, list[str]]:
+    return {**_pop(), CORPUS_NODE: ["go_stanford"]}
+
+
+def _corpus_manifest(owner: str | None = None, **overrides: Any) -> dict[str, Any]:
+    manifest = _sets_manifest(population=_corpus_pop(), **overrides)
+    manifest["job_ownership"] = {
+        "upstream": "owner",
+        "torch": "owner",
+        "plot": "owner",
+        "go_stanford": owner,
+    }
+    return manifest
+
+
+OWNED_BY_OWNER = HERMETIC + RESOURCE
+# A corpus-owner job runs the hermetic population plus the one node it owns; the
+# upstream/torch/plot nodes belong to a different job and are deselected there.
+CORPUS_JOB_RUNS = [*HERMETIC, CORPUS_NODE]
+
+
+class TestCorpusOwnership:
+    def test_the_corpus_node_is_in_the_resource_union_not_the_hermetic_set(self) -> None:
+        sets = cps.sets_from(_corpus_pop())
+        assert CORPUS_NODE in sets["go_stanford"] == {CORPUS_NODE}
+        assert CORPUS_NODE in sets["resource_union"]
+        assert CORPUS_NODE not in sets["hermetic"]
+
+    def test_an_ordinary_leg_may_deselect_the_corpus_node(self) -> None:
+        report = _sets_report(HERMETIC, [*RESOURCE, CORPUS_NODE])
+        assert cps.check(report, _corpus_manifest(), cps.ORDINARY, VERSIONS) == []
+
+    def test_a_non_owner_job_may_deselect_the_corpus_node(self) -> None:
+        """upstream-compat owns upstream/torch/plot, not the corpus."""
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        assert cps.check(report, _corpus_manifest(), cps.OWNER, VERSIONS, job_id="owner") == []
+
+    def test_a_marker_with_no_owner_fails_completeness_and_names_the_node(self) -> None:
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        failures = "\n".join(cps.check(report, _corpus_manifest(), cps.COMPLETENESS))
+        assert "go_stanford" in failures and CORPUS_NODE in failures
+        assert "no owner job" in failures
+
+    def test_open_evidence_gaps_cannot_baseline_the_missing_owner(self) -> None:
+        """Recording that a node executes nowhere is not the same as evidence."""
+        manifest = _corpus_manifest(
+            open_evidence_gaps=[{"node_id": CORPUS_NODE, "reason": "attempt", "status": "permitted"}]
+        )
+        report = _sets_report(OWNED_BY_OWNER, [CORPUS_NODE])
+        failures = "\n".join(cps.check(report, manifest, cps.COMPLETENESS))
+        assert CORPUS_NODE in failures, "an open-gap entry suppressed a missing-owner failure"
+
+    def test_completeness_passes_once_an_owner_executes_the_node(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        assert cps.check(report, _corpus_manifest(owner="corpus-job"), cps.COMPLETENESS) == []
+
+    def test_a_declared_owner_that_does_not_execute_the_node_fails(self) -> None:
+        report = _sets_report(HERMETIC, RESOURCE)
+        failures = "\n".join(
+            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, VERSIONS, job_id="corpus-job")
+        )
+        assert CORPUS_NODE in failures and "missing" in failures
+
+    def test_a_declared_owner_that_executes_the_node_passes(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        assert (
+            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, VERSIONS, job_id="corpus-job")
+            == []
+        )
+
+    def test_a_declared_owner_that_skips_the_node_fails(self) -> None:
+        report = _sets_report(CORPUS_JOB_RUNS, RESOURCE)
+        report["outcomes"][CORPUS_NODE] = "skipped"
+        failures = "\n".join(
+            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, VERSIONS, job_id="corpus-job")
+        )
+        assert CORPUS_NODE in failures and "unexpected skips" in failures
+
+    def test_a_declared_owner_that_deselects_the_node_fails(self) -> None:
+        report = _sets_report(HERMETIC, [*RESOURCE, CORPUS_NODE])
+        failures = "\n".join(
+            cps.check(report, _corpus_manifest(owner="corpus-job"), cps.OWNER, VERSIONS, job_id="corpus-job")
+        )
+        assert CORPUS_NODE in failures and "deselected from their owner job" in failures
+
+    def test_removing_the_corpus_marker_puts_the_node_in_the_hermetic_set(self) -> None:
+        """The mutation that would smuggle a corpus test into the ordinary legs."""
+        unmarked = {**_corpus_pop(), CORPUS_NODE: []}
+        report = _sets_report(HERMETIC, [*RESOURCE, CORPUS_NODE])
+        manifest = _sets_manifest(population=unmarked)
+        manifest["job_ownership"] = {"upstream": "owner", "torch": "owner", "plot": "owner"}
+        failures = "\n".join(cps.check(report, manifest, cps.ORDINARY, VERSIONS))
+        assert CORPUS_NODE in failures
+
+    def test_a_missing_report_still_exits_non_zero_in_completeness_mode(self, tmp_path: Path) -> None:
+        manifest = tmp_path / "m.json"
+        manifest.write_text(json.dumps(_corpus_manifest()))
+        assert cps.main([str(tmp_path / "absent.json"), "--mode", cps.COMPLETENESS,
+                         "--manifest", str(manifest)]) == 1

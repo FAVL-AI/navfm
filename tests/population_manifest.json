@@ -1,5 +1,5 @@
 {
-  "_comment": "Pinned test-population expectation. Guards against silent contraction of the evidence base (F-M2-1). `population` maps every node id to its declared resource markers; every set below is mechanically derivable from it, so counts are never the primary record. The marker populations OVERLAP -- upstream and torch share 23 node ids -- so their counts must never be summed. Update only through a reviewed commit.",
+  "_comment": "Pinned test-population expectation. Guards against silent contraction of the evidence base (F-M2-1). `population` maps every node id to its declared resource markers; every set below is mechanically derivable from it, so counts are never the primary record. The marker populations OVERLAP -- upstream and torch share 23 node ids -- so their counts must never be summed. Resource markers OVERLAP; their counts must never be summed. `job_ownership` names the job that must EXECUTE each marker's nodes -- a null owner means those node ids execute nowhere, which is a blocking evidence failure and is not suppressible by `open_evidence_gaps`. Update only through a reviewed commit.",
   "measured_under": {
     "python": "3.11.15",
     "torch": "2.13.0+cpu",
@@ -56,16 +56,16 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 678,
-      "sha256": "b8aa1d19ee2dfa42eaaa6adb2ea6f63253f8e8daadf438fc3358c739169bbeb0"
+      "count": 692,
+      "sha256": "9eea9243c7e13a173f1470daedfdf4ad1b5b60ccce95f54e93c3e83b111261e6"
     },
     "hermetic": {
-      "count": 607,
-      "sha256": "46495469b40ce827631876cb14649c874081c8cc4d2c22f46e0b956564b16599"
+      "count": 620,
+      "sha256": "a507a7976f8ff9a041c6dfd411a19dfb8b11f054e9b0ebcfb5b91cf3a41bd5b1"
     },
     "resource_union": {
-      "count": 71,
-      "sha256": "a06dc335f5087e0d28acb62e67cdd34a8c7b9963c7168a35a95b5d4974618410"
+      "count": 72,
+      "sha256": "6ae1753537e3641383d1d4f539f182ec793518739c6a8b8b3c842a2cef0c2f02"
     },
     "upstream": {
       "count": 39,
@@ -78,13 +78,18 @@
     "plot": {
       "count": 1,
       "sha256": "4aae920fd70fd03242edc1addd9a3c4bad6beb86f8093034b637e41a3778e268"
+    },
+    "go_stanford": {
+      "count": 1,
+      "sha256": "0cd6f3942c93d280779a5d59f601d872899993ff1a79dac98d9faf697f0ba7ab"
     }
   },
   "intersections": {
     "upstream_and_torch": 23,
     "upstream_and_plot": 0,
     "torch_and_plot": 0,
-    "upstream_and_torch_and_plot": 0
+    "upstream_and_torch_and_plot": 0,
+    "go_stanford_and_any_other": 0
   },
   "ordinary_leg": {
     "_comment": "Hermetic legs are explicitly NOT the owner of the resource population. Of the 71 resource node ids, 19 are collectable without provisioning and are DESELECTED by marker; the other 52 live in modules that cannot import at all without their resource, so they are never collected here. Deselected and not-collected are different states and are pinned separately.",
@@ -124,6 +129,18 @@
     "tests/test_check_test_population.py::TestConditions::test_collected_but_never_run_is_not_fine": [],
     "tests/test_check_test_population.py::TestConditions::test_healthy_report_passes": [],
     "tests/test_check_test_population.py::TestConditions::test_swapped_node_ids_fail_even_at_the_right_count": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_declared_owner_that_deselects_the_node_fails": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_declared_owner_that_does_not_execute_the_node_fails": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_declared_owner_that_executes_the_node_passes": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_declared_owner_that_skips_the_node_fails": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_marker_with_no_owner_fails_completeness_and_names_the_node": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_missing_report_still_exits_non_zero_in_completeness_mode": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_a_non_owner_job_may_deselect_the_corpus_node": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_an_ordinary_leg_may_deselect_the_corpus_node": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_completeness_passes_once_an_owner_executes_the_node": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_open_evidence_gaps_cannot_baseline_the_missing_owner": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_removing_the_corpus_marker_puts_the_node_in_the_hermetic_set": [],
+    "tests/test_check_test_population.py::TestCorpusOwnership::test_the_corpus_node_is_in_the_resource_union_not_the_hermetic_set": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_missing_owned_node_is_named": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_stale_stored_digest_is_refused": [],
     "tests/test_check_test_population.py::TestOwnershipModes::test_a_substituted_node_is_caught_though_the_count_is_right": [],
@@ -776,8 +793,6 @@
     "tests/test_train_run.py::test_resume_state_carries_no_custom_classes": [
       "torch"
     ],
-    "tests/test_trajio_contract.py::TestAgainstTheRealCorpus::test_conversion_preserves_the_measured_values": [],
-    "tests/test_trajio_contract.py::TestAgainstTheRealCorpus::test_representative_released_records_convert": [],
     "tests/test_trajio_contract.py::TestCoerceScalar::test_complex_cell_refuses_rather_than_dropping_the_imaginary_part": [],
     "tests/test_trajio_contract.py::TestCoerceScalar::test_empty_and_multi_element_refuse[value0]": [],
     "tests/test_trajio_contract.py::TestCoerceScalar::test_empty_and_multi_element_refuse[value1]": [],
@@ -794,6 +809,9 @@
     "tests/test_trajio_contract.py::TestCoerceScalar::test_non_numeric_that_parses_as_a_number_refuses[True]": [],
     "tests/test_trajio_contract.py::TestCoerceScalar::test_non_numeric_that_parses_as_a_number_refuses[value3]": [],
     "tests/test_trajio_contract.py::TestCoerceScalar::test_ragged_sequence_refuses_with_the_contract_error_type": [],
+    "tests/test_trajio_contract.py::TestConversionMechanics::test_a_multi_valued_cell_is_still_refused": [],
+    "tests/test_trajio_contract.py::TestConversionMechanics::test_object_cell_values_survive_conversion": [],
+    "tests/test_trajio_contract.py::TestConversionMechanics::test_representative_record_shapes_convert": [],
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_empty_trajectory_is_refused": [],
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_failure_names_the_trajectory_and_index": [],
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_incorrect_position_shape_fails_clearly": [],
@@ -810,6 +828,9 @@
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_typed_non_numeric_position_refuses_at_the_non_object_branch[U8-values1]": [],
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_typed_non_numeric_position_refuses_at_the_non_object_branch[bool-values2]": [],
     "tests/test_trajio_contract.py::TestInvalidInputsAreRefused::test_typed_non_numeric_position_refuses_at_the_non_object_branch[complex-values0]": [],
+    "tests/test_trajio_contract.py::TestReleasedGoStanfordCorpus::test_released_records_convert": [
+      "go_stanford"
+    ],
     "tests/test_trajio_contract.py::TestToleranceCounterIsReachable::test_a_clean_corpus_counts_zero_of_both": [],
     "tests/test_trajio_contract.py::TestToleranceCounterIsReachable::test_a_refusable_cell_is_reported_not_raised": [],
     "tests/test_trajio_contract.py::TestToleranceCounterIsReachable::test_multi_valued_cell_is_counted_even_though_it_is_refused": [],
@@ -942,5 +963,24 @@
     "tests/test_wandb_ledger.py::TestVisuals::test_the_path_plot_is_drawn_from_recorded_poses": [
       "plot"
     ]
+  },
+  "job_ownership": {
+    "upstream": "upstream-compat",
+    "torch": "upstream-compat",
+    "plot": "upstream-compat",
+    "go_stanford": null
+  },
+  "required_owners": {
+    "go_stanford": {
+      "status": "OPEN -- BLOCKING -- NOT BASELINED -- NOT A PERMITTED SKIP",
+      "owner_job": null,
+      "tracked_as": "Repair 6",
+      "deselection_from_non_owners": "EXPECTED",
+      "execution_anywhere": "NONE -- unacceptable as evidence",
+      "source": "huggingface.co/datasets/franciszzj/GoStanford2",
+      "licence": "CC BY-NC-SA 3.0 (non-commercial); this repository is MIT, so corpus bytes are not committed",
+      "size_bytes": 781700000,
+      "corpus_digest": null
+    }
   }
 }
