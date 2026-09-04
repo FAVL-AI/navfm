@@ -1,0 +1,140 @@
+{
+  "check": "SPRINT_2D_CROSS_CONSUMER_INTERVENTION_CERTIFICATION",
+  "artifact_semantics": "APPEND_ONLY_RESULT",
+  "created_utc": "2026-09-04T04:25:10.835863+00:00",
+  "executed_head": "98ae8d0856d86cb9d5e560da7dc03139c5ad61db",
+  "candidate_policy_digest": "c6534203825fa13d",
+  "certification_status": "PASS",
+  "runtime_gate": {
+    "status": "PASS",
+    "executed_cases": {
+      "causality": "9/9",
+      "dense_targetability": "5/5",
+      "physx_footprint": "9/9",
+      "total": "23/23"
+    },
+    "manifest_path": "/home/favl/navfm-runtime-evidence/g2-20260904/G2_runtime_sha256.txt",
+    "manifest_sha256": "42e49d7ee83dcee333817b528bbd80b38bc2e1442fa461e5de1f1e30c14ae24e",
+    "causality_result_sha256": "9c730be0e5a89fd6115e33b37a91c92102695ca0a7a30c78188334162d819eb0",
+    "dense_result_sha256": "10e067de1fcc107f2fc264879480790d08020494c3d9608559dd579ec23d6fab",
+    "physx_result_sha256": "484b7baecf6eaf195ec4af16a4125d625828afdd8495d824902bc01451ccecd4"
+  },
+  "sprint_2d_execution": {
+    "parity_tests": "30/30 PASS",
+    "supporting_tests": "137/137 PASS",
+    "parity_collection_sha256": "7602ee2099ea09bd04f158b11cf8bfefe37020b9507f03cdcc29abc3d18e3751",
+    "parity_stdout_sha256": "095df0a1eac8ba751c1c22dc8093cdcf7ee9bd5f0cf6ccc3af0fd549285687ea",
+    "supporting_stdout_sha256": "05c528b79ac385aa4e8af75b10893ad34e3be021cdf32c8693a865f3efbde2c0"
+  },
+  "environment": {
+    "environment_identity": {
+      "python_version": "3.11.16",
+      "torch_version": null,
+      "cuda_version": null,
+      "pip_freeze_digest": "f3d4b3ef20c24ff38a5beabac67e8b44ea396fadfc92f78ee17df3dd9cc6acae",
+      "distribution_count": 174,
+      "os": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+      "architecture": "x86_64",
+      "pythonpath": "/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages",
+      "sys_prefix": "<prefix>",
+      "sys_base_prefix": "<prefix>",
+      "pythonhome": "",
+      "enable_user_site": true,
+      "module_locations": {
+        "torch": null,
+        "torchvision": null,
+        "navfm": "<repo>/src/navfm/__init__.py",
+        "vint_train.training.train_utils": null,
+        "cv2": null,
+        "matplotlib": null,
+        "diffusers": null
+      },
+      "environment_id": "c5dc8ac58c22a3a5c1371dd0b822bb450dc52db664f879787773c43d079663a6"
+    },
+    "environment_identity_sha256": "0ac7c6ad1b87ce9d5d6baf498cdaf1aebe47c65d8b9db51df4da006ad7e47dfb",
+    "execution_fingerprint_sha256": "e4bc1760e2c445a4c6b2b7c264b8dd05c6acf6dd7c84dda4caac37627800775a",
+    "execution_context_sha256": "083b23b2dcebd671d255a5889e2442717a2054a3dee2f085ad1d6e65f61e86a8",
+    "pytest_plugin_autoload_disabled": true,
+    "pytest_plugin_autoload_reason": "The shell exposes ROS Humble Python 3.10 paths through PYTHONPATH. Default pytest plugin discovery attempted to load the unrelated ROS launch_testing plugin. Sprint 2D pytest execution therefore disabled automatic third-party plugin loading without changing the certification tests."
+  },
+  "criteria": {
+    "1_runtime_prerequisite": {
+      "status": "PASS",
+      "evidence": "G2 runtime: causality 9/9 + dense targetability 5/5 + PhysX footprint 9/9 = 23/23"
+    },
+    "2_shared_policy_control": {
+      "status": "PASS",
+      "evidence": "tests/test_consumer_policy_parity.py \u2014 30/30"
+    },
+    "3_no_duplicate_local_generator": {
+      "status": "PASS",
+      "evidence": "parity suite plus source inspection of four migrated target-directed consumers"
+    },
+    "4_blocker_equivalence": {
+      "status": "PASS",
+      "evidence": "cross-consumer blocker parity tests"
+    },
+    "5_support_equivalence": {
+      "status": "PASS",
+      "evidence": "top-down SUPPORT semantics and role-separation tests"
+    },
+    "6_control_variants": {
+      "status": "PASS",
+      "evidence": "declared control-variant tests plus executed causality controls"
+    },
+    "7_observation_independence": {
+      "status": "PASS",
+      "evidence": "parity and candidate-policy observation-independence tests"
+    },
+    "8_targetability_population_immutability": {
+      "status": "PASS",
+      "evidence": "targetability/candidate-policy supporting tests and executed before/after candidate digests"
+    },
+    "9_identity_separate_from_generic_hit": {
+      "status": "PASS",
+      "evidence": "executed wrong-collider/non-target controls plus identity-specific adjudication"
+    },
+    "10_accounting_invariants": {
+      "status": "PASS",
+      "evidence": "tests/test_population.py within the 137/137 supporting suite"
+    },
+    "11_negative_controls": {
+      "status": "PASS",
+      "evidence": "target removal, wrong collider, occlusion, competing geometry, non-isolatable target, invalid geometry, observation independence, SUPPORT lateral rejection and population immutability"
+    },
+    "12_volumetric_boundary": {
+      "status": "PASS",
+      "evidence": "PhysX footprint oracle remains target-free and intentionally not comparable"
+    },
+    "13_no_expectation_rewrite": {
+      "status": "PASS",
+      "evidence": "pre-result worktree contains only executed runtime outputs plus protected stale Hospital artefact; expectation diff exit was 0"
+    },
+    "14_provenance_complete": {
+      "status": "PASS",
+      "evidence": "exact HEAD, G2 hashes, parity hashes, supporting-test hash, environment identity, execution fingerprint, PYTHONPATH and pytest plugin-autoload control recorded"
+    }
+  },
+  "known_non_certifying_historical_state": {
+    "hospital_collision_coverage_audit": "STALE / PROTECTED / NOT REINTERPRETED",
+    "hospital_status": "NO_EVIDENCE / PENDING",
+    "wrong_1": "UNRESOLVED"
+  },
+  "claim": "The identified NavFM tools use equivalent contract-owned physical interventions for equivalent target geometry, role and policy configuration, and preserve a separate contract for volumetric footprint operations.",
+  "non_claims": [
+    "Hospital is valid",
+    "Hospital passes",
+    "Office is valid",
+    "Warehouse is valid",
+    "a canonical scene is selected",
+    "a robot trajectory was collected",
+    "GNM, ViNT or NoMaD performance",
+    "a navigation or safety improvement",
+    "sim-to-real transfer"
+  ],
+  "next_state": {
+    "safe_to_prepare_contract_amendment": true,
+    "safe_to_remeasure_hospital": false,
+    "automatic_next_tranche": false
+  }
+}
