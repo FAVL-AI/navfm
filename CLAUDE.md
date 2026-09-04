@@ -14,20 +14,49 @@ matrix headed for a CoRL/ICRA/RA-L submission. Read, in order:
 `docs/EXPERIMENTS.md` → `PREREGISTRATION.md`. `docs/METHODOLOGY.md` is the
 deep reference; `paper/draft.md` is the paper.
 
-## Environment on this machine (facts, do not "fix" them)
+## Environment (facts, do not "fix" them)
 
-- Ubuntu 22.04, RTX 4080 SUPER 16 GB, ROS 2 Humble.
-- **Isaac Sim 5.1.0 is installed. Do NOT upgrade to 6.x.** 5.1 is the stable
-  Isaac Lab pairing (Python 3.11). The codebase supports both namespaces; on
-  this machine the 5.x path is PRIMARY: `isaacsim.core.api.SimulationContext`,
+Two different environments appear in this project and conflating them wastes a
+tranche: the **Isaac host**, where PhysX actually runs, and whatever host this
+checkout currently sits on. They are not always the same machine. Measure
+before planning work that needs physics; do not read an installation claim as
+a guarantee about the machine you are on.
+
+- Ubuntu 22.04, ROS 2 Humble. RTX 4080 SUPER 16 GB is the intended GPU, and it
+  is UNVERIFIED on any host where `nvidia-smi` cannot reach the driver.
+- **Isaac Sim 5.1.0 is the pinned API target. Do NOT upgrade to 6.x.** 5.1 is
+  the stable Isaac Lab pairing (Python 3.11). The codebase supports both
+  namespaces and the 5.x path is PRIMARY: `isaacsim.core.api.SimulationContext`,
   `isaacsim.core.prims.Articulation`, `isaacsim.sensors.camera.Camera`.
   The 6.0 experimental APIs (`isaacsim.core.experimental.*`,
-  `isaacsim.sensors.experimental.rtx`) are the fallback branch here, not the
+  `isaacsim.sensors.experimental.rtx`) are the fallback branch, not the
   default. If you touch `src/navfm/isaac/`, keep both branches working and
   make the 5.1 branch the tested one.
+- **Isaac Sim is not present on every host this repo is checked out on.** Its
+  absence is a hard stop, never something to work around or infer past. Two
+  commands settle it, and they are cheap:
+
+      python -c "import isaacsim"    # must import
+      nvidia-smi                     # must reach the driver
+
+  Measured 2026-09-04 on host `favl`: **both FAIL**. No `isaacsim` module in
+  either virtualenv, no `omni` package anywhere on disk, no `python.sh`; the
+  only thing under `~/.local/share/ov/pkg/` is `hub-2.0.0`, which is the
+  Omniverse launcher hub and not Isaac Sim. Earlier text here asserted the
+  installation as a machine fact while a later section said the opposite; the
+  claim was never measured, and a reader planning a PhysX tranche believed the
+  wrong half.
+
+  Everything importing `isaacsim.simulation_app` can be edited and unit-tested
+  on such a host but NOT executed: the three frozen harnesses
+  (`validate_collision_probe_causality`, `validate_dense_targetability`,
+  `validate_physx_footprint_oracle`), the scene audits
+  (`audit_office_collision_coverage`, `diagnose_hospital_isolation`) and all of
+  `src/navfm/isaac/`. Static reasoning about what they would return is weaker
+  evidence than a run and must be labelled as such wherever it is recorded.
 - Two virtualenvs, never merged: `~/.venv-train` (Python 3.11, torch cu128,
-  this package + patched upstream) and the Isaac Sim 5.1 Python environment.
-  They exchange only files on disk.
+  this package + patched upstream) and, on a host that has Isaac Sim, its 5.1
+  Python environment. They exchange only files on disk.
 - Upstream reference: `third_party/visualnav-transformer` pinned at commit
   `dca7981`, patched via `scripts/patch_upstream.py` (idempotent, reversible).
   Never edit upstream files directly; extend the patch script instead.
@@ -178,7 +207,8 @@ entrypoints that close the path from a dataset to a paper table:
 `navfm.eval.offline`, `navfm.train.run`, `scripts/make_tables.py`. Evidence in
 `gates/M1/`; `bash gates/M1/reproduce.sh` re-runs the whole chain on CPU.
 
-Implemented but NEVER EXECUTED (no Isaac Sim in the build environment):
+Implemented but NEVER EXECUTED (no Isaac Sim on this host — see Environment
+above for how to check, rather than assuming either way):
 `navfm/isaac/{app,robot,randomize,collect}.py` — expect real API friction on
 first 5.1 run; fix in the fallback branch.
 
