@@ -14,49 +14,78 @@ matrix headed for a CoRL/ICRA/RA-L submission. Read, in order:
 `docs/EXPERIMENTS.md` → `PREREGISTRATION.md`. `docs/METHODOLOGY.md` is the
 deep reference; `paper/draft.md` is the paper.
 
-## Environment (facts, do not "fix" them)
+## Execution environments (facts, do not "fix" them)
 
-Two different environments appear in this project and conflating them wastes a
-tranche: the **Isaac host**, where PhysX actually runs, and whatever host this
-checkout currently sits on. They are not always the same machine. Measure
-before planning work that needs physics; do not read an installation claim as
-a guarantee about the machine you are on.
+Three environments, and conflating them is how a tranche gets planned against a
+machine that cannot run it. "The repository is configured for Isaac Sim 5.1" is
+not "Isaac Sim is installed on this machine", and only the second one lets you
+report a physics result.
 
-- Ubuntu 22.04, ROS 2 Humble. RTX 4080 SUPER 16 GB is the intended GPU, and it
-  is UNVERIFIED on any host where `nvidia-smi` cannot reach the driver.
-- **Isaac Sim 5.1.0 is the pinned API target. Do NOT upgrade to 6.x.** 5.1 is
-  the stable Isaac Lab pairing (Python 3.11). The codebase supports both
-  namespaces and the 5.x path is PRIMARY: `isaacsim.core.api.SimulationContext`,
-  `isaacsim.core.prims.Articulation`, `isaacsim.sensors.camera.Camera`.
-  The 6.0 experimental APIs (`isaacsim.core.experimental.*`,
-  `isaacsim.sensors.experimental.rtx`) are the fallback branch, not the
-  default. If you touch `src/navfm/isaac/`, keep both branches working and
-  make the 5.1 branch the tested one.
-- **Isaac Sim is not present on every host this repo is checked out on.** Its
-  absence is a hard stop, never something to work around or infer past. Two
-  commands settle it, and they are cheap:
+### 1. Development / build host
 
-      python -c "import isaacsim"    # must import
-      nvidia-smi                     # must reach the driver
+The ordinary development host does NOT have Isaac Sim installed. On it:
 
-  Measured 2026-09-04 on host `favl`: **both FAIL**. No `isaacsim` module in
-  either virtualenv, no `omni` package anywhere on disk, no `python.sh`; the
-  only thing under `~/.local/share/ov/pkg/` is `hub-2.0.0`, which is the
-  Omniverse launcher hub and not Isaac Sim. Earlier text here asserted the
-  installation as a machine fact while a later section said the opposite; the
-  claim was never measured, and a reader planning a PhysX tranche believed the
-  wrong half.
+- static repository inspection is allowed;
+- ordinary Python tests may run;
+- CI reproduction may run where dependencies exist;
+- formatting, linting and type checking may run;
+- Isaac Sim / PhysX-dependent harnesses MUST NOT be reported as executed;
+- a missing Isaac runtime is NOT evidence of a physics-test failure -- it is
+  the absence of a test, and the two must never be recorded the same way;
+- physics-dependent results are reported as **NOT RUN**, never as a number.
 
-  Everything importing `isaacsim.simulation_app` can be edited and unit-tested
-  on such a host but NOT executed: the three frozen harnesses
-  (`validate_collision_probe_causality`, `validate_dense_targetability`,
-  `validate_physx_footprint_oracle`), the scene audits
-  (`audit_office_collision_coverage`, `diagnose_hospital_isolation`) and all of
-  `src/navfm/isaac/`. Static reasoning about what they would return is weaker
-  evidence than a run and must be labelled as such wherever it is recorded.
+Two commands settle which host you are on, and they are cheap:
+
+    python -c "import isaacsim"    # must import
+    nvidia-smi                     # must reach the driver
+
+Measured 2026-09-04 on host `favl`: **both FAIL**. No `isaacsim` module in
+either virtualenv, no `omni` package anywhere on disk, no `python.sh`; the only
+thing under `~/.local/share/ov/pkg/` is `hub-2.0.0`, the Omniverse launcher hub
+rather than Isaac Sim. `nvidia-smi` cannot reach a driver, so RTX 4080 SUPER
+16 GB is the intended GPU and is UNVERIFIED here.
+
+Everything importing `isaacsim.simulation_app` can be edited and unit-tested on
+this host but NOT executed: the three frozen harnesses
+(`validate_collision_probe_causality`, `validate_dense_targetability`,
+`validate_physx_footprint_oracle`), the scene audits
+(`audit_office_collision_coverage`, `diagnose_hospital_isolation`) and all of
+`src/navfm/isaac/`. Static reasoning about what they would return is weaker
+evidence than a run and must be labelled as such wherever it is recorded.
+
+### 2. GitHub CI
+
+Reproducibility and software gates only: lint, types, the test matrix, the
+upstream compatibility proof, population ownership, the corpus owner job. CI
+being green says nothing about physics and must never be cited as though it
+did.
+
+### 3. Isaac Sim execution machine
+
+A separate machine runs the physics-dependent experiments, on **Isaac Sim
+5.1.0**. Do NOT upgrade the NavFM research environment to 6.x without an
+explicit compatibility and revalidation tranche. 5.1 is the stable Isaac Lab
+pairing (Python 3.11); the codebase supports both namespaces and the 5.x path
+is PRIMARY: `isaacsim.core.api.SimulationContext`,
+`isaacsim.core.prims.Articulation`, `isaacsim.sensors.camera.Camera`. The 6.0
+experimental APIs (`isaacsim.core.experimental.*`,
+`isaacsim.sensors.experimental.rtx`) are the fallback branch, not the default.
+If you touch `src/navfm/isaac/`, keep both branches working and make the 5.1
+branch the tested one.
+
+Only this machine may support a claim requiring real Isaac Sim / PhysX
+execution: the three frozen harnesses, scene collision remeasurement, footprint
+sweeps, and any other Isaac-dependent runtime evidence.
+
+Before accepting any Isaac-dependent result, record: hostname or
+execution-environment identity, repository HEAD, Isaac Sim version, the
+interpreter used, the relevant policy and contract digests, and worktree state.
+A physics number without that provenance is not admissible, because nothing
+distinguishes it from a number produced somewhere else.
+
 - Two virtualenvs, never merged: `~/.venv-train` (Python 3.11, torch cu128,
-  this package + patched upstream) and, on a host that has Isaac Sim, its 5.1
-  Python environment. They exchange only files on disk.
+  this package + patched upstream) and, on the Isaac machine, its 5.1 Python
+  environment. They exchange only files on disk.
 - Upstream reference: `third_party/visualnav-transformer` pinned at commit
   `dca7981`, patched via `scripts/patch_upstream.py` (idempotent, reversible).
   Never edit upstream files directly; extend the patch script instead.
