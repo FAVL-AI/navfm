@@ -253,3 +253,5 @@ Not yet implemented:
 - NoMaD offline evaluation: `upstream.build_model` raises for it on purpose.
   `_compute_losses_nomad` needs a diffusion sampling loop, so E1.3 is its own
   entrypoint rather than a `--model nomad` flag on `eval.offline`.
+
+@.claude/governance-router.md
