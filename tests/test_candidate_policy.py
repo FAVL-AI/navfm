@@ -435,13 +435,3 @@ class TestRemainingSemanticsSurvivedTheRemoval:
                                  Aabb(tuple(d["bounds_min"]), tuple(d["bounds_max"])))  # type: ignore[arg-type]
         assert len(cs.candidates) == d["logical_population"]
         assert len(cs.valid_candidates) == d["valid_count"]
-
-    def test_no_consumer_physics_changed_because_no_consumer_calls_this_yet(self) -> None:
-        """Guards the claim boundary of this tranche, not the code.
-
-        If a consumer starts calling the policy in the same commit as the scope
-        correction, a later digest change becomes ambiguous between the two.
-        """
-        root = Path(__file__).resolve().parents[1] / "scripts"
-        callers = [p.name for p in root.glob("*.py") if "candidate_policy" in p.read_text()]
-        assert callers == [], f"consumer migration must not ride along with the scope correction: {callers}"

@@ -56,12 +56,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 748,
-      "sha256": "611656aac520eefb95f1f0fa263b15bbe7b9d9399c1d10d3670aec19426ea806"
+      "count": 761,
+      "sha256": "21a13813db24da642ee7862f17fa71682b0d47bf306b350d5db3a33a536d2c5d"
     },
     "hermetic": {
-      "count": 676,
-      "sha256": "acaed0080fecf627c340e9f6eb680e3d90d5d46a9193c72bc00b6c8712a1e5d9"
+      "count": 689,
+      "sha256": "785e5b418f507c401eecdd7367d74b3dced9c1c16e749161a2113fd36094cb7d"
     },
     "resource_union": {
       "count": 72,
@@ -150,7 +150,6 @@
     "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_causality_controls_are_untouched[standoff-1.0]": [],
     "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_causality_controls_are_untouched[standoff-1.5]": [],
     "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_invalid_geometry_semantics_are_untouched": [],
-    "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_no_consumer_physics_changed_because_no_consumer_calls_this_yet": [],
     "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_shared_origin_control_is_untouched": [],
     "tests/test_candidate_policy.py::TestRemainingSemanticsSurvivedTheRemoval::test_support_population_is_untouched": [],
     "tests/test_candidate_policy.py::TestSupportGeneration::test_support_and_blocker_are_different_experiments": [],
@@ -261,6 +260,20 @@
     "tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_unreadable_image": [],
     "tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_wrong_position_shape": [],
     "tests/test_compat_harness.py::TestRequiredChecksFailOnBrokenInput::test_wrong_yaw_shape": [],
+    "tests/test_consumer_policy_parity.py::TestCandidatesDoNotDependOnObservations::test_the_policy_digest_is_stable_across_the_session": [],
+    "tests/test_consumer_policy_parity.py::TestCandidatesDoNotDependOnObservations::test_the_set_is_identical_before_and_after_unrelated_queries": [],
+    "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_a_control_variant_is_a_different_experiment": [],
+    "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_all_four_faces_are_present_for_every_consumer": [],
+    "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_the_retired_construction_is_reachable_only_by_name": [],
+    "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_the_same_target_yields_one_candidate_set_digest": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_no_local_candidate_arithmetic_survives[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_calls_generate_candidates[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_imports_the_policy[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_records_the_policy_that_produced_its_candidates[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_the_oracle_does_not_import_the_candidate_policy[validate_physx_footprint_oracle.py]": [],
+    "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_the_oracle_keeps_its_own_volumetric_operations": [],
+    "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_the_oracle_still_declares_no_target[validate_physx_footprint_oracle.py]": [],
+    "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_this_boundary_test_can_fail": [],
     "tests/test_control_arm_seeding.py::TestModelConstruction::test_two_seeded_constructions_give_identical_weights": [
       "torch"
     ],
