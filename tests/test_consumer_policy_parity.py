@@ -37,6 +37,7 @@ MIGRATED = (
     "diagnose_hospital_isolation.py",
     "validate_dense_targetability.py",
     "validate_collision_probe_causality.py",
+    "audit_office_collision_coverage.py",
 )
 
 #: SD-001: this harness has no target-directed portion at all. Its rays come from
@@ -53,6 +54,7 @@ LOCAL_GENERATOR_MARKERS = (
     'for label, axis, sign in',
     "for ox, sgn in",
     "def x_interval(",
+    "def _x_iv(",
 )
 
 
@@ -184,3 +186,38 @@ class TestCandidatesDoNotDependOnObservations:
 
     def test_the_policy_digest_is_stable_across_the_session(self) -> None:
         assert policy_digest() == policy_digest()
+
+
+class TestSupportIsNoLongerInterrogatedEdgeOn:
+    """The Sprint 2A defect, made unrepeatable.
+
+    In the production audit a SUPPORT target's downward probe was computed and
+    then discarded: the candidate list beneath it was X-only and role-blind, and
+    its choice overwrote origin, direction and reach. Every SUPPORT row therefore
+    asked whether a floor's rim obstructs, never whether the floor bears weight.
+
+    These fail if lateral-support semantics come back by any route.
+    """
+
+    BOX = Aabb((0.0, 0.0, 0.0), (4.0, 4.0, 0.1))
+
+    def test_a_support_candidate_travels_downward_only(self) -> None:
+        for c in generate_candidates("/W/Floor", Role.SUPPORT, self.BOX).candidates:
+            assert c.direction == (0.0, 0.0, -1.0), "support must be met from above"
+            assert c.direction[0] == 0.0 and c.direction[1] == 0.0, "no lateral support probe"
+
+    def test_a_support_candidate_starts_above_the_surface(self) -> None:
+        c = generate_candidates("/W/Floor", Role.SUPPORT, self.BOX).candidates[0]
+        assert c.origin[2] > self.BOX.maximum[2]
+
+    def test_support_and_blocker_never_share_a_candidate_set(self) -> None:
+        s = generate_candidates("/W/Floor", Role.SUPPORT, self.BOX)
+        b = generate_candidates("/W/Floor", Role.BLOCKER, self.BOX)
+        assert s.digest != b.digest
+        assert {c.face for c in s.candidates}.isdisjoint({c.face for c in b.candidates})
+
+    def test_the_audit_selects_the_policy_role_from_the_probe_role(self) -> None:
+        """Structural: the role must reach the policy, not be recomputed beside it."""
+        src = source("audit_office_collision_coverage.py")
+        assert "Role.SUPPORT if role ==" in src
+        assert "generate_candidates(" in src

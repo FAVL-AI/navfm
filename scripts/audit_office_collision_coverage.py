@@ -38,15 +38,25 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from navfm.candidate_policy import Aabb, Role, generate_candidates, policy_digest  # noqa: E402
 from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
+from navfm.population import Disposition, build  # noqa: E402
 from navfm.targetability import Interval, TargetabilityInput, choose  # noqa: E402
 
 
-def _x_iv(mn, mx, ox: float, sgn: float, ry: float, rz: float):
-    """Ray/body interval along X, requiring the ray to pass through in Y and Z."""
-    if not (mn[1] <= ry <= mx[1] and mn[2] <= rz <= mx[2]):
-        return None
-    lo, hi = ((mn[0] - ox, mx[0] - ox) if sgn > 0 else (ox - mx[0], ox - mn[0]))
+def _ray_iv(mn, mx, origin, direction):
+    """Ray/body interval along the travel axis, requiring passage in the other two.
+
+    Generalised from an X-only helper when the contract's set brought the +-Y
+    faces and the -Z support probe. The old version could not describe either.
+    """
+    axis = next(i for i in range(3) if direction[i] != 0.0)
+    for other in (i for i in range(3) if i != axis):
+        if not (mn[other] <= origin[other] <= mx[other]):
+            return None
+    o = origin[axis]
+    lo, hi = ((mn[axis] - o, mx[axis] - o) if direction[axis] > 0
+              else (o - mx[axis], o - mn[axis]))
     return Interval(max(0.0, lo), hi) if hi > 0 else None
 
 OUT = REPO / "gates" / "scenes"
@@ -126,6 +136,11 @@ def main() -> int:
         "risk_direction": ("Missing collision never invents an obstacle; it invents free "
                            "space, precisely where the robot would collide."),
         "probe_contract_digest": cd,
+        # The contract says how an observation is judged; the policy digest says
+        # which physical question produced it. A row carrying only the first is
+        # incomplete provenance, because two runs can share a contract and still
+        # interrogate a target from different places.
+        "candidate_policy_digest": policy_digest(),
         "probe_contract_regressions": contract.get("dense_result"),
         "parent_contract_digest": contract.get("parent_contract_digest"),
         "evidence_channels_kept_separate": (
@@ -237,61 +252,29 @@ def main() -> int:
                 return {"probe_role": role, "expected_target_prim": row["path"],
                         "verdict": "NO_EVIDENCE", "reason": "target bounds empty"}
             mn, mx = r.GetMin(), r.GetMax()
-            cx, cy = (mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2
-            if role == "SUPPORT":
-                # Straight down onto the target's own top face.
-                origin = [cx, cy, mx[2] + 0.5]
-                direction = [0.0, 0.0, -1.0]
-                reach = 1.5
-            else:
-                # In from outside the target's own -X face, toward its centre,
-                # so nothing of the target's own scale can be in front of it.
-                span = mx[0] - mn[0]
-                origin = [mn[0] - max(0.6, span * 0.25), cy, (mn[2] + mx[2]) / 2]
-                direction = [1.0, 0.0, 0.0]
-                reach = max(0.6, span * 0.25) * 2 + span
-            # Reachability preflight. Aiming from outside the target's bounds
-            # toward its centre is a large improvement on a shared origin, but it
-            # is not a guarantee: rotated, concave, nested, overlapping or
-            # instanced colliders can put something else first along the segment.
-            # A probe that cannot isolate its target is NON_PROBATIVE, which is a
-            # statement about the experiment -- not a failure of the target.
-            # A verifier cannot recover causal specificity the experiment never
-            # created, so this is checked before the verdict, not after.
-            occluders = []
-            for other in candidates_for_occlusion:
-                if other["path"] == row["path"]:
-                    continue
-                orr = cache.ComputeWorldBound(
-                    stage.GetPrimAtPath(other["path"])).ComputeAlignedRange()
-                if orr.IsEmpty():
-                    continue
-                omn, omx = orr.GetMin(), orr.GetMax()
-                # Does the other collider straddle the probe segment ahead of the
-                # target, in the two axes the ray does not travel along?
-                if role == "SUPPORT":
-                    if (omn[0] <= cx <= omx[0] and omn[1] <= cy <= omx[1]
-                            and omx[2] > mx[2] and omn[2] < origin[2]):
-                        occluders.append(other["path"])
-                elif (omn[1] <= cy <= omx[1] and omn[2] <= (mn[2] + mx[2]) / 2 <= omx[2]
-                        and omn[0] < mn[0] and omx[0] > origin[0]):
-                    occluders.append(other["path"])
-            if occluders:
-                return {"probe_role": role, "expected_target_prim": row["path"],
-                        "probe_reachability_status": "OCCLUDED",
-                        "occluders": occluders[:4],
-                        "verdict": "NON_PROBATIVE_OCCLUDED",
-                        "reason": ("another collider necessarily precedes the declared target "
-                                   "along this segment, so the probe cannot interrogate it")}
 
-            # CAUSAL_TARGETABILITY, decided before the query. A target that no
-            # candidate can isolate is not queried at all, so it can never be
-            # recorded as a target failure for an experiment that never reached
-            # it -- which is what produced five phantom Hospital wall failures.
+            # The intervention is the contract's. Before migration this function
+            # computed a role-specific origin, direction and reach -- a downward
+            # probe for SUPPORT, a lateral one for BLOCKING -- and then discarded
+            # all three, because the candidate list built below them was X-only
+            # and role-blind, and its choice overwrote them. Every SUPPORT target
+            # was therefore interrogated edge-on: the audit asked whether a
+            # floor's rim obstructs, never whether the floor bears weight. The
+            # role now selects the policy role, and the policy decides the
+            # geometry, so the two cannot drift apart again.
+            policy_role = Role.SUPPORT if role == "SUPPORT" else Role.BLOCKER
+            cset = generate_candidates(
+                row["path"], policy_role,
+                Aabb((mn[0], mn[1], mn[2]), (mx[0], mx[1], mx[2])))
+
             cands = []
-            for ox, sgn in ((mn[0] - 0.30, 1.0), (mx[0] + 0.30, -1.0)):
-                rch = abs((mx[0] if sgn > 0 else mn[0]) - ox) + 0.2
-                ti = _x_iv(mn, mx, ox, sgn, cy, (mn[2] + mx[2]) / 2)
+            reachable_geometrically = False
+            for cand in cset.candidates:
+                if not cand.valid:
+                    continue
+                ti = _ray_iv(mn, mx, cand.origin, cand.direction)
+                if ti is not None:
+                    reachable_geometrically = True
                 comp = []
                 for other in candidates_for_occlusion:
                     if other["path"] == row["path"]:
@@ -300,23 +283,39 @@ def main() -> int:
                         stage.GetPrimAtPath(other["path"])).ComputeAlignedRange()
                     if orr.IsEmpty():
                         continue
-                    oi = _x_iv(orr.GetMin(), orr.GetMax(), ox, sgn, cy,
-                               (mn[2] + mx[2]) / 2)
-                    if oi and oi.enter <= rch:
+                    oi = _ray_iv(orr.GetMin(), orr.GetMax(), cand.origin, cand.direction)
+                    if oi and oi.enter <= cand.max_range:
                         comp.append((other["path"], oi))
                 cands.append(TargetabilityInput(
-                    declared_target=row["path"], origin=(ox, cy, (mn[2] + mx[2]) / 2),
-                    direction=(sgn, 0.0, 0.0), max_range=rch, target_interval=ti,
-                    competing=tuple(comp),
+                    declared_target=row["path"], origin=cand.origin,
+                    direction=cand.direction, max_range=cand.max_range,
+                    target_interval=ti, competing=tuple(comp),
                     origin_inside=tuple(c for c, ci in comp if ci.enter <= 0.0 < ci.exit)))
+
+            common = {"probe_role": role, "expected_target_prim": row["path"],
+                      "candidate_policy_digest": policy_digest(),
+                      "candidate_set_digest": cset.digest}
+
+            # GEOMETRIC_REACHABILITY, before targetability and before any query.
+            if not reachable_geometrically:
+                return {**common, "probe_reachability_status": "OCCLUDED",
+                        "verdict": "NON_PROBATIVE_OCCLUDED",
+                        "reason": ("no candidate in the contract's finite set meets the "
+                                   "declared target at all, so the probe cannot "
+                                   "interrogate it")}
+
+            # CAUSAL_TARGETABILITY, decided before the query. A target that no
+            # candidate can isolate is not queried at all, so it can never be
+            # recorded as a target failure for an experiment that never reached
+            # it -- which is what produced five phantom Hospital wall failures.
             tdec = choose(cands)
             if not tdec.state.probative:
-                return {"probe_role": role, "expected_target_prim": row["path"],
-                        "probe_reachability_status": "REACHABLE",
+                return {**common, "probe_reachability_status": "REACHABLE",
                         "causal_targetability": tdec.state.value,
                         "targetability_reason": tdec.reason,
                         "candidate_digest": tdec.candidate_digest,
                         "verdict": "NON_PROBATIVE_NOT_TARGETABLE"}
+
             origin = list(tdec.chosen.origin)
             direction = list(tdec.chosen.direction)
             reach = tdec.chosen.max_range
@@ -328,7 +327,7 @@ def main() -> int:
                                      or actual.startswith(row["path"])
                                      or row["path"].startswith(actual)))
             return {
-                "probe_role": role, "expected_target_prim": row["path"],
+                **common,
                 "origin": [round(v, 3) for v in origin], "direction": direction,
                 "max_distance": round(reach, 3),
                 "actual_hit": hit,
@@ -351,22 +350,59 @@ def main() -> int:
         sup_probes = [probe_target(r, "SUPPORT") for r in sup_c]
         blk_probes = [probe_target(r, "BLOCKING") for r in blk_c]
 
+        #: Verdict -> where the probe finally landed. Exactly one disposition per
+        #: selected probe, which is what makes the partition checkable. A probe
+        #: that fired is PROBATIVE whatever it found: probative means the
+        #: experiment could speak, not that it said something welcome.
+        _DISPOSITION = {
+            "NO_EVIDENCE": Disposition.NO_EVIDENCE,
+            "NON_PROBATIVE_OCCLUDED": Disposition.NONPROBATIVE_UNREACHABLE,
+            "NON_PROBATIVE_NOT_TARGETABLE": Disposition.NONPROBATIVE_NOT_TARGETABLE,
+            "PASS_CORRECT_CAUSE": Disposition.PROBATIVE,
+            "FAIL_WRONG_CAUSE": Disposition.PROBATIVE,
+            "FAIL_NO_HIT": Disposition.PROBATIVE,
+        }
+
         def summarise(probes: list[dict[str, Any]], planned: int) -> dict[str, Any]:
+            # Populations are sets of probe identities, never counts reconstructed
+            # by subtraction. reachable - non_probative once produced -1 here,
+            # because the two counted probes surviving different stages: a number
+            # no population can have then fed the representativeness gate. A set
+            # has no negative cardinality, so that is now unrepresentable rather
+            # than guarded against.
+            selected: dict[str, Disposition] = {}
+            reachable_s: set[str] = set()
+            targetable_s: set[str] = set()
+            fired_s: set[str] = set()
+            for p_ in probes:
+                pid = str(p_["expected_target_prim"])
+                verdict = str(p_["verdict"])
+                selected[pid] = _DISPOSITION[verdict]
+                if p_.get("probe_reachability_status") == "REACHABLE":
+                    reachable_s.add(pid)
+                if verdict not in ("NO_EVIDENCE", "NON_PROBATIVE_OCCLUDED",
+                                   "NON_PROBATIVE_NOT_TARGETABLE"):
+                    targetable_s.add(pid)
+                    fired_s.add(pid)
+            pop = build(selected, reachable=reachable_s, targetable=targetable_s,
+                        fired=fired_s, adjudicated=fired_s)
+
             fired = len(probes)
-            reachable = sum(1 for p_ in probes
-                            if p_.get("probe_reachability_status") == "REACHABLE")
+            reachable = len(pop.reachable)
             nonprob = sum(1 for p_ in probes if str(p_["verdict"]).startswith("NON_PROBATIVE"))
             not_targetable = sum(1 for p_ in probes
                                  if p_["verdict"] == "NON_PROBATIVE_NOT_TARGETABLE")
             correct = sum(1 for p_ in probes if p_["verdict"] == "PASS_CORRECT_CAUSE")
             wrong = sum(1 for p_ in probes if p_["verdict"] == "FAIL_WRONG_CAUSE")
+            probative = pop.probative_population
             dists = [p_.get("actual_distance") for p_ in probes if p_.get("actual_distance")]
             invariant = len(dists) > 2 and len(set(round(d, 2) for d in dists)) == 1
             return {
                 "planned": planned, "fired": fired,
                 "reachable": reachable, "non_probative": nonprob,
                 "not_targetable": not_targetable,
-                "probative_population": reachable - nonprob,
+                "probative_population": probative,
+                "accounting": pop.to_json(),
                 "correct_target_hits": correct, "wrong_target_hits": wrong,
                 "generic_hit_rate": (
                     round(sum(1 for p_ in probes if p_.get("actual_hit")) / fired, 3)
@@ -386,10 +422,10 @@ def main() -> int:
                 "verdict": ("NOT_RUN" if planned and not fired
                             else "NO_EVIDENCE" if not fired
                             else "NON_PROBATIVE_SAMPLE"
-                            if (reachable - nonprob) / fired < MIN_REACHABLE_FRACTION
+                            if probative / fired < MIN_REACHABLE_FRACTION
                             else "REVIEW_REQUIRED_INVARIANCE" if invariant
-                            else "PROBATIVE_PASS" if correct == (reachable - nonprob)
-                            else "CONTRADICTION" if correct and correct < (reachable - nonprob)
+                            else "PROBATIVE_PASS" if correct == probative
+                            else "CONTRADICTION" if correct and correct < probative
                             else "PROBATIVE_FAIL"),
                 "probes": probes,
             }
