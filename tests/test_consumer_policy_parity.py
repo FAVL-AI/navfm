@@ -36,6 +36,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 MIGRATED = (
     "diagnose_hospital_isolation.py",
     "validate_dense_targetability.py",
+    "validate_collision_probe_causality.py",
 )
 
 #: SD-001: this harness has no target-directed portion at all. Its rays come from

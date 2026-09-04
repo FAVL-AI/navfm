@@ -56,12 +56,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 765,
-      "sha256": "4d63b05054e76464ea710f8538a50244c728be019c56aba2ba5b39f858e993fc"
+      "count": 769,
+      "sha256": "aff6db02c85c1b72ce1f8d156d288af0197c60906714fa125be2a7eb72cb3ff5"
     },
     "hermetic": {
-      "count": 693,
-      "sha256": "0c1aad0c35b0f37b3c3b40537b037317b2198eb720fcea6d7e131b34a4aada94"
+      "count": 697,
+      "sha256": "2ae693ff21e23440b4ebbfe3bf46b097c8a2dde2f12dedf9fc124f3c54861481"
     },
     "resource_union": {
       "count": 72,
@@ -267,12 +267,16 @@
     "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_the_retired_construction_is_reachable_only_by_name": [],
     "tests/test_consumer_policy_parity.py::TestCrossConsumerBlockerParity::test_the_same_target_yields_one_candidate_set_digest": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_no_local_candidate_arithmetic_survives[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_no_local_candidate_arithmetic_survives[validate_collision_probe_causality.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_no_local_candidate_arithmetic_survives[validate_dense_targetability.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_calls_generate_candidates[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_calls_generate_candidates[validate_collision_probe_causality.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_calls_generate_candidates[validate_dense_targetability.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_imports_the_policy[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_imports_the_policy[validate_collision_probe_causality.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_imports_the_policy[validate_dense_targetability.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_records_the_policy_that_produced_its_candidates[diagnose_hospital_isolation.py]": [],
+    "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_records_the_policy_that_produced_its_candidates[validate_collision_probe_causality.py]": [],
     "tests/test_consumer_policy_parity.py::TestMigratedConsumersCallTheSharedPolicy::test_the_consumer_records_the_policy_that_produced_its_candidates[validate_dense_targetability.py]": [],
     "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_the_oracle_does_not_import_the_candidate_policy[validate_physx_footprint_oracle.py]": [],
     "tests/test_consumer_policy_parity.py::TestTheVolumetricBoundaryHolds::test_the_oracle_keeps_its_own_volumetric_operations": [],
