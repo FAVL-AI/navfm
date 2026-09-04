@@ -41,6 +41,14 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from navfm.candidate_policy import (  # noqa: E402
+    DEFAULT_POLICY,
+    Aabb,
+    Role,
+    generate_candidates,
+    policy_digest,
+    shared_origin_control,
+)
 from navfm.measurement import Liveness, MeasurementEnvelope  # noqa: E402
 from navfm.targetability import (  # noqa: E402
     Interval,
@@ -55,8 +63,6 @@ DENSE_EXPECT = "49c5418859e3d6b5850e0018f718eb4a"
 AMENDMENT = "6451a1f5cc799d6faebba002b70b5d87"
 EFFECTIVE = "03ebdbc0f1c89d87c1b2813de157d1b7"
 FIXTURE_COUNT = 5
-
-LOCAL_STANDOFF = 0.30
 
 
 def main() -> int:
@@ -106,6 +112,12 @@ def main() -> int:
         "dense_expectations_digest": DENSE_EXPECT,
         "amendment_digest": AMENDMENT,
         "effective_expectations_digest": EFFECTIVE,
+        # Provenance the contract digest alone cannot carry: two runs can share a
+        # contract and still ask different physical questions.
+        "candidate_policy_digest": policy_digest(),
+        "candidate_policy_note": ("candidates come from navfm.candidate_policy; the naive "
+                                  "fixture requests the retired shared-origin construction "
+                                  "as a declared control variant with its own digest"),
         "no_hospital_content": ("No Hospital path, prim, distance or observed answer is used. "
                                "Hospital supplied the mechanism; these fixtures reproduce it "
                                "from first principles. wrong_1 is evidence for nothing here."),
@@ -178,51 +190,70 @@ def main() -> int:
                 "violations": reasons,
                 "note": "asserted before any query; without it this becomes an identity test"}
 
-    def x_interval(path: str, origin_x: float, sign: float,
-                   ray_y: float, ray_z: float) -> Interval | None:
+    def ray_interval(path: str, origin: tuple[float, float, float],
+                     direction: tuple[float, float, float]) -> Interval | None:
         """Where an axis-aligned ray meets this body, or None if it misses.
 
-        The X extent alone is not an intersection. An earlier version compared
-        only X spans, so the 40x20 m floor registered as competing geometry on
-        every ray -- including rays half a metre above it. Every local candidate
-        then looked occluded and no target could ever be isolated. The ray must
-        actually pass through the body in the two axes it does not travel along.
+        The extent along the travel axis alone is not an intersection. An earlier
+        version compared only X spans, so the 40x20 m floor registered as
+        competing geometry on every ray -- including rays half a metre above it.
+        Every local candidate then looked occluded and no target could ever be
+        isolated. The ray must actually pass through the body in the two axes it
+        does not travel along.
+
+        Generalised from X-only when the shared policy brought the +-Y faces:
+        the old helper could not have described a Y-directed candidate at all.
         """
         r = bounds(path)
         if r.IsEmpty():
             return None
         mn, mx = r.GetMin(), r.GetMax()
-        if not (mn[1] <= ray_y <= mx[1] and mn[2] <= ray_z <= mx[2]):
-            return None
-        if sign > 0:
-            lo, hi = mn[0] - origin_x, mx[0] - origin_x
+        axis = next(i for i in range(3) if direction[i] != 0.0)
+        for other in (i for i in range(3) if i != axis):
+            if not (mn[other] <= origin[other] <= mx[other]):
+                return None
+        o = origin[axis]
+        if direction[axis] > 0:
+            lo, hi = mn[axis] - o, mx[axis] - o
         else:
-            lo, hi = origin_x - mx[0], origin_x - mn[0]
+            lo, hi = o - mx[axis], o - mn[axis]
         return Interval(max(0.0, lo), hi) if hi > 0 else None
 
     def candidates_for(target: str, competitors: list[str], *, naive: bool) -> list[Any]:
-        """Deterministic generation from the target's own geometry. Never from an
-        observed collider."""
+        """The contract's intervention set, described for the targetability stage.
+
+        Generation is no longer this script's. It asks navfm.candidate_policy for
+        the candidates and only computes what targetability needs on top of them:
+        where the ray meets the declared target, and which competitors precede it.
+        Those are analyses of a candidate, not choices about one.
+
+        ``naive`` is the retired shared-origin construction, now requested by
+        name through a declared control variant instead of being rebuilt inline.
+        Its wrongness is the point of the fixture, so it must stay reachable --
+        but only deliberately, and only with its own policy digest.
+        """
         r = bounds(target)
         if r.IsEmpty():
             return []
         mn, mx = r.GetMin(), r.GetMax()
-        cy, cz = (mn[1] + mx[1]) / 2, (mn[2] + mx[2]) / 2
+        box = Aabb((mn[0], mn[1], mn[2]), (mx[0], mx[1], mx[2]))
+        policy = shared_origin_control(mx[0] + 0.2) if naive else DEFAULT_POLICY
         out = []
-        specs = ([(0.0, +1.0)] if naive
-                 else [(mn[0] - LOCAL_STANDOFF, +1.0), (mx[0] + LOCAL_STANDOFF, -1.0)])
-        for ox, sign in specs:
-            reach = abs((mx[0] if sign > 0 else mn[0]) - ox) + 0.2
-            ti = x_interval(target, ox, sign, cy, cz)
+        for cand in generate_candidates(target, Role.BLOCKER, box, policy=policy).candidates:
+            if not cand.valid:
+                # Not fireable, so not an intervention the gate can choose. It
+                # stays in the policy's population and out of this list.
+                continue
+            ti = ray_interval(target, cand.origin, cand.direction)
             comp = []
             for c in competitors:
-                ci = x_interval(c, ox, sign, cy, cz)
-                if ci and ci.enter <= reach:
+                ci = ray_interval(c, cand.origin, cand.direction)
+                if ci and ci.enter <= cand.max_range:
                     comp.append((c, ci))
             inside = tuple(c for c, ci in comp if ci.enter <= 0.0 < ci.exit)
             out.append(TargetabilityInput(
-                declared_target=target, origin=(ox, cy, cz),
-                direction=(sign, 0.0, 0.0), max_range=reach,
+                declared_target=target, origin=cand.origin,
+                direction=cand.direction, max_range=cand.max_range,
                 target_interval=ti, competing=tuple(comp), origin_inside=inside))
         return out
 

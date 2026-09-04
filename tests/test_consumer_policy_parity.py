@@ -33,7 +33,10 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 
 #: Consumers whose target-directed candidate construction has been migrated.
 #: Grows one entry per migration commit; a name arrives here only with evidence.
-MIGRATED = ("diagnose_hospital_isolation.py",)
+MIGRATED = (
+    "diagnose_hospital_isolation.py",
+    "validate_dense_targetability.py",
+)
 
 #: SD-001: this harness has no target-directed portion at all. Its rays come from
 #: a robot pose, declare no target and adjudicate no collider identity, so it must
@@ -48,6 +51,7 @@ LOCAL_GENERATOR_MARKERS = (
     "LOCAL_MARGIN",
     'for label, axis, sign in',
     "for ox, sgn in",
+    "def x_interval(",
 )
 
 
