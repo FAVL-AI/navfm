@@ -14,6 +14,45 @@ matrix headed for a CoRL/ICRA/RA-L submission. Read, in order:
 `docs/EXPERIMENTS.md` → `PREREGISTRATION.md`. `docs/METHODOLOGY.md` is the
 deep reference; `paper/draft.md` is the paper.
 
+## Canonical identity (frozen 2026-09-04)
+
+| | |
+|---|---|
+| Repository | `FAVL-AI/navfm` — https://github.com/FAVL-AI/navfm |
+| Organisation | `FAVL-AI` |
+| Author | Frank (Asante) Van Laarhoven |
+| Role | Doctoral Researcher / PhD Candidate |
+| Affiliation | Newcastle University |
+| Academic email | `F.Van-Laarhoven2@newcastle.ac.uk` — correspondence and papers |
+| Git identity | `frankleroyvan@gmail.com` — commits only, see rule 1 below |
+
+The remote is `FAVL-AI/navfm` and never a personal account. Verify before every
+push, because the failure is quiet and the repair afterwards is history
+rewriting:
+
+    git remote -v                 # git@github.com:FAVL-AI/navfm.git
+    gh repo view FAVL-AI/navfm
+
+**The repository is private.** A tool that lacks authorisation for the
+organisation reports 404 rather than 403, so "not found" from a third-party
+integration is the expected symptom of a missing installation — not evidence
+that the repository is absent, misnamed, or has moved. Diagnose the integration
+before touching the remote.
+
+**`FAVL-Engineering-OS` is a separate repository.** It holds the machine-level
+governance and tooling; it is not NavFM, not a mirror of NavFM, and not a
+fallback for it. A push failing there says nothing about this repository, and
+neither one is evidence about the other.
+
+Public-facing authorship is Frank (Asante) Van Laarhoven alone. No AI system is
+recorded as author, contributor or co-author, in commits, code, docs, metadata,
+papers or slides. The tool identifiers this repository's governance layer
+requires — the standing-instructions filename, the `.claude/` configuration
+directory, the `CLAUDE_PROJECT_DIR` environment variable — are technical
+identifiers rather than attribution, which is why `.attribution-allow` lists
+exactly where they may appear and why the guard still refuses every credit
+construction inside those same paths.
+
 ## Execution environments (facts, do not "fix" them)
 
 Three environments, and conflating them is how a tranche gets planned against a
