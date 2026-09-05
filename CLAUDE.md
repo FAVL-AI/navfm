@@ -73,24 +73,37 @@ The ordinary development host does NOT have Isaac Sim installed. On it:
   the absence of a test, and the two must never be recorded the same way;
 - physics-dependent results are reported as **NOT RUN**, never as a number.
 
-Two commands settle which host you are on, and they are cheap:
+Two commands settle which host you are on, and they must name the environment,
+because Isaac Sim is pip-installed in a conda env and is invisible from any
+other interpreter:
 
-    python -c "import isaacsim"    # must import
-    nvidia-smi                     # must reach the driver
+    ~/miniforge3/envs/isaac/bin/python -c "import isaacsim"   # must import
+    nvidia-smi                                                # must reach the driver
 
-Measured 2026-09-04 on host `favl`: **both FAIL**. No `isaacsim` module in
-either virtualenv, no `omni` package anywhere on disk, no `python.sh`; the only
-thing under `~/.local/share/ov/pkg/` is `hub-2.0.0`, the Omniverse launcher hub
-rather than Isaac Sim. `nvidia-smi` cannot reach a driver, so RTX 4080 SUPER
-16 GB is the intended GPU and is UNVERIFIED here.
+Measured 2026-09-05 on host `favl`: **both SUCCEED**. Isaac Sim 5.1.0.0, 25
+`isaacsim-*` distributions, under `~/miniforge3/envs/isaac` (Python 3.11.15);
+NVIDIA GeForce RTX 4080 SUPER, driver 580.173.02, 16376 MiB. The GPU is
+therefore VERIFIED present, which is an identity check and not a performance
+claim. Method and the earlier 2026-08-07 measurement are in `docs/HARDWARE.md`
+§"Isaac Sim 5.1 — verified invocation".
 
-Everything importing `isaacsim.simulation_app` can be edited and unit-tested on
-this host but NOT executed: the three frozen harnesses
+**Do not conclude absence from the wrong interpreter.** `import isaacsim` fails
+in `~/.venv-train` and in `navfm-ci` by design — the environments are never
+merged — and there are no launcher artefacts (`python.sh`, `~/.local/share/ov/`)
+because this is a pip install, not a launcher bundle. Concluding "Isaac Sim is
+absent" from either observation is a false negative that has now been recorded
+twice: `gates/failures/F-PILOT-1.md`, and again in this file between 2026-09-04
+and 2026-09-06.
+
+So this host CAN execute the Isaac-dependent code: the three frozen harnesses
 (`validate_collision_probe_causality`, `validate_dense_targetability`,
 `validate_physx_footprint_oracle`), the scene audits
 (`audit_office_collision_coverage`, `diagnose_hospital_isolation`) and all of
-`src/navfm/isaac/`. Static reasoning about what they would return is weaker
-evidence than a run and must be labelled as such wherever it is recorded.
+`src/navfm/isaac/`. They must still be run from the Isaac interpreter above, and
+under the provenance capture the gate discipline requires. Everything else in
+this section stands: an unexecuted harness is still **NOT RUN**, never a number,
+and static reasoning about what one would return remains weaker evidence than a
+run and must be labelled as such wherever it is recorded.
 
 ### 2. GitHub CI
 
@@ -275,8 +288,8 @@ entrypoints that close the path from a dataset to a paper table:
 `navfm.eval.offline`, `navfm.train.run`, `scripts/make_tables.py`. Evidence in
 `gates/M1/`; `bash gates/M1/reproduce.sh` re-runs the whole chain on CPU.
 
-Implemented but NEVER EXECUTED (no Isaac Sim on this host — see Environment
-above for how to check, rather than assuming either way):
+Implemented but NEVER EXECUTED (not for want of a runtime — Isaac Sim 5.1.0.0
+runs on this host; these modules simply have not been run yet):
 `navfm/isaac/{app,robot,randomize,collect}.py` — expect real API friction on
 first 5.1 run; fix in the fallback branch.
 
