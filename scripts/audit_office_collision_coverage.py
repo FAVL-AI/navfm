@@ -72,11 +72,21 @@ MIN_REACHABLE_FRACTION = 0.5
 #: is what 9/9 causality regressions established. The digest is mandatory
 #: provenance: a behavioural row without it is not admissible evidence, because
 #: nothing would distinguish it from the retired probe's output.
-REQUIRED_CONTRACT_DIGEST = "24bf0a8c09ab96d6d961b823c8f69c16"
+REQUIRED_CONTRACT_DIGEST = "ad78a8045d0ad7642ac2abbdcd6fc66b"
 #: The effective contract, not the sparse parent. 480d9f07 certified probe
 #: semantics in geometry that contained no competing structure, so it could not
 #: license a claim about a dense authored scene. Behavioural rows measured under
 #: the parent are retired.
+#:
+#: Repointed from 24bf0a8c (amendment 1, causal-targetability) to ad78a804
+#: (amendment 2, the reproduced behavioural contract frozen at 8f222b2). The pin
+#: stays an explicit frozen literal rather than a value read back from the
+#: amendments file: deriving it at runtime would make the check agree with
+#: whatever the file currently says, which is the one thing it exists to detect.
+#: Amendment 2 changed no intervention semantics -- candidate count, order,
+#: origins, directions, standoff, range, targetability, identity adjudication and
+#: accounting are all unchanged -- so this is an identity rebind and not a
+#: behavioural change. tests/test_office_contract_pin.py proves both directions.
 
 #: The robot's own band. Geometry outside it cannot block a Yahboom, so its
 #: collision state is irrelevant and must not count against coverage.
