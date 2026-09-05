@@ -1,0 +1,101 @@
+{
+  "check": "HOSPITAL_REMEASUREMENT_AUTHORIZATION",
+  "artifact_semantics": "APPEND_ONLY_DECISION",
+  "decision_id": "HA-001",
+  "created_utc": "2026-09-05T23:42:27.501388+00:00",
+  "author": "Frank Asante Van Laarhoven",
+  "status": "FROZEN. Amendments are new dated records, never edits to this one.",
+  "git_head_at_decision": "c1f3486d9df8d28bbacedd534a46b3b74d50fa6a",
+  "what_this_authorises": "REMEASUREMENT ONLY \u2014 permission to execute a fresh measurement.",
+  "what_this_does_not_assert": [
+    "Hospital valid",
+    "Hospital passes",
+    "canonical scene selected",
+    "targetability resolved",
+    "wrong_1 resolved",
+    "navigation suitability",
+    "trajectory admissibility",
+    "safety performance",
+    "model performance"
+  ],
+  "prerequisite_state_before": {
+    "safe_to_remeasure_hospital": false,
+    "recorded_in": "gates/scenes/collision_probe_contract_amendments.jsonl#2",
+    "why_it_said_false": "that amendment was written while the contract was still drafted and uncommitted. The brief's condition is that Hospital may be remeasured only after the contract is frozen, and frozen means committed.",
+    "note": "the amendment is append-only and is NOT edited by this record."
+  },
+  "transition_basis": {
+    "behavioural_contract_committed": {
+      "commit": "8f222b28a2fe4deefb19ea0622b3867d4890cbc6",
+      "subject": "gates/scenes/collision_probe_contract_amendments.jsonl#2",
+      "effective_contract_digest": "ad78a8045d0ad7642ac2abbdcd6fc66bcb8cad819c11cc5df45e176b065a1a76",
+      "canonical_rule_verified": true
+    },
+    "reproduction_comparison_committed": {
+      "commit": "8f222b28a2fe4deefb19ea0622b3867d4890cbc6",
+      "artifact": "gates/G2/g2_reproduction_comparison_20260905.json",
+      "sha256": "d62b14dbea36a2bf9f7ee117374b28f8c7ea66ce8292cd9142f06f0a031f940b"
+    },
+    "consumer_pin_rebound": {
+      "commit": "c1f3486d9df8d28bbacedd534a46b3b74d50fa6a",
+      "consumer": "scripts/audit_office_collision_coverage.py",
+      "from": "24bf0a8c09ab96d6d961b823c8f69c16",
+      "to": "ad78a8045d0ad7642ac2abbdcd6fc66b"
+    },
+    "negative_control_passed": {
+      "test": "tests/test_office_contract_pin.py",
+      "method": "the pin was reverted to the superseded digest and the suite re-run before being trusted against the good state",
+      "observed": "exactly 3 identity tests failed with the stale pin; all 11 pass with the correct one",
+      "principle": "a gate is not trustworthy because its positive case passes; it must be shown to fail when its defining contract is violated"
+    },
+    "g2_certified": {
+      "date": "2026-09-04",
+      "executed_head": "98ae8d0856d86cb9d5e560da7dc03139c5ad61db",
+      "result": "23/23 PASS",
+      "manifest_sha256": "42e49d7ee83dcee333817b528bbd80b38bc2e1442fa461e5de1f1e30c14ae24e",
+      "role": "EVIDENCE_OF_RECORD"
+    },
+    "g2_reproduction": {
+      "date": "2026-09-05",
+      "executed_head": "52f3bec0be2a0be792af0fd35954ca807abbcb48",
+      "result": "23/23 PASS",
+      "manifest_sha256": "f30b0c4bce3f7f06d5a4cb80f1e188ff1adba37d6b14957712df3971250def7e",
+      "role": "CORROBORATING_REPRODUCTION"
+    },
+    "parity_tests": "30/30 PASS",
+    "supporting_tests": "137/137 PASS",
+    "consumer_identity_regression": "11/11 PASS (separate module; certified counts unchanged)",
+    "candidate_policy_production_digest": "c6534203825fa13d",
+    "frozen_expectations_unchanged": true,
+    "hospital_audit_unchanged": {
+      "path": "gates/scenes/hospital_collision_coverage_audit.json",
+      "sha256": "66c5a885ecea736cc0bcfb642ed1c43e9d796cbb61109ce900b4e0caa6561222",
+      "state": "STALE / PROTECTED / NOT REINTERPRETED \u2014 dirty in the worktree, never staged or committed"
+    },
+    "no_production_scene_executed": true
+  },
+  "authorization_after": {
+    "safe_to_remeasure_hospital": true
+  },
+  "state_that_does_not_change": {
+    "hospital_status": "NO_EVIDENCE / PENDING",
+    "wrong_1": "UNRESOLVED",
+    "canonical_scene": "NONE",
+    "why": "authorising a measurement is not evidence from one. Hospital stays PENDING until a fresh authorised measurement executes and is adjudicated."
+  },
+  "language_erratum": {
+    "subject": "gates/scenes/collision_probe_contract_amendments.jsonl#2",
+    "field": "reproduction_semantics[0]",
+    "as_frozen": "the reproduction corroborates deterministic scientific behaviour of the G2 instrument",
+    "overclaim": "'deterministic' asserts a general property. What was demonstrated is reproduction across two specific compared executions, which is a narrower and defensible claim.",
+    "corrected_language": "Across the two independently archived G2 executions, all scientific observables, verdicts, collider identities, measurement outcomes, accounting results and governing expectation/policy digests reproduced; only explicitly non-scientific timestamp fields differed.",
+    "why_not_a_new_amendment": "the Office audit pins the digest of the LAST line of the amendments file, so any append moves the effective contract identity and forces another consumer rebind. Verified: a hypothetical prose-only amendment 3 yields 1a97f2c0..., different from ad78a804.... Spending a contract identity change on a wording fix would make the identity track prose rather than semantics, which is the opposite of what it is for.",
+    "disposition": "recorded here; the frozen amendment is unedited and byte-identical. The corrected wording governs all future citation of this evidence.",
+    "amendment_byte_identical": true
+  },
+  "gaps_not_addressed_here": {
+    "G-2": "stale '7/7 required' string; non-blocking, 9 fixtures executed; separate repair",
+    "G-4": "stale Isaac/GPU environment claim in the standing-instructions file; separate commit"
+  },
+  "next_permitted_action": "prepare a Hospital production-measurement execution plan for review. Execution itself remains gated on that review."
+}
