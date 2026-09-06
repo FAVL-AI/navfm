@@ -26,10 +26,15 @@ table access by resembling an old one.
 from __future__ import annotations
 
 import enum
+import hashlib
+import json
+from pathlib import Path
 from typing import Any
 
 __all__ = [
     "EvidenceClass",
+    "EvidenceNotPersisted",
+    "emit_evidence",
     "evidence_block",
 ]
 
@@ -119,3 +124,58 @@ def evidence_block(
         "model_initialization": model_initialization,
         "data_source": data_source,
     }
+
+
+class EvidenceNotPersisted(RuntimeError):
+    """A run finished without durably emitting the evidence it owed."""
+
+
+def emit_evidence(
+    path: str | Path,
+    record: dict[str, Any],
+    *,
+    required_keys: tuple[str, ...] = (),
+) -> str:
+    """Write a run's evidence and prove it landed. Returns its SHA-256.
+
+    Call this BEFORE shutting down any runtime the experiment used.
+    ``SimulationApp.close()`` can terminate the process outright, so a write
+    placed after it never executes -- and the process still exits 0. That
+    produced exactly one failure here: a diagnostic reported success and left no
+    artefact, caught by a caller's file-existence check rather than by any exit
+    code (the F-M2/FL-019 genus, a clean status from a step that did not happen).
+
+    Writing is not persisting. This re-reads and re-parses what it wrote, so the
+    only way to return normally is for a valid artefact to exist on disk. A
+    caller that reaches the next line has evidence; a caller that does not gets
+    an exception rather than a zero.
+    """
+    target = Path(path)
+    try:
+        payload = json.dumps(record, indent=2, default=str) + "\n"
+    except Exception as exc:  # any render failure means nothing was written
+        raise EvidenceNotPersisted(
+            f"record is not serialisable, so nothing was written to {target}: {exc}") from exc
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(payload)
+
+    # Read back rather than trust the write. A truncated or empty artefact is
+    # indistinguishable from a healthy one until something tries to parse it.
+    if not target.is_file():
+        raise EvidenceNotPersisted(f"no artefact at {target} after writing it")
+    raw = target.read_bytes()
+    if not raw.strip():
+        raise EvidenceNotPersisted(f"artefact at {target} is empty")
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise EvidenceNotPersisted(f"artefact at {target} does not parse: {exc}") from exc
+
+    missing = [k for k in required_keys if k not in parsed]
+    if missing:
+        raise EvidenceNotPersisted(
+            f"artefact at {target} is missing required key(s) {missing}; a result that "
+            f"cannot say what it is may later be read as something it is not")
+
+    return hashlib.sha256(raw).hexdigest()
