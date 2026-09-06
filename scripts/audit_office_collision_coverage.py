@@ -72,14 +72,18 @@ MIN_REACHABLE_FRACTION = 0.5
 #: is what 9/9 causality regressions established. The digest is mandatory
 #: provenance: a behavioural row without it is not admissible evidence, because
 #: nothing would distinguish it from the retired probe's output.
-REQUIRED_CONTRACT_DIGEST = "ad78a8045d0ad7642ac2abbdcd6fc66b"
+REQUIRED_CONTRACT_DIGEST = "aa1bdfe9ecb3bbd674f97e6b30614a9f"
 #: The effective contract, not the sparse parent. 480d9f07 certified probe
 #: semantics in geometry that contained no competing structure, so it could not
 #: license a claim about a dense authored scene. Behavioural rows measured under
 #: the parent are retired.
 #:
-#: Repointed from 24bf0a8c (amendment 1, causal-targetability) to ad78a804
-#: (amendment 2, the reproduced behavioural contract frozen at 8f222b2). The pin
+#: Repointed 24bf0a8c (amendment 1, causal-targetability) -> ad78a804
+#: (amendment 2, reproduced behavioural contract, 8f222b2) -> aa1bdfe9
+#: (amendment 3, raw-distance invariance retired for geometry plus identity,
+#: 43f407a). Amendment 3 IS a semantic change to how an observation is judged, so
+#: unlike amendment 2 the identity move is the point rather than a side effect.
+#: The pin
 #: stays an explicit frozen literal rather than a value read back from the
 #: amendments file: deriving it at runtime would make the check agree with
 #: whatever the file currently says, which is the one thing it exists to detect.
