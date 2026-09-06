@@ -36,7 +36,10 @@ SCRIPTS = REPO / "scripts"
 
 #: Harnesses that own an Isaac runtime AND owe an evidence artefact. A name
 #: arrives here when such a harness is written, not when it first misbehaves.
-EVIDENCE_PRODUCING_ISAAC_HARNESSES = ("diagnose_support_invariance.py",)
+EVIDENCE_PRODUCING_ISAAC_HARNESSES = (
+    "diagnose_support_invariance.py",
+    "diagnose_support_causal_controls.py",
+)
 
 
 class TestEmitEvidencePersists:
