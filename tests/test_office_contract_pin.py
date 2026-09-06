@@ -53,6 +53,21 @@ def _amendments() -> list[dict]:
     return [json.loads(line) for line in AMENDMENTS.read_text().strip().splitlines()]
 
 
+def _amendment(amendment_id: int) -> dict:
+    """Select by id, never by position.
+
+    An earlier version of the two tests below reached for ``[-1]``. That happened
+    to be amendment 2 when they were written, and broke the moment amendment 3
+    was appended -- not because the assertions were wrong but because the locator
+    was. Facts about a specific amendment must be addressed by its id; only the
+    *contract identity* is a property of the last line.
+    """
+    for record in _amendments():
+        if record["amendment_id"] == amendment_id:
+            return record
+    raise AssertionError(f"amendment {amendment_id} not found")
+
+
 def canonical_digest(record: dict) -> str:
     """The repository's self-digest rule, recomputed rather than trusted.
 
@@ -126,7 +141,7 @@ class TestTheRebindChangedIdentityOnly:
             policy_digest,
         )
 
-        frozen = _amendments()[-1]["candidate_policy"]
+        frozen = _amendment(2)["candidate_policy"]
         assert frozen["production_digest"] == policy_digest()
         assert frozen["policy_version"] == POLICY_VERSION
         assert frozen["public_roles"] == sorted(r.value for r in Role)
@@ -136,7 +151,29 @@ class TestTheRebindChangedIdentityOnly:
         assert frozen["support"]["direction"] == [0.0, 0.0, -1.0]
 
     def test_the_amendment_does_not_authorise_a_scene(self) -> None:
-        record = _amendments()[-1]
+        record = _amendment(2)
         assert record["safe_to_remeasure_hospital"] is False
         assert record["hospital_status"] == "NO_EVIDENCE / PENDING"
         assert "Hospital valid" in record["non_claims"]
+
+    def test_no_amendment_resolves_wrong_1(self) -> None:
+        """The property that actually holds across every record, present and future.
+
+        Amendment 1 predates the ``non_claims`` convention and disclaims Hospital
+        in its ``claim_boundary`` instead, so requiring a particular disclaimer
+        *field* would assert a house style rather than a scientific invariant.
+        What every amendment must carry is that it does not resolve wrong_1:
+        that needs target-specific causal evidence no contract amendment supplies.
+        """
+        for record in _amendments():
+            assert record["wrong_1"].startswith("UNRESOLVED"), (
+                f"amendment {record['amendment_id']} claims to resolve wrong_1; "
+                "that requires a causal experiment, not a contract change"
+            )
+
+    def test_every_amendment_disclaims_hospital_somewhere(self) -> None:
+        for record in _amendments():
+            disclaimer = json.dumps(record.get("non_claims", [])) + record.get("claim_boundary", "")
+            assert "Hospital" in disclaimer, (
+                f"amendment {record['amendment_id']} says nothing about Hospital's standing"
+            )
