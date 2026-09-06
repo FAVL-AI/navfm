@@ -1,0 +1,148 @@
+{
+  "check": "SUPPORT_INVARIANCE_METRIC_PREREGISTRATION",
+  "artifact_semantics": "PREREGISTRATION_WRITTEN_BEFORE_REINTERPRETATION",
+  "written_before_execution": true,
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-06T23:44:00.945048+00:00",
+  "git_head": "09c2af036699bc6d3bb8e95aa3724ba6b61ed135",
+  "ordering_contract": "This file must precede any re-scoring of a scene under the replacement criterion. Hospital's result under the RETIRED criterion is already known, so the replacement is fixed here, against synthetic geometry and recovered historical evidence, before any scene is re-read. A criterion chosen after seeing which scenes it would pass is a result fitted to its instrument.",
+  "retired_criterion": {
+    "name": "cross-target raw hit-distance invariance",
+    "implementation": "scripts/audit_office_collision_coverage.py: invariant = len(dists) > 2 and len(set(round(d, 2) for d in dists)) == 1",
+    "raises": "REVIEW_REQUIRED_UNEXPECTED_INVARIANCE",
+    "identifiability_failure": "NON_IDENTIFIABLE_UNDER_TARGET_RELATIVE_CONSTRUCTION",
+    "derivation": {
+      "support": "origin_z = target_bounds_max_z + start_height_m (candidate_policy._support_set), ray direction (0,0,-1). A hit on the declared target's own top face returns d = origin_z - z_s = start_height_m. z_s cancels identically, so d is the same for every target at any world elevation.",
+      "blocker": "origin[axis] = face +/- standoff_m (candidate_policy._blocker_set), ray inward. A hit on the first face along the ray returns d = standoff_m, independent of target size and world position. The same cancellation.",
+      "consequence": "correct probes are expected to be perfectly invariant, and wrong, missing or occluded geometry is what can create distance diversity. The criterion is therefore not merely weak but directionally inverted for these roles."
+    },
+    "empirical_confirmation": {
+      "hospital_support": "8 declared targets whose top elevations genuinely differ (0.000998 vs 0.001001 m) all returned 0.500000 m, residual <= 6e-8",
+      "warehouse_support": "independently fired the same false positive: 8 probes, all 0.50 to 2dp, REVIEW_REQUIRED_INVARIANCE"
+    },
+    "not_a_generic_judgement": "The retired rule caught a real defect. What fails is the estimand: it reacts to both the correct and the defective case and separates neither."
+  },
+  "replacement_estimand": {
+    "form": "CONJUNCTION \u2014 all conditions must hold; none substitutes for another",
+    "A_geometric_residual": {
+      "expected_geometric_distance_m": "distance implied by the declared target's geometry and the intervention: start_height_m for SUPPORT, standoff_m for BLOCKER",
+      "residual_m": "observed_hit_distance - expected_geometric_distance",
+      "pass_condition": "abs(residual) <= tolerance_m",
+      "detects": "the hit came from where the declared target's geometry says it should",
+      "does_not_establish": "that the collider hit IS the declared target"
+    },
+    "B_target_identity": {
+      "pass_condition": "the returned collider is the declared target or a preregistered physical owner of it",
+      "rule": "a generic hit is not a target-correct hit",
+      "does_not_establish": "that the hit came from the expected geometry"
+    },
+    "C_intervention_response": {
+      "role": "CALIBRATION / IDENTIFIABILITY CONTROL, not a per-probe production metric",
+      "support": "vary start_height h with the target held fixed; require dd/dh ~= 1",
+      "blocker": "vary standoff s with the target held fixed; require dd/ds ~= 1",
+      "purpose": "proves the instrument responds to the physical intervention at all. Without it, residual ~ 0 and a correct identity could both be produced by an instrument that cannot move."
+    }
+  },
+  "tolerance": {
+    "tolerance_m": 0.05,
+    "provenance": "SUPPORT_TOL_M, already frozen at scripts/validate_physx_footprint_oracle.py:62 as the declared engineering tolerance for height agreement. A SUPPORT residual is exactly a height agreement along -Z, so this is the existing convention reused, not a new number.",
+    "precedent": "the DISTANCE_DIVERSITY amendment used tolerance_m 0.05 with provenance 'existing fixture tolerance, not newly invented for this amendment'",
+    "not_derived_from_hospital": true,
+    "separation_check": {
+      "worst_correct_residual_m": 5.960464477539063e-08,
+      "smallest_defect_residual_m": 0.275,
+      "correct_as_fraction_of_tolerance": 1.19e-06,
+      "smallest_defect_in_tolerances": 5.5,
+      "separation_ratio": 4600000.0,
+      "note": "the tolerance sits about six orders of magnitude above every correct residual and about 5.5x below the smallest defect residual, so its exact value is not load bearing; it was not fitted to the gap"
+    }
+  },
+  "probative_conditions_all_required": [
+    "candidate valid",
+    "reachable",
+    "targetable",
+    "query fired",
+    "hit returned",
+    "target identity correct",
+    "geometric residual within tolerance",
+    "accounting valid"
+  ],
+  "explicitly_not_prerequisites": [
+    "raw distance diversity across targets",
+    "raw distance equality across targets"
+  ],
+  "central_rule": "geometry-consistent AND target-correct \u2014 not 'a hit happened', not 'distances were diverse'",
+  "bound_evidence": {
+    "historical_defect": {
+      "signature": "12 x 5.9 m",
+      "reading": "a count times a value: twelve probes each returning 5.9 m, not a 12 m by 5.9 m room",
+      "commit": "acd53d0",
+      "path": "gates/scenes/office_collision_coverage_audit.json",
+      "mechanism": "twelve distinct declared door targets all answered by one collider, /World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m, at one distance",
+      "class": "SHARED_COLLIDER_ALIASING",
+      "recovery_status": "RECOVERED_COMPLETE"
+    },
+    "support_causal_controls": {
+      "harness_commit": "09c2af036699bc6d3bb8e95aa3724ba6b61ed135",
+      "artifact": "gates/scenes/support_causal_controls_20260906.json",
+      "sha256": "ed834354ea10df0aef90c0e7de39b8d7f1e4ab03faa1f5165930e95c6702ae5f",
+      "status": "EVIDENCE_OF_RECORD \u2014 rerun from committed HEAD, 0 scientific differences"
+    },
+    "support_invariance_diagnostic": {
+      "harness_commit": "141820b4f0a8a0ea7bb9630d352e0a77fb965ee2",
+      "artifact": "gates/scenes/hospital_support_invariance_diagnostic_20260906.json",
+      "sha256": "3cdde96b751840dd5922c90f94fb83437345b54ce3e05aadf1ac84c8fc8427f3",
+      "status": "EVIDENCE_OF_RECORD \u2014 rerun from committed HEAD, 0 scientific differences"
+    },
+    "blocker_response_already_frozen": {
+      "source": "gates/scenes/collision_probe_regression_expected_answers_amendments.jsonl#1",
+      "assertion": "standoffs 0.50/1.00/1.50 m measured as 0.50/1.00/1.50 m; collapse to equality must FAIL",
+      "result": "9/9 PASS in the G2 runtime gate, both executions"
+    },
+    "candidate_policy_digest": "c6534203825fa13d"
+  },
+  "discrimination_table": {
+    "_columns": [
+      "correct",
+      "target_removed",
+      "wrong_collider",
+      "shared_owner(historical)",
+      "unrelated"
+    ],
+    "old_raw_invariance": [
+      "FIRES(false positive)",
+      "N/A no hit",
+      "N/A",
+      "FIRES(true positive)",
+      "N/A no hit"
+    ],
+    "geometric_residual": [
+      "PASS ~0",
+      "NO_HIT",
+      "FAIL -0.275",
+      "FAIL +0.550",
+      "NO_HIT"
+    ],
+    "target_identity": [
+      "PASS True",
+      "FAIL",
+      "FAIL",
+      "FAIL",
+      "FAIL"
+    ],
+    "reading": "the retired rule cannot separate column 1 from column 4; residual and identity separate them by 4.6e6 and by a boolean respectively"
+  },
+  "claim_boundary": "The retired raw-distance invariance criterion was non-identifiable under target-relative probe construction. It is replaced by geometry-consistency plus target-identity adjudication, with intervention-response controls validating physical sensitivity.",
+  "non_claims": [
+    "Hospital passes",
+    "Hospital is admissible",
+    "wrong_1 resolved",
+    "canonical scene selected",
+    "trajectory admissible",
+    "navigation improved",
+    "safety improved"
+  ],
+  "hospital_status_unchanged": "REVIEW_REQUIRED / PENDING",
+  "wrong_1": "UNRESOLVED",
+  "status": "FROZEN \u2014 amendments are new dated records, never edits to this one"
+}
