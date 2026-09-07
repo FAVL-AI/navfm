@@ -117,6 +117,55 @@ Use the official repository as source of truth.
 Additional NavFM evidence/provenance MUST be a sidecar layer that does not break
 the published loader-facing format.
 
+## E-0. DOMAIN RULE — HOSPITAL IS A BRANCH, NOT THE ROOT
+
+Hospital is the preferred application environment. It is **not** the root of the
+dependency tree, and it must never become the single blocking dependency.
+
+If Hospital cannot currently satisfy the fixed collection/admission contract, do
+not fabricate compatibility and do not stay blocked. Evaluate candidates in
+order and select the FIRST that passes the complete admission test:
+
+    1. Hospital
+    2. Office
+    3. Warehouse
+    4. another available Isaac environment meeting the same preregistered criteria
+
+Selection is decided by the admission matrix, not by preference.
+
+If Office or Warehouse is used, state exactly:
+
+    "This closes the new-data framework compatibility and collection-pipeline
+     proof. It does not substitute for the later Hospital-domain dataset."
+
+**Never relabel Office or Warehouse data as Hospital data.** Bo asked for new
+Hospital data; that request stays incomplete until Hospital data exists.
+
+For the BO-03 engineering proof, Hospital-specific semantics are NOT required.
+For the final Hospital-domain thesis experiment, they are.
+
+### Long-horizon means structure, not wall-clock
+
+Declare the threshold before collection: minimum duration, frame count,
+travelled distance, meaningful heading/route changes, start-goal separation, and
+enough temporal length for context-window sampling. Recording for a long time is
+not a long-horizon trajectory.
+
+### Camera contract
+
+Compatibility does not require the camera to sit where the original GNM robots'
+cameras sat. It requires a forward-facing robot-mounted RGB stream with a fixed,
+declared, reproducible extrinsic, and a trajectory transformed into the exact
+published loader format. Freeze camera identity, pose, field of view, resolution
+and extrinsics in the provenance layer. Judge "forward-facing" geometrically,
+never from the camera's name, and prove the check can fail (rotate 180 degrees,
+detach from the robot, wrong prim -- each must be rejected).
+
+### Goal image independence
+
+The goal image must be sealed before motion and must not be the final
+observation frame. That substitution is the H7/H7R defect.
+
 ## E. HOSPITAL DATA
 
 Historical H7/H7R recordings are:
@@ -257,6 +306,20 @@ For weekly updates:
 
 RQ1/RQ2/RQ3 are NOT supervisor-approved. They are draft thesis direction
 awaiting discussion, and must be described that way.
+
+## K-0. PARALLEL TRACKS
+
+These advance independently. Do not serialise them behind Hospital.
+
+    TRACK A  official reproduction on published datasets/checkpoints -> BO-09
+    TRACK B  new-data collection + official loader proof              -> BO-03, BO-10
+    TRACK C  metric computability decision                           -> BO-08
+    TRACK D  literature/SaferPath comparison                         -> BO-06
+    TRACK E  fine-tuning, only after A and B                         -> BO-11
+
+Tracks A, C and D require no scene admission and must not wait for it. If an
+official asset is missing, return a precise asset blocker rather than leaving a
+row at "not yet final".
 
 ## K. EXECUTION PRIORITY
 

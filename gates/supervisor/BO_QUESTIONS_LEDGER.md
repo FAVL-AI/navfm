@@ -21,14 +21,14 @@ Bo's governing sequence, which overrides internal task appeal:
 |---|---|---|---|---|
 | BO-01 | Existing dataset formats, real examples, references | COMPLETE | Package §2; refs verified in `METRIC_REFERENCES_20260907.md` | — |
 | BO-02 | Our dataset format | COMPLETE | Package §3; enforced in `schema.py`/`writer.py` | — |
-| BO-03 | Direct GNM/ViNT/NoMaD loader compatibility | SYNTHETIC_COMPATIBILITY_COMPLETE / HOSPITAL_COMPATIBILITY_BLOCKED_ON_ADMITTED_TRAJECTORY | **Executed**: 4 passed, `.venv-train` py3.11.15 torch 2.11.0+cu128, upstream `dca7981` | Same chain on a newly admitted Hospital trajectory |
+| BO-03 | Direct GNM/ViNT/NoMaD loader compatibility | SYNTHETIC COMPLETE / REAL-TRAJECTORY OUTSTANDING | **Executed**: 4 passed, upstream `dca7981`, torch 2.11.0+cu128 | One **real admitted** trajectory. Hospital preferred; **Office/Warehouse acceptable as pipeline proof**, never relabelled as Hospital |
 | BO-04 | Existing metrics + paper provenance | COMPLETE | Package §5; every source opened, method recorded per row | Collision metric definition once a comparison protocol is chosen |
 | BO-05 | Explanation of the evidence/provenance layer | COMPLETE | Package §6, plain English, H7/H7R as motivation | — |
 | BO-06 | Novelty vs SaferPath | DEFERRED / NOVELTY HYPOTHESIS | SaferPath verified to exist (ICRA 2026) | Systematic literature review; SaferPath collision definition not yet read |
 | BO-07 | RQ1/RQ2/RQ3 ordering | AWAITING SUPERVISOR DECISION | — | Not approved; described as draft direction |
 | BO-08 | Path-reference metrics (nDTW/SDTW/CLS) | BLOCKED | Ilharco et al. verified: both require a reference trajectory | Trustworthy versioned reference paths |
-| BO-09 | Baseline reproduction | PARTIAL | `gates/M1/`, `gates/G0/g0c/` | Published-performance reproduction is a separate, unmade claim |
-| BO-10 | New Hospital collection | BLOCKED ON SCENE ADMISSION | `gates/G2/`; Hospital REVIEW_REQUIRED / PENDING | Scene admission |
+| BO-09 | Published-result reproduction | ViNT PARTIALLY_REPRODUCED · GNM NOT_RUN · NoMaD BLOCKED_MISSING_ASSET | `PUBLISHED_REPRODUCTION_MATRIX.md`; G0.c verdict *reconstructed, not reproduced*; 0.180268 vs 0.17398 (+3.61%), controls ~2.5-2.9 | **Independent of Hospital.** GNM runnable with assets in hand; NoMaD needs a diffusion sampling entrypoint; ViNT capped by an unrecoverable five-dataset published mixture |
+| BO-10 | New Hospital collection | BLOCKED ON SCENE ADMISSION (Hospital) | `gates/G2/`; Hospital REVIEW_REQUIRED / PENDING | Collect in the **first environment passing admission**; Hospital request stays open until Hospital data exists |
 | BO-11 | Fine-tuning and comparison | NOT STARTED | — | Downstream of admitted data + baseline |
 
 ## The compatibility target
@@ -45,6 +45,19 @@ Sidecar, kept separate so the official loader is untouched:
         scene identity/digest, camera identity, controller identity,
         start pose, goal provenance, timestamps, robot identity,
         collection parameters, checksums, admission result
+
+## Domain rule
+
+Hospital is the preferred domain, **not** the root dependency. If Hospital cannot
+be admitted, the collection-pipeline and loader-compatibility proof is completed
+in the first environment that passes the same admission criteria, and reported as:
+
+> "The full collection and model-loading pipeline has been validated on the
+> admitted <environment> while Hospital scene admission is still being resolved.
+> The same frozen collection protocol will then be applied to Hospital without
+> changing the loader-facing data format."
+
+Office/Warehouse data is never relabelled as Hospital data.
 
 ## Standing corrections
 
