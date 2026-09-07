@@ -39,6 +39,7 @@ SCRIPTS = REPO / "scripts"
 EVIDENCE_PRODUCING_ISAAC_HARNESSES = (
     "diagnose_support_invariance.py",
     "diagnose_support_causal_controls.py",
+    "diagnose_blocker_targetability.py",
 )
 
 
