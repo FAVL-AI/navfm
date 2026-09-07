@@ -46,6 +46,7 @@ from navfm.candidate_policy import (  # noqa: E402
     shared_origin_control,
 )
 from navfm.measurement import Liveness, MeasurementEnvelope  # noqa: E402
+from navfm.probe_adjudication import identity_matches  # noqa: E402
 
 OUT = REPO / "gates" / "scenes"
 EXPECTED = OUT / "collision_probe_regression_expected_answers.json"
@@ -202,8 +203,8 @@ def main() -> int:
             res = q.raycast_closest(list(cand.origin), list(cand.direction), cand.max_range)
             hit = bool(res and res.get("hit"))
             actual = str(res.get("collision", "")) if hit else None
-            match = bool(actual and any(actual == o or actual.startswith(o) or o.startswith(actual)
-                                        for o in [target, *owners]))
+            # One canonical relation, shared with every other identity consumer.
+            match = identity_matches(actual, target, tuple(owners))
             return {
                 "target": target, "reachability": "REACHABLE",
                 "candidate_id": cand.candidate_id, "face": cand.face,

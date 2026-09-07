@@ -50,6 +50,7 @@ from navfm.candidate_policy import (  # noqa: E402
     shared_origin_control,
 )
 from navfm.measurement import Liveness, MeasurementEnvelope  # noqa: E402
+from navfm.probe_adjudication import identity_matches  # noqa: E402
 from navfm.targetability import (  # noqa: E402
     Interval,
     Targetability,
@@ -263,8 +264,7 @@ def main() -> int:
         actual = str(res.get("collision", "")) if hit else None
         return {"query_fired": True, "generic_hit": hit, "actual_collider": actual,
                 "distance": round(float(res["distance"]), 4) if hit else None,
-                "identity_match": bool(actual and (actual == inp.declared_target
-                                                   or actual.startswith(inp.declared_target)))}
+                "identity_match": identity_matches(actual, inp.declared_target)}
 
     def validate_ordering(cand: Any, target: str, expect_intercepted_by: str | None
                           ) -> dict[str, Any]:

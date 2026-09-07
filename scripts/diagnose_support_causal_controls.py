@@ -48,6 +48,7 @@ from navfm.candidate_policy import (  # noqa: E402
     policy_digest,
 )
 from navfm.evidence import emit_evidence  # noqa: E402
+from navfm.probe_adjudication import identity_matches  # noqa: E402
 
 #: Fixture geometry, chosen for separation rather than to hit any particular
 #: number. Targets are 0.40 m cubes; the shared slab is wide enough to sit under
@@ -114,9 +115,7 @@ def main() -> int:
         collider = str(res.get("collision", "")) if hit else None
         observed = float(res.get("distance")) if hit else None
         expected = cand.origin[2] - box.maximum[2]
-        match = bool(collider and (collider == target
-                                   or collider.startswith(target)
-                                   or target.startswith(collider)))
+        match = identity_matches(collider, target)
         return {
             "declared_target": target,
             "origin": list(cand.origin), "direction": list(cand.direction),

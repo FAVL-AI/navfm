@@ -55,6 +55,7 @@ from navfm.candidate_policy import (  # noqa: E402
     policy_digest,
 )
 from navfm.evidence import emit_evidence  # noqa: E402
+from navfm.probe_adjudication import identity_matches  # noqa: E402
 
 OUT = REPO / "gates" / "scenes"
 
@@ -143,9 +144,7 @@ def main() -> int:
             res = q.raycast_closest(list(cand.origin), list(cand.direction), cand.max_range)
             hit = bool(res and res.get("hit"))
             collider = str(res.get("collision", "")) if hit else None
-            match = bool(collider and (collider == path
-                                       or collider.startswith(path)
-                                       or path.startswith(collider)))
+            match = identity_matches(collider, path)
             observed = float(res.get("distance")) if hit else None
             expected = cand.origin[2] - box.maximum[2]      # == start_height_m
             return {

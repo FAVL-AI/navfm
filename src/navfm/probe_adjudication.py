@@ -47,6 +47,7 @@ __all__ = [
     "Reason",
     "adjudicate",
     "geometric_residual",
+    "identity_matches",
     "verdict_label",
 ]
 
@@ -119,7 +120,7 @@ def _same_or_related_path(hit: str, declared: str) -> bool:
             or declared.startswith(hit + "/"))
 
 
-def _identity_matches(
+def identity_matches(
     returned_collider: str | None,
     declared_target: str,
     preregistered_owners: tuple[str, ...],
@@ -131,6 +132,10 @@ def _identity_matches(
     that happened to answer. Owners are matched by the same path relation as the
     target, which is what the causality harness's frozen PHYSICAL_OWNER_IDENTITY
     fixture already asserts.
+
+    Public because four harnesses each carried their own copy of this relation
+    and drifted from it. One predicate, one meaning: a second implementation is
+    how a repair fails to propagate (FL-007).
     """
     if not returned_collider:
         return False
@@ -163,7 +168,7 @@ def adjudicate(
     if not hit or observed_distance_m is None:
         return ProbeVerdict(False, Reason.NO_HIT, False, False, residual, tolerance_m)
 
-    identity_ok = _identity_matches(returned_collider, declared_target, preregistered_owners)
+    identity_ok = identity_matches(returned_collider, declared_target, preregistered_owners)
     geometry_ok = residual is not None and abs(residual) <= tolerance_m
 
     if not identity_ok:
