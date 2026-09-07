@@ -4,8 +4,9 @@ Audit date 2026-09-07. **This track is independent of Hospital scene admission**
 and of the new-data collection track; it should have been running in parallel
 and was not.
 
-Status vocabulary: `REPRODUCED` · `PARTIALLY_REPRODUCED` · `BLOCKED_MISSING_ASSET`
-· `BLOCKED_ENVIRONMENT` · `NOT_RUN`.
+Status vocabulary: `REPRODUCED` · `PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS` ·
+`BLOCKED_MISSING_EVALUATION_PATH` · `BLOCKED_MISSING_ASSET` · `BLOCKED_ENVIRONMENT` ·
+`FAILED_REPRODUCTION` · `NOT_RUN`.
 
 A model is **not** reproduced because a checkpoint loads, a forward pass runs, or
 a finite loss appears. Published-result reproduction requires official data,
@@ -33,9 +34,9 @@ is **not** asset availability for the checkpoints.
 
 | Model | Paper | Dataset | Split | Metric | Published | Ours | Δ | Status | Evidence |
 |---|---|---|---|---|---|---|---|---|---|
-| **ViNT** | Shah et al. | GO Stanford (reconstructed) | held-out, 760 traj / 15 scenes, 41 872 pairs, batch 400 | `strict/total_loss` | `0.17398` (checkpoint-associated, epoch 29) | **`0.18026808`** | **+3.61 %** | **`PARTIALLY_REPRODUCED`** — recorded verdict is *"CLASSIFICATION 2 — RECONSTRUCTED BUT NOT REPRODUCED"* | `gates/G0/g0c/`, `runs/g0c/g0c-vint-r1`, `-r2` |
-| **GNM** | Shah et al. | — | — | — | — | — | — | **`NOT_RUN`** | config path exists (`config/gnm.yaml`); no G0.c arm |
-| **NoMaD** | Sridhar et al. | — | — | — | — | — | — | **`BLOCKED_MISSING_ASSET`** — evaluator raises by design; `_compute_losses_nomad` needs a diffusion sampling loop, so it is a separate entrypoint, not a `--model nomad` flag | `src/navfm/upstream.py`; standing instructions |
+| **ViNT** | Shah et al. | GO Stanford (reconstructed) | held-out, 760 traj / 15 scenes, 41 872 pairs, batch 400 | `strict/total_loss` | `0.17398` (checkpoint-associated, epoch 29) | **`0.18026808`** | **+3.61 %** | **`PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS`** — recorded verdict *"CLASSIFICATION 2 — RECONSTRUCTED BUT NOT REPRODUCED"* | `gates/G0/g0c/`, `runs/g0c/g0c-vint-r1`, `-r2` |
+| **GNM** | Shah et al. | GO Stanford (reconstructed) | test, 41 872 pairs, 105 batches, batch 400 | `strict/total_loss` | `0.1393500482205535` (checkpoint-associated, epoch 29) | **`0.15870234802528657`** | **+13.888 %** | **`PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS`** | `GNM_REPRODUCTION_20260907.json`; `runs/trackA/gnm-r1`, `-r2`, `-control-seed0` |
+| **NoMaD** | Sridhar et al. | — | — | — | — | — | — | **`BLOCKED_MISSING_EVALUATION_PATH`** — model assets exist; the evaluator raises by design; `_compute_losses_nomad` needs a diffusion sampling loop, so it is a separate entrypoint, not a `--model nomad` flag | `src/navfm/upstream.py`; standing instructions |
 
 ---
 
@@ -76,20 +77,55 @@ published number, and it must not be reported as one.
 
 ---
 
+## GNM — executed 2026-09-07
+
+| | |
+|---|---|
+| Reference (`gnm.pth` `avg_total_test_loss`, epoch 29) | `0.1393500482205535` |
+| Reproduced r1 | `0.15870234802528657` |
+| Reproduced r2 | `0.15870234802528657` — **bitwise identical** |
+| Random-init control | `2.7875974904258642` — **17.56×** the checkpoint |
+| Δ absolute / relative | `+0.019352300` / **+13.888 %** |
+| Population | 41 872 pairs, 105 batches, none skipped |
+
+Same evaluator, objective, split and population as the ViNT arm, so the two are
+directly comparable. **ViNT deviated +3.61 %; GNM deviates +13.89 %, roughly four
+times further.**
+
+That ordering is expected rather than surprising. `config/gnm.yaml` opens with
+`# NOTE: this model uses private datasets`, so GNM's checkpoint-associated
+reference was computed over a mixture including corpora we cannot obtain at all.
+Our single-corpus GO Stanford reconstruction is therefore a more distant estimand
+for GNM than it was for ViNT — the larger delta is evidence about the *reference*,
+not about our evaluation path.
+
+Not `FAILED_REPRODUCTION`: nothing failed. The path executed over the full
+declared population with exact repeatability and a 17.6× separation from random
+initialisation. No preregistered reproduction tolerance existed, and none was
+invented after seeing the result; the delta is reported descriptively.
+
+Run under `runs/trackA/`, **not** `runs/g0c/`. G0.c was preregistered for ViNT;
+recording GNM as a G0.c arm would claim a preregistration it never had.
+
 ## What would move each row
 
-**ViNT → `REPRODUCED`.** Requires either (a) the exact five-dataset evaluation
-mixture, which appears unrecoverable from the release, or (b) a published number
-computed on a corpus we can obtain in full. Failing both, the honest ceiling is
-`PARTIALLY_REPRODUCED`, and the row should say so permanently rather than sit at
-"not yet final".
+**ViNT → `REPRODUCED`.** Requires either (a) the five-dataset evaluation mixture,
+which has not been reconstructed from the obtainable release assets, or (b) a
+published number computed on a corpus we can obtain in full. Until one exists the
+status is `PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS`.
 
-**GNM → runnable now.** The config path exists and the checkpoint and corpus are
-held. This is the single highest-value BO-09 action and needs no new assets.
+This is a statement about **currently available assets, not a permanent ceiling**:
+a later corpus release or an equivalent official artefact could lift it.
 
-**NoMaD → needs an entrypoint.** A diffusion sampling loop for
-`_compute_losses_nomad`. Known, scoped, and deliberately not a flag on the
-existing evaluator.
+**GNM → executed.** Ceiling is the same as ViNT's and for a stronger reason: the
+reference mixture includes private datasets. `REPRODUCED` is not reachable from
+obtainable assets.
+
+**NoMaD → needs an evaluation path, not an asset.** The checkpoint is held and
+its digest recorded; what is missing is the diffusion sampling/evaluation
+entrypoint (`_compute_losses_nomad`), which is deliberately a separate
+entrypoint rather than a flag on the existing evaluator. Classifying this as a
+missing *asset* would misstate where the gap is.
 
 ---
 
@@ -100,7 +136,9 @@ existing evaluator.
 > reconstructed GO Stanford holdout and lands within 3.6 % of the
 > checkpoint-associated value, with random-initialisation controls an order of
 > magnitude worse. We are recording this as *reconstructed, not reproduced*,
-> because the published figure was computed over a five-dataset mixture whose
-> composition the release does not let us rebuild — the two numbers are close but
-> are not the same estimand. GNM can be evaluated with assets already in hand.
-> NoMaD needs a diffusion sampling entrypoint first.
+> because the published figure was computed over a five-dataset mixture that has
+> not been reconstructed from the obtainable release assets — the two numbers are
+> close but are not the same estimand. That is a limitation of the assets
+> currently available to us, not a permanent one. GNM can be evaluated with assets
+> already in hand. NoMaD holds its checkpoint but lacks the diffusion
+> sampling/evaluation entrypoint the reproduction run needs.

@@ -27,7 +27,7 @@ Bo's governing sequence, which overrides internal task appeal:
 | BO-06 | Novelty vs SaferPath | DEFERRED / NOVELTY HYPOTHESIS | SaferPath verified to exist (ICRA 2026) | Systematic literature review; SaferPath collision definition not yet read |
 | BO-07 | RQ1/RQ2/RQ3 ordering | AWAITING SUPERVISOR DECISION | — | Not approved; described as draft direction |
 | BO-08 | Path-reference metrics (nDTW/SDTW/CLS) | BLOCKED | Ilharco et al. verified: both require a reference trajectory | Trustworthy versioned reference paths |
-| BO-09 | Published-result reproduction | ViNT PARTIALLY_REPRODUCED · GNM NOT_RUN · NoMaD BLOCKED_MISSING_ASSET | `PUBLISHED_REPRODUCTION_MATRIX.md`; G0.c verdict *reconstructed, not reproduced*; 0.180268 vs 0.17398 (+3.61%), controls ~2.5-2.9 | **Independent of Hospital.** GNM runnable with assets in hand; NoMaD needs a diffusion sampling entrypoint; ViNT capped by an unrecoverable five-dataset published mixture |
+| BO-09 | Published-result reproduction | ViNT + GNM PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS · NoMaD BLOCKED_MISSING_EVALUATION_PATH | ViNT +3.61%, GNM +13.888%, both exactly repeatable, controls 17-19x worse; `PUBLISHED_REPRODUCTION_MATRIX.md`, `GNM_REPRODUCTION_20260907.json` | NoMaD diffusion sampling entrypoint. ViNT/GNM ceilings are reference-mixture limitations, not engineering gaps |
 | BO-10 | New Hospital collection | BLOCKED ON SCENE ADMISSION (Hospital) | `gates/G2/`; Hospital REVIEW_REQUIRED / PENDING | Collect in the **first environment passing admission**; Hospital request stays open until Hospital data exists |
 | BO-11 | Fine-tuning and comparison | NOT STARTED | — | Downstream of admitted data + baseline |
 
