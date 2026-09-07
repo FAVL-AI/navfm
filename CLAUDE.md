@@ -307,3 +307,4 @@ Not yet implemented:
   entrypoint rather than a `--model nomad` flag on `eval.offline`.
 
 @.claude/governance-router.md
+@.claude/project-router.md
