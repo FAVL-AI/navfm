@@ -42,10 +42,12 @@ from enum import Enum
 
 __all__ = [
     "DEFAULT_TOLERANCE_M",
+    "VERDICT_LABEL",
     "ProbeVerdict",
     "Reason",
     "adjudicate",
     "geometric_residual",
+    "verdict_label",
 ]
 
 #: Height-agreement tolerance, frozen as SUPPORT_TOL_M in the PhysX footprint
@@ -159,3 +161,27 @@ def adjudicate(
         return ProbeVerdict(False, Reason.GEOMETRY_INCONSISTENT, True, False,
                             residual, tolerance_m)
     return ProbeVerdict(True, Reason.PROBATIVE, True, True, residual, tolerance_m)
+
+
+#: Reason -> the verdict string scene audits record. Kept here rather than in a
+#: consumer so the label set cannot drift from the reasons that produce it, and
+#: so a consumer's disposition table can be checked for exhaustiveness against
+#: something other than itself.
+VERDICT_LABEL: dict[Reason, str] = {
+    Reason.PROBATIVE: "PASS_CORRECT_CAUSE",
+    Reason.WRONG_IDENTITY: "FAIL_WRONG_CAUSE",
+    Reason.GEOMETRY_INCONSISTENT: "FAIL_GEOMETRY_INCONSISTENT",
+    Reason.NO_HIT: "FAIL_NO_HIT",
+}
+
+
+def verdict_label(verdict: ProbeVerdict) -> str:
+    """The recorded verdict string for an adjudication.
+
+    Every ``Reason`` maps, so a new reason cannot silently fall through to a
+    default that reads as an ordinary failure.
+    """
+    try:
+        return VERDICT_LABEL[verdict.reason]
+    except KeyError as exc:  # pragma: no cover - guarded by an exhaustiveness test
+        raise ValueError(f"no verdict label for {verdict.reason}") from exc

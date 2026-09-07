@@ -41,6 +41,11 @@ sys.path.insert(0, str(REPO / "src"))
 from navfm.candidate_policy import Aabb, Role, generate_candidates, policy_digest  # noqa: E402
 from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
 from navfm.population import Disposition, build  # noqa: E402
+from navfm.probe_adjudication import (  # noqa: E402
+    DEFAULT_TOLERANCE_M,
+    adjudicate,
+    verdict_label,
+)
 from navfm.targetability import Interval, TargetabilityInput, choose  # noqa: E402
 
 
@@ -336,23 +341,51 @@ def main() -> int:
             res = q.raycast_closest(origin, direction, reach)
             hit = bool(res and res.get("hit"))
             actual = str(res.get("collision", "")) if hit else None
-            # Identity, not category: "some wall" is not "this wall".
-            match = bool(actual and (actual == row["path"]
-                                     or actual.startswith(row["path"])
-                                     or row["path"].startswith(actual)))
+            observed = float(res["distance"]) if hit else None
+
+            # Where the declared target's own geometry says the ray must first
+            # meet it. Derived from the candidate and the target bounds, never
+            # from the observation -- an expectation computed from the hit would
+            # agree with any hit.
+            iv = _ray_iv(mn, mx, tdec.chosen.origin, tdec.chosen.direction)
+            expected = iv.enter if iv is not None else None
+
+            # Amendment 3: identity AND geometry, neither substituting for the
+            # other. The retired rule asked whether raw distances differed across
+            # targets, which target-relative construction makes constant for every
+            # correct probe -- so it fired on correctness and on the 12x5.9
+            # shared-collider defect alike.
+            verdict_obj = (
+                adjudicate(hit=hit, returned_collider=actual,
+                           declared_target=row["path"],
+                           observed_distance_m=observed,
+                           expected_distance_m=expected,
+                           tolerance_m=DEFAULT_TOLERANCE_M)
+                if expected is not None else None)
+            verdict = "NO_EVIDENCE" if verdict_obj is None else verdict_label(verdict_obj)
+
             return {
                 **common,
                 "origin": [round(v, 3) for v in origin], "direction": direction,
                 "max_distance": round(reach, 3),
                 "actual_hit": hit,
                 "actual_collider_prim": actual,
-                "actual_distance": round(float(res["distance"]), 4) if hit else None,
+                "actual_distance": round(observed, 4) if observed is not None else None,
+                "expected_geometric_distance": (round(expected, 4)
+                                                if expected is not None else None),
+                "geometric_residual_m": (round(verdict_obj.residual_m, 6)
+                                         if verdict_obj is not None
+                                         and verdict_obj.residual_m is not None else None),
+                "residual_tolerance_m": DEFAULT_TOLERANCE_M,
+                "geometry_consistent": (verdict_obj.geometry_ok
+                                        if verdict_obj is not None else None),
                 "probe_reachability_status": "REACHABLE",
                 "causal_targetability": tdec.state.value,
                 "candidate_digest": tdec.candidate_digest,
-                "identity_match": match,
-                "verdict": ("PASS_CORRECT_CAUSE" if match
-                            else "FAIL_WRONG_CAUSE" if hit else "FAIL_NO_HIT"),
+                "identity_match": (verdict_obj.identity_ok
+                                   if verdict_obj is not None else False),
+                "adjudication": "navfm.probe_adjudication.adjudicate",
+                "verdict": verdict,
             }
 
         # Stratified quotas: blockers cannot consume support slots, because the
@@ -374,6 +407,11 @@ def main() -> int:
             "NON_PROBATIVE_NOT_TARGETABLE": Disposition.NONPROBATIVE_NOT_TARGETABLE,
             "PASS_CORRECT_CAUSE": Disposition.PROBATIVE,
             "FAIL_WRONG_CAUSE": Disposition.PROBATIVE,
+            # The experiment spoke and said the geometry disagrees. Probative
+            # means the experiment could speak, not that it said something
+            # welcome, so this sits beside FAIL_WRONG_CAUSE rather than among
+            # the non-probative dispositions.
+            "FAIL_GEOMETRY_INCONSISTENT": Disposition.PROBATIVE,
             "FAIL_NO_HIT": Disposition.PROBATIVE,
         }
 
@@ -423,8 +461,15 @@ def main() -> int:
                     if fired else None),
                 # The scientifically relevant number, kept separate on purpose.
                 "correct_target_hit_rate": round(correct / fired, 3) if fired else None,
+                # RETIRED by amendment 3 as NON_IDENTIFIABLE_UNDER_TARGET_RELATIVE_
+                # CONSTRUCTION. Retained for provenance comparability with rows
+                # measured before the amendment, and deliberately stripped of
+                # verdict authority: see the verdict chain below, which no longer
+                # consults it.
                 "unexpected_invariance": invariant,
-                "review_required": ("REVIEW_REQUIRED_UNEXPECTED_INVARIANCE" if invariant else None),
+                "raw_distance_invariance_diagnostic_only": True,
+                "raw_distance_invariance_retired_by": "collision_probe_contract_amendments.jsonl#3",
+                "review_required": None,
                 # Only reachable probes can carry causal evidence, so the
                 # verdict is judged over that subset, and a stratum with no
                 # reachable probe is NON_PROBATIVE rather than a pass or a fail.
@@ -437,7 +482,6 @@ def main() -> int:
                             else "NO_EVIDENCE" if not fired
                             else "NON_PROBATIVE_SAMPLE"
                             if probative / fired < MIN_REACHABLE_FRACTION
-                            else "REVIEW_REQUIRED_INVARIANCE" if invariant
                             else "PROBATIVE_PASS" if correct == probative
                             else "CONTRADICTION" if correct and correct < probative
                             else "PROBATIVE_FAIL"),
