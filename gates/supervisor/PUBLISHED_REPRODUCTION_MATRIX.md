@@ -36,7 +36,7 @@ is **not** asset availability for the checkpoints.
 |---|---|---|---|---|---|---|---|---|---|
 | **ViNT** | Shah et al. | GO Stanford (reconstructed) | held-out, 760 traj / 15 scenes, 41 872 pairs, batch 400 | `strict/total_loss` | `0.17398` (checkpoint-associated, epoch 29) | **`0.18026808`** | **+3.61 %** | **`PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS`** — recorded verdict *"CLASSIFICATION 2 — RECONSTRUCTED BUT NOT REPRODUCED"* | `gates/G0/g0c/`, `runs/g0c/g0c-vint-r1`, `-r2` |
 | **GNM** | Shah et al. | GO Stanford (reconstructed) | test, 41 872 pairs, 105 batches, batch 400 | `strict/total_loss` | `0.1393500482205535` (checkpoint-associated, epoch 29) | **`0.15870234802528657`** | **+13.888 %** | **`PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS`** | `GNM_REPRODUCTION_20260907.json`; `runs/trackA/gnm-r1`, `-r2`, `-control-seed0` |
-| **NoMaD** | Sridhar et al. | — | — | — | — | — | — | **`BLOCKED_MISSING_EVALUATION_PATH`** — model assets exist; the evaluator raises by design; `_compute_losses_nomad` needs a diffusion sampling loop, so it is a separate entrypoint, not a `--model nomad` flag | `src/navfm/upstream.py`; standing instructions |
+| **NoMaD** | Sridhar et al. | — | — | — | — | — | — | **`BLOCKED_MISSING_RELEASED_EVALUATION_ENTRYPOINT`** — **executed**, boundary reached at `upstream.py:218` | `NOMAD_BLOCKER_20260907.json` |
 
 ---
 
@@ -92,16 +92,23 @@ Same evaluator, objective, split and population as the ViNT arm, so the two are
 directly comparable. **ViNT deviated +3.61 %; GNM deviates +13.89 %, roughly four
 times further.**
 
-That ordering is expected rather than surprising. `config/gnm.yaml` opens with
-`# NOTE: this model uses private datasets`, so GNM's checkpoint-associated
-reference was computed over a mixture including corpora we cannot obtain at all.
-Our single-corpus GO Stanford reconstruction is therefore a more distant estimand
-for GNM than it was for ViNT — the larger delta is evidence about the *reference*,
-not about our evaluation path.
+`config/gnm.yaml` opens with `# NOTE: this model uses private datasets`, so the
+checkpoint-associated reference was computed over a mixture including corpora
+that cannot be obtained. **The reference is therefore not reconstructable from
+released assets, so the numerical delta is descriptive rather than a valid
+reproduction error.** It does not measure how far our evaluation path is from the
+published one, and it does not by itself prove the private-data explanation
+either — the comparison is simply not between the same estimand.
 
-Not `FAILED_REPRODUCTION`: nothing failed. The path executed over the full
-declared population with exact repeatability and a 17.6× separation from random
-initialisation. No preregistered reproduction tolerance existed, and none was
+The larger GNM delta is consistent with a more distant reference population, but
+consistency is not evidence, and this ordering is recorded as an observation
+rather than an inference.
+
+Not `FAILED_REPRODUCTION`: nothing failed. The path executed over the **full
+declared obtainable evaluation population** — which is *not* the population used
+for the checkpoint-associated reference — with exact repeatability and a 17.6×
+separation from random initialisation. Repeatability and control separation are
+instrument checks; neither is published-reproduction proof. No preregistered reproduction tolerance existed, and none was
 invented after seeing the result; the delta is reported descriptively.
 
 Run under `runs/trackA/`, **not** `runs/g0c/`. G0.c was preregistered for ViNT;
@@ -121,11 +128,7 @@ a later corpus release or an equivalent official artefact could lift it.
 reference mixture includes private datasets. `REPRODUCED` is not reachable from
 obtainable assets.
 
-**NoMaD → needs an evaluation path, not an asset.** The checkpoint is held and
-its digest recorded; what is missing is the diffusion sampling/evaluation
-entrypoint (`_compute_losses_nomad`), which is deliberately a separate
-entrypoint rather than a flag on the existing evaluator. Classifying this as a
-missing *asset* would misstate where the gap is.
+**NoMaD → executed blocker, not an inference.** See below.
 
 ---
 
@@ -142,3 +145,58 @@ missing *asset* would misstate where the gap is.
 > currently available to us, not a permanent one. GNM can be evaluated with assets
 > already in hand. NoMaD holds its checkpoint but lacks the diffusion
 > sampling/evaluation entrypoint the reproduction run needs.
+
+
+---
+
+## NoMaD — executed blocker, 2026-09-07
+
+The earlier classification came from reading the repository. It has now been
+**executed**, and the first attempt was not sufficient evidence.
+
+| Attempt | Outcome | Sufficient? |
+|---|---|---|
+| CLI `--model nomad` | exit 2 — *"invalid choice: 'nomad' (choose from 'vint', 'gnm')"* | **No.** An argparse rejection is earlier than the evaluation boundary; it proves only that the CLI does not expose the model |
+| API `upstream.build_model("nomad", …)` | `NotImplementedError` at **`src/navfm/upstream.py:218`** | **Yes.** Reaches the point at which the released model cannot be constructed for evaluation |
+
+Inspecting the release at that boundary:
+
+- `train_utils._compute_losses_nomad` **is present** upstream (line 447);
+- the only evaluation-shaped module is `vint_train/training/train_eval_loop.py`;
+- its only driver is `train.py`.
+
+**The release computes NoMaD's diffusion losses inside the training loop and
+ships no standalone evaluation entrypoint.** There is therefore no official
+evaluation path to execute in the way ViNT and GNM were evaluated.
+
+Classification: **`BLOCKED_MISSING_RELEASED_EVALUATION_ENTRYPOINT`**.
+
+Not `BLOCKED_MISSING_ASSET` — the checkpoint and config are held and
+digest-verified. Not `BLOCKED_MISSING_SAMPLING_IMPLEMENTATION` — upstream does
+implement the sampling loss. What is absent is a standalone entrypoint invoking
+it outside training.
+
+No evaluator was written to make the row runnable. Building one would be new
+work, not reproduction of a released path.
+
+Also noted: NoMaD's config uses `context_size: 3` against GNM/ViNT's `5`, so it
+would additionally require its own sample population rather than reusing the
+41 872-pair set.
+
+---
+
+## BO-09 closure
+
+| Model | Executed | `published_result_reproduction_status` |
+|---|---|---|
+| ViNT | ✅ result | `NOT_RECONSTRUCTABLE_FROM_RELEASED_ASSETS` |
+| GNM | ✅ result | `NOT_RECONSTRUCTABLE_FROM_RELEASED_ASSETS` |
+| NoMaD | ✅ blocker | `NOT_ATTEMPTABLE_FROM_RELEASED_EVALUATION_PATH` |
+
+**BO-09 = `COMPLETE_WITH_EVIDENCED_LIMITATIONS`.** All three rows carry executed
+evidence and a precise, evidenced ceiling.
+
+This explicitly does **not** mean any published number was reproduced. Not one
+was. What is complete is the *investigation*: for each model we can now say what
+runs, what does not, and exactly why — and each remaining limitation is inherent
+to what the release provides rather than to our engineering.

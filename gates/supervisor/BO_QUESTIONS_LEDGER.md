@@ -27,7 +27,7 @@ Bo's governing sequence, which overrides internal task appeal:
 | BO-06 | Novelty vs SaferPath | DEFERRED / NOVELTY HYPOTHESIS | SaferPath verified to exist (ICRA 2026) | Systematic literature review; SaferPath collision definition not yet read |
 | BO-07 | RQ1/RQ2/RQ3 ordering | AWAITING SUPERVISOR DECISION | — | Not approved; described as draft direction |
 | BO-08 | Path-reference metrics (nDTW/SDTW/CLS) | BLOCKED | Ilharco et al. verified: both require a reference trajectory | Trustworthy versioned reference paths |
-| BO-09 | Published-result reproduction | ViNT + GNM PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS · NoMaD BLOCKED_MISSING_EVALUATION_PATH | ViNT +3.61%, GNM +13.888%, both exactly repeatable, controls 17-19x worse; `PUBLISHED_REPRODUCTION_MATRIX.md`, `GNM_REPRODUCTION_20260907.json` | NoMaD diffusion sampling entrypoint. ViNT/GNM ceilings are reference-mixture limitations, not engineering gaps |
+| BO-09 | Published-result reproduction | **COMPLETE_WITH_EVIDENCED_LIMITATIONS** | ViNT +3.61%, GNM +13.888% (both executed, exactly repeatable, controls 17-19x worse); NoMaD executed blocker at `upstream.py:218` | None. No published number was reproduced; every ceiling is inherent to the release |
 | BO-10 | New Hospital collection | BLOCKED ON SCENE ADMISSION (Hospital) | `gates/G2/`; Hospital REVIEW_REQUIRED / PENDING | Collect in the **first environment passing admission**; Hospital request stays open until Hospital data exists |
 | BO-11 | Fine-tuning and comparison | NOT STARTED | — | Downstream of admitted data + baseline |
 
@@ -45,6 +45,16 @@ Sidecar, kept separate so the official loader is untouched:
         scene identity/digest, camera identity, controller identity,
         start pose, goal provenance, timestamps, robot identity,
         collection parameters, checksums, admission result
+
+## What Isaac-collected new data does and does not prove
+
+PROVES: simulator execution pipeline · new temporal RGB collection · camera
+mounting and extrinsics · trajectory/pose recording · official loader
+compatibility.
+
+DOES NOT PROVE: physical-robot execution · sim-to-real transfer ·
+Hospital-domain performance if collected in Office or Warehouse · deployment
+safety.
 
 ## Domain rule
 
