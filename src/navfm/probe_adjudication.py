@@ -99,6 +99,26 @@ def geometric_residual(
     return observed_distance_m - expected_distance_m
 
 
+def _same_or_related_path(hit: str, declared: str) -> bool:
+    """Exact prim, or a true path-segment ancestor/descendant of it.
+
+    Both directions are intended and both are in use: USD often reports the
+    collider as a child mesh of the declared prim, and the PHYSICAL_OWNER_IDENTITY
+    fixture declares a leaf owned by an ancestor Xform.
+
+    The boundary is the whole point. A raw ``startswith`` made a lexical prefix
+    look like a hierarchy: with a declared ``/World/Scene/Geo_M3_DoorWall``, a
+    prim named ``/World/Scene/Geo_M3_DoorWallLamp`` was accepted as that wall,
+    and the probe was recorded probative. Requiring the separator turns "the name
+    begins the same way" back into "is inside that prim". ``/Wall`` no longer
+    matches ``/WallLamp``, ``/Wall2`` or ``/Wallpaper``, and still matches
+    ``/Wall`` and ``/Wall/Section0``.
+    """
+    return (hit == declared
+            or hit.startswith(declared + "/")
+            or declared.startswith(hit + "/"))
+
+
 def _identity_matches(
     returned_collider: str | None,
     declared_target: str,
@@ -106,21 +126,16 @@ def _identity_matches(
 ) -> bool:
     """Identity, not category: "some wall" is not "this wall".
 
-    Prefix matching in either direction accepts the declared prim and the
-    collider USD reports for it, which are often parent and child of one another.
     A preregistered owner is accepted only when it was declared in advance, so a
     shared collider cannot acquire ownership retrospectively by being the thing
-    that happened to answer.
+    that happened to answer. Owners are matched by the same path relation as the
+    target, which is what the causality harness's frozen PHYSICAL_OWNER_IDENTITY
+    fixture already asserts.
     """
     if not returned_collider:
         return False
-    if returned_collider in preregistered_owners:
-        return True
-    return (
-        returned_collider == declared_target
-        or returned_collider.startswith(declared_target)
-        or declared_target.startswith(returned_collider)
-    )
+    return any(_same_or_related_path(returned_collider, d)
+               for d in (declared_target, *preregistered_owners))
 
 
 def adjudicate(
