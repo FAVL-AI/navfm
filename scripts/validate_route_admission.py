@@ -126,6 +126,10 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--budget", type=int, default=96,
                     help="candidate search budget (frozen; matches the Hospital search)")
+    ap.add_argument("--region-declaration", default=None,
+                    help="frozen collection-region declaration JSON. REQUIRED for a scene "
+                         "with no intrinsic geometric boundary (see gates/failures/F-BOUNDS-1.md); "
+                         "omit to map the whole stage bound, which is the unchanged default.")
     args = ap.parse_args()
 
     from isaacsim.simulation_app import SimulationApp
@@ -195,7 +199,25 @@ def main() -> int:
         from isaacsim.core.utils.extensions import enable_extension
         rec["occupancy_extension_enabled"] = bool(enable_extension("isaacsim.asset.gen.omap"))
 
-        grid = collector.build_occupancy(args.scene)
+        region_bounds = None
+        if args.region_declaration:
+            import json as _json
+            decl = _json.loads(Path(args.region_declaration).read_text())
+            import hashlib as _hashlib
+            rec["region_declaration"] = {
+                "path": args.region_declaration,
+                "sha256": _hashlib.sha256(
+                    Path(args.region_declaration).read_bytes()).hexdigest(),
+                "check": decl.get("check"),
+                "region_centre": decl["region_centre"]["value"],
+                "window": decl["window"],
+                "frozen_before_any_candidate_enumerated": decl.get("artifact_semantics"),
+            }
+            region_bounds = (tuple(decl["window"]["bounds_min"]),
+                             tuple(decl["window"]["bounds_max"]))
+        rec["occupancy_bounds_source"] = ("declared region" if region_bounds
+                                          else "stage bound (default)")
+        grid = collector.build_occupancy(args.scene, bounds=region_bounds)
         collector._grid = grid
         collector._clearance = grid.clearance()
         inflated = collector._inflated

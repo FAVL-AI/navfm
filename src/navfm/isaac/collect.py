@@ -149,6 +149,26 @@ class Collector:
 
     # -- setup -----------------------------------------------------------
 
+    @staticmethod
+    def route_window(
+        centre: tuple[float, float],
+        max_path_m: float,
+        footprint_radius_m: float,
+    ) -> tuple[tuple[float, float], tuple[float, float]]:
+        """A square window that cannot exclude any admissible route.
+
+        Euclidean displacement cannot exceed path length, so every point of a
+        route no longer than ``max_path_m`` lies within that distance of its
+        start. The footprint radius is added because the swept body extends
+        beyond the centreline.
+
+        Justified entirely by parameters already frozen in the collection
+        contract; the only declared input is the centre.
+        """
+        half = float(max_path_m) + float(footprint_radius_m)
+        cx, cy = float(centre[0]), float(centre[1])
+        return (cx - half, cy - half), (cx + half, cy + half)
+
     def open_scene(self, scene_usd: str) -> None:
         assert self._app is not None
         self._app.open_stage(scene_usd)
@@ -162,12 +182,33 @@ class Collector:
         self._grid = self.build_occupancy(scene_usd)
         self._clearance = self._grid.clearance()
 
-    def build_occupancy(self, scene_usd: str) -> OccupancyGrid:
+    def build_occupancy(
+        self,
+        scene_usd: str,
+        bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
+    ) -> OccupancyGrid:
         """Build a 2-D occupancy grid by ray-casting a horizontal slice.
 
         Uses Isaac Sim's occupancy-map extension when available (it is
         GPU-accelerated and handles instanced geometry correctly), and falls
         back to a PhysX scene-query sweep otherwise.
+
+        ``bounds`` overrides the stage bounding box. It is OPT-IN and the
+        default is unchanged, because changing the default would change the grid
+        for scenes whose results are already frozen, and a different grid means
+        different sampling.
+
+        It exists because the stage bound is not a collection region in scenes
+        that contain distant scenery. Office carries a city-skyline backdrop
+        spanning 1064 x 678 m, which makes the grid 72 million cells against
+        Hospital's 322,560 for a comparable interior, and roughly 99.5% of the
+        mapped area is exterior the robot will never occupy. Two geometric rules
+        for deriving a tighter bound were tried and both are refuted by
+        measurement in gates/failures/F-BOUNDS-1.md -- the buildings carry
+        colliders, and they stand on a ground plane, so neither collidable
+        geometry nor "where the robot can stand" separates interior from
+        exterior. Such a scene has no intrinsic boundary, so the region is
+        declared and recorded rather than derived.
         """
         res = self.collect.grid_resolution
         try:
@@ -185,7 +226,7 @@ class Collector:
             except TypeError:
                 gen = _omap.Generator(stage_id)
             gen.update_settings(res, 4, 5, 6)  # cell size, occupied, unoccupied, unknown
-            bounds = self._stage_bounds()
+            bounds = bounds if bounds is not None else self._stage_bounds()
             gen.set_transform(
                 (0.0, 0.0, 0.0),
                 (bounds[0][0], bounds[0][1], 0.10),
