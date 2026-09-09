@@ -1,0 +1,49 @@
+{
+  "check": "CORRECTED_MAP_BASELINE_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_ANY_CANDIDATE_EVALUATED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-09T00:00:00+00:00",
+  "git_head_at_freeze": "41e00be063c7421e7d45fb97b2859c0b6c826089",
+  "purpose": "Answer one question before TURNING_ROUTE_POPULATION_V1 is designed: how much of the straight-route behaviour survives the F-G5-1 map repair? The Office freeze attributed it to string-pulling; that attribution is retracted as UNMEASURED because 62% of the planner's free space came from unclassified cells. Designing a turning-route population against an unestablished cause would be building a protocol on a guess.",
+  "what_is_unchanged": {
+    "generator": "navfm.planning.sample_episode_pair -- identical",
+    "smoothing": "smooth_path string-pulling -- identical, NOT disabled",
+    "seed": 0,
+    "budget": 96,
+    "candidate_ordering": "seeded generation order",
+    "all_g10_thresholds": {
+      "min_usable_frames": 120,
+      "min_travelled_distance_m": 8.0,
+      "min_start_goal_separation_m": 5.0,
+      "min_heading_changes": 3,
+      "heading_change_deg": 30.0,
+      "min_valid_context_windows": 30
+    },
+    "gates": "G3-G10 unchanged",
+    "min_clearance_m": 0.35,
+    "scene": "Hospital"
+  },
+  "what_changed": {
+    "single_variable": "the occupancy decode: grid = (buf == OCCUPIED) becomes grid = (buf != UNOCCUPIED)",
+    "effect_measured_before_running": {
+      "hospital_unknown_cells": 174376,
+      "hospital_total_cells": 322560,
+      "free_cells_after_inflation_old": 242106,
+      "free_cells_after_inflation_new": 91650
+    }
+  },
+  "predeclared_outcomes": {
+    "note": "stated BEFORE running so the result cannot be read as whichever story fits",
+    "if_zero_turn_fraction_falls_sharply": "the map was the dominant cause; a turning-route population may be unnecessary, or much smaller in scope",
+    "if_zero_turn_fraction_is_similar": "string-pulling is confirmed as dominant and TURNING_ROUTE_POPULATION_V1 is justified as originally reasoned",
+    "if_the_planner_now_fails_to_find_routes": "the corrected map is far more constrained (28.4% free vs 75.1%); a high PlannerError rate is a legitimate outcome and is reported, not tuned away"
+  },
+  "forbidden": [
+    "changing any threshold in response to the result",
+    "changing the generator, seed or budget in response to the result",
+    "disabling smoothing to manufacture turns",
+    "re-running with a different seed and reporting the better outcome"
+  ],
+  "relationship_to_frozen_results": "This does NOT overwrite or amend HOSPITAL_BO10_FROZEN_ROUTESET or OFFICE_BO10_FROZEN_ROUTESET. Those remain valid measurements of what the pipeline produced under the old decode. This is a separate measurement under a repaired instrument.",
+  "e2_eligible": false
+}
