@@ -28,6 +28,7 @@ and leave sim and real with different effective fields of view.
 
 from __future__ import annotations
 
+import contextlib
 import dataclasses
 import math
 from collections.abc import Sequence
@@ -144,19 +145,48 @@ class SimRobot:
 
         stage_utils.add_reference_to_stage(self.config.usd_path, path=self.prim_path)
         self._attach()
+        # An articulation is not addressable the instant its prim appears: the
+        # physics tensor entity is created by the simulation, so teleport() --
+        # which sets velocities -- asserts on 5.1 unless the timeline has
+        # advanced at least one frame since the reference was added. Stepping
+        # here rather than in every caller keeps spawn() a complete operation.
+        self._settle()
         self.teleport(position, yaw)
 
-    def _attach(self) -> None:
-        try:
-            from isaacsim.core.experimental.prims import Articulation
+    def _settle(self, frames: int = 3) -> None:
+        """Advance the sim until the articulation's physics entity is valid."""
+        app = getattr(self, "app", None)
+        if app is None:
+            return
+        for _ in range(frames):
+            with contextlib.suppress(Exception):
+                app.update()
+        valid = getattr(self._articulation, "is_physics_tensor_entity_valid", None)
+        if callable(valid):
+            for _ in range(frames):
+                if valid():
+                    return
+                with contextlib.suppress(Exception):
+                    app.update()
 
-            self._articulation = Articulation(self.prim_path)
-            self._is_v6 = True
-        except ImportError:  # 5.x
+    def _attach(self) -> None:
+        # 5.1 is the PRIMARY branch, so it is tried FIRST. Preferring the 6.0
+        # experimental namespace here was wrong in a way that could not show up
+        # until a real run: `isaacsim.core.experimental.prims` imports fine on
+        # 5.1, so the fallback always won and the primary path was never used.
+        # The two APIs differ -- 5.x set_velocities takes one (N, 6) array,
+        # experimental takes linear and angular separately -- so the wrong choice
+        # surfaces as a shape error deep inside a velocity command.
+        try:
             from isaacsim.core.prims import Articulation
 
             self._articulation = Articulation(self.prim_path)
             self._is_v6 = False
+        except ImportError:  # 6.0 experimental
+            from isaacsim.core.experimental.prims import Articulation
+
+            self._articulation = Articulation(self.prim_path)
+            self._is_v6 = True
 
     def attach_camera(self) -> None:
         """Create the forward RGB sensor at the configured extrinsics."""
@@ -245,4 +275,9 @@ class SimRobot:
         c, s = math.cos(yaw), math.sin(yaw)
         world = np.array([[c * vx - s * vy, s * vx + c * vy, 0.0]])
         angular = np.array([[0.0, 0.0, wz]])
-        self._articulation.set_velocities(np.concatenate([world, angular], axis=1))
+        if self._is_v6:
+            # 6.0 experimental takes linear and angular as separate (N, 3) arrays.
+            self._articulation.set_velocities(world, angular)
+        else:
+            # 5.x takes a single (N, 6) array.
+            self._articulation.set_velocities(np.concatenate([world, angular], axis=1))

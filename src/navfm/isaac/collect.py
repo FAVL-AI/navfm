@@ -162,7 +162,16 @@ class Collector:
             import omni.usd
             from isaacsim.asset.gen.omap.bindings import _omap
 
-            gen = _omap.Generator(omni.usd.get_context().get_stage_id())
+            stage_id = omni.usd.get_context().get_stage_id()
+            # Isaac 5.1 takes (PhysX, stage_id); earlier bindings took the stage
+            # id alone. Try 5.1 first -- it is the PRIMARY branch here -- and
+            # keep the single-argument form working rather than replacing it.
+            try:
+                from omni.physx import get_physx_interface
+
+                gen = _omap.Generator(get_physx_interface(), stage_id)
+            except TypeError:
+                gen = _omap.Generator(stage_id)
             gen.update_settings(res, 4, 5, 6)  # cell size, occupied, unoccupied, unknown
             bounds = self._stage_bounds()
             gen.set_transform(
