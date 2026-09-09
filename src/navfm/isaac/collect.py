@@ -269,6 +269,66 @@ class Collector:
                 "uncorrelated with spatial proximity."
             ) from exc
 
+    def build_occupancy_physx(
+        self,
+        bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
+        *,
+        slab_z: tuple[float, float] = (0.10, 0.60),
+    ) -> OccupancyGrid:
+        """EXPERIMENTAL, NOT VALIDATED. Build occupancy from PhysX overlap queries.
+
+        **This is not wired into production and must not be used for evidence
+        until validated.** It is retained because it is the most promising route
+        to a trustworthy map and because the measurements behind it are worth
+        keeping.
+
+        The occupancy-map extension does not represent a large part of this
+        scene's collision geometry. Measured on Hospital: a reception desk
+        spanning z 0.0-1.321 has 0 of 725 footprint cells marked occupied and a
+        supply cart spanning 0.0-1.034 has 0 of 72. Routes were planned straight
+        through furniture, and every long-horizon candidate failed G5 at
+        near-contact distances. See gates/failures/F-G5-2.md.
+
+        This asks PhysX instead. The point is not only accuracy: G5 already
+        queries PhysX, so building the map from the same instrument removes the
+        disagreement between the map that plans a route and the gate that judges
+        it. It does not make G5 redundant -- G5 sweeps the footprint at several
+        heights and measures distance, where this asks one yes/no question per
+        cell.
+
+        **Overlap, not raycast.** The first implementation cast a ray downward
+        from the top of the slab, and it was wrong in the most dangerous
+        direction. A ray starting inside a collider reports no hit, so every
+        object taller than the slab -- every wall -- vanished from the map. It
+        was caught by checking a known wall: `Geo_W_WallBase10`, spanning
+        z 0.0-3.0, went from 12.5% of its footprint marked occupied to 0%. An
+        overlap test asks whether anything intersects the cell's slab volume,
+        which is the question actually being asked and is indifferent to whether
+        a query point lies inside geometry.
+        """
+        assert self._app is not None, "an Isaac app is required for PhysX queries"
+        from omni.physx import get_physx_scene_query_interface
+
+        res = self.collect.grid_resolution
+        (min_x, min_y), (max_x, max_y) = bounds if bounds is not None else self._stage_bounds()
+        nx = max(1, int(math.ceil((max_x - min_x) / res)))
+        ny = max(1, int(math.ceil((max_y - min_y) / res)))
+        q = get_physx_scene_query_interface()
+
+        z_lo, z_hi = float(slab_z[0]), float(slab_z[1])
+        half = [res / 2.0, res / 2.0, (z_hi - z_lo) / 2.0]
+        z_mid = (z_lo + z_hi) / 2.0
+        identity = [0.0, 0.0, 0.0, 1.0]  # xyzw
+
+        grid = np.zeros((ny, nx), dtype=bool)
+        for j in range(ny):
+            y = min_y + j * res
+            for i in range(nx):
+                x = min_x + i * res
+                if q.overlap_box(half, [x, y, z_mid], identity, lambda _h: False, True):
+                    grid[j, i] = True
+        return OccupancyGrid(grid, res, origin=(min_x, min_y))
+
     def _stage_bounds(self) -> tuple[tuple[float, float], tuple[float, float]]:
         import omni.usd
         from pxr import Usd, UsdGeom
