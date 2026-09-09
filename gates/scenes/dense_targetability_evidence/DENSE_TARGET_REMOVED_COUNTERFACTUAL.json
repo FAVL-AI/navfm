@@ -1,7 +1,7 @@
 {
   "B_present": {
     "targetability": "TARGET_ISOLATABLE",
-    "candidate_digest": "a71356c6f9f05dbb",
+    "candidate_digest": "bea2a934da1cf3f9",
     "observation": {
       "query_fired": true,
       "generic_hit": true,
@@ -12,7 +12,7 @@
   },
   "B_disabled": {
     "targetability": "TARGET_ISOLATABLE",
-    "candidate_digest": "a71356c6f9f05dbb",
+    "candidate_digest": "bea2a934da1cf3f9",
     "observation": {
       "query_fired": true,
       "generic_hit": false,

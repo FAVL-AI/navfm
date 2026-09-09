@@ -1,6 +1,6 @@
 {
   "check": "PHYSX_FOOTPRINT_ORACLE_VALIDATION",
-  "timestamp_utc": "2026-08-14T04:46:22.687677+00:00",
+  "timestamp_utc": "2026-09-05T22:49:12.663997+00:00",
   "expectations_digest": "944d2dff69d50d9fbf49423136a05c11d6b8f477488c35a47f1763d05990da3d",
   "expectations_written_at": "2026-08-14T04:42:55.824582+00:00",
   "footprint_half_extents_m": [

@@ -2,7 +2,7 @@
   "check": "COLLISION_COVERAGE_AUDIT",
   "scene_id": "hospital",
   "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
-  "timestamp_utc": "2026-08-14T05:28:06.778633+00:00",
+  "timestamp_utc": "2026-09-07T00:34:09.966153+00:00",
   "navigation_band_m": [
     0.02,
     0.2803
@@ -13,8 +13,10 @@
   ],
   "question": "Are the surfaces and objects capable of blocking a Yahboom, within its own height band, physically queryable? NOT 'does every render mesh carry a collider' -- that equivalence is false and would fail every real asset.",
   "risk_direction": "Missing collision never invents an obstacle; it invents free space, precisely where the robot would collide.",
-  "probe_contract_digest": "480d9f07770eaf2a95446793639e9aadca5325554ccf2da115d764a653508c18",
-  "probe_contract_regressions": "9/9 causality regressions PASS",
+  "probe_contract_digest": "aa1bdfe9ecb3bbd674f97e6b30614a9f9ed1834e3e0312749aa5cc73947baf4c",
+  "candidate_policy_digest": "c6534203825fa13d",
+  "probe_contract_regressions": "5/5 PASS",
+  "parent_contract_digest": "480d9f07770eaf2a95446793639e9aad",
   "evidence_channels_kept_separate": "authored CollisionAPI state and live behavioural response are reported as independent lines and never merged into one percentage",
   "floor_z": 0.0,
   "declared": {
@@ -46,32 +48,73 @@
     "support": {
       "planned": 8,
       "fired": 8,
-      "reachable": 7,
-      "non_probative": 1,
-      "correct_target_hits": 7,
+      "reachable": 8,
+      "non_probative": 0,
+      "not_targetable": 0,
+      "probative_population": 8,
+      "accounting": {
+        "counts": {
+          "selected": 8,
+          "reachable": 8,
+          "targetable": 8,
+          "fired": 8,
+          "adjudicated": 8,
+          "probative": 8
+        },
+        "probative_population": 8,
+        "non_probative_by_reason": {},
+        "representativeness_numerator": 8,
+        "representativeness_denominator": 8,
+        "accounting_valid": true,
+        "note": "populations are set cardinalities; none is reconstructed by subtracting counts drawn from different stages"
+      },
+      "correct_target_hits": 8,
       "wrong_target_hits": 0,
-      "generic_hit_rate": 0.875,
-      "correct_target_hit_rate": 0.875,
+      "generic_hit_rate": 1.0,
+      "correct_target_hit_rate": 1.0,
       "unexpected_invariance": true,
-      "review_required": "REVIEW_REQUIRED_UNEXPECTED_INVARIANCE",
-      "reachable_fraction": 0.875,
+      "raw_distance_invariance_diagnostic_only": true,
+      "raw_distance_invariance_retired_by": "collision_probe_contract_amendments.jsonl#3",
+      "review_required": null,
+      "reachable_fraction": 1.0,
       "min_reachable_fraction": 0.5,
-      "verdict": "REVIEW_REQUIRED_INVARIANCE",
+      "verdict": "PROBATIVE_PASS",
       "probes": [
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
-          "probe_reachability_status": "OCCLUDED",
-          "occluders": [
-            "/World/Scene/Geo_Floor_Costum17_21/Geo_Floor_Costum/Geo_Floor_Costum/Section0",
-            "/World/Scene/Geo_Floor_Costum17_21/Geo_Floor_Costum/Geo_Floor_Costum/Section1"
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "37f1bfd95b77b75b",
+          "origin": [
+            12.66,
+            -1.108,
+            0.501
           ],
-          "verdict": "NON_PROBATIVE_OCCLUDED",
-          "reason": "another collider necessarily precedes the declared target along this segment, so the probe cannot interrogate it"
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_distance": 1.5,
+          "actual_hit": true,
+          "actual_collider_prim": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+          "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
+          "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "3d614ec3cb923c4c",
+          "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
+          "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "a29f4523e35963e0",
           "origin": [
             -2.09,
             7.101,
@@ -86,13 +129,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "7a395630b1f486c1",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "efa19fd12b621c2d",
           "origin": [
             -5.589,
             7.101,
@@ -107,13 +159,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": 0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "3ca1c9813d1223bf",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "21d71e8ea66c4b5b",
           "origin": [
             -9.089,
             7.101,
@@ -128,13 +189,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "31f0fbd2ad4c5b0b",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "9d151d4f6fe379b7",
           "origin": [
             -12.589,
             7.101,
@@ -149,13 +219,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "5e0a41a2c6e2a9d5",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "1763688c4090fe04",
           "origin": [
             -16.089,
             7.101,
@@ -170,13 +249,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "6244271f2c823fa4",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "662703a1cd3e9403",
           "origin": [
             -19.59,
             7.101,
@@ -191,13 +279,22 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "83bc57c45638ada7",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         },
         {
           "probe_role": "SUPPORT",
           "expected_target_prim": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "61c9c7ff72429c61",
           "origin": [
             -23.09,
             7.101,
@@ -212,8 +309,15 @@
           "actual_hit": true,
           "actual_collider_prim": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
           "actual_distance": 0.5,
+          "expected_geometric_distance": 0.5,
+          "geometric_residual_m": -0.0,
+          "residual_tolerance_m": 0.05,
+          "geometry_consistent": true,
           "probe_reachability_status": "REACHABLE",
+          "causal_targetability": "TARGET_ISOLATABLE",
+          "candidate_digest": "abdacb01e2f68384",
           "identity_match": true,
+          "adjudication": "navfm.probe_adjudication.adjudicate",
           "verdict": "PASS_CORRECT_CAUSE"
         }
       ]
@@ -222,189 +326,131 @@
       "planned": 8,
       "fired": 8,
       "reachable": 8,
-      "non_probative": 0,
-      "correct_target_hits": 3,
-      "wrong_target_hits": 5,
-      "generic_hit_rate": 1.0,
-      "correct_target_hit_rate": 0.375,
+      "non_probative": 8,
+      "not_targetable": 8,
+      "probative_population": 0,
+      "accounting": {
+        "counts": {
+          "selected": 8,
+          "reachable": 8,
+          "targetable": 0,
+          "fired": 0,
+          "adjudicated": 0,
+          "probative": 0
+        },
+        "probative_population": 0,
+        "non_probative_by_reason": {
+          "NONPROBATIVE_NOT_TARGETABLE": 8
+        },
+        "representativeness_numerator": 0,
+        "representativeness_denominator": 8,
+        "accounting_valid": true,
+        "note": "populations are set cardinalities; none is reconstructed by subtracting counts drawn from different stages"
+      },
+      "correct_target_hits": 0,
+      "wrong_target_hits": 0,
+      "generic_hit_rate": 0.0,
+      "correct_target_hit_rate": 0.0,
       "unexpected_invariance": false,
+      "raw_distance_invariance_diagnostic_only": true,
+      "raw_distance_invariance_retired_by": "collision_probe_contract_amendments.jsonl#3",
       "review_required": null,
       "reachable_fraction": 1.0,
       "min_reachable_fraction": 0.5,
-      "verdict": "CONTRADICTION",
+      "verdict": "NON_PROBATIVE_SAMPLE",
       "probes": [
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
-          "origin": [
-            13.45,
-            2.401,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "83b00401419b08b4",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "399e48cdb55ed2db",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
-          "origin": [
-            13.45,
-            2.401,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "f03bd85ee3fa8c0c",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "8471f733e6c93a5e",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
-          "origin": [
-            10.41,
-            0.701,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 4.5,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
-          "actual_distance": 0.75,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "f539cbbda67ad240",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "18f4bb4859a2b1a3",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
-          "origin": [
-            10.41,
-            0.701,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 4.5,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall6/Geo_M3_BackWall/Geo_M3_BackWall/Section0",
-          "actual_distance": 0.75,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "997875dfa4a2b667",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "7251e84004731788",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-          "origin": [
-            10.56,
-            -1.1,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "6c77de766399b4db",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "a5efcfb4c59a4922",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
-          "origin": [
-            10.56,
-            -1.1,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "9dbc84c385c1e109",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "f2703c934ee51a6f",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
-          "origin": [
-            13.45,
-            -1.099,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "7063789fb6ae6e03",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": true,
-          "verdict": "PASS_CORRECT_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "f0b22b671aed2584",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         },
         {
           "probe_role": "BLOCKING",
           "expected_target_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
-          "origin": [
-            13.45,
-            -1.099,
-            1.501
-          ],
-          "direction": [
-            1.0,
-            0.0,
-            0.0
-          ],
-          "max_distance": 1.31,
-          "actual_hit": true,
-          "actual_collider_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
-          "actual_distance": 0.6,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "7c463051f5067ac7",
           "probe_reachability_status": "REACHABLE",
-          "identity_match": false,
-          "verdict": "FAIL_WRONG_CAUSE"
+          "causal_targetability": "TARGET_NOT_ISOLATABLE",
+          "targetability_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "candidate_digest": "5a0cf7c4d85a7796",
+          "verdict": "NON_PROBATIVE_NOT_TARGETABLE"
         }
       ]
     }
   },
-  "scientific_status": "HOLD_CONTRADICTION",
+  "scientific_status": "HOLD_INSUFFICIENT_SAMPLE",
   "verdict": {
     "physx_traversability_admissible": false,
     "reason": "insufficient collision coverage: a PhysX free-space map built here would manufacture traversable space where geometry actually blocks"
@@ -448,7 +494,7 @@
         "expected_items": null,
         "complete": null
       },
-      "value": 0.625,
+      "value": 0.5,
       "is_evidence": true,
       "evidence": {}
     }

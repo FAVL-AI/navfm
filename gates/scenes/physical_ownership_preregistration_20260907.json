@@ -1,0 +1,118 @@
+{
+  "check": "PHYSICAL_OWNERSHIP_AND_SELECTION_GRANULARITY",
+  "artifact_semantics": "PREREGISTRATION_AND_DIAGNOSTIC",
+  "written_before_any_selection_change": true,
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-07T01:16:41.973686+00:00",
+  "git_head": "78ca3fdf619ccc9b4576cdda137242dc98e53bc7",
+  "existing_ownership_semantics": {
+    "status": "ALREADY DECLARED AND FROZEN \u2014 this tranche did not invent it",
+    "contract_clause": "collision_probe_contract.json semantics.identity: 'returned collider must BE the declared target or a preregistered physical owner; same-class neighbours are rejected'",
+    "implementation": "navfm.probe_adjudication.adjudicate(preregistered_owners=...)",
+    "frozen_fixture": "PHYSICAL_OWNER_IDENTITY in validate_collision_probe_causality.py: declares /World/Group/Leaf with owner /World/Group, asserts the same-class neighbour /World/Neighbour is rejected. 9/9 PASS in both G2 executions.",
+    "ownership_is_pre_query": true,
+    "ownership_is_inferred_after_a_hit": false,
+    "same_parent_currently_means_physical_owner": false,
+    "scene_audit_uses_it": false,
+    "gap": "the scene audit calls adjudicate() without preregistered_owners and excludes only exact path equality from its competitor set. The ownership contract exists and is unused there \u2014 the same FL-007 propagation shape as the invariance criterion."
+  },
+  "hospital_hierarchy": {
+    "section_targets": 8,
+    "distinct_parent_prims": 4,
+    "grouping": "each wall contributes exactly 2 SectionN children; each section is defeated by its sibling",
+    "parents": [
+      "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall",
+      "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall",
+      "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall",
+      "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall"
+    ],
+    "diagnostic_artifact": "gates/scenes/hospital_blocker_targetability_diagnostic_20260907.json",
+    "diagnostic_sha256": "8cb37410b16792a504fecfe2bd39a08cfac91b558e5020526608356eb11bcd6c"
+  },
+  "generalisation_check": {
+    "verdict": "SAME_PARENT_IS_NOT_SUFFICIENT_FOR_OWNERSHIP",
+    "static_sample_coverage": "40 of 2058 Hospital meshes (1.9%) \u2014 not exhaustive, and not treated as such",
+    "counterexample": "the historical 12x5.9 Office defect at acd53d0 groups SM_DoorEntrance, door_R, door_L, glass_door_R, glass_door_L and glass_main under one BP_DoorEntrance_2651 parent. Door leaves and glass panels under one blueprint are not self-evidently one physical blocker.",
+    "conclusion": "a parent may be a semantic, transform or convenience grouping. Ownership must be DECLARED, which is what the frozen contract already says by writing 'preregistered'."
+  },
+  "hypothesis_matrix": {
+    "_legend": "targetability state, or identity_ok boolean",
+    "A_multisection_wall_targetable": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_ISOLATABLE",
+      "reading": "only H2 resolves the self-conflict"
+    },
+    "B_two_distinct_walls_still_compete": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS",
+      "reading": "H2 does not dissolve genuine competitors"
+    },
+    "C_same_parent_distinct_objects_not_merged": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS",
+      "reading": "no auto-merge from a shared transform parent"
+    },
+    "D_door_components_not_auto_merged": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS",
+      "reading": "the 12x5.9 authoring shape is not silently merged"
+    },
+    "E_component_hit_is_owner_correct": {
+      "H1_section": false,
+      "H2_owner": true,
+      "reading": "the intended difference, and it comes from a PRE-QUERY declaration"
+    },
+    "F_unrelated_sibling_rejected": {
+      "H1_section": false,
+      "H2_owner": false,
+      "reading": "identity preserved under both"
+    },
+    "G_prefix_collision_false_accept": {
+      "H1_section": true,
+      "H2_owner": true,
+      "reading": "BOTH FALSE-ACCEPT \u2014 see blocking_defect below"
+    },
+    "H_historical_12x5_9_still_rejected": {
+      "H1_section": false,
+      "H2_owner": false,
+      "reading": "the shared wall collider is rejected under both; historical capability preserved"
+    }
+  },
+  "blocking_defect": {
+    "id": "IDENTITY-PREFIX-1",
+    "found_by": "negative control G, this tranche",
+    "defect": "navfm.probe_adjudication._identity_matches accepts a returned collider by raw string prefix in either direction, with no path-segment boundary. A prim named '/W/WallLamp' is therefore accepted as identity for declared target '/W/Wall'.",
+    "status_today": "PRE-EXISTING, not introduced here. It is latent at section granularity because declared paths are long and specific.",
+    "why_it_blocks_H2": "owner-granularity selection makes declared targets SHORTER prefixes, so the set of prims that can false-accept grows. Adopting H2 on top of prefix matching would weaken identity, which is the opposite of the intent.",
+    "required_repair_before_any_selection_change": "identity by explicit component membership, or prefix matching that respects path-segment boundaries. Preregister and test before adopting, with G as the negative control."
+  },
+  "decision": "MIXED_BY_DECLARED_OWNERSHIP",
+  "decision_rationale": "H2 is supported as a SELECTION-GRANULARITY option and is the only hypothesis that resolves the self-conflict, but it is not adoptable as a hierarchy rule. Same-parent grouping fails on counterexamples, and the existing frozen contract already requires ownership to be preregistered rather than inferred. Adoption is additionally blocked by IDENTITY-PREFIX-1.",
+  "amendment_authorised": false,
+  "amendment_blocked_by": [
+    "IDENTITY-PREFIX-1 unrepaired",
+    "no declared ownership source for Hospital walls",
+    "generalisation evidence covers 1.9% of the scene"
+  ],
+  "if_adopted_the_rules_would_be": {
+    "selection": "the declared physical owner is the blocker unit; its components are declared pre-query",
+    "competitor_exclusion": "exclude the target and all preregistered components of its owner; exclude nothing on path or string similarity",
+    "identity": "returned collider is in declared_owner.component_paths \u2014 membership, not prefix",
+    "rejected_design": "declare Section0, hit Section1, accept because the parent matches. That discovers ownership after observing the result."
+  },
+  "identity_strength_if_adopted": "UNCHANGED to STRONGER, provided IDENTITY-PREFIX-1 is repaired first; WEAKER if adopted on top of prefix matching",
+  "targetability_code_changes_required": "NONE \u2014 targetability.decide is sound and passed 6/6 controls",
+  "correction_locus": "target selection and competitor construction, upstream of targetability",
+  "hospital_status": "REVIEW_REQUIRED / PENDING \u2014 unchanged, not re-scored",
+  "wrong_1": "UNRESOLVED. Establishing that previous probes asked the wrong physical-unit question does not establish which collider physically caused wrong_1.",
+  "canonical_scene": "NOT SELECTED",
+  "non_claims": [
+    "Hospital passes",
+    "Hospital is admissible",
+    "wrong_1 resolved",
+    "canonical scene selected",
+    "same parent means same physical owner",
+    "Hospital walls are genuinely non-isolatable"
+  ],
+  "claim_boundary": "Establishes where the defect is and what ownership would have to mean. Selects no scene, changes no semantics, and authorises no amendment."
+}

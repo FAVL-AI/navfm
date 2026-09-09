@@ -48,7 +48,7 @@
     "chosen_origin": null,
     "chosen_direction": null
   },
-  "targetability_decided_at": "2026-08-14T05:53:35.008884+00:00",
+  "targetability_decided_at": "2026-09-05T22:49:01.854337+00:00",
   "candidate_digest_before": "7130657d348e85ce",
   "candidate_digest_after": "7130657d348e85ce",
   "observation": {
@@ -58,6 +58,6 @@
     "distance": 1.8,
     "identity_match": false
   },
-  "observed_at": "2026-08-14T05:53:35.008973+00:00",
+  "observed_at": "2026-09-05T22:49:01.854423+00:00",
   "interpretation": "non-probative: the intervention never isolated B, so the hit on A is not evidence against B"
 }

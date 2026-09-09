@@ -1,39 +1,49 @@
 {
   "check": "COLLISION_PROBE_CAUSALITY_REGRESSIONS",
-  "timestamp_utc": "2026-08-14T05:54:10.762743+00:00",
+  "timestamp_utc": "2026-09-05T22:48:54.646416+00:00",
   "original_manifest_digest": "a4f2dfd2a3bb69cc67b540835c763fd6afa895841cfd7b8a2f55c99600c0b008",
   "amendment_digest": "7fd477c706313b555504e11b05f88957b01fc7daece09d4f0a1a4188634e8e4d",
   "effective_expectation_digest": "47e54f586dfbb0203a90f495865aae5675e1d902e1951f56b1434517ccc27eaa",
   "digests_verified_before_execution": true,
+  "candidate_policy_digest": "c6534203825fa13d",
+  "candidate_policy_note": "production probes use the default policy; from_origin and explicit standoffs are declared control variants, each recording its own digest on the probe row",
   "results": {
     "CAUSAL_MUTATION_PRESENT": {
       "target": "/World/B",
       "reachability": "REACHABLE",
+      "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+      "face": "+X",
       "origin": [
-        2.3,
+        2.5,
         0.0,
         0.3
       ],
-      "max_distance": 1.1,
+      "max_distance": 0.85,
       "generic_hit": true,
       "actual_collider": "/World/B",
-      "distance": 0.5,
+      "distance": 0.3,
       "identity_match": true,
+      "candidate_policy_digest": "c6534203825fa13d",
+      "candidate_set_digest": "80ac842c298c81e5",
       "verdict": "PASS_CORRECT_CAUSE"
     },
     "CAUSAL_MUTATION_REMOVED": {
       "target": "/World/B",
       "reachability": "REACHABLE",
+      "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+      "face": "+X",
       "origin": [
-        2.3,
+        2.5,
         0.0,
         0.3
       ],
-      "max_distance": 1.1,
+      "max_distance": 0.85,
       "generic_hit": false,
       "actual_collider": null,
       "distance": null,
       "identity_match": false,
+      "candidate_policy_digest": "c6534203825fa13d",
+      "candidate_set_digest": "80ac842c298c81e5",
       "verdict": "FAIL_NO_HIT"
     },
     "WRONG_CAUSE_BAD_PROBE": {
@@ -42,22 +52,28 @@
       "occluders": [
         "/World/A"
       ],
+      "candidate_policy_digest": "c0a05923595b72bb",
+      "candidate_set_digest": "b652baa9170688e1",
       "verdict": "NON_PROBATIVE_OCCLUDED",
       "old_generic_logic_would_say": "FAIL"
     },
     "WRONG_CAUSE_GOOD_PROBE": {
       "target": "/World/B",
       "reachability": "REACHABLE",
+      "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+      "face": "+X",
       "origin": [
-        2.3,
+        2.5,
         0.0,
         0.3
       ],
-      "max_distance": 1.1,
+      "max_distance": 0.85,
       "generic_hit": true,
       "actual_collider": "/World/B",
-      "distance": 0.5,
+      "distance": 0.3,
       "identity_match": true,
+      "candidate_policy_digest": "c6534203825fa13d",
+      "candidate_set_digest": "80ac842c298c81e5",
       "verdict": "PASS_CORRECT_CAUSE"
     },
     "SUPPORT_STARVATION": {
@@ -77,36 +93,46 @@
       "occluders": [
         "/World/A_wall"
       ],
+      "candidate_policy_digest": "c0a05923595b72bb",
+      "candidate_set_digest": "ae318d1f22c52f77",
       "verdict": "NON_PROBATIVE_OCCLUDED"
     },
     "REACHABLE_TARGET": {
       "target": "/World/B_open",
       "reachability": "REACHABLE",
+      "candidate_id": "/World/B_open#BLOCKER#+X#c6534203825fa13d",
+      "face": "+X",
       "origin": [
-        2.3,
+        2.5,
         5.0,
         0.3
       ],
-      "max_distance": 1.1,
+      "max_distance": 0.85,
       "generic_hit": true,
       "actual_collider": "/World/B_open",
-      "distance": 0.5,
+      "distance": 0.3,
       "identity_match": true,
+      "candidate_policy_digest": "c6534203825fa13d",
+      "candidate_set_digest": "591cc53aa6ddf6d9",
       "verdict": "PASS_CORRECT_CAUSE"
     },
     "PHYSICAL_OWNER_IDENTITY": {
       "target": "/World/Group/Leaf",
       "reachability": "REACHABLE",
+      "candidate_id": "/World/Group/Leaf#BLOCKER#+X#c6534203825fa13d",
+      "face": "+X",
       "origin": [
-        2.3,
+        2.5,
         0.0,
         0.3
       ],
-      "max_distance": 1.1,
+      "max_distance": 0.85,
       "generic_hit": true,
       "actual_collider": "/World/Group/Leaf",
-      "distance": 0.5,
+      "distance": 0.3,
       "identity_match": true,
+      "candidate_policy_digest": "c6534203825fa13d",
+      "candidate_set_digest": "5d37fdafdfa92029",
       "verdict": "PASS_CORRECT_CAUSE",
       "adjacent_same_class_rejected": true
     },
@@ -120,48 +146,60 @@
       "near": {
         "target": "/World/T_NEAR",
         "reachability": "REACHABLE",
+        "candidate_id": "/World/T_NEAR#BLOCKER#+X#f262ab4c40adaf08",
+        "face": "+X",
         "origin": [
           5.3,
           0.0,
           0.3
         ],
-        "max_distance": 1.1,
+        "max_distance": 1.05,
         "generic_hit": true,
         "actual_collider": "/World/T_NEAR",
         "distance": 0.5,
         "identity_match": true,
+        "candidate_policy_digest": "f262ab4c40adaf08",
+        "candidate_set_digest": "a93b3d72a987d601",
         "verdict": "PASS_CORRECT_CAUSE",
         "declared_standoff_m": 0.5
       },
       "mid": {
         "target": "/World/T_MID",
         "reachability": "REACHABLE",
+        "candidate_id": "/World/T_MID#BLOCKER#+X#7670a01604dd7314",
+        "face": "+X",
         "origin": [
           4.8,
           4.0,
           0.3
         ],
-        "max_distance": 1.6,
+        "max_distance": 1.55,
         "generic_hit": true,
         "actual_collider": "/World/T_MID",
         "distance": 1.0,
         "identity_match": true,
+        "candidate_policy_digest": "7670a01604dd7314",
+        "candidate_set_digest": "dd00ca1d306a4939",
         "verdict": "PASS_CORRECT_CAUSE",
         "declared_standoff_m": 1.0
       },
       "far": {
         "target": "/World/T_FAR",
         "reachability": "REACHABLE",
+        "candidate_id": "/World/T_FAR#BLOCKER#+X#b303977ded31507c",
+        "face": "+X",
         "origin": [
           4.3,
           8.0,
           0.3
         ],
-        "max_distance": 2.1,
+        "max_distance": 2.05,
         "generic_hit": true,
         "actual_collider": "/World/T_FAR",
         "distance": 1.5,
         "identity_match": true,
+        "candidate_policy_digest": "b303977ded31507c",
+        "candidate_set_digest": "2e42f9d3853f50ac",
         "verdict": "PASS_CORRECT_CAUSE",
         "declared_standoff_m": 1.5
       },
@@ -210,16 +248,20 @@
         "observed": {
           "target": "/World/B",
           "reachability": "REACHABLE",
+          "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+          "face": "+X",
           "origin": [
-            2.3,
+            2.5,
             0.0,
             0.3
           ],
-          "max_distance": 1.1,
+          "max_distance": 0.85,
           "generic_hit": true,
           "actual_collider": "/World/B",
-          "distance": 0.5,
+          "distance": 0.3,
           "identity_match": true,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "80ac842c298c81e5",
           "verdict": "PASS_CORRECT_CAUSE"
         }
       }
@@ -246,16 +288,20 @@
         "observed": {
           "target": "/World/B",
           "reachability": "REACHABLE",
+          "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+          "face": "+X",
           "origin": [
-            2.3,
+            2.5,
             0.0,
             0.3
           ],
-          "max_distance": 1.1,
+          "max_distance": 0.85,
           "generic_hit": false,
           "actual_collider": null,
           "distance": null,
           "identity_match": false,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "80ac842c298c81e5",
           "verdict": "FAIL_NO_HIT"
         }
       }
@@ -285,6 +331,8 @@
           "occluders": [
             "/World/A"
           ],
+          "candidate_policy_digest": "c0a05923595b72bb",
+          "candidate_set_digest": "b652baa9170688e1",
           "verdict": "NON_PROBATIVE_OCCLUDED",
           "old_generic_logic_would_say": "FAIL"
         }
@@ -312,16 +360,20 @@
         "observed": {
           "target": "/World/B",
           "reachability": "REACHABLE",
+          "candidate_id": "/World/B#BLOCKER#+X#c6534203825fa13d",
+          "face": "+X",
           "origin": [
-            2.3,
+            2.5,
             0.0,
             0.3
           ],
-          "max_distance": 1.1,
+          "max_distance": 0.85,
           "generic_hit": true,
           "actual_collider": "/World/B",
-          "distance": 0.5,
+          "distance": 0.3,
           "identity_match": true,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "80ac842c298c81e5",
           "verdict": "PASS_CORRECT_CAUSE"
         }
       }
@@ -383,6 +435,8 @@
           "occluders": [
             "/World/A_wall"
           ],
+          "candidate_policy_digest": "c0a05923595b72bb",
+          "candidate_set_digest": "ae318d1f22c52f77",
           "verdict": "NON_PROBATIVE_OCCLUDED"
         }
       }
@@ -409,16 +463,20 @@
         "observed": {
           "target": "/World/B_open",
           "reachability": "REACHABLE",
+          "candidate_id": "/World/B_open#BLOCKER#+X#c6534203825fa13d",
+          "face": "+X",
           "origin": [
-            2.3,
+            2.5,
             5.0,
             0.3
           ],
-          "max_distance": 1.1,
+          "max_distance": 0.85,
           "generic_hit": true,
           "actual_collider": "/World/B_open",
-          "distance": 0.5,
+          "distance": 0.3,
           "identity_match": true,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "591cc53aa6ddf6d9",
           "verdict": "PASS_CORRECT_CAUSE"
         }
       }
@@ -445,16 +503,20 @@
         "observed": {
           "target": "/World/Group/Leaf",
           "reachability": "REACHABLE",
+          "candidate_id": "/World/Group/Leaf#BLOCKER#+X#c6534203825fa13d",
+          "face": "+X",
           "origin": [
-            2.3,
+            2.5,
             0.0,
             0.3
           ],
-          "max_distance": 1.1,
+          "max_distance": 0.85,
           "generic_hit": true,
           "actual_collider": "/World/Group/Leaf",
-          "distance": 0.5,
+          "distance": 0.3,
           "identity_match": true,
+          "candidate_policy_digest": "c6534203825fa13d",
+          "candidate_set_digest": "5d37fdafdfa92029",
           "verdict": "PASS_CORRECT_CAUSE",
           "adjacent_same_class_rejected": true
         }
@@ -489,48 +551,60 @@
           "near": {
             "target": "/World/T_NEAR",
             "reachability": "REACHABLE",
+            "candidate_id": "/World/T_NEAR#BLOCKER#+X#f262ab4c40adaf08",
+            "face": "+X",
             "origin": [
               5.3,
               0.0,
               0.3
             ],
-            "max_distance": 1.1,
+            "max_distance": 1.05,
             "generic_hit": true,
             "actual_collider": "/World/T_NEAR",
             "distance": 0.5,
             "identity_match": true,
+            "candidate_policy_digest": "f262ab4c40adaf08",
+            "candidate_set_digest": "a93b3d72a987d601",
             "verdict": "PASS_CORRECT_CAUSE",
             "declared_standoff_m": 0.5
           },
           "mid": {
             "target": "/World/T_MID",
             "reachability": "REACHABLE",
+            "candidate_id": "/World/T_MID#BLOCKER#+X#7670a01604dd7314",
+            "face": "+X",
             "origin": [
               4.8,
               4.0,
               0.3
             ],
-            "max_distance": 1.6,
+            "max_distance": 1.55,
             "generic_hit": true,
             "actual_collider": "/World/T_MID",
             "distance": 1.0,
             "identity_match": true,
+            "candidate_policy_digest": "7670a01604dd7314",
+            "candidate_set_digest": "dd00ca1d306a4939",
             "verdict": "PASS_CORRECT_CAUSE",
             "declared_standoff_m": 1.0
           },
           "far": {
             "target": "/World/T_FAR",
             "reachability": "REACHABLE",
+            "candidate_id": "/World/T_FAR#BLOCKER#+X#b303977ded31507c",
+            "face": "+X",
             "origin": [
               4.3,
               8.0,
               0.3
             ],
-            "max_distance": 2.1,
+            "max_distance": 2.05,
             "generic_hit": true,
             "actual_collider": "/World/T_FAR",
             "distance": 1.5,
             "identity_match": true,
+            "candidate_policy_digest": "b303977ded31507c",
+            "candidate_set_digest": "2e42f9d3853f50ac",
             "verdict": "PASS_CORRECT_CAUSE",
             "declared_standoff_m": 1.5
           },

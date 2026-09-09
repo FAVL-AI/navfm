@@ -1,0 +1,72 @@
+{
+  "check": "PHYSICAL_OWNERSHIP_ENUMERATION_PREREGISTRATION",
+  "artifact_semantics": "PREREGISTRATION_WRITTEN_BEFORE_ENUMERATION",
+  "written_before_execution": true,
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-07T02:23:33.071634+00:00",
+  "git_head": "da697523ba882eff984c13dff92e57e598ef6510",
+  "research_question": "Which authored scene-graph elements correspond to physical objects suitable for pre-query ownership declaration?",
+  "explicitly_not_a_rule": "same parent = same physical owner. BP_DoorEntrance_2651 already disproves it, and this enumeration must not re-derive it.",
+  "scope": {
+    "scene": "Isaac 5.1 Hospital",
+    "sampling": "NONE \u2014 complete traversal of the scene",
+    "prior_coverage_replaced": "40 of 2058 meshes (1.9%)"
+  },
+  "evidence_classes_allowed": [
+    "EXPLICIT_OWNER_METADATA",
+    "SHARED_COLLISION_OWNER",
+    "SHARED_RIGID_BODY",
+    "SHARED_SEMANTIC_OBJECT",
+    "EXPLICIT_SCENE_DECLARATION",
+    "AUTHORING_GROUP_ONLY",
+    "TRANSFORM_PARENT_ONLY",
+    "NAMING_ONLY",
+    "GEOMETRIC_CONTINUITY_ONLY",
+    "CONFLICTING_EVIDENCE",
+    "NO_OWNERSHIP_EVIDENCE"
+  ],
+  "insufficient_alone_for_ownership": [
+    "AUTHORING_GROUP_ONLY",
+    "TRANSFORM_PARENT_ONLY",
+    "NAMING_ONLY"
+  ],
+  "confidence_classes": [
+    "DECLARED",
+    "STRONGLY_SUPPORTED",
+    "WEAKLY_SUPPORTED",
+    "UNSUPPORTED",
+    "CONFLICTED"
+  ],
+  "adoption_standard": "only DECLARED is sufficient for automatic owner adoption; nothing in this preregistration establishes another admissible standard",
+  "heuristics_to_evaluate": [
+    "same_parent",
+    "same_rigid_body",
+    "same_collision_owner",
+    "same_semantic_object",
+    "explicit_declaration",
+    "geometric_adjacency",
+    "naming_prefix_family"
+  ],
+  "selection_rule": "semantic validity, never pass rate. A heuristic is not adopted because it groups more relations, and never because it would make Hospital targetable.",
+  "hypotheses": {
+    "H1": "section granularity",
+    "H2": "declared physical owner",
+    "H3": "same-parent grouping",
+    "H4": "collision-owner grouping",
+    "H5": "semantic-owner grouping"
+  },
+  "declaration_vs_inference": "every proposed owner must be marked as explicitly declared in scene or repository metadata, or as inferred by us. Inference is never silently promoted to declaration.",
+  "counterexample_limitation": "BP_DoorEntrance_2651 is an Office prim. It is characterised from the archived acd53d0 Office audit rather than by running Office, which this tranche does not authorise.",
+  "edit_safety_rule": "every edited Python file passes py_compile/ast.parse and focused lint before any scientific execution. A syntax failure is a development failure, never a scientific result.",
+  "produces": "evidence only \u2014 no manifest, no amendment, no scene scoring",
+  "non_claims": [
+    "Hospital passes",
+    "Hospital is admissible",
+    "wrong_1 resolved",
+    "canonical scene selected",
+    "ownership is decided",
+    "same parent means same owner"
+  ],
+  "hospital_status": "REVIEW_REQUIRED / PENDING",
+  "wrong_1": "UNRESOLVED"
+}

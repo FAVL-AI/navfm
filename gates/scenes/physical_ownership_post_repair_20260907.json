@@ -1,0 +1,89 @@
+{
+  "check": "PHYSICAL_OWNERSHIP_REEVALUATION_POST_IDENTITY_REPAIR",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "created_utc": "2026-09-07T01:25:39.566129+00:00",
+  "git_head": "e85a6c4c2de048a3b5b27a6781d5c918d19ca0d1",
+  "supersedes_nothing": "the pre-repair diagnostic is retained unchanged; it is the record of how IDENTITY-PREFIX-1 was discovered and must not be rewritten",
+  "pre_repair_artifact": {
+    "path": "gates/scenes/physical_ownership_preregistration_20260907.json",
+    "sha256": "0b3d50f04aba27a6d0f638586fee41fb91e3efb0d263b5ef8af4a433d0c74783",
+    "role": "PRE_REPAIR_DIAGNOSTIC_EVIDENCE",
+    "what_it_records": "the ownership hypothesis matrix that exposed IDENTITY-PREFIX-1 via control G"
+  },
+  "identity_repair": {
+    "commit": "e85a6c4c2de048a3b5b27a6781d5c918d19ca0d1",
+    "defect": "IDENTITY-PREFIX-1",
+    "status": "CLOSED",
+    "old_rule": "hit == declared or hit.startswith(declared) or declared.startswith(hit)",
+    "new_rule": "hit == declared or hit.startswith(declared + '/') or declared.startswith(hit + '/')",
+    "probe_adjudication_sha256": "0a2879eb1117e654c69a346cb41a4db82a183173c77bd089f4657cb20e386627",
+    "regression_tests": "tests/test_identity_path_boundary.py (23)",
+    "semantic_delta": {
+      "UNCHANGED_VALID_ACCEPT": 5,
+      "UNCHANGED_VALID_REJECT": 3,
+      "INTENDED_FALSE_ACCEPT_REMOVED": 3,
+      "UNEXPECTED": 0
+    }
+  },
+  "post_repair_matrix": {
+    "A_multisection_wall_targetable": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_ISOLATABLE"
+    },
+    "B_two_distinct_walls_still_compete": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS"
+    },
+    "C_same_parent_distinct_objects_not_merged": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS"
+    },
+    "D_door_components_not_auto_merged": {
+      "H1_section": "TARGET_AMBIGUOUS",
+      "H2_owner": "TARGET_AMBIGUOUS"
+    },
+    "E_component_hit_is_owner_correct": {
+      "H1_section": false,
+      "H2_owner": true
+    },
+    "F_unrelated_sibling_rejected": {
+      "H1_section": false,
+      "H2_owner": false
+    },
+    "G_prefix_collision_false_accept": {
+      "H1_section": false,
+      "H2_owner": false
+    },
+    "H_historical_12x5.9_still_rejected": {
+      "H1_section": false,
+      "H2_owner": false
+    }
+  },
+  "matrix_delta_vs_pre_repair": {
+    "cells_changed": [
+      "G_prefix_collision_false_accept"
+    ],
+    "direction": "true (false accept) -> false (correctly rejected)",
+    "scientific_ownership_conclusions_changed": "NONE",
+    "reading": "the repair removed a false accept and moved nothing else, so the ownership conclusions drawn pre-repair stand on their own"
+  },
+  "ownership_blockers": {
+    "1_identity_prefix_1": "CLOSED \u2014 repaired at e85a6c4 with a passing perturbation proof",
+    "2_no_declared_ownership_source_for_hospital_walls": "OPEN \u2014 nothing in the scene or the repository declares which SectionN meshes constitute one physical wall; hierarchy is not a declaration",
+    "3_generalisation_evidence": "OPEN \u2014 static coverage was 40 of 2058 Hospital meshes (1.9%), and the historical BP_DoorEntrance_2651 grouping is a live counterexample to same-parent ownership"
+  },
+  "decision": "OWNERSHIP_PREREGISTRATION_ONLY_AUTHORISED",
+  "amendment_authorised": false,
+  "why_not_authorised": "two independent evidence gaps remain after the repair. Adopting owner granularity now would rest on hierarchy inference, which the frozen contract already refuses by requiring ownership to be PREREGISTERED.",
+  "hospital_status": "REVIEW_REQUIRED / PENDING \u2014 not rerun, unchanged at f9e5c0b9",
+  "wrong_1": "UNRESOLVED",
+  "canonical_scene": "NOT SELECTED",
+  "non_claims": [
+    "Hospital passes",
+    "Hospital is admissible",
+    "wrong_1 resolved",
+    "canonical scene selected",
+    "same parent means same physical owner",
+    "ownership granularity is decided"
+  ]
+}

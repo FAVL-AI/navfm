@@ -1,0 +1,540 @@
+{
+  "check": "SUPPORT_INVARIANCE_DIAGNOSTIC",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "timestamp_utc": "2026-09-06T00:10:50.771074+00:00",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+  "targets_from": "gates/scenes/hospital_collision_coverage_audit.json",
+  "production_policy_digest": "c6534203825fa13d",
+  "question": "Can raw SUPPORT hit distance vary across correct hits, given an origin defined as the target's own bounds_max_z + start_height?",
+  "claim_boundary": "Concerns the identifiability of one criterion. Establishes nothing about whether Hospital is suitable, and does not change any expectation, verdict or policy.",
+  "experiment_1_geometry": [
+    {
+      "target": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        12.6599998138845,
+        -1.108388710785421,
+        0.500998168945313
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0009981689453130512,
+      "expected_distance_m": 0.49999999999999994,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.9604644719879474e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -2.0900021753460236,
+        7.100853768363608,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -5.588766823783524,
+        7.100853768363608,
+        0.5010009155273439
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010009155273439784,
+      "expected_distance_m": 0.49999999999999994,
+      "observed_distance_m": 0.5,
+      "residual_m": 5.551115123125783e-17,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -9.088771706596024,
+        7.100853768363608,
+        0.5010007629394534
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010007629394533535,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor4/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -12.588730202689774,
+        7.100855294242516,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor5/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -16.08881687261165,
+        7.100855294242516,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor6/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -19.590029030814772,
+        7.100855294242516,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor7/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        -23.089994851127273,
+        7.100855294242516,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.960464477539063e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M2_Floor8/Geo_M2_Floor/Geo_M2_Floor",
+      "identity_match": true
+    }
+  ],
+  "target_top_elevations_m": [
+    0.000998,
+    0.001001
+  ],
+  "targets_share_one_elevation": false,
+  "experiment_2_perturbation": [
+    {
+      "target": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "series": [
+        {
+          "policy_digest": "b0f0471bc0f2b56c",
+          "start_height_m": 0.25,
+          "origin": [
+            12.6599998138845,
+            -1.108388710785421,
+            0.25099816894531307
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0009981689453130512,
+          "expected_distance_m": 0.25,
+          "observed_distance_m": 0.2499999701976776,
+          "residual_m": -2.9802322387695312e-08,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "c6534203825fa13d",
+          "start_height_m": 0.5,
+          "origin": [
+            12.6599998138845,
+            -1.108388710785421,
+            0.500998168945313
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0009981689453130512,
+          "expected_distance_m": 0.49999999999999994,
+          "observed_distance_m": 0.4999999403953552,
+          "residual_m": -5.9604644719879474e-08,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "347f776140cee702",
+          "start_height_m": 0.75,
+          "origin": [
+            12.6599998138845,
+            -1.108388710785421,
+            0.750998168945313
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0009981689453130512,
+          "expected_distance_m": 0.75,
+          "observed_distance_m": 0.75,
+          "residual_m": 0.0,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+          "identity_match": true
+        }
+      ],
+      "distance_tracks_start_height": true,
+      "distinct_observed_distances": 3,
+      "identity_held_throughout": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+      "series": [
+        {
+          "policy_digest": "b0f0471bc0f2b56c",
+          "start_height_m": 0.25,
+          "origin": [
+            -2.0900021753460236,
+            7.100853768363608,
+            0.25100061035156274
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010006103515627284,
+          "expected_distance_m": 0.25,
+          "observed_distance_m": 0.2499999701976776,
+          "residual_m": -2.9802322387695312e-08,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "c6534203825fa13d",
+          "start_height_m": 0.5,
+          "origin": [
+            -2.0900021753460236,
+            7.100853768363608,
+            0.5010006103515627
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010006103515627284,
+          "expected_distance_m": 0.5,
+          "observed_distance_m": 0.4999999403953552,
+          "residual_m": -5.960464477539063e-08,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "347f776140cee702",
+          "start_height_m": 0.75,
+          "origin": [
+            -2.0900021753460236,
+            7.100853768363608,
+            0.7510006103515627
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010006103515627284,
+          "expected_distance_m": 0.75,
+          "observed_distance_m": 0.7499998807907104,
+          "residual_m": -1.1920928955078125e-07,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        }
+      ],
+      "distance_tracks_start_height": true,
+      "distinct_observed_distances": 3,
+      "identity_held_throughout": true
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+      "series": [
+        {
+          "policy_digest": "b0f0471bc0f2b56c",
+          "start_height_m": 0.25,
+          "origin": [
+            -5.588766823783524,
+            7.100853768363608,
+            0.251000915527344
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010009155273439784,
+          "expected_distance_m": 0.25,
+          "observed_distance_m": 0.2499999701976776,
+          "residual_m": -2.9802322387695312e-08,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "c6534203825fa13d",
+          "start_height_m": 0.5,
+          "origin": [
+            -5.588766823783524,
+            7.100853768363608,
+            0.5010009155273439
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010009155273439784,
+          "expected_distance_m": 0.49999999999999994,
+          "observed_distance_m": 0.5,
+          "residual_m": 5.551115123125783e-17,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        },
+        {
+          "policy_digest": "347f776140cee702",
+          "start_height_m": 0.75,
+          "origin": [
+            -5.588766823783524,
+            7.100853768363608,
+            0.7510009155273439
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "max_range": 1.5,
+          "target_bounds_max_z": 0.0010009155273439784,
+          "expected_distance_m": 0.75,
+          "observed_distance_m": 0.75,
+          "residual_m": 0.0,
+          "hit": true,
+          "collider": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+          "identity_match": true
+        }
+      ],
+      "distance_tracks_start_height": true,
+      "distinct_observed_distances": 3,
+      "identity_held_throughout": true
+    }
+  ],
+  "experiment_3_removal": {
+    "status": "NOT_RUN",
+    "target": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+    "before": {
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        12.6599998138845,
+        -1.108388710785421,
+        0.500998168945313
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0009981689453130512,
+      "expected_distance_m": 0.49999999999999994,
+      "observed_distance_m": 0.4999999403953552,
+      "residual_m": -5.9604644719879474e-08,
+      "hit": true,
+      "collider": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "identity_match": true
+    },
+    "reason": "ErrorException: \n\tError in 'pxrInternal_v0_24__pxrReserved__::UsdStage::_ValidateEditPrim' at line 1466 in file /builds/omniverse/usd-ci/USD/pxr/usd/usd/stage.cpp : 'Cannot create prim spec at path </World/Scene/Geo_M3_Floor2/Geo_M3_Floor>; authoring to an instance proxy is not allowed.'",
+    "interpretation": "Hospital's floor prims are USD instance proxies, which cannot be authored on. The causal removal control therefore did NOT execute, and target-specific causality is NOT established by this diagnostic."
+  },
+  "experiment_4_displaced_origin_control": [
+    {
+      "target": "/World/Scene/Geo_M3_Floor2/Geo_M3_Floor",
+      "displacement_m": [
+        50.0,
+        50.0,
+        0.0
+      ],
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        62.6599998138845,
+        48.89161128921458,
+        0.500998168945313
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0009981689453130512,
+      "expected_distance_m": 0.49999999999999994,
+      "observed_distance_m": 0.5010055899620056,
+      "residual_m": 0.0010055899620056707,
+      "hit": true,
+      "collider": "/World/Scene/GroundPlane/CollisionPlane",
+      "identity_match": false
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor2/Geo_M2_Floor/Geo_M2_Floor",
+      "displacement_m": [
+        50.0,
+        50.0,
+        0.0
+      ],
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        47.90999782465398,
+        57.100853768363606,
+        0.5010006103515627
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010006103515627284,
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.5010063052177429,
+      "residual_m": 0.00100630521774292,
+      "hit": true,
+      "collider": "/World/Scene/GroundPlane/CollisionPlane",
+      "identity_match": false
+    },
+    {
+      "target": "/World/Scene/Geo_M2_Floor3/Geo_M2_Floor/Geo_M2_Floor",
+      "displacement_m": [
+        50.0,
+        50.0,
+        0.0
+      ],
+      "policy_digest": "c6534203825fa13d",
+      "start_height_m": 0.5,
+      "origin": [
+        44.41123317621648,
+        57.100853768363606,
+        0.5010009155273439
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "max_range": 1.5,
+      "target_bounds_max_z": 0.0010009155273439784,
+      "expected_distance_m": 0.49999999999999994,
+      "observed_distance_m": 0.5010062456130981,
+      "residual_m": 0.0010062456130982,
+      "hit": true,
+      "collider": "/World/Scene/GroundPlane/CollisionPlane",
+      "identity_match": false
+    }
+  ],
+  "identity_check_can_fail": true
+}
