@@ -65,6 +65,13 @@ from .robot import M3PRO, RobotConfig, SimRobot
 
 __all__ = ["CollectConfig", "Collector", "EpisodeResult"]
 
+#: Cell values the Isaac occupancy generator is asked to write. UNKNOWN is a
+#: third state and must never be folded into either of the other two: a cell the
+#: generator could not classify is not a cell it found empty.
+OCCUPIED = 4
+UNOCCUPIED = 5
+UNKNOWN = 6
+
 
 @dataclasses.dataclass
 class CollectConfig:
@@ -225,7 +232,8 @@ class Collector:
                 gen = _omap.Generator(get_physx_interface(), stage_id)
             except TypeError:
                 gen = _omap.Generator(stage_id)
-            gen.update_settings(res, 4, 5, 6)  # cell size, occupied, unoccupied, unknown
+            # Values the generator writes: OCCUPIED, UNOCCUPIED, UNKNOWN.
+            gen.update_settings(res, OCCUPIED, UNOCCUPIED, UNKNOWN)
             bounds = bounds if bounds is not None else self._stage_bounds()
             gen.set_transform(
                 (0.0, 0.0, 0.0),
@@ -235,7 +243,22 @@ class Collector:
             gen.generate2d()
             dims = gen.get_dimensions()
             buf = np.asarray(gen.get_buffer()).reshape(dims[1], dims[0])
-            grid = buf == 4
+            # Blocked is "not explicitly unoccupied", NOT "explicitly occupied".
+            #
+            # The earlier rule was `buf == OCCUPIED`, which made every UNKNOWN cell
+            # free space. On Hospital that is 174,376 of 322,560 cells -- 54% of the
+            # map -- and after inflation it inflated the planner's free space from
+            # 91,650 cells to 242,106, so 62% of everywhere the planner believed it
+            # could drive was somewhere the generator had declined to classify.
+            # Measured, not estimated: gates/failures/F-G5-1.md.
+            #
+            # A transect through a Hospital wall shows the shape of it: the interior
+            # of the wall is UNKNOWN, only a two-cell surface sliver is OCCUPIED, and
+            # the planner drove through the middle. This is the FL-019 genus at map
+            # scale -- an absence of knowledge consumed as a benign value -- and the
+            # direction of the error is the dangerous one, because a missing obstacle
+            # invents free space exactly where the robot would collide.
+            grid = buf != UNOCCUPIED
             return OccupancyGrid(grid, res, origin=(bounds[0][0], bounds[0][1]))
         except Exception as exc:
             raise RuntimeError(

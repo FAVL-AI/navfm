@@ -86,5 +86,22 @@
     "No physical-hardware claim.",
     "e2_eligible = false.",
     "Office data, if ever collected, is a pipeline and loader proof and is never relabelled as Hospital data."
-  ]
+  ],
+  "PARTIAL_RETRACTION_20260909": {
+    "what_is_retracted": "the causal attribution in the_cross_scene_finding, not the measurements",
+    "measurements_stand": {
+      "hospital": "96 evaluated, 0 admissible, 73/96 zero-turn, 89/96 fail G10 turns, 7/96 fail G5",
+      "office": "96 evaluated, 0 admissible, 84/96 zero-turn, 96/96 fail G10 turns",
+      "why_they_stand": "these record what the pipeline produced, and it did produce them"
+    },
+    "claim_downgraded": {
+      "was": "the binding constraint is the route generator: smooth_path string-pulls routes straight wherever line of sight permits",
+      "now": "under a map that decoded 62% of its free space from unclassified cells, the generator produced predominantly straight routes. How much of that survives a corrected map is UNMEASURED.",
+      "reason": "F-G5-1 resolved: build_occupancy decoded grid = (buf == OCCUPIED), so all 174,376 UNKNOWN cells (54% of Hospital's map) became free space. After inflation the planner's free space was 242,106 cells instead of 91,650. With 75% of the grid decoded as free, most of the scene looked like open space, and a shortest-path planner in open space produces straight lines whatever its smoothing does. String-pulling is real but is not established as the dominant cause."
+    },
+    "hospital_g5_leg_strengthened": "the 7 G5 failures are genuine -- those routes run into geometry that the map did not represent. NO_ADMISSIBLE_ROUTE is unaffected and its weaker leg is now its stronger one.",
+    "consequence_for_the_next_experiment": "a turning-route population must not be designed against a cause that is not established. The corrected-map behaviour of the existing generator must be measured first.",
+    "repair": "grid = buf != UNOCCUPIED; tests/test_occupancy_decode.py",
+    "residual_open_defect": "gates/failures/F-G5-2.md -- cells explicitly marked UNOCCUPIED still carry solid geometry"
+  }
 }
