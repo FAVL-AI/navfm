@@ -1,0 +1,120 @@
+{
+  "check": "ISAAC_LAB_NAVFM_STATUS",
+  "artifact_semantics": "DECISION_RECORD_NOT_AN_INSTALLATION",
+  "author": "Frank Asante Van Laarhoven",
+  "recorded_at": "2026-09-09T00:00:00+00:00",
+
+  "ISAAC_LAB_NAVFM": {
+    "VERSION_SELECTED": "v2.3.2",
+    "INSTALLATION": "BLOCKED_ON_DISK_RECOVERY",
+    "ENVIRONMENT": "NOT CREATED",
+    "IMPORTED_BY_NAVFM": "NO",
+    "BO10_DEPENDENCY": "NO",
+    "FUTURE_PURPOSE": [
+      "targeted episode generation",
+      "curriculum and domain randomisation",
+      "parallel evaluation",
+      "policy training"
+    ]
+  },
+
+  "version_selection": {
+    "selected": "v2.3.2",
+    "commit": "37ddf626871758333d6ed89cf64ad702aef127d0",
+    "tag_date": "2026-01-29",
+    "why": "terminal patch of the 2.3 line; its own installation docs pin isaacsim[all,extscache]==5.1.0",
+    "rejected": {
+      "v2.3.0": "superseded by v2.3.1 and v2.3.2 within the same line",
+      "v3.0.0-beta2.patch1": "targets the Isaac Sim 6.0 line; the standing instructions forbid a 6.x move without a dedicated compatibility and revalidation tranche",
+      "main": "untagged and moving; the current editable install already tracks it, which is the condition this plan exists to end"
+    },
+    "verified_from": "the v2.3.2 tag's own docs/source/setup/installation/*.rst, not the develop documentation"
+  },
+
+  "existing_installation_left_untouched": {
+    "decision": "DO NOT TOUCH",
+    "what_exists": {
+      "environment": "~/miniforge3/envs/isaac",
+      "clone": "/home/favl/ai-lab/IsaacLab",
+      "branch": "main",
+      "commit": "3e73d6dd79080fd7632488c061052a6edd52e230",
+      "tag": null,
+      "worktree_dirty": false,
+      "install_mode": "editable",
+      "packages": {"isaaclab": "0.54.3", "isaaclab_tasks": "0.11.16",
+                   "isaaclab_rl": "0.5.1", "isaaclab_assets": "0.2.4"},
+      "isaacsim": "5.1.0.0"
+    },
+    "risk_accepted_for_now": "an editable install tracking main can change the environment without anything in this repository changing. Accepted because navfm imports nothing from Isaac Lab; it stops being acceptable the day a navfm module does.",
+    "detection": "navfm.simenv records the Isaac Lab version, clone commit, tag and worktree cleanliness in every harness provenance block, so a change becomes visible in the artefact rather than invisible."
+  },
+
+  "planned_isolation": {
+    "method": "git worktree, not a second clone",
+    "correction_to_the_plan_as_written": {
+      "issue": "the plan's commands begin `cd ~/projects/IsaacLab`; no such directory exists",
+      "actual_clone_path": "/home/favl/ai-lab/IsaacLab",
+      "git_fetch_not_required": "v2.3.0, v2.3.1 and v2.3.2 are already present locally; 32 tags fetched"
+    },
+    "caveat_on_do_not_touch": "`git worktree add` writes metadata into the existing clone's .git directory and registers the new worktree. It does not change that clone's HEAD, branch or working files, and it does not alter the installed editable packages, which resolve to source/ paths in the original checkout. This is a departure from a literal reading of 'do not touch' and is recorded rather than glossed.",
+    "alternative_if_that_is_unacceptable": "a fresh `git clone --branch v2.3.2 --depth 1` into a separate directory, which touches nothing at all and costs roughly 270 MB more"
+  },
+
+  "blocking_condition": {
+    "blocker": "root filesystem within hours of full",
+    "measured": {
+      "free_gb": 11.4,
+      "runaway_log_gb": 332,
+      "growth_gb_per_hour": 7.6,
+      "hours_to_full": 1.5,
+      "producer_pid": 2992556,
+      "producer_cpu_percent": 97.4,
+      "producer_uptime": "2 days 13 hours",
+      "observed_rate": "20,000 identical log lines in 2 seconds"
+    },
+    "required_before_installation": [
+      "close the producing desktop application normally",
+      "verify the log has stopped growing",
+      "truncate and restart rsyslog",
+      "confirm the 50 GB safety floor"
+    ],
+    "estimated_install_footprint_gb": "30-35",
+    "rationale": "a full filesystem can corrupt environments, leave partial package installs, and damage evidence artefacts. Installation while within hours of full is not attempted."
+  },
+
+  "hardware_caveat": {
+    "host_ram_gb": 31,
+    "stated_baseline_ram_gb": 32,
+    "host_vram_mib": 16376,
+    "stated_baseline_vram_gb": 16,
+    "claim_boundary": "the host does NOT meet the recommended specification and this must not be claimed. Being under a documented baseline is a reason to benchmark conservatively; it is not evidence that Isaac Lab will fail to run.",
+    "scaling_protocol": {
+      "num_envs_sequence": [1, 2, 4, 8],
+      "advance_only_on": "measured headroom",
+      "record_per_step": ["nvidia-smi", "free -h", "peak host RAM", "peak GPU memory"],
+      "expectation": "state-only environments are expected to scale far better than camera-based ones, because vectorising also vectorises render products, camera buffers and model inputs. A low camera-environment ceiling is an acceptable outcome."
+    },
+    "preferred_architecture": "large-scale cheap state/geometry generation, then a smaller RGB rendering subset for GNM/ViNT/NoMaD images, rather than continuous full-resolution RGB in every parallel environment"
+  },
+
+  "relationship_to_bo10": {
+    "bo10_stays_on": "Isaac Sim 5.1 + src/navfm/isaac/collect.py + G2-G10",
+    "isaac_lab_is": "parallel infrastructure development, not a prerequisite",
+    "must_not": "BO-10 is not moved onto Isaac Lab until the official-loader compatibility deliverable is closed",
+    "motivating_problem": "the straight-route finding -- 84/96 Office and 73/96 Hospital candidates have zero qualifying turns because a shortest-path planner string-pulls routes straight. An episode-distribution task generator is a cleaner home for turn and junction requirements than further extending the collector.",
+    "still_required_first": "a NEW preregistered turning-route experiment, whose generator, budget, seed and eligibility rules are declared before any candidate is evaluated. Isaac Lab is a possible implementation of that generator, not a substitute for preregistering it."
+  },
+
+  "environment_lock_to_record_before_navfm_depends_on_it": [
+    "ISAAC_LAB_RELEASE", "ISAAC_LAB_COMMIT", "ISAAC_SIM_VERSION", "PYTHON_VERSION",
+    "TORCH_VERSION", "NVIDIA_DRIVER", "GPU", "GPU_VRAM", "HOST_RAM"
+  ],
+  "lock_recorder": "python -m navfm.simenv --isaac-lab-clone <path> --out <artefact>",
+
+  "non_claims": [
+    "No Isaac Lab installation was performed.",
+    "No existing environment, clone or checkout was modified.",
+    "No process was terminated.",
+    "No BO-10 result depends on Isaac Lab."
+  ]
+}
