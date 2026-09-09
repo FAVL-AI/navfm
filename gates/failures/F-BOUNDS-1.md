@@ -73,22 +73,65 @@ scene is big" rather than as "this bound is wrong".
   refute — and both diagnoses were wrong. The caches were bounded anyway on their
   own merits, and that change is not claimed to have fixed this.
 
-## Candidate rule, not yet validated
+## Two candidate rules, both refuted by measurement
 
-The occupancy map only needs to cover where the robot can be, and the robot must
-be on collidable ground. Bounding by collidable geometry would exclude a
-non-collidable backdrop generally rather than by name.
+Recorded because each looked correct and each is wrong, and a later reader
+reaching for either should find the measurement rather than repeat it.
 
-That rule is **not yet demonstrated**. A first attempt enumerated
-`UsdPhysics.CollisionAPI` over `stage.Traverse()` and found **zero** collider
-prims in Office, while the Hospital route pass demonstrably raycast against
-prims such as `/World/Scene/Geo_W_TrimStrateBase5/...`. These environments are
-heavily instanced and plain traversal does not descend into instance proxies, so
-the enumeration was wrong rather than the scene being collider-free. Any
-implementation must traverse with `Usd.TraverseInstanceProxies()` and must be
-validated against a scene whose answer is already known — Hospital, where the
-current bounds are known to be reasonable and a correct rule must reproduce
-them.
+### Refuted: bound by collidable geometry
+
+The robot must stand on something, so bounding by colliders should exclude a
+non-collidable backdrop. Enumerated with `Usd.TraverseInstanceProxies()` — plain
+`stage.Traverse()` finds zero colliders in these instanced scenes, which was the
+first attempt's error:
+
+| | colliders | collider bounds | stage bounds |
+|---|---|---|---|
+| Hospital | 2,160 | 766 × 418 cells | 766 × 420 cells |
+| Office | 3,645 | **identical to stage bounds** | 10635 × 6771 cells |
+
+It reproduces Hospital exactly, and does nothing at all for Office: the skyline
+buildings **carry colliders**. Refuted.
+
+### Refuted: bound by where the robot can stand
+
+The support test G3 and G4 already use — raycast down, accept a hit within
+`SUPPORT_FLOOR_TOL_M` of `floor_z` — applied as a 1 m coarse scan. Cheap, at
+353,000 rays/second: 2.2 s for Office's 723,135 cells.
+
+| | coarse cells | cells reporting ground | ground extent |
+|---|---|---|---|
+| Hospital | 3,354 | **3,354 (100%)** | 77 × 42 m |
+| Office | 723,135 | **723,135 (100%)** | **1064 × 678 m** |
+
+Every cell in Office reports ground at `floor_z = 0`. The city backdrop is not
+floating scenery; it stands on a ground plane spanning the entire stage. So by
+pure geometry the robot could stand almost anywhere, and the support criterion —
+correct as a gate — does not bound a collection region. Refuted.
+
+### What the refutations establish
+
+**Office has no intrinsic geometric boundary.** It is not an enclosed interior
+with a bounded floor; it is an office placed on a large ground plane in a city.
+Any bounded collection region for such a scene must be **declared**, and the
+declaration must be principled and frozen before candidates are enumerated.
+
+### Surviving candidate: a window justified by the frozen route length
+
+`CollectConfig.max_path_m = 40.0` is already frozen. Euclidean displacement
+cannot exceed path length, so every point of every admissible route lies within
+40 m of its start. A square window of half-width `max_path_m` plus a footprint
+margin, centred on a declared region centre, therefore cannot exclude any route
+the contract would admit — and at 0.10 m it is roughly 820 × 820 = 672,400
+cells, about twice Hospital's and entirely tractable.
+
+The one declared input is the region centre, which must be stated and justified
+before any Office candidate is enumerated, and recorded in provenance.
+
+**This must be opt-in, and Hospital's default must not change.** A window applied
+to Hospital would produce a different grid from the 420 × 768 that produced the
+frozen result, and a different grid means different sampling. Hospital's result
+is frozen; it is not re-derived under a new bounds rule.
 
 ## Effect on results
 
