@@ -121,11 +121,21 @@ class SimRobot:
         *,
         prim_path: str = "/World/Robot",
         camera_prim: str = "Camera_front",
+        camera_parent_link: str = "base_link",
     ) -> None:
         self.app = app
         self.config = config
         self.prim_path = prim_path
-        self.camera_path = f"{prim_path}/{camera_prim}"
+        # The camera hangs off the articulation's base LINK, not off the robot
+        # root. The root is a plain xform that the reference was added under and
+        # that physics never touches; the links beneath it are what move. A
+        # camera parented to the root therefore stays where it was authored while
+        # the robot drives away -- world-fixed in effect, whatever it is called.
+        # G7 measured exactly that on 2026-09-09: the robot moved 2.236 m and the
+        # camera moved 0.000 m, and every frame the collector wrote would have
+        # been from a static viewpoint that never turned with the base.
+        self.camera_parent_path = f"{prim_path}/{camera_parent_link}"
+        self.camera_path = f"{self.camera_parent_path}/{camera_prim}"
         self._articulation: Any = None
         self._camera: Any = None
         self._is_v6 = False

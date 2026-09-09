@@ -173,11 +173,27 @@ def main() -> int:
             xcache.Clear()
 
         def relative(cam: str, base: str) -> Any:
+            """Camera-to-base offset expressed in the BASE frame.
+
+            The world-frame difference was the first implementation and it is
+            wrong for this check. A rigidly mounted camera's world-frame offset
+            rotates with the robot, so yawing the base registers as drift: with
+            the production extrinsics (0.16, 0, 0.28) and a 40 degree yaw the
+            world delta changes by 0.1095 m, and the harness measured 0.10943 m
+            and called a correctly mounted camera detached. The fixed extrinsic
+            the gate is testing for is constant in the base frame, not the world
+            frame, so the delta is rotated back through the robot's yaw.
+            """
             pc, mc = pose_of(cam) or (None, None)
             pb, mb = pose_of(base) or (None, None)
             if pc is None or pb is None:
                 return None
-            return np.array(mc.ExtractTranslation()) - np.array(mb.ExtractTranslation())
+            delta = np.array(mc.ExtractTranslation()) - np.array(mb.ExtractTranslation())
+            _pos, yaw = robot.pose()
+            c, sn = math.cos(-yaw), math.sin(-yaw)
+            return np.array([c * delta[0] - sn * delta[1],
+                             sn * delta[0] + c * delta[1],
+                             delta[2]], dtype=float)
 
         def optical_axis(path: str) -> Any:
             """USD cameras look down local -Z. Return that axis in world space."""
