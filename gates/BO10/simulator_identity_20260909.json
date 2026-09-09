@@ -1,0 +1,29 @@
+{
+  "isaac_sim_version": "5.1.0.0",
+  "isaac_sim_matches_expected": true,
+  "expected_isaac_sim_version": "5.1.0",
+  "isaac_lab": {
+    "isaac_lab_version": "0.54.3",
+    "installed": true,
+    "clone_path": "/home/favl/ai-lab/IsaacLab",
+    "isaac_lab_commit": "3e73d6dd79080fd7632488c061052a6edd52e230",
+    "isaac_lab_tag": null,
+    "clone_worktree_dirty": false
+  },
+  "python_version": "3.11.15",
+  "torch_version": "2.7.0+cu128",
+  "cuda_runtime": "12.8",
+  "gpu": {
+    "driver_reachable": true,
+    "gpus": [
+      {
+        "name": "NVIDIA GeForce RTX 4080 SUPER",
+        "driver_version": "580.173.02",
+        "memory_total": "16376 MiB"
+      }
+    ]
+  },
+  "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "conda_env": "base",
+  "isaac_sim_present": true
+}

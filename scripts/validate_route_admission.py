@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import math
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -86,10 +87,27 @@ def _provenance(scene: str, robot: str) -> dict[str, Any]:
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
     import platform
+
+    # Simulator identity is REQUIRED for an Isaac-dependent result: a trajectory
+    # from 5.1.0 and one from 6.0 are not interchangeable evidence. An earlier
+    # version of this harness recorded the interpreter but not the simulator
+    # version, which the older Hospital harness did record -- a regression, and
+    # the kind that only shows up when someone tries to reproduce a result.
+    from navfm.simenv import simulator_identity
+
+    sim = simulator_identity(isaac_lab_clone=os.environ.get("NAVFM_ISAAC_LAB_CLONE"))
     return {
         "hostname": platform.node(),
         "interpreter": sys.executable,
         "python": platform.python_version(),
+        "isaac_sim_version": sim.isaac_sim_version,
+        "isaac_sim_matches_expected": sim.isaac_sim_matches_expected,
+        "torch": sim.torch_version,
+        "cuda_runtime": sim.cuda_runtime,
+        "gpu": sim.gpu,
+        # Recorded even though navfm imports nothing from it: it shares the
+        # environment, so it is part of the instrument's identity.
+        "isaac_lab": sim.isaac_lab,
         "git_head": sh("git", "rev-parse", "HEAD"),
         "git_branch": sh("git", "rev-parse", "--abbrev-ref", "HEAD"),
         "worktree_dirty": bool(sh("git", "status", "--porcelain")),
