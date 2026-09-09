@@ -59,6 +59,15 @@ CLEARANCE_MAX_RANGE_M = 2.0
 #: collapse onto one cache entry.
 CACHE_QUANT_M = 0.005
 
+#: Cache entries are dropped between candidates. The overlap memoisation exists
+#: to exploit is WITHIN a route -- consecutive swept configurations re-probe the
+#: same ground tens of times -- and it does not carry between candidates whose
+#: routes are elsewhere in the scene. Keeping every entry for the whole search
+#: made the caches grow without bound: the first Office run reached 7 GB RSS at
+#: three minutes and the machine began shedding processes. A bounded cache keeps
+#: the speedup and drops the growth.
+CACHE_MAX_ENTRIES = 400_000
+
 
 def _provenance(scene: str, robot: str) -> dict[str, Any]:
     import hashlib
@@ -89,6 +98,23 @@ def _provenance(scene: str, robot: str) -> dict[str, Any]:
         "robot_asset": robot,
         "robot_asset_sha256": sha(robot),
     }
+
+
+#: Fields whose per-configuration lists would make the artefact enormous without
+#: adding evidence: the first failure and the counts are what a reader needs, and
+#: both are kept.
+_BULK_DETAIL_FIELDS = ("unsupported_configurations", "violations", "unsupported_samples")
+
+
+def _trim(gate: dict[str, Any]) -> dict[str, Any]:
+    """Drop bulk per-configuration lists, keeping first-failure and counts."""
+    detail = dict(gate.get("detail") or {})
+    for field in _BULK_DETAIL_FIELDS:
+        if isinstance(detail.get(field), list) and len(detail[field]) > 1:
+            detail[field] = detail[field][:1]
+            detail[f"{field}_truncated_to"] = 1
+    gate["detail"] = detail
+    return gate
 
 
 def main() -> int:
@@ -201,11 +227,16 @@ def main() -> int:
                 self.cache: dict[tuple[int, int], SupportSample] = {}
                 self.queries = 0
 
+            def reset(self) -> None:
+                self.cache.clear()
+
             def sample(self, x: float, y: float) -> SupportSample:
                 key = (int(round(x / CACHE_QUANT_M)), int(round(y / CACHE_QUANT_M)))
                 hit = self.cache.get(key)
                 if hit is not None:
                     return hit
+                if len(self.cache) >= CACHE_MAX_ENTRIES:
+                    self.cache.clear()
                 self.queries += 1
                 origin = [x, y, floor_z + SUPPORT_PROBE_HEIGHT_M]
                 res = q.raycast_closest(origin, [0.0, 0.0, -1.0], SUPPORT_MAX_RANGE_M)
@@ -229,11 +260,16 @@ def main() -> int:
                 self.cache: dict[tuple[int, int], ClearanceSample] = {}
                 self.queries = 0
 
+            def reset(self) -> None:
+                self.cache.clear()
+
             def sample(self, x: float, y: float) -> ClearanceSample:
                 key = (int(round(x / CACHE_QUANT_M)), int(round(y / CACHE_QUANT_M)))
                 hit = self.cache.get(key)
                 if hit is not None:
                     return hit
+                if len(self.cache) >= CACHE_MAX_ENTRIES:
+                    self.cache.clear()
                 self.queries += 1
                 best = CLEARANCE_MAX_RANGE_M
                 best_h: float | None = None
@@ -266,6 +302,8 @@ def main() -> int:
 
         for i in range(args.budget):
             cand: dict[str, Any] = {"route_id": f"{args.scene_id}_route_{i:03d}"}
+            support.reset()
+            clearance.reset()
             try:
                 start, yaw, goal, path = sample_episode_pair(
                     inflated, rng,
@@ -290,7 +328,7 @@ def main() -> int:
             adm.record(g10)
             if g10.status is not GateStatus.PASS:
                 cand.update({"rejected": True, "rejection_reason": f"G10: {g10.reason}",
-                             "gates": {g.gate: g.to_dict() for g in [g10]}})
+                             "gates": {g10.gate: _trim(g10.to_dict())}})
                 candidates.append(cand)
                 continue
 
@@ -316,7 +354,7 @@ def main() -> int:
                     adm.record(g5)
                     gates.append(g5)
 
-            cand["gates"] = {g.gate: g.to_dict() for g in gates}
+            cand["gates"] = {g.gate: _trim(g.to_dict()) for g in gates}
             failed = [g.gate for g in gates if not g.admits]
             evaluated = {g.gate for g in gates}
             required = {"G10_LONG_HORIZON", "G3_START_SUPPORT", "G6_END_SUPPORT",
