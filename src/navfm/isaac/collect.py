@@ -48,6 +48,12 @@ from typing import Any
 import numpy as np
 import yaml
 
+from ..collection.scope import (
+    BO10_SCOPE_DECLARATION,
+    CollectionScope,
+    ScopeDeclarationError,
+    authorise_g2_acknowledgement,
+)
 from ..control import DemonstratorMode, PurePursuit
 from ..kinematics import arc_length
 from ..planning import OccupancyGrid, PlannerError, perturb_path, sample_episode_pair
@@ -117,8 +123,14 @@ class Collector:
         sim: SimConfig,
         robot_config: RobotConfig = M3PRO,
         randomization: RandomizationConfig | None = None,
+        scope: CollectionScope | None = None,
     ) -> None:
         self.out_dir = Path(out_dir)
+        #: What this collection is for, and whether it may enter the E2
+        #: population. Stamped into every episode's metadata and into the
+        #: manifest, so a trajectory carries its own scope rather than relying on
+        #: the directory it happens to sit in.
+        self.scope = scope
         self.collect = collect
         self.sim = sim
         self.robot_config = robot_config
@@ -262,6 +274,8 @@ class Collector:
             "randomization": randomization_draw,
             "planned_path_length_m": arc_length(path),
         }
+        if self.scope is not None:
+            metadata.update(self.scope.to_manifest_fields())
 
         writer = TrajectoryWriter(self.out_dir / name, metadata=metadata)
         writer.open()
@@ -385,6 +399,11 @@ class Collector:
             "robot": self.robot_config.to_dict(),
             "episodes": [dataclasses.asdict(r) for r in self.results],
         }
+        if self.scope is not None:
+            # Written at the top level, where an E2 consumer reads it. A manifest
+            # with no scope block is REFUSED by navfm.collection.scope rather
+            # than admitted, so this is not an optional annotation.
+            manifest.update(self.scope.to_manifest_fields())
         (self.out_dir / "collection_manifest.json").write_text(json.dumps(manifest, indent=2))
 
 
@@ -409,12 +428,32 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help=argparse.SUPPRESS,  # deliberately undocumented: see the refusal text
     )
+    p.add_argument(
+        "--scope-declaration",
+        default=None,
+        help="path to the frozen BO-10 scope declaration; REQUIRED with "
+             "--acknowledge-g2-block, which is authorised only when bound to it",
+    )
     args = p.parse_args(argv)
 
     # G2 mechanical block. Runs before Isaac Sim is opened and before a single
     # frame is written, because a deferral that can be stepped over once the
     # collector is warm is not a deferral.
-    if not args.acknowledge_g2_block:
+    scope: CollectionScope | None = None
+    if args.acknowledge_g2_block:
+        # The acknowledgement is not a flag, it is a flag bound to a frozen
+        # declaration. Passing it alone would be a bypass with a comment
+        # attached, so the declaration is required and its digest must match.
+        declaration = args.scope_declaration or (
+            Path(__file__).resolve().parents[3] / BO10_SCOPE_DECLARATION)
+        try:
+            scope = authorise_g2_acknowledgement(declaration)
+        except ScopeDeclarationError as exc:
+            print(f"--acknowledge-g2-block refused: {exc}", file=sys.stderr)
+            return 4
+        print(f"G2 acknowledged under {scope.purpose.value}; "
+              f"e2_eligible={scope.e2_eligible}", flush=True)
+    else:
         import importlib.util
 
         spec = importlib.util.spec_from_file_location(
@@ -444,7 +483,7 @@ def main(argv: list[str] | None = None) -> int:
     robot = dataclasses.replace(M3PRO, usd_path=args.robot_usd or M3PRO.usd_path)
     rand = RandomizationConfig(enabled=not args.no_randomization, seed=cfg.seed)
 
-    collector = Collector(args.out, cfg, sim, robot, rand)
+    collector = Collector(args.out, cfg, sim, robot, rand, scope=scope)
     if args.occupancy_npz:
         collector.load_occupancy(args.occupancy_npz)
     results = collector.run(scenes, cfg.episodes)
