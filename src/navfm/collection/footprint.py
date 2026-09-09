@@ -273,28 +273,60 @@ def _wrap(angle: float) -> float:
     return math.atan2(math.sin(angle), math.cos(angle))
 
 
-def heading_changes(path: np.ndarray, threshold_deg: float) -> tuple[int, list[float]]:
+def heading_changes(
+    path: np.ndarray,
+    threshold_deg: float,
+    *,
+    decimation_m: float = 0.5,
+    straight_deg: float = 1.0,
+) -> tuple[int, list[float]]:
     """Count direction changes exceeding a threshold, on a decimated path.
 
     Decimation matters: consecutive samples of a smoothed path are nearly
     collinear, so per-sample angles measure planner noise rather than route
-    structure. Turns accumulate until they exceed the threshold, so one sweeping
-    corner counts once rather than as many small deltas.
+    structure.
+
+    **Turns are grouped into episodes rather than emitted on first crossing.**
+    The earlier rule accumulated and emitted the moment the running total passed
+    the threshold, then reset. That made the count depend on where the
+    decimation grid happened to fall: a single 90 degree corner reads as one
+    turn when a sample lands on it, and as two 45 degree turns when the corner
+    falls between samples, because interpolation replaces the corner with a
+    chord. Measured across leg lengths, the same physical corner counted 1, 2,
+    2, 1, 2, 1 -- an arbitrary alignment, not a property of the route.
+
+    So a turn is a maximal run of same-signed heading deltas, uninterrupted by a
+    straight segment, and it counts once if its total exceeds the threshold. A
+    corner split across two chords merges back into one turn; two corners
+    separated by a straight leg stay separate; and a sequence of corners in the
+    same direction is separated by the straight legs between them.
+
+    The change is strictly conservative -- grouping can only merge counts, never
+    create them -- so it cannot convert a route that failed a minimum-turn
+    requirement into one that passes.
     """
-    pts, _ = resample_route(np.asarray(path, dtype=float), 0.5)
+    pts, _ = resample_route(np.asarray(path, dtype=float), decimation_m)
     if pts.shape[0] < 3:
         return 0, []
     d = np.diff(pts, axis=0)
     ang = np.arctan2(d[:, 1], d[:, 0])
+    deltas = [math.degrees(_wrap(float(ang[k]) - float(ang[k - 1]))) for k in range(1, len(ang))]
+
     turns: list[float] = []
     acc = 0.0
-    for k in range(1, len(ang)):
-        delta = math.degrees(_wrap(float(ang[k]) - float(ang[k - 1])))
-        if acc != 0.0 and (delta > 0) != (acc > 0):
-            acc = delta  # direction reversed: start a fresh turn
-        else:
-            acc += delta
+
+    def close() -> None:
+        nonlocal acc
         if abs(acc) >= threshold_deg:
             turns.append(round(acc, 4))
-            acc = 0.0
+        acc = 0.0
+
+    for delta in deltas:
+        if abs(delta) < straight_deg:
+            close()          # a straight segment ends whatever turn was running
+            continue
+        if acc != 0.0 and (delta > 0) != (acc > 0):
+            close()          # direction reversed: a new turn starts here
+        acc += delta
+    close()
     return len(turns), turns

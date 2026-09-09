@@ -155,6 +155,32 @@ class TestHeadingChanges:
         n, turns = heading_changes(three_legs, 30.0)
         assert n == 2, f"expected two corners, got {n}: {turns}"
 
+    def test_the_count_does_not_depend_on_decimation_alignment(self) -> None:
+        """The defect this counter was rebuilt to remove.
+
+        One physical right-angle corner, with the leg length swept across the
+        0.5 m decimation grid. The earlier accumulate-and-emit rule returned
+        1, 2, 2, 1, 2, 1 for these six -- the corner reads as two 45 degree
+        turns whenever interpolation replaces it with a chord. A count that
+        depends on where the grid falls is not measuring route structure.
+        """
+        counts = {
+            heading_changes(np.array([[0.0, 0.0], [leg, 0.0], [leg, leg]]), 30.0)[0]
+            for leg in (5.0, 5.1, 5.25, 5.4, 6.73, 7.0)
+        }
+        assert counts == {1}, f"one corner must count once at every alignment, got {counts}"
+
+    def test_consecutive_corners_in_the_same_direction_stay_separate(self) -> None:
+        """Grouping must not merge distinct corners separated by straight legs."""
+        spiral = np.array([[0.0, 0.0], [6.0, 0.0], [6.0, 6.0], [0.0, 6.0], [0.0, 0.6]])
+        n, _ = heading_changes(spiral, 30.0)
+        assert n == 3
+
+    def test_grouping_is_conservative(self) -> None:
+        """It can only merge counts, so it cannot rescue a failing minimum-turn route."""
+        straightish = np.array([[0.0, 0.0], [10.0, 0.0], [20.0, 0.0]])
+        assert heading_changes(straightish, 30.0)[0] == 0
+
     def test_a_turn_below_the_threshold_does_not_count(self) -> None:
         """Negative control for the threshold: a 20 deg bend must not register at 30 deg."""
         far = 10.0
