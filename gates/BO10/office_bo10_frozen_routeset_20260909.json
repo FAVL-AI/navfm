@@ -1,0 +1,90 @@
+{
+  "check": "OFFICE_BO10_FROZEN_ROUTESET",
+  "artifact_semantics": "FROZEN_EXPERIMENTAL_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-09T00:00:00+00:00",
+  "git_head_at_freeze": "340d1b289bc708e0f77a671d2f9fd828fb88086c",
+  "source_artefact": "gates/BO10/office_route_admission_20260909.json",
+  "source_artefact_sha256": "cb2ad42e2c1366f3d9e60b683877136d0de4a84beef3b8c1e141af66a5fc87b2",
+  "region_declaration": "gates/BO10/office_collection_region_declaration_20260909.json",
+  "OFFICE_BO10_FROZEN_ROUTESET": "NO_ADMISSIBLE_ROUTE",
+  "search_closure": {
+    "method": "navfm.planning.sample_episode_pair under a declared seed",
+    "seed": 0,
+    "budget": 96,
+    "expected_count": 96,
+    "evaluated_count": 96,
+    "expected_equals_evaluated": true,
+    "planner_failures": 0,
+    "hand_picked": false,
+    "identical_to_the_hospital_search": true,
+    "occupancy_bounds_source": "declared region, frozen before enumeration",
+    "occupancy_grid_shape": [
+      806,
+      805
+    ]
+  },
+  "result": {
+    "candidates_evaluated": 96,
+    "candidates_passing": 0,
+    "rejection_distribution": {
+      "G10_HEADING_CHANGES": 96
+    },
+    "every_candidate_failed_on_heading_changes_alone": true,
+    "heading_change_distribution": {
+      "0": 84,
+      "1": 10,
+      "2": 2,
+      ">=3": 0
+    },
+    "all_other_thresholds_passed": {
+      "note": "no candidate failed frames, distance, separation or windows",
+      "example_candidate": {
+        "usable_frames": 332,
+        "travelled_distance_m": 9.708,
+        "start_goal_separation_m": 9.708,
+        "limiting_window_count": 321,
+        "heading_change_count": 0
+      }
+    },
+    "instrument_controls_all_pass": true
+  },
+  "the_cross_scene_finding": {
+    "statement": "The binding constraint is the ROUTE GENERATOR, not the scene.",
+    "evidence": {
+      "hospital": {
+        "zero_turn_candidates": 73,
+        "of": 96,
+        "failed_g10_turns": 89
+      },
+      "office": {
+        "zero_turn_candidates": 84,
+        "of": 96,
+        "failed_g10_turns": 96
+      }
+    },
+    "mechanism": "sample_episode_pair plans with A* and then string-pulls via smooth_path, which straightens a route wherever line of sight permits. In open interior floor space most start-goal pairs have line of sight, so the route is a straight line. In the Office example travelled distance and start-goal separation are equal to four decimal places (9.708 m), which is a straight line exactly.",
+    "consequence": "the predeclared long-horizon turn requirement (>= 3 changes of >= 30 degrees) and the frozen route generator are incompatible. Two scenes with different geometry, different occupancy bounds and different failure margins produce the same verdict for the same reason.",
+    "prediction_for_warehouse": "a third scene is expected to fail identically, because the generator rather than the scene is binding. Running Warehouse under this contract would spend Isaac time to re-derive a known result. Stated as a PREDICTION, not a result: no Warehouse candidate has been enumerated."
+  },
+  "what_this_does_not_claim": [
+    "not that Office cannot support long-horizon navigation",
+    "not that all possible Office routes fail",
+    "not that the frozen thresholds are wrong",
+    "not that the route generator is defective -- string-pulling is correct behaviour for a shortest-path planner; it is simply not a generator of turning routes",
+    "not any Warehouse result"
+  ],
+  "correct_next_step": {
+    "not": "another scene under this contract",
+    "but": "a NEW preregistered collection experiment whose route population can produce turning routes -- multi-leg or waypoint routes -- with its generator, budget, seed and eligibility rules declared before any candidate is evaluated.",
+    "must_not": "overwrite or amend the Hospital or Office frozen results, or be presented as a repair to them. Both are valid measurements of the population they declared.",
+    "thresholds": "unchanged; this is a change of route population, not of the adequacy bar"
+  },
+  "non_claims": [
+    "No route is admitted.",
+    "No data is collected.",
+    "No physical-hardware claim.",
+    "e2_eligible = false.",
+    "Office data, if ever collected, is a pipeline and loader proof and is never relabelled as Hospital data."
+  ]
+}

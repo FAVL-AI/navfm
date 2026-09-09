@@ -399,9 +399,24 @@ def main() -> int:
         rec["candidates_passing"] = sum(1 for c in candidates if c.get("all_route_gates_pass"))
         rec["selected_route"] = selected
         rec["selection_rule"] = "first candidate passing all route gates, in seeded order"
-        rec["probe_queries"] = {"support": support.queries, "clearance": clearance.queries,
-                                "support_cache_entries": len(support.cache),
-                                "clearance_cache_entries": len(clearance.cache)}
+        # Snapshot BEFORE the control probes run, so the control cannot satisfy
+        # itself. Counting after would make "probes were queried" true because
+        # the control probe queried one -- a check certifying its own execution
+        # rather than the candidate evaluation's.
+        candidate_support_queries = support.queries
+        candidate_clearance_queries = clearance.queries
+        geometry_gates_evaluated = sum(
+            1 for c in candidates
+            if any(g in (c.get("gates") or {})
+                   for g in ("G3_START_SUPPORT", "G4_CONTINUOUS_ROUTE_SUPPORT",
+                             "G5_OBSTACLE_CLEARANCE", "G6_END_SUPPORT")))
+        rec["probe_queries"] = {
+            "support_during_candidates": candidate_support_queries,
+            "clearance_during_candidates": candidate_clearance_queries,
+            "candidates_reaching_a_geometry_gate": geometry_gates_evaluated,
+            "zero_is_expected_when": ("every candidate is rejected by predicted G10, which is "
+                                      "pure route geometry and needs no raycast"),
+        }
 
         # ---- instrument controls: the gates must be able to fail ----------
         far = 1.0e6
@@ -412,7 +427,18 @@ def main() -> int:
             "clearance_is_unobstructed_off_scene": (
                 open_space.distance_m >= CLEARANCE_MAX_RANGE_M),
             "budget_fully_enumerated": len(candidates) == args.budget,
-            "probes_actually_queried": support.queries > 0,
+            # Conditional, and deliberately so. An earlier form asserted
+            # support.queries > 0 unconditionally and was evaluated AFTER the
+            # control probes, so the control probe made the control pass: it
+            # certified its own execution, not the candidate evaluation's. Zero
+            # candidate probes is CORRECT when every candidate is rejected by
+            # predicted G10 before any geometry gate is reached, so the control
+            # asks the question that can actually be wrong -- did the probes run
+            # where a geometry gate was in fact evaluated?
+            "probes_queried_where_a_geometry_gate_was_evaluated": (
+                candidate_support_queries > 0 if geometry_gates_evaluated else True),
+            "control_probes_are_not_counted_as_candidate_probes": (
+                support.queries > candidate_support_queries),
         }
         rec["controls_all_pass"] = all(rec["controls"].values())
 
