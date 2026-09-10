@@ -301,7 +301,8 @@
     "predicted_from_planned_route": 3,
     "root_cause": "gates/failures/F-G10-1.md -- predicted and realised G10 are computed over structurally different geometry: a planned polyline has straight legs between corners, a pure-pursuit driven path is continuously curving (1 near-straight segment in 41, median heading delta 3.86 deg), so the grouping rule merges all turning into one episode",
     "retry_policy": "NONE FROZEN. Routes 083 and 086 are NOT attempted: the cause is systematic rather than route-specific, and trying routes until one passes would be optional stopping.",
-    "nothing_was_tuned": "the threshold, straight_deg and the grouping rule are unchanged"
+    "nothing_was_tuned": "the threshold, straight_deg and the grouping rule are unchanged",
+    "corner_cutting_claim_correction": "an earlier note said corner-cutting was ruled out because the realised path is longer than planned. That is withdrawn: total length is an aggregate and cannot isolate a local behaviour. Local corner-cutting remains possible and unisolated."
   },
   "what_worked": {
     "kinematic_drive": "740 poses applied, 0 collision rejections, 20.968 m realised vs 20.808 m planned",

@@ -35,25 +35,36 @@
   "SYSTEMATIC_TURN_BLENDING": {
     "observation": "the driven path contains ONE low-curvature segment in 41 and no separator run of any length. The plan's three corners (73.0, 30.6, 34.2 degrees) are realised as a single sustained 172.15 degree sweep over roughly 15 m.",
     "this_is_not_route_specific": "the cause is a property of how the controller realises any polyline, so routes 083 and 086 are expected to behave the same way. They are NOT attempted: trying candidates until one passes would be optional stopping.",
-    "classification": "UNRESOLVED -- candidate causes not yet distinguished by measurement",
+    "classification": "UNRESOLVED -- contributors not separated; local corner-cutting NOT excluded",
     "candidates": {
       "CONTROLLER_SMOOTHING": "pure pursuit steers toward a moving lookahead point and may never settle onto a straight leg",
       "CONTROLLER_LOOKAHEAD": "lookahead 0.45 m against legs of roughly 3.5 m; too long would cut corners, but the realised path is 0.8% LONGER than planned rather than shorter, which does not fit simple corner-cutting",
       "ROUTE_TO_CONTROLLER_INTERFACE": "the planned path is a 7-point polyline; how it is consumed may not preserve its leg structure",
       "ROUTE_TURN_SPACING": "less likely -- 3.5 m legs are long relative to the 0.29 m minimum turning radius at cruise",
-      "KINEMATIC_DRIVE_INTERACTION": "the drive applies an integrated pose each step; a residual heading error would appear as continuous curvature rather than as tracking oscillation"
+      "KINEMATIC_DRIVE_INTERACTION": "the drive applies an integrated pose each step; a residual heading error would appear as continuous curvature rather than as tracking oscillation",
+      "LOCAL_CORNER_CUTTING": "still possible; not isolated. Was previously and wrongly described as ruled out by total path length."
     },
     "evidence_against_corner_cutting": {
-      "planned_length_m": 20.808,
-      "realised_length_m": 20.968,
-      "note": "corner-cutting shortens a path; this one is slightly longer"
+      "RETRACTED": true,
+      "superseded_by": "CORRECTION_20260910",
+      "note": "total path length does not discriminate local corner-cutting"
     },
     "next_diagnostic": "record commanded twist, cross-track error and heading error per step on a SYNTHETIC three-corner route outside the BO-10 population, and compare the driven path with the polyline it was given. That distinguishes controller behaviour from route structure without touching the production candidates.",
     "forbidden": [
       "tuning pure-pursuit after observing production failure",
       "retrying candidates until one passes",
       "changing G10 thresholds or V2 parameters"
-    ]
+    ],
+    "CORRECTION_20260910": {
+      "what_was_overclaimed": "that corner-cutting was ruled out because the realised path is 0.8% LONGER than planned",
+      "why_that_was_wrong": "a controller can cut corners locally while still producing a longer total path, because tracking oscillation, overshoot and curvature elsewhere add length. Total length is an aggregate and cannot isolate a local behaviour.",
+      "defensible_statement": "the observed total path length does not support the hypothesis that simple GLOBAL path-shortening alone explains the blending. Local corner-cutting remains possible and has not been isolated.",
+      "measurements": {
+        "planned_path_length_m": 20.808,
+        "realised_path_length_m": 20.968,
+        "delta_percent": 0.8
+      }
+    }
   },
   "plan_precondition_gap": {
     "issue": "the V2 PLAN precondition cannot be recomputed on the frozen 96 because the route artefact stores heading counts and turn lists but NOT the planned polylines.",
@@ -101,6 +112,14 @@
     },
     "interpretation": "V2 merges some planned turns -- the three candidates with 4 v1-turns have 3 v2-events -- but no PASS/FAIL verdict flips. The plan side of G10 is therefore NOT the blocker: the same three candidates (050, 083, 086) satisfy the V2 plan precondition and every other route gate.",
     "first_under_frozen_selection_rule": "hospital_repaired_map_route_050",
-    "consequence": "route_050 is exactly the candidate whose realised execution already failed. Recollecting it would reproduce SYSTEMATIC_TURN_BLENDING, and 083/086 share the controller. Item 14 applies: stop rather than retry."
+    "consequence": "route_050 is exactly the candidate whose realised execution already failed. Recollecting it would reproduce SYSTEMATIC_TURN_BLENDING, and 083/086 share the controller. Item 14 applies: stop rather than retry.",
+    "identity_proof": {
+      "start_poses_identical": "96/96",
+      "v1_turn_counts_identical_recomputed_vs_stored": "96/96",
+      "v1_turn_magnitudes_identical": "96/96",
+      "strength": "turn magnitudes are a fine-grained function of path geometry, so matching all 96 establishes path identity rather than only start-pose identity",
+      "route_length_and_separation": "not recomputed in this pass. They follow from path identity rather than being independently re-measured, and that is recorded rather than presented as a fresh measurement."
+    },
+    "replay_artefact_sha256": "e05209693643c1e950ba6a3a91983bc2790c40df555fa8086ccf957711e1dc45"
   }
 }
