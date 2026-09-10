@@ -1,0 +1,80 @@
+{
+  "check": "G10_V2_RETROSPECTIVE_AND_SYSTEMATIC_TURN_BLENDING",
+  "artifact_semantics": "LOCKED_RETROSPECTIVE_DIAGNOSTIC",
+  "author": "Frank Asante Van Laarhoven",
+  "recorded_at": "2026-09-10T00:00:00+00:00",
+  "git_head": "e2c1b6453ceacbe3e63768052de9599f5782bb07",
+  "semantics": "gates/BO10/g10_turn_semantics_v2_20260910.json",
+  "semantics_sha256": "a8f8b383c5a392ea3f200c5704e265b7a31f14b0585397e6bb4dda836258eaf3",
+  "evaluated_after_freeze": true,
+  "run_00000": {
+    "trajectory": "runs/bo10/hospital_bo10_run_00000",
+    "primary_status": "COLLECTED_NOT_ADMITTED under original G10 realised semantics",
+    "G10_V2_RETROSPECTIVE": "FAIL",
+    "v1_realised_turns": 1,
+    "v2_realised_qualifying_events": 1,
+    "events": [
+      {
+        "net_deg": -16.56,
+        "qualifies": false,
+        "segments": 9
+      },
+      {
+        "net_deg": 172.15,
+        "qualifies": true,
+        "segments": 31
+      }
+    ],
+    "turning_segments": 40,
+    "low_curvature_segments": 1,
+    "separator_runs_m": [],
+    "longest_separator_run_m": 0.0,
+    "promoted_to_primary_bo10_trajectory": false,
+    "why_not": "its failure was inspected before the metric changed; admitting it afterwards would be post-hoc admission. V2 did not rescue it in any case."
+  },
+  "SYSTEMATIC_TURN_BLENDING": {
+    "observation": "the driven path contains ONE low-curvature segment in 41 and no separator run of any length. The plan's three corners (73.0, 30.6, 34.2 degrees) are realised as a single sustained 172.15 degree sweep over roughly 15 m.",
+    "this_is_not_route_specific": "the cause is a property of how the controller realises any polyline, so routes 083 and 086 are expected to behave the same way. They are NOT attempted: trying candidates until one passes would be optional stopping.",
+    "classification": "UNRESOLVED -- candidate causes not yet distinguished by measurement",
+    "candidates": {
+      "CONTROLLER_SMOOTHING": "pure pursuit steers toward a moving lookahead point and may never settle onto a straight leg",
+      "CONTROLLER_LOOKAHEAD": "lookahead 0.45 m against legs of roughly 3.5 m; too long would cut corners, but the realised path is 0.8% LONGER than planned rather than shorter, which does not fit simple corner-cutting",
+      "ROUTE_TO_CONTROLLER_INTERFACE": "the planned path is a 7-point polyline; how it is consumed may not preserve its leg structure",
+      "ROUTE_TURN_SPACING": "less likely -- 3.5 m legs are long relative to the 0.29 m minimum turning radius at cruise",
+      "KINEMATIC_DRIVE_INTERACTION": "the drive applies an integrated pose each step; a residual heading error would appear as continuous curvature rather than as tracking oscillation"
+    },
+    "evidence_against_corner_cutting": {
+      "planned_length_m": 20.808,
+      "realised_length_m": 20.968,
+      "note": "corner-cutting shortens a path; this one is slightly longer"
+    },
+    "next_diagnostic": "record commanded twist, cross-track error and heading error per step on a SYNTHETIC three-corner route outside the BO-10 population, and compare the driven path with the polyline it was given. That distinguishes controller behaviour from route structure without touching the production candidates.",
+    "forbidden": [
+      "tuning pure-pursuit after observing production failure",
+      "retrying candidates until one passes",
+      "changing G10 thresholds or V2 parameters"
+    ]
+  },
+  "plan_precondition_gap": {
+    "issue": "the V2 PLAN precondition cannot be recomputed on the frozen 96 because the route artefact stores heading counts and turn lists but NOT the planned polylines.",
+    "consequence": "old vs V2 planned-turn counts cannot be compared per candidate from stored evidence",
+    "recorded_not_worked_around": true,
+    "v1_planned_turn_distribution": {
+      "0": 73,
+      "1": 10,
+      "2": 8,
+      "3": 2,
+      "4": 3
+    },
+    "candidates_passing_all_route_gates_v1": 3,
+    "repair": "store planned polylines in future route-admission artefacts. Recomputing them now would mean re-running admission, which is a separate action and is not taken here."
+  },
+  "status": {
+    "F_DRIVE_1": "RESOLVED for BO-10 via KINEMATIC_COLLECTION_DRIVE_V1, dynamics claims excluded",
+    "F_G10_1": "RESOLVED as a measurement-semantics defect; G10_TURN_SEMANTICS_V2 frozen",
+    "new_blocker": "SYSTEMATIC_TURN_BLENDING -- the controller realises multi-corner plans as a single sweep",
+    "BO10": "COLLECTION MECHANISM WORKING; ADMISSION BLOCKED on realised turn events",
+    "BO03_REAL_DATA_COMPATIBILITY": "OUTSTANDING -- requires an admitted trajectory",
+    "DYNAMIC_WHEEL_DRIVE_V1": "DEFERRED"
+  }
+}
