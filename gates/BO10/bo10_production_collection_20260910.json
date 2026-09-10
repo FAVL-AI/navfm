@@ -2,7 +2,7 @@
   "check": "BO10_PRODUCTION_COLLECTION",
   "artifact_semantics": "PRODUCTION_TRAJECTORY_EVIDENCE",
   "scene_id": "hospital_bo10",
-  "timestamp_utc": "2026-09-10T03:55:19.353851+00:00",
+  "timestamp_utc": "2026-09-10T04:08:08.408937+00:00",
   "provenance": {
     "isaac_sim_version": "5.1.0.0",
     "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
@@ -89,16 +89,225 @@
     ],
     "path_points": 7
   },
+  "kinematic_drive": {
+    "preregistration": "gates/BO10/kinematic_collection_drive_v1_20260910.json",
+    "config": {
+      "dt": 0.08333333333333333,
+      "max_v": 0.45,
+      "max_vy": 0.35,
+      "max_w": 1.2,
+      "sweep_substeps": 8,
+      "zero_command_eps": 1e-06,
+      "max_step_translation_m": 0.056249999999999994,
+      "max_step_rotation_rad": 0.15
+    },
+    "guard": "PhysX overlap against scene collision geometry, robot self-hits excluded",
+    "footprint_radius_m": 0.24,
+    "probe_spacing_m": 0.05,
+    "steps_applied": 740,
+    "steps_rejected": 0,
+    "guard_queries": 5920,
+    "self_hits_excluded": 314311,
+    "motion_model": "KINEMATIC_SE2",
+    "contact_response": "NOT_EVALUATED",
+    "wheel_dynamics": "NOT_EVALUATED"
+  },
   "episode": {
     "index": 0,
     "name": "hospital_bo10_run_00000",
-    "accepted": false,
-    "reason": "stalled",
-    "n_frames": 51,
-    "path_length_m": 0.0,
-    "wall_time_s": 11.503358840942383
+    "accepted": true,
+    "reason": "reached_goal",
+    "n_frames": 740,
+    "path_length_m": 20.96817173543963,
+    "wall_time_s": 12.700329065322876
   },
   "trajectory_dir": "runs/bo10/hospital_bo10_run_00000",
-  "BO10_COLLECTION": "EPISODE_NOT_ACCEPTED",
-  "reason": "stalled"
+  "post_episode": {
+    "G10_realised": {
+      "gate": "G10_LONG_HORIZON",
+      "status": "FAIL",
+      "kind": "POSTCONDITION",
+      "reason": "heading_changes",
+      "detail": {
+        "measurement": {
+          "usable_frames": 740,
+          "travelled_distance_m": 20.96817173543963,
+          "start_goal_separation_m": 12.833238553280763,
+          "heading_change_count": 1,
+          "heading_changes_deg": [
+            172.1524
+          ],
+          "windows_per_model": {
+            "gnm": 730,
+            "vint": 730,
+            "nomad": 729
+          },
+          "limiting_window_count": 729
+        },
+        "thresholds": {
+          "min_usable_frames": 120,
+          "min_travelled_distance_m": 8.0,
+          "min_start_goal_separation_m": 5.0,
+          "min_heading_changes": 3,
+          "heading_change_deg": 30.0,
+          "min_valid_context_windows": 30,
+          "label": "PREDECLARED COLLECTION ADEQUACY THRESHOLDS",
+          "not_defined_by": "elapsed wall-clock seconds; nor by any published model requirement"
+        },
+        "checks": {
+          "usable_frames": true,
+          "travelled_distance": true,
+          "start_goal_separation": true,
+          "heading_changes": false,
+          "context_windows": true
+        },
+        "threshold_semantics": "PREDECLARED COLLECTION ADEQUACY THRESHOLDS -- frozen before any candidate route was evaluated; not requirements published by GNM, ViNT or NoMaD",
+        "window_derivation": "TrajectorySpec.num_samples, mirroring ViNT_Dataset._build_index at the pinned upstream commit; GNM/ViNT context_size 5, NoMaD context_size 3 with len_traj_pred 8",
+        "no_rounding": "values are compared as measured; nothing is rounded into a pass",
+        "source": "recorded positions and yaws",
+        "frame_count_is_recorded_not_estimated": true
+      }
+    },
+    "G8_controller_identity": {
+      "gate": "G8_CONTROLLER_IDENTITY",
+      "status": "PASS",
+      "kind": "POSTCONDITION",
+      "reason": "controller identity unchanged across the episode",
+      "detail": {
+        "before_digest": "023d31452fd21f0ab1f4b9e7575f5ed518e58985360d729602933ed77eb99932",
+        "after_digest": "023d31452fd21f0ab1f4b9e7575f5ed518e58985360d729602933ed77eb99932",
+        "before": {
+          "implementation": "navfm.control.PurePursuit",
+          "control_hz": 12.0,
+          "max_v": 0.45,
+          "max_w": 1.2,
+          "max_vy": 0.35,
+          "max_a": 0.8,
+          "max_alpha": 3.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator_mode": "nonholonomic",
+          "seed": 0,
+          "extra": {}
+        },
+        "after": {
+          "implementation": "navfm.control.PurePursuit",
+          "control_hz": 12.0,
+          "max_v": 0.45,
+          "max_w": 1.2,
+          "max_vy": 0.35,
+          "max_a": 0.8,
+          "max_alpha": 3.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator_mode": "nonholonomic",
+          "seed": 0,
+          "extra": {}
+        },
+        "changed_fields": [],
+        "claim_boundary": "controller identity only. This gate does not establish that the robot moved: a command issued to a wedged articulation produces an identical digest. Realised motion is a postcondition measured from recorded poses."
+      }
+    },
+    "G9_goal_image_seal": {
+      "gate": "G9_GOAL_IMAGE_SEAL",
+      "status": "PASS",
+      "kind": "PRECONDITION",
+      "reason": "goal declared, captured, hashed, sealed, then motion began",
+      "detail": {
+        "goal_xy": [
+          -28.7009700284671,
+          16.971295079647238
+        ],
+        "source_camera": "/World/Robot/base_link/Camera_front",
+        "goal_image_sha256": "f5eccf65a2335110ab34df21afb218344560572cea2a93062ad45b70ec6edf4f",
+        "capture_sim_time": null,
+        "events": [
+          [
+            "GOAL_DECLARED",
+            1
+          ],
+          [
+            "GOAL_IMAGE_ACQUIRED",
+            2
+          ],
+          [
+            "GOAL_IMAGE_HASHED",
+            3
+          ],
+          [
+            "GOAL_PROVENANCE_WRITTEN",
+            4
+          ],
+          [
+            "GOAL_SEALED",
+            5
+          ],
+          [
+            "FIRST_MOTION_COMMAND",
+            6
+          ]
+        ],
+        "required_order": [
+          "GOAL_DECLARED",
+          "GOAL_IMAGE_ACQUIRED",
+          "GOAL_IMAGE_HASHED",
+          "GOAL_PROVENANCE_WRITTEN",
+          "GOAL_SEALED",
+          "FIRST_MOTION_COMMAND"
+        ],
+        "provenance_is_the_event_order": "pixel similarity does not establish provenance in either direction: a stationary robot photographs the same scene twice, and two different images do not show which was captured first",
+        "final_observation_digest": "06292a68fb2dc3b01f6e8beb1e7b3377a90db6cd8edfa82d18fb43aabb201095"
+      }
+    },
+    "MOTION_REALISED": {
+      "gate": "MOTION_REALISED",
+      "status": "PASS",
+      "kind": "POSTCONDITION",
+      "reason": "travelled 20.968 m",
+      "detail": {
+        "travelled_distance_m": 20.96817173543963,
+        "net_displacement_m": 12.833238553280763,
+        "yaw_span_rad": 3.146778265061257,
+        "min_displacement_m": 0.5,
+        "distinct_from_g8": "G8 proves the controller did not change; this proves the base moved"
+      }
+    }
+  },
+  "data_integrity": {
+    "n_frames": 740,
+    "n_images": 740,
+    "positions_shape": [
+      740,
+      2
+    ],
+    "yaw_shape": [
+      740
+    ],
+    "positions_finite": true,
+    "yaws_finite": true,
+    "images_match_frames": true,
+    "goal_image_sha256": "f5eccf65a2335110ab34df21afb218344560572cea2a93062ad45b70ec6edf4f",
+    "final_observation_sha256": "06292a68fb2dc3b01f6e8beb1e7b3377a90db6cd8edfa82d18fb43aabb201095",
+    "goal_is_not_final_observation": true
+  },
+  "BO10_COLLECTION": "TRAJECTORY_NOT_ADMITTED",
+  "admission_failure": {
+    "gate": "G10_realised",
+    "check": "heading_changes",
+    "realised": 1,
+    "required": 3,
+    "predicted_from_planned_route": 3,
+    "root_cause": "gates/failures/F-G10-1.md -- predicted and realised G10 are computed over structurally different geometry: a planned polyline has straight legs between corners, a pure-pursuit driven path is continuously curving (1 near-straight segment in 41, median heading delta 3.86 deg), so the grouping rule merges all turning into one episode",
+    "retry_policy": "NONE FROZEN. Routes 083 and 086 are NOT attempted: the cause is systematic rather than route-specific, and trying routes until one passes would be optional stopping.",
+    "nothing_was_tuned": "the threshold, straight_deg and the grouping rule are unchanged"
+  },
+  "what_worked": {
+    "kinematic_drive": "740 poses applied, 0 collision rejections, 20.968 m realised vs 20.808 m planned",
+    "G8_controller_identity": "PASS",
+    "G9_goal_image_seal": "PASS",
+    "MOTION_REALISED": "PASS -- this is the direction F-DRIVE-1 failed in",
+    "data_integrity": "740 frames, 740 images, positions and yaws finite, goal image distinct from final observation"
+  }
 }

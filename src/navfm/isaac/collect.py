@@ -197,6 +197,11 @@ class Collector:
         self.enforce_premotion_gates: bool = False
         #: Populated by run_episode when enforce_premotion_gates is set.
         self.episode_gate_records: list[dict[str, Any]] = []
+        #: KINEMATIC_COLLECTION_DRIVE_V1. When set, the episode advances the base
+        #: by integrating the commanded twist and applying the pose, subject to
+        #: the driver's swept-collision invariant, instead of writing articulation
+        #: root velocities. F-DRIVE-1: root velocities do not move this robot.
+        self.kinematic_driver: Any = None
         #: What this collection is for, and whether it may enter the E2
         #: population. Stamped into every episode's metadata and into the
         #: manifest, so a trajectory carries its own scope rather than relying on
@@ -566,7 +571,20 @@ class Collector:
                         and not _seal._has_first_motion):
                     _seal.note_first_motion()
                     _seal._has_first_motion = True
-                self._robot.set_body_velocity(vx, vy, wz)
+                if self.kinematic_driver is not None:
+                    step_res = self.kinematic_driver.step(
+                        (float(pos[0]), float(pos[1]), float(cur_yaw)), (vx, vy, wz))
+                    if step_res.outcome.value == "REJECTED_COLLISION":
+                        # The invariant refused the pose. It is not applied and
+                        # the episode stops; continuing would mean driving a
+                        # trajectory whose next step was known to be unsafe.
+                        reason = f"collision_guard: {step_res.reason}"
+                        self._drive_rejection = step_res.to_dict()
+                        break
+                    self._robot.teleport((step_res.pose[0], step_res.pose[1]),
+                                         step_res.pose[2])
+                else:
+                    self._robot.set_body_velocity(vx, vy, wz)
                 sim_t = self._app.step()
 
                 pos, cur_yaw = self._robot.pose()

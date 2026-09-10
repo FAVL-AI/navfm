@@ -1,0 +1,87 @@
+{
+  "check": "KINEMATIC_COLLECTION_DRIVE_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_PRODUCTION_EXECUTION",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "0cee53d576eefe51a315ff732bfd2bd2aade93bb",
+  "authorised_because": "F-DRIVE-1: articulation root-velocity commands do not move this robot (0.0036 m over 40 steps, 0.0000 m with rendering). BO-10 needs a trajectory, not a drivetrain model.",
+  "motion_model": "KINEMATIC_SE2",
+  "integration": {
+    "method": "explicit body-frame twist integration; body velocities rotated into the world by the CURRENT heading and applied over dt; heading wrapped to (-pi, pi]",
+    "dt_s": 0.08333333333333333,
+    "control_hz": 12.0,
+    "exactness": "exact for straight motion, first-order for turning; the sweep is what prevents the arc between poses being stepped over"
+  },
+  "limits": {
+    "max_v_m_s": 0.45,
+    "max_vy_m_s": 0.35,
+    "max_w_rad_s": 1.2,
+    "source": "M3PRO_LIMITS, unchanged",
+    "acceleration_limits": "NOT APPLIED in this mechanism; max_a/max_alpha are recorded in controller identity but the kinematic drive clamps velocity only"
+  },
+  "per_step_guards": {
+    "max_step_translation_m": 0.056249999999999994,
+    "max_step_rotation_rad": 0.15,
+    "purpose": "a pose jump larger than the limits permit in one dt is refused as an integration fault, because that is the shape a teleport-through-a-wall would take"
+  },
+  "collision_invariant": {
+    "rule": "current -> candidate is admitted only if the swept footprint is free of blocking collision geometry at every sub-step",
+    "sweep_substeps": 8,
+    "queried_against": "the SCENE collision geometry via PhysX, NOT the planner's occupancy map",
+    "why_not_the_map": "the map is what planned the route, and this programme has just established that a previous map omitted a reception desk entirely. Making it the sole protection would be a single point of failure with a known failure history.",
+    "on_rejection": "the pose is NOT applied; the episode stops. A guard that reported a violation and moved anyway would be a diagnostic, not an invariant",
+    "footprint": "the validated production footprint, radius 0.24 m",
+    "resolution": "the frozen swept sampling resolution from e0cce10"
+  },
+  "stall_and_completion": {
+    "zero_command_eps": 1e-06,
+    "no_command_is_distinct_from_rejection": "so 'was not asked to move' and 'was refused' never collapse",
+    "stall_semantics": "unchanged from CollectConfig.stall_patience",
+    "route_completion_tolerance": "unchanged from CollectConfig.goal_tol_m"
+  },
+  "defining_controls_required": {
+    "A": "clear straight translation -> motion succeeds",
+    "B": "clear rotation -> motion succeeds",
+    "C": "obstacle at the candidate pose -> rejected, pose unchanged",
+    "D": "obstacle on the sweep but not the endpoint -> rejected",
+    "E": "large dt cannot step over a wall -> rejected by the sweep",
+    "F": "clear route -> no false rejection over 200 steps",
+    "G": "zero command -> zero displacement, recorded as NO_COMMAND",
+    "H": "safe non-zero command -> measurable displacement (the direction F-DRIVE-1 failed in)",
+    "I": "blocked command -> realised footprint never crosses the obstacle"
+  },
+  "claim_boundaries": {
+    "trajectory_geometry": "ADMISSIBLE",
+    "camera_observations": "ADMISSIBLE",
+    "se2_pose_history": "ADMISSIBLE",
+    "route_following_execution": "ADMISSIBLE",
+    "contact_dynamics": "NOT CLAIMED",
+    "wheel_dynamics": "NOT CLAIMED",
+    "mecanum_roller_fidelity": "NOT CLAIMED",
+    "slip_traction_fidelity": "NOT CLAIMED",
+    "physical_collision_response": "NOT CLAIMED",
+    "sim_to_real_drivetrain_fidelity": "NOT CLAIMED",
+    "CONTACT_RESPONSE": "NOT_EVALUATED",
+    "WHEEL_DYNAMICS": "NOT_EVALUATED"
+  },
+  "open_findings_unchanged": [
+    "F-TWIN-1 OPEN",
+    "FL-002 OPEN",
+    "PHYSICAL_M3_PRO_GROUND_CLEARANCE NOT_MEASURED"
+  ],
+  "DYNAMIC_WHEEL_DRIVE_V1": {
+    "status": "DEFERRED",
+    "not_a_bo10_prerequisite": true,
+    "must_separately_address": [
+      "F-TWIN-1",
+      "FL-002",
+      "mecanum roller/contact representation",
+      "wheel joint actuation",
+      "controller calibration",
+      "actual displacement",
+      "slip/traction behaviour",
+      "contact validation"
+    ]
+  },
+  "no_tuning_after_observation": "these parameters are frozen and are not adjusted from the production trajectory"
+}

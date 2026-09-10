@@ -213,7 +213,81 @@ def main() -> int:
         collector.fixed_route = (start_r, float(yaw_r), goal_r, path_r)
         collector.enforce_premotion_gates = True
 
+        # KINEMATIC_COLLECTION_DRIVE_V1 with its swept-collision invariant.
+        # The guard queries the SCENE, not the planner's occupancy map: the map
+        # planned the route, and a previous map omitted a reception desk
+        # entirely, so it is not an acceptable sole protection.
+        from omni.physx import get_physx_scene_query_interface
+
+        from navfm.collection.footprint import CircularFootprint, SweepResolution
+        from navfm.collection.kinematic_drive import KinematicDriveConfig, KinematicDriver
+
+        q = get_physx_scene_query_interface()
+        footprint = CircularFootprint(robot_cfg.footprint_radius)
+        sweep_res = SweepResolution.derive(robot_cfg.footprint_radius,
+                                           grid_resolution_m=cfg.grid_resolution)
+        SLAB = (0.10, 0.60)
+        z_mid = (SLAB[0] + SLAB[1]) / 2
+        half_z = (SLAB[1] - SLAB[0]) / 2
+        ident = [0.0, 0.0, 0.0, 1.0]
+        ROBOT_PRIM = robot.prim_path
+
+        class SceneCollisionGuard:
+            """Is the robot footprint free of blocking scene geometry here?
+
+            The robot's own colliders are in the scene, so a naive overlap at the
+            robot's current pose always reports a hit -- the robot detecting
+            itself. Hits whose prim lies under the robot are therefore excluded,
+            which is the same class of mistake as H-ORDER-1 and H-INSTANCE-1 and
+            is handled explicitly rather than by hoping it does not arise.
+            """
+
+            def __init__(self) -> None:
+                self.queries = 0
+                self.self_hits = 0
+
+            def pose_is_free(self, x: float, y: float, yaw: float) -> bool:
+                self.queries += 1
+                blocking: list[str] = []
+
+                def _cb(hit: Any) -> bool:
+                    path = str(getattr(hit, "collision", ""))
+                    if path.startswith(ROBOT_PRIM):
+                        self.self_hits += 1
+                        return True
+                    blocking.append(path)
+                    return False
+
+                for px, py in footprint.points(x, y, yaw, sweep_res.probe_spacing_m):
+                    blocking.clear()
+                    q.overlap_box([sweep_res.probe_spacing_m / 2,
+                                   sweep_res.probe_spacing_m / 2, half_z],
+                                  [float(px), float(py), z_mid], ident, _cb, False)
+                    if blocking:
+                        return False
+                return True
+
+        guard = SceneCollisionGuard()
+        drive_cfg = KinematicDriveConfig(dt=1.0 / sim_cfg.hz)
+        collector.kinematic_driver = KinematicDriver(guard=guard, config=drive_cfg)
+        rec["kinematic_drive"] = {
+            "preregistration": "gates/BO10/kinematic_collection_drive_v1_20260910.json",
+            "config": drive_cfg.to_dict(),
+            "guard": "PhysX overlap against scene collision geometry, robot self-hits excluded",
+            "footprint_radius_m": robot_cfg.footprint_radius,
+            "probe_spacing_m": sweep_res.probe_spacing_m,
+        }
+
         result = collector.run_episode(0, args.scene_id)
+        rec["kinematic_drive"]["steps_applied"] = collector.kinematic_driver.applied
+        rec["kinematic_drive"]["steps_rejected"] = collector.kinematic_driver.rejections
+        rec["kinematic_drive"]["guard_queries"] = guard.queries
+        rec["kinematic_drive"]["self_hits_excluded"] = guard.self_hits
+        rec["kinematic_drive"]["motion_model"] = "KINEMATIC_SE2"
+        rec["kinematic_drive"]["contact_response"] = "NOT_EVALUATED"
+        rec["kinematic_drive"]["wheel_dynamics"] = "NOT_EVALUATED"
+        if getattr(collector, "_drive_rejection", None):
+            rec["kinematic_drive"]["rejection"] = collector._drive_rejection
         rec["episode"] = dataclasses.asdict(result)
 
         traj_dir = Path(args.out_dir) / result.name
