@@ -1,0 +1,77 @@
+{
+  "check": "TURNING_ROUTE_POPULATION_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_ANY_CANDIDATE_EVALUATED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "bf79dc2cd91854fecab56e6d3acf092e5fffdcbb",
+  "implementation_sha256": "7d82eb210c920115e30a8cb4347c044703366b54b2e483543cabbcaf4eea324c",
+  "purpose": "test whether a route population containing spatially separated, natural turning events produces >= 3 distinct realised turn episodes under the UNCHANGED kinematic pure-pursuit controller",
+  "single_thing_changed": "route population structure",
+  "explicitly_unchanged": [
+    "controller (pure pursuit, lookahead, dt, velocity/angular limits)",
+    "G10 thresholds",
+    "G10_TURN_SEMANTICS_V2 event semantics",
+    "obstacle map backend",
+    "robot and twin asset",
+    "camera",
+    "collection format",
+    "G3-G9"
+  ],
+  "why_not_tune_the_controller_first": "changing route structure and controller together would leave no way to say which produced any improvement. Route structure is changed first because it is the cheaper hypothesis and the one run_00000 cannot distinguish.",
+  "frozen_generator": {
+    "legs": 4,
+    "interior_turns": 3,
+    "min_anchor_separation_m": 3.0,
+    "max_anchor_separation_m": 9.0,
+    "min_anchor_turn_deg": 30.0,
+    "max_anchor_turn_deg": 135.0,
+    "min_clearance_m": 0.35,
+    "max_tries_per_anchor": 60,
+    "per_leg_planning": "A* per leg, smoothing confined WITHIN a leg",
+    "global_smoothing": "FORBIDDEN -- it would string-pull straight through the anchors and remove the structure the population exists to create",
+    "provenance": {
+      "legs": "4 legs give 3 interior turns, the frozen G10 minimum",
+      "min_anchor_separation_m": "3 x the frozen 1.0 m G10 separator, so a separator run has room either side",
+      "max_anchor_separation_m": "keeps summed legs within the frozen max_path_m",
+      "min_anchor_turn_deg": "the frozen turn magnitude; a smaller bend cannot produce an admissible event",
+      "max_anchor_turn_deg": "135 degrees. A bend approaching 180 is a REVERSAL along the same corridor rather than a region transition. This was not in the first draft: the corridor control exposed the generator emitting 3 m out and 3 m back, which satisfies a turn count while being exactly the manufactured zig-zag this population exists to avoid.",
+      "derived_from_run_00000": false
+    }
+  },
+  "generation_never_sees_g10": {
+    "rule": "the generator does not import, reference or react to any turn metric",
+    "forbidden_pattern": "keep adding waypoints until G10 passes",
+    "why": "that would bake the evaluation criterion into the population and make any subsequent pass uninterpretable",
+    "control_H": "enforced structurally, not by promise: the module is parsed and must not import turn_events or long_horizon, nor reference realised_turn_events, heading_changes, TURN_SEMANTICS, predict_from_route or measure_from_trajectory"
+  },
+  "refuses_rather_than_relaxes": "when a scene cannot supply separated, non-collinear, non-reversing anchors within the try budget, the generator raises rather than loosening its own rules. A generator that relaxed until it succeeded would produce a population whose structure depended on scene difficulty rather than on this declaration.",
+  "independent_controls": {
+    "A_open_straight_corridor": "REFUSED -- no artificial turns introduced",
+    "B_L_corridor": "one natural turn",
+    "C_scene_with_room": ">= 3 plan events",
+    "D_sawtooth": "impossible under the frozen minimum separation; a tight generator refuses rather than producing one",
+    "D2_near_reversal": "refused by the 135 degree bound",
+    "E_disconnected_waypoint": "rejected",
+    "F_waypoint_inside_obstacle": "never sampled",
+    "G_same_seed": "identical population",
+    "H_no_turn_evaluator": "output identical; enforced by source inspection",
+    "all_pass": true,
+    "test_module": "tests/test_turning_routes.py",
+    "count": 16
+  },
+  "still_to_freeze_before_hospital_execution": [
+    "seed",
+    "candidate budget",
+    "candidate ordering",
+    "start/goal eligibility",
+    "production selection rule"
+  ],
+  "production_selection_rule": "first candidate in frozen ordering satisfying every pre-motion gate",
+  "no_optional_stopping": "the complete population is evaluated regardless of the first pass",
+  "predeclared_outcomes": {
+    "if_realised_turns_pass": "collect, then run the exact trajectory through GNM/ViNT/NoMaD",
+    "if_realised_turns_fail_again": "STOP. Do not retry another candidate. Classify as ROUTE_STRUCTURE_INSUFFICIENT, CONTROLLER_LOOKAHEAD, ROUTE_CONTROLLER_INTERFACE, MIXED or INCONCLUSIVE, and only then preregister CONTROLLER_TURN_PRESERVATION_V1, which is the ONLY place controller parameters may change."
+  },
+  "run_00000": "COLLECTED_NOT_ADMITTED, immutable, took no part in any parameter here",
+  "e2_eligible": false
+}
