@@ -147,3 +147,34 @@ that produced a false failure. Every one of them lived in the apparatus, not in
 the instrument under test. The recurring shape is an expectation computed by a
 convenient proxy — an AABB, a stepped sample, a default transform — rather than
 by the thing it claims to measure.
+
+---
+
+## Permanent rule for NavFM validation
+
+All five defects in this ledger are instances of one mistake, and it is now
+stated as a standing rule rather than left as five stories:
+
+> **Validation expectations must be generated from an independent representation
+> of the underlying geometry. They must not reuse an approximation taken from
+> the instrument under test, nor a convenient proxy for it.**
+
+The proxies that failed here, each of which was available and plausible:
+
+| proxy used | what it stood in for | how it failed |
+|---|---|---|
+| world AABB | an object's true footprint | over-covers; produced false negatives twice (`H-AABB-1`, `H-AABB-2`) |
+| stepped world samples | a cell index range | under-covers the far edge (`H-SAMPLING-1`) |
+| a default transform | a deliberate placement | put a collider at the world origin (`H-INSTANCE-1`) |
+| an origin derived from the object | an independent grid | forced boundary tangency (`H-FIXTURE-1`) |
+
+Four of the five manufactured a **false failure**, which is the direction that
+wastes effort and invites the worst possible repair: tuning the instrument until
+the broken yardstick is satisfied. `H-AABB-2` came closest — raising the query
+epsilon until the reception desk "passed" would have manufactured false
+positives invisibly, because the fixtures that were genuinely exact would have
+stayed exact.
+
+The one direction that would have been far more dangerous — a proxy that
+manufactured **false confidence** — did not occur here, and that is luck rather
+than method. The rule above is what removes the luck.

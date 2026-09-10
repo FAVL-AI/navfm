@@ -144,6 +144,9 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--budget", type=int, default=96,
                     help="candidate search budget (frozen; matches the Hospital search)")
+    ap.add_argument("--occupancy-backend", default="legacy",
+                    help="legacy | physx_cell_overlap_v1. Explicit; never inferred, and "
+                         "recorded in the artefact so a result can say which map produced it.")
     ap.add_argument("--region-declaration", default=None,
                     help="frozen collection-region declaration JSON. REQUIRED for a scene "
                          "with no intrinsic geometric boundary (see gates/failures/F-BOUNDS-1.md); "
@@ -235,7 +238,12 @@ def main() -> int:
                              tuple(decl["window"]["bounds_max"]))
         rec["occupancy_bounds_source"] = ("declared region" if region_bounds
                                           else "stage bound (default)")
-        grid = collector.build_occupancy(args.scene, bounds=region_bounds)
+        grid = collector.build_occupancy(args.scene, bounds=region_bounds,
+                                         backend=args.occupancy_backend)
+        rec["occupancy_backend_requested"] = args.occupancy_backend
+        rec["occupancy_backend_used"] = collector.occupancy_backend_used
+        rec["occupancy_query_failures"] = int(
+            getattr(collector, "occupancy_query_failures", 0))
         collector._grid = grid
         collector._clearance = grid.clearance()
         inflated = collector._inflated
