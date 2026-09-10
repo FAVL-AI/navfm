@@ -1,0 +1,146 @@
+{
+  "check": "OBSTACLE_MAP_FULL_ACCEPTANCE",
+  "artifact_semantics": "PRODUCTION_ACCEPTANCE_DECLARATION",
+  "author": "Frank Asante Van Laarhoven",
+  "declared_at": "2026-09-10T00:00:00+00:00",
+  "git_head": "13464243fdb51f7cbaf04feac00fa1573bc1b7b1",
+  "estimand": "OBSTACLE_CELL_OCCUPANCY_V1",
+  "backend": "physx_cell_overlap_v1",
+  "acceptance_criteria": {
+    "validated_cell_volume_probe": {
+      "result": "PASS",
+      "evidence": "gates/BO10/obstacle_cell_probe_freeze_v1_20260910.json"
+    },
+    "analytic_fixtures": {
+      "result": "PASS",
+      "detail": "13/13 exact set agreement, 0 FN, 0 negative-control FP, epsilon 0.0",
+      "evidence": "gates/BO10/obstacle_map_validation_eps0_20260910.json"
+    },
+    "known_wall": {
+      "result": "PASS",
+      "detail": "Geo_W_WallBase10 legacy 10/82 -> physx 82/82"
+    },
+    "reception_desk": {
+      "result": "PASS",
+      "detail": "legacy 0/750 INVISIBLE -> physx 222/750; 0 genuine false negatives after independent dense adjudication"
+    },
+    "supply_cart": {
+      "result": "PASS",
+      "detail": "legacy 0/84 INVISIBLE -> physx 79/84; 0 genuine false negatives"
+    },
+    "negative_controls": {
+      "result": "PASS",
+      "detail": "above-slab, below-slab, visual-only-no-collider, nearby-outside-cell all correctly free in the analytic fixtures"
+    },
+    "instance_proxy_control": {
+      "result": "PASS",
+      "detail": "instanced collidable object rasterises exactly (4/4)"
+    },
+    "unknown_query_failure_control": {
+      "result": "PASS",
+      "detail": "UNKNOWN_CELL_POLICY=BLOCKED; query failure blocks and is counted; negative control asserts 99/100 UNKNOWN cells blocked under the current rule and 0 under the old one"
+    },
+    "g2_v2_regression": {
+      "result": "PASS",
+      "detail": "1089 colliders in the robot band, population complete, 0 planner-invisible",
+      "evidence": "gates/BO10/g2_obstacle_map_integrity_v2_20260910.json"
+    },
+    "planner_inflation": {
+      "result": "PASS",
+      "detail": "ceil(0.24/0.10)=3 cells=0.30m; planar wall, isolated box, thin wall and corner match an independently written expectation exactly; every free centre cell provably >= a footprint from any obstacle"
+    },
+    "clearance_semantics_reconciled": {
+      "result": "PASS",
+      "detail": "analytic / planner / PhysX declared with frames, units, sign and footprint treatment before comparison; four threshold distances evaluated exactly; PhysX matches analytic at every distance; planner agrees within one cell"
+    },
+    "no_unexplained_blocking_false_negatives": {
+      "result": "PASS",
+      "detail": "the single Office candidate was explained and is not a probe defect -- see H-SAMPLING-1"
+    }
+  },
+  "OBSTACLE_PROBE_LOCAL_VALIDATION": "PASS",
+  "OBSTACLE_MAP_FULL_ACCEPTANCE": "PASS",
+  "legacy_vs_new_causal_control": {
+    "method": "both backends built in ONE session so a single variable changes",
+    "legacy_reproduces_the_omission": true,
+    "new_corrects_it": true,
+    "table": {
+      "reception_desk": "0/750 -> 222/750",
+      "supply_cart": "0/84 -> 79/84",
+      "wall": "10/82 -> 82/82",
+      "chart_rack": "45/84 -> 84/84",
+      "trim": "40/120 -> 120/120"
+    },
+    "scene_wide": {
+      "legacy_occupied_fraction": 0.6332,
+      "physx_occupied_fraction": 0.0877,
+      "changed_cells": 196668,
+      "note": "CORROBORATIVE ONLY; the legacy map is not merely coarser, it is wrong in placement"
+    }
+  },
+  "f_g5_root_cause_classification": {
+    "primary": "OCCUPANCY_OMISSION",
+    "secondary": "MIXED -- CENTRE_VS_SURFACE_ESTIMAND and INFLATED_VS_UNINFLATED_ESTIMAND",
+    "ruled_out": [
+      "UNIT_MISMATCH",
+      "GRID_DISCRETISATION as a primary cause",
+      "PHYSX_QUERY_SEMANTICS"
+    ],
+    "reasoning": "The dominant cause is occupancy omission, established by perturbation rather than by correlation: the legacy backend reproduces the omission and the new one corrects it, in one session with one variable changed. A reception desk and a supply cart were wholly absent from the planner's map while PhysX reported them without difficulty, so routes were planned through furniture and G5 correctly rejected them.\\n\\nPart of the reported two-orders-of-magnitude gap was never a disagreement at all. The planner number was centre-to-inflated-cell with a footprint radius already consumed; the PhysX number was centre-to-surface ignoring the footprint. Compared without conversion these differ by roughly an inflation radius plus a footprint radius whether or not anything is wrong, which is an estimand error in the reporting rather than a defect in either instrument.\\n\\nUnits were checked and are correct. Grid discretisation contributes at most one cell and cannot account for the magnitude. PhysX query semantics are sound where the query matches the question -- the earlier raycast and centre-sphere probes failed because they asked a different question, not because the engine misreported.",
+    "f_g5_1": "RESOLVED -- unknown-as-free decode",
+    "f_g5_2": "RESOLVED -- generator omitted solid geometry; superseded by the validated backend"
+  },
+  "office_generalisation": {
+    "backend": "physx_cell_overlap_v1 (identical semantics, unchanged for a larger scene)",
+    "grid": [
+      805,
+      805
+    ],
+    "cells": 648025,
+    "occupied": 22756,
+    "occupied_fraction": 0.035116,
+    "query_failures": 0,
+    "build_seconds": 1.2,
+    "peak_rss_gb": 5.31,
+    "wall_visible": true,
+    "furniture_visible": true,
+    "empty_region_probe": {
+      "tested": 121,
+      "free": 108
+    },
+    "population": {
+      "checked": 790,
+      "planner_invisible": 0
+    },
+    "visual_only_control": "INCONCLUSIVE BY CONSTRUCTION -- the chosen prim's AABB spans 2632 cells and contains other collidable geometry, so marked cells are not attributable to it. The property is established by the synthetic N3 fixture instead, which is exact."
+  },
+  "warehouse_generalisation": {
+    "result": "NOT_RUN",
+    "reason": "the run terminated without producing an artefact and a prior crash minidump is present. Item 13 makes this optional and bounded; it was not bounded, so it was stopped rather than pursued. No Warehouse claim of any kind is made."
+  },
+  "route_admission": {
+    "authorised": true,
+    "scope": "Hospital route admission under the validated backend, with the UNCHANGED generator, seed 0, budget 96, ordering, smoothing semantics and G3-G10 thresholds",
+    "naming_discrepancy_flagged": "The instruction names TURNING_ROUTE_POPULATION_V1 as the population to rerun. No such preregistration exists: it was deliberately NOT preregistered when the binding constraint moved from G10 to G5, and that decision is recorded in gates/BO10/office_bo10_frozen_routeset_20260909.json. What is authorised here is therefore the existing, unchanged route population under a repaired map. If a turning-capable population is still wanted it remains a separate experiment requiring its own preregistration before any candidate is evaluated."
+  },
+  "claim_boundaries": [
+    "Simulated obstacle-map correctness is NOT physical-robot validation.",
+    "F-TWIN-1 remains OPEN.",
+    "PHYSICAL_M3_PRO_GROUND_CLEARANCE remains NOT_MEASURED.",
+    "No route has been admitted and no data collected by this tranche.",
+    "Scene-wide occupancy figures are corroborative; known-object and defining controls carry the causal evidence."
+  ],
+  "harness_defects_recorded": [
+    "H-FIXTURE-1",
+    "H-AABB-1",
+    "H-AABB-2",
+    "H-INSTANCE-1",
+    "H-SAMPLING-1"
+  ],
+  "evidence_digests": {
+    "obstacle_cell_occupancy_v1": "503eed4b4d54a70ddae248f0eefa159e67db085440adbc56854e1db8e4fdd55c",
+    "analytic_fixtures": "e30922588a593a73375bc1538124f0dc8df3ab23c24f8d56c347ec46a1a0c624",
+    "hospital_known_objects": "3ab35c7948308ee5c6d86fe57f91fe3c9b102877b7e313d6f0cd4d6466090b72",
+    "g2_v2": "14d6b464dac17e30c7350efca58d540b027c271e2bd455bef748f9a342d85be9"
+  }
+}

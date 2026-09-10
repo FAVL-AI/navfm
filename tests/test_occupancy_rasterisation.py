@@ -172,3 +172,47 @@ class TestComparisonMetrics:
         assert len(cmp.measured) > len(cmp.expected), "aggregate looks better"
         assert cmp.false_negatives == frozenset({(9, 9)}), "yet a real obstacle was lost"
         assert not cmp.exact_agreement
+
+
+class TestCellSpanningIsByIndexNotByStepping:
+    """H-SAMPLING-1: stepping world points under-covers an object's far edge."""
+
+    class _Grid:
+        origin = (0.0, 0.0)
+        resolution = 0.10
+        shape = (20, 20)
+
+        def world_to_cell(self, xy):
+            return (int(round(xy[1] / 0.10)), int(round(xy[0] / 0.10)))
+
+        def in_bounds(self, rc):
+            return 0 <= rc[0] < 20 and 0 <= rc[1] < 20
+
+    def test_a_non_multiple_span_includes_its_far_edge(self) -> None:
+        from navfm.collection.occupancy import cells_spanning_aabb
+
+        box = AABB(0.0, 0.0, 0.0, 0.3424, 0.3424, 1.0)
+        cells = cells_spanning_aabb(self._Grid(), box)
+        far = self._Grid().world_to_cell((box.max_x, box.max_y))
+        assert far in cells, "the cell containing the object's far edge must be covered"
+
+    def test_stepping_by_resolution_would_have_missed_it(self) -> None:
+        """The defect reproduced with the measured values that exposed it.
+
+        SM_InformationDesk_A_232 spans y from -11.7972 to -11.4548 on a grid with
+        origin y = -27.14. Its geometry is in row 157; the stepped sampler's last
+        sample landed in row 156, so the object read as planner-invisible while
+        the map had marked it correctly.
+        """
+        origin_y, res = -27.14, 0.10
+        min_y, max_y = -11.7972, -11.4548
+
+        def row(y: float) -> int:
+            return int(round((y - origin_y) / res))
+
+        n = int((max_y - min_y) / res)
+        last_stepped_row = row(min_y + n * res)
+        true_far_row = row(max_y)
+        assert last_stepped_row == 156
+        assert true_far_row == 157
+        assert last_stepped_row < true_far_row, "the far edge row was never sampled"

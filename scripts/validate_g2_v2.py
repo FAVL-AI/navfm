@@ -55,7 +55,7 @@ def main() -> int:
     from omni.physx import get_physx_scene_query_interface
     from pxr import Usd, UsdGeom, UsdPhysics
 
-    from navfm.collection.occupancy import AABB
+    from navfm.collection.occupancy import AABB, cells_spanning_aabb
     from navfm.simenv import simulator_identity
 
     sim_id = simulator_identity()
@@ -129,18 +129,16 @@ def main() -> int:
         rec["unknown_cell_policy"] = "BLOCKED"
 
         def footprint_visible(box: AABB, grid: Any) -> tuple[int, int]:
-            """(cells sampled over the object's footprint, cells marked occupied)."""
-            total = marked = 0
-            nx = max(1, int((box.max_x - box.min_x) / RESOLUTION))
-            ny = max(1, int((box.max_y - box.min_y) / RESOLUTION))
-            for i in range(nx + 1):
-                for j in range(ny + 1):
-                    rc = grid.world_to_cell((box.min_x + i * RESOLUTION,
-                                             box.min_y + j * RESOLUTION))
-                    if grid.in_bounds(rc):
-                        total += 1
-                        marked += int(bool(grid.grid[rc[0], rc[1]]))
-            return total, marked
+            """(cells spanning the object's footprint, cells marked occupied).
+
+            Uses cell INDEX ranges. Stepping world points by the resolution
+            under-covers whenever the span is not an exact multiple, which
+            reported a correctly-mapped information desk as planner-invisible
+            because its geometry sat one row past the last sample.
+            """
+            cells = cells_spanning_aabb(grid, box)
+            marked = sum(1 for (r, c) in cells if bool(grid.grid[r, c]))
+            return len(cells), marked
 
         def find(name: str) -> Any:
             for p in Usd.PrimRange(stage.GetPseudoRoot(), Usd.TraverseInstanceProxies()):

@@ -3,7 +3,7 @@
   "artifact_semantics": "NEW_VERSIONED_INSTRUMENT_REGRESSION_NOT_AN_UPDATE",
   "supersedes_nothing": "gates/scenes/hospital_g2_obstacle_map_integrity_20260907.json is preserved unchanged; its planner-visibility labels were produced under the legacy builder and are not reused",
   "scene_id": "hospital",
-  "timestamp_utc": "2026-09-10T01:11:10.491448+00:00",
+  "timestamp_utc": "2026-09-10T01:18:07.964217+00:00",
   "estimand": "can collision-capable geometry relevant to the simulated robot be invisible to the planner's occupancy map?",
   "referent": "SIMULATED_ROBOT_COLLISION_MODEL",
   "PHYSICAL_M3_PRO_GROUND_CLEARANCE": "NOT_MEASURED",
@@ -66,13 +66,13 @@
       ],
       "intersects_robot_band": true,
       "legacy": {
-        "cells": 80,
+        "cells": 82,
         "marked": 10,
         "planner_visible": true
       },
       "physx": {
-        "cells": 80,
-        "marked": 80,
+        "cells": 82,
+        "marked": 82,
         "planner_visible": true
       },
       "PASS": true
@@ -85,13 +85,13 @@
       ],
       "intersects_robot_band": true,
       "legacy": {
-        "cells": 725,
+        "cells": 750,
         "marked": 0,
         "planner_visible": false
       },
       "physx": {
-        "cells": 725,
-        "marked": 213,
+        "cells": 750,
+        "marked": 222,
         "planner_visible": true
       },
       "PASS": true
@@ -104,13 +104,13 @@
       ],
       "intersects_robot_band": true,
       "legacy": {
-        "cells": 72,
+        "cells": 84,
         "marked": 0,
         "planner_visible": false
       },
       "physx": {
-        "cells": 72,
-        "marked": 67,
+        "cells": 84,
+        "marked": 79,
         "planner_visible": true
       },
       "PASS": true
@@ -123,13 +123,13 @@
       ],
       "intersects_robot_band": true,
       "legacy": {
-        "cells": 65,
-        "marked": 38,
+        "cells": 84,
+        "marked": 45,
         "planner_visible": true
       },
       "physx": {
-        "cells": 65,
-        "marked": 65,
+        "cells": 84,
+        "marked": 84,
         "planner_visible": true
       },
       "PASS": true

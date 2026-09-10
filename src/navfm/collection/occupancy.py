@@ -27,6 +27,7 @@ __all__ = [
     "AABB",
     "RasterComparison",
     "cell_bounds",
+    "cells_spanning_aabb",
     "compare_cells",
     "expected_cells_for_box",
     "expected_cells_for_boxes",
@@ -198,6 +199,30 @@ def compare_cells(
     measured: set[tuple[int, int]] | frozenset[tuple[int, int]],
 ) -> RasterComparison:
     return RasterComparison(frozenset(expected), frozenset(measured))
+
+
+def cells_spanning_aabb(grid: Any, box: AABB) -> list[tuple[int, int]]:
+    """Every grid cell index overlapping ``box``, by index range not by stepping.
+
+    Stepping world points from ``box.min_x`` in strides of the resolution is the
+    obvious way to do this and it silently under-covers: ``int(span / res) + 1``
+    samples span ``int(span / res) * res``, which is less than the object
+    whenever the span is not an exact multiple. A 0.3424 m object was sampled
+    across rows 153-156 while its geometry sat in row 157, and it was reported
+    planner-invisible when the map had marked it correctly.
+
+    That direction of error is benign for a visibility check -- under-sampling
+    can only miss marked cells, never invent them -- but it manufactures false
+    failures, and one such false failure blocked an acceptance verdict.
+    """
+    r0, c0 = grid.world_to_cell((box.min_x, box.min_y))
+    r1, c1 = grid.world_to_cell((box.max_x, box.max_y))
+    out: list[tuple[int, int]] = []
+    for r in range(min(r0, r1), max(r0, r1) + 1):
+        for c in range(min(c0, c1), max(c0, c1) + 1):
+            if grid.in_bounds((r, c)):
+                out.append((r, c))
+    return out
 
 
 def measured_cells_from_grid(grid: np.ndarray) -> set[tuple[int, int]]:

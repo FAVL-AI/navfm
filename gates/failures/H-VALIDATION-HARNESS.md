@@ -109,3 +109,41 @@ None was a defect in the cell-volume probe. After all four repairs the probe
 passes 13 of 13 analytic fixtures with exact set agreement and 5 of 5 known
 Hospital objects with zero genuine false negatives, at epsilon = 0 and with no
 per-object tuning.
+
+---
+
+## `H-SAMPLING-1` — a footprint sampler that never reached the object's far edge
+
+**Toward false failure.** Found 2026-09-10 during the Office generalisation.
+
+The helper that asked "how many of this object's cells does the map mark?"
+stepped world points from the AABB minimum in strides of the resolution, taking
+`int(span / res) + 1` samples. That covers `int(span / res) * res`, which is less
+than the object whenever the span is not an exact multiple of the resolution.
+
+`SM_InformationDesk_A_232` spans y from −11.7972 to −11.4548 on a grid with
+origin y = −27.14. Its geometry sits in row 157. The sampler's last sample landed
+at −11.4972, which is row **156**, so it examined rows 153–156 and reported the
+desk **planner-invisible** — one genuine-looking false negative, enough to block
+`OBSTACLE_MAP_FULL_ACCEPTANCE`.
+
+The map was correct. Reading the production grid directly shows cells
+(157, 407) through (157, 410) marked occupied, and `overlap_box` at that cell
+centre returns a hit.
+
+**Direction of error, and why it did not corrupt G2 V2.** Under-sampling can only
+*miss* marked cells; it can never invent them. So it manufactures false
+"invisible" reports and can never manufacture a false "visible" one. G2 V2's
+result — 1,089 colliders checked, zero planner-invisible — was computed with the
+same flawed helper and is therefore conservative: a correct helper can only
+confirm it, never overturn it.
+
+**Repair.** `cells_spanning_aabb` enumerates cell INDEX ranges from the corner
+cells, so the far edge is included by construction. Pinned by a test using the
+measured values above.
+
+**The pattern.** This is the fifth harness defect in this tranche and the fourth
+that produced a false failure. Every one of them lived in the apparatus, not in
+the instrument under test. The recurring shape is an expectation computed by a
+convenient proxy — an AABB, a stepped sample, a default transform — rather than
+by the thing it claims to measure.
