@@ -233,3 +233,51 @@ Reworded to *"comes from a seeded sampler run against"*. The guard was not
 disabled and `--no-verify` was not used: a false positive costs one rewording,
 and a disabled attribution guard costs the authorship rule the repository is
 built on. This is the second such collision recorded in this programme.
+
+---
+
+## `H-LMDB-1` — one open LMDB environment produced two false incompatibilities
+
+**Toward false failure.** Found 2026-09-10 during the loader-compatibility proof.
+
+GNM, ViNT and NoMaD were built in one process from one split folder. The
+reference loader writes an LMDB cache *inside* the split folder keyed by dataset
+name, so the second and third builds hit:
+
+```
+Error: The environment '/tmp/_bo10_splits/recon/train/dataset_recon.lmdb'
+is already open in this process.
+```
+
+Reported verbatim, that reads as **ViNT and NoMaD reject the trajectory** — a
+false negative against upstream, on the exact question the tranche existed to
+answer. GNM passed only because it happened to run first.
+
+**Repair.** Each model gets its own split folder, so each gets its own LMDB
+environment. All three then pass: 1190, 1190 and 1189 samples.
+
+This is the LMDB-cache landmine the repository already documents, in a form it
+had not taken before — not a stale cache across runs, but a live collision within
+one process.
+
+## `H-EVIDENCE-KEY-1` — the evidence guard failed closed, correctly
+
+**Not a false failure. A guard working.** Same session.
+
+The turning-population artefact contained a failure-combination dictionary keyed
+by tuples, which JSON cannot serialise. `emit_evidence` raised
+
+```
+EvidenceNotPersisted: record is not serialisable, so nothing was written
+```
+
+after the full 96-candidate evaluation had already been computed.
+
+It wrote nothing rather than a partial artefact, which is exactly the contract:
+returning normally must imply valid evidence exists on disk. The alternative --
+writing what serialised and dropping what did not -- would have produced an
+artefact that parsed, looked complete, and silently lacked the failure
+distribution.
+
+Recorded here because the ledger should not contain only defects. This is the
+FL-019 defence catching a real fault in the direction it was built for.

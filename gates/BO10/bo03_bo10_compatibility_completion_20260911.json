@@ -1,0 +1,171 @@
+{
+  "check": "BO03_BO10_COMPATIBILITY_COMPLETION",
+  "artifact_semantics": "FROZEN_COMPLETION_RECORD",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-11T00:00:00+00:00",
+  "git_head": "2698505c9a37513f0f84d01c4949cbdbc9c30553",
+  "STATUSES": {
+    "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
+    "BO-10_PIPELINE_COLLECTION": "COMPLETE",
+    "BO-10_HOSPITAL_COLLECTION": "COMPLETE_FOR_COMPATIBILITY_PURPOSE",
+    "NAVIGATION_TASK_COMPLETION": "FAIL / NOT ACHIEVED",
+    "DATASET_QUALITY_FOR_FINE_TUNING": "NOT ESTABLISHED",
+    "BO-11_FINE_TUNING": "NOT_READY_INSUFFICIENT_ADMITTED_DATA",
+    "why_not_a_bare_COMPLETE": "a bare COMPLETE on the Hospital collection would read as successful navigation. The compatibility purpose is complete; the navigation task was not achieved, and the two are recorded as separate facts."
+  },
+  "PRIMARY_RESULT": "A newly collected Hospital simulator trajectory was written in the published loader-facing trajectory format and successfully consumed by the pinned GNM, ViNT and NoMaD data paths.",
+  "LIMITATION_STATED_WITH_THE_RESULT": "This proves framework/data compatibility, not successful navigation or dataset quality. The collected episode reached the maximum step budget and stopped 1.679 m from the sealed goal, outside the 0.20 m goal tolerance. One trajectory is sufficient for an execution/compatibility proof but is not sufficient for training, validation and held-out evaluation.",
+  "compatibility_table": {
+    "note": "sample counts are NOT expected to match; the frameworks' temporal and action specifications differ",
+    "rows": [
+      {
+        "framework": "GNM",
+        "samples": 1190,
+        "tuple_length": 7,
+        "action": "[5, 4] dx/dy/cos/sin",
+        "context_size": 5,
+        "len_traj_pred": 5,
+        "result": "PASS"
+      },
+      {
+        "framework": "ViNT",
+        "samples": 1190,
+        "tuple_length": 7,
+        "action": "[5, 4] dx/dy/cos/sin",
+        "context_size": 5,
+        "len_traj_pred": 5,
+        "result": "PASS"
+      },
+      {
+        "framework": "NoMaD",
+        "samples": 1189,
+        "tuple_length": 7,
+        "action": "[8, 2] dx/dy",
+        "context_size": 3,
+        "len_traj_pred": 8,
+        "result": "PASS"
+      }
+    ],
+    "all_three_from_the_same_trajectory": true,
+    "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+    "distance_dtype": "torch.int64",
+    "action_values_finite": true,
+    "synthetic_fallback_used": false
+  },
+  "NAVIGATION_TASK_COMPLETION_DETAIL": {
+    "verdict": "FAIL / NOT ACHIEVED",
+    "final_distance_to_goal_m": 1.679,
+    "goal_tolerance_m": 0.2,
+    "termination_reason": "max_steps",
+    "why_the_trajectory_was_still_admitted": "reached_goal is not among the frozen post-episode compatibility conditions, which are the six adequacy thresholds plus data integrity. The trajectory is admitted because it meets what was frozen, not because goal-reaching was checked and passed.",
+    "not_claimed": [
+      "successful navigation",
+      "reliable goal reaching",
+      "stopping success"
+    ]
+  },
+  "REALISED_TURN_FINDING": {
+    "planned_turn_magnitudes_deg": [
+      50.71,
+      -58.39,
+      94.42
+    ],
+    "realised_turn_magnitudes_deg": [
+      131.27,
+      -101.92,
+      166.32
+    ],
+    "planned_path_length_m": 23.252,
+    "realised_path_length_m": 25.707,
+    "termination": "max_steps",
+    "observation": "realised turns were amplified relative to plan; the realised path was longer than planned",
+    "causal_classification": "UNRESOLVED",
+    "explicitly_not_asserted": [
+      "that overshoot caused the turn amplification",
+      "that turn amplification caused max_steps",
+      "that pure pursuit is the root cause",
+      "that route geometry is the root cause"
+    ],
+    "permitted_statement": "the observations are consistent with execution overshoot or deviation, but causality has not been established from a single production trajectory"
+  },
+  "trajectory": {
+    "identifier": "hospital_bo10_run_00001",
+    "path": "runs/bo10/hospital_bo10_run_00001",
+    "frames": 1200,
+    "images": 1200,
+    "traj_data_sha256": "40b9890d96973b3b910e218cfd0e64fd5453e881822ebcce62bd7da99b30ef09",
+    "first_image_sha256_prefix": "201c7d1b101dce86",
+    "last_image_sha256_prefix": "88a7c019fee13149",
+    "travelled_distance_m": 25.707,
+    "start_goal_separation_m": 17.976,
+    "realised_turn_events": 3,
+    "limiting_context_windows": 1189,
+    "goal_image_sealed_before_motion": true,
+    "goal_image_distinct_from_final_observation": true,
+    "immutable": true,
+    "e2_eligible": false,
+    "size_note": "60 MB; correctly excluded from version control by .gitignore"
+  },
+  "run_00000": {
+    "status": "COLLECTED_NOT_ADMITTED",
+    "unchanged": true,
+    "reason": "G10_V2 realised turn events = 1 (172.15 deg), zero separator runs"
+  },
+  "evidence_chain_sha256": {
+    "gates/BO10/hospital_turning_route_population_20260910.json": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+    "gates/BO10/bo10_production_collection_run00001_20260910.json": "601ca1ec326330cf04724ee588caeaf4d9c67fbb7cc5c9b2c4b362ce64254146",
+    "gates/BO10/loader_compatibility_run00001_20260910.json": "5051631d88556d233df568ece8915e52129285e12fbd8714a35e17fd2480e844",
+    "gates/BO10/turning_route_population_v1_final_20260910.json": "c046364d98314cef3d2809ec92a814d54316ef1153d1c792f60ff9d5ce4742df",
+    "gates/BO10/g10_turn_semantics_v2_20260910.json": "a8f8b383c5a392ea3f200c5704e265b7a31f14b0585397e6bb4dda836258eaf3",
+    "gates/BO10/kinematic_collection_drive_v1_20260910.json": "062b5410f131422939112239060edbb0a657b6b6d3447edfa23739201e68ff51",
+    "gates/BO10/obstacle_map_full_acceptance_20260910.json": "f382e7be5a6c964e97d7dc2d99e30aa79a6cc36c1baa81df4502cb77e75e8e9b",
+    "gates/BO10/bo10_e2_scope_declaration_20260907.json": "7bc18794bf6242b2652acc597f37ae680f126242bfeb5907d94592bc055e47ec"
+  },
+  "CLAIM_REGISTER": {
+    "allowed": [
+      "newly collected Hospital simulator data exists",
+      "official loader-facing structure was produced",
+      "GNM accepts it",
+      "ViNT accepts it",
+      "NoMaD accepts it",
+      "goal image was independently sealed before motion",
+      "provenance and admission evidence exists",
+      "the BO-03 compatibility question is closed"
+    ],
+    "not_allowed": [
+      "successful Hospital navigation",
+      "reliable goal reaching",
+      "stopping success",
+      "dataset-quality claim",
+      "model-performance improvement",
+      "sim-to-real success",
+      "real-robot safety",
+      "contact-dynamics fidelity",
+      "physical M3 Pro clearance"
+    ],
+    "open_findings": {
+      "F-TWIN-1": "OPEN",
+      "PHYSICAL_M3_PRO_GROUND_CLEARANCE": "NOT_MEASURED",
+      "DYNAMIC_WHEEL_DRIVE_V1": "DEFERRED",
+      "e2_eligible": false
+    }
+  },
+  "BO11_BOUNDARY": {
+    "status": "NOT_READY_INSUFFICIENT_ADMITTED_DATA",
+    "rule": "one compatibility trajectory must not become both training and evaluation data",
+    "required_before_bo11_starts": [
+      "number of trajectories",
+      "route diversity",
+      "scene diversity if applicable",
+      "train / validation / held-out test split",
+      "trajectory and route leakage prevention across splits",
+      "seeds",
+      "model checkpoint",
+      "optimizer",
+      "learning rate",
+      "epochs",
+      "augmentation",
+      "evaluation metrics"
+    ]
+  }
+}
