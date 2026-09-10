@@ -1,0 +1,201 @@
+{
+  "check": "HOSPITAL_BO10_REPAIRED_MAP_RERUN_V1_RESULT",
+  "artifact_semantics": "FROZEN_EXPERIMENTAL_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "b6bc56c3a1344ddb77d1292628d8f6cc08f9efc1",
+  "preregistration": "gates/BO10/hospital_repaired_map_rerun_v1_20260910.json",
+  "preregistration_sha256": "a562dda4124bb79ab6eb324a770c4c59a7d65742833c0cbb3a2c7475690e2678",
+  "source_artefact": "gates/BO10/hospital_repaired_map_rerun_20260910.json",
+  "source_artefact_sha256": "11cb0cede4c7751338407195cbbcf06eebde704822c88cf2298698303579c4ef",
+  "ROUTE_ADMISSION": "ROUTE_ADMITTED_FOR_COLLECTION",
+  "occupancy_backend_used": "physx_cell_overlap_v1",
+  "occupancy_query_failures": 0,
+  "candidates_generated": 96,
+  "candidates_passing": 3,
+  "instrument_controls_all_pass": true,
+  "no_optional_stopping": "all 96 evaluated; the budget was exhausted regardless of the first pass",
+  "result_by_map_state": {
+    "A_historical_defective_decode_omap": {
+      "candidates": 96,
+      "admissible": 0,
+      "binding": {
+        "G10_heading_changes": 89,
+        "G5": 7
+      }
+    },
+    "B_decode_repaired_omap": {
+      "candidates": 96,
+      "admissible": 0,
+      "binding": {
+        "G10_heading_changes": 85,
+        "G5": 10,
+        "G10_separation": 1
+      }
+    },
+    "C_validated_physx_backend": {
+      "candidates": 96,
+      "admissible": 3,
+      "binding": {
+        "G10_heading_changes": 91,
+        "G5": 2,
+        "admitted": 3
+      }
+    }
+  },
+  "heading_change_distribution_C": {
+    "0": 73,
+    "1": 10,
+    "2": 8,
+    "3": 2,
+    "4": 3
+  },
+  "CONFOUND_THE_INTERVENTION_WAS_NOT_ISOLATED": {
+    "severity": "MATERIAL -- it changes what may be claimed, though not the practical outcome",
+    "what_was_intended": "hold the candidate population fixed and change only the obstacle map",
+    "what_actually_happened": "the obstacle map is an INPUT to candidate generation, not merely a downstream consumer. navfm.planning.sample_episode_pair(grid, rng, ...) draws start and goal poses from the FREE CELLS of the inflated grid, so changing the map changes the population it samples from.",
+    "measured": {
+      "identical_start_poses": "0 of 96",
+      "identical_goal_poses": "0 of 96",
+      "identical_ordering_indices": "96 of 96",
+      "candidate_count": "96 expected, 96 generated"
+    },
+    "consequence": "the preregistration's population-identity definition -- 'the frozen candidate-generation inputs' -- is satisfied for scene, generator, seed, budget, ordering and eligibility rules, but NOT in the sense it was written to guarantee, because the map is itself one of those inputs. This was not anticipated when the preregistration was frozen and is recorded rather than reinterpreted."
+  },
+  "what_is_claimed": "Under the validated obstacle map, the unchanged generation procedure -- same generator, seed 0, budget 96, ordering, eligibility rules and G3-G10 thresholds -- yields 3 fully admissible candidates of 96. Under both prior map states the same procedure yielded 0 of 96.",
+  "what_is_NOT_claimed": [
+    "that any specific previously-failing candidate now passes -- those candidates do not exist in this run, because the poses differ",
+    "that the 7 historically G5-bound candidates were rescued -- they cannot be followed across the intervention",
+    "a clean single-variable causal attribution; the map moved the candidate population with it"
+  ],
+  "what_would_isolate_it": "replaying the historical start/goal pairs directly against the repaired map, bypassing sample_episode_pair. That is a separate experiment and is NOT run here, because BO-10 needs an admissible route rather than an attribution.",
+  "turn_distribution_observation": "state C returns 73 zero-turn candidates, close to state A's 73 and far from state B's 24. State B's apparent improvement in turning was an artefact of over-blocking: with UNKNOWN cells blocked on the legacy backend, 63% of the map was occupied and paths were forced to wind. The accurate map is 8.8% occupied, so paths are straight again. The shortest-path generator's tendency toward straight routes is therefore REAL and was never a map artefact -- but it no longer blocks BO-10, because 3 candidates clear the turn threshold and every other gate.",
+  "admissible_candidates": [
+    {
+      "route_id": "hospital_repaired_map_route_050",
+      "start_pose": [
+        -39.90271172754076,
+        23.12059657138799,
+        -1.3986055122719583
+      ],
+      "goal_pose": [
+        -28.7009700284671,
+        16.971295079647238
+      ],
+      "nominal_path_length_m": 20.80842388694475,
+      "predicted": {
+        "usable_frames": 713,
+        "travelled_distance_m": 20.80842388694475,
+        "start_goal_separation_m": 12.801562404644207,
+        "heading_change_count": 3,
+        "heading_changes_deg": [
+          73.0092,
+          30.5792,
+          34.2196
+        ],
+        "windows_per_model": {
+          "gnm": 703,
+          "vint": 703,
+          "nomad": 702
+        },
+        "limiting_window_count": 702
+      },
+      "g5_min_clearance_m": 0.35675492882728577,
+      "gates": {
+        "G10_LONG_HORIZON": "PASS",
+        "G3_START_SUPPORT": "PASS",
+        "G6_END_SUPPORT": "PASS",
+        "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+        "G5_OBSTACLE_CLEARANCE": "PASS"
+      }
+    },
+    {
+      "route_id": "hospital_repaired_map_route_083",
+      "start_pose": [
+        16.05710713965024,
+        -0.6100253352794099,
+        2.3462938236043565
+      ],
+      "goal_pose": [
+        10.222781812387284,
+        -1.193304578545668
+      ],
+      "nominal_path_length_m": 14.925471646269976,
+      "predicted": {
+        "usable_frames": 511,
+        "travelled_distance_m": 14.925471646269976,
+        "start_goal_separation_m": 5.830951894845297,
+        "heading_change_count": 4,
+        "heading_changes_deg": [
+          72.2553,
+          47.4896,
+          44.0586,
+          37.4284
+        ],
+        "windows_per_model": {
+          "gnm": 501,
+          "vint": 501,
+          "nomad": 500
+        },
+        "limiting_window_count": 500
+      },
+      "g5_min_clearance_m": 0.31334400177001953,
+      "gates": {
+        "G10_LONG_HORIZON": "PASS",
+        "G3_START_SUPPORT": "PASS",
+        "G6_END_SUPPORT": "PASS",
+        "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+        "G5_OBSTACLE_CLEARANCE": "PASS"
+      }
+    },
+    {
+      "route_id": "hospital_repaired_map_route_086",
+      "start_pose": [
+        19.153456786093916,
+        3.0768181196060422,
+        -2.999695598985629
+      ],
+      "goal_pose": [
+        -10.700410184084673,
+        3.5411301843280474
+      ],
+      "nominal_path_length_m": 31.44514956118468,
+      "predicted": {
+        "usable_frames": 1078,
+        "travelled_distance_m": 31.44514956118468,
+        "start_goal_separation_m": 29.902675465583336,
+        "heading_change_count": 3,
+        "heading_changes_deg": [
+          32.3998,
+          -38.6744,
+          -37.9666
+        ],
+        "windows_per_model": {
+          "gnm": 1068,
+          "vint": 1068,
+          "nomad": 1067
+        },
+        "limiting_window_count": 1067
+      },
+      "g5_min_clearance_m": 0.3394146263599396,
+      "gates": {
+        "G10_LONG_HORIZON": "PASS",
+        "G3_START_SUPPORT": "PASS",
+        "G6_END_SUPPORT": "PASS",
+        "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+        "G5_OBSTACLE_CLEARANCE": "PASS"
+      }
+    }
+  ],
+  "selected_route": "hospital_repaired_map_route_050",
+  "selection_rule": "first candidate in frozen ordering satisfying every required gate; frozen before outcomes were seen",
+  "turning_route_population_v1_required": false,
+  "turning_population_reason": "at least one candidate passes, so the preregistered trigger for a turning-population experiment is not met",
+  "e2_eligible": false,
+  "claim_boundaries": [
+    "F-TWIN-1 OPEN",
+    "PHYSICAL_M3_PRO_GROUND_CLEARANCE NOT_MEASURED",
+    "no data collected by this tranche",
+    "predicted G10 is a forecast, not a measurement"
+  ]
+}
