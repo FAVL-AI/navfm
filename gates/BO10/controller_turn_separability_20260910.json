@@ -1,0 +1,840 @@
+{
+  "check": "CONTROLLER_TURN_SEPARABILITY",
+  "artifact_semantics": "NON_PRODUCTION_CONTROLLER_INTERFACE_VALIDATION",
+  "timestamp_utc": "2026-09-10T04:56:27.277065+00:00",
+  "excluded_from": [
+    "BO-10 production population",
+    "E2 population",
+    "production route selection"
+  ],
+  "controller": {
+    "implementation": "navfm.control.PurePursuit",
+    "lookahead_m": 0.45,
+    "goal_tol_m": 0.2,
+    "cruise_v_m_s": 0.35,
+    "control_hz": 12.0,
+    "mode": "nonholonomic",
+    "UNCHANGED": true
+  },
+  "drive": {
+    "model": "KINEMATIC_SE2",
+    "dt_s": 0.08333333333333333,
+    "collision_guard": "OpenSpace -- admits every pose",
+    "why_free_space": "the question is whether turn structure survives the controller; obstacles would confound it with rejections, and the guard has its own nine controls"
+  },
+  "generator_frozen_before_this": "gates/BO10/turning_route_population_v1_final_20260910.json",
+  "cannot_feed_back": "no generator parameter may change from these results",
+  "fixtures": [
+    {
+      "fixture": "ONE_SMOOTH_TURN",
+      "declared_before_running": "one genuine 90 degree turn; expected realised events = 1",
+      "expected_realised_events": 1,
+      "corners": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          6.0,
+          0.0
+        ],
+        [
+          6.0,
+          6.0
+        ]
+      ],
+      "planned": {
+        "turn_events": 1,
+        "event_magnitudes_deg": [
+          90.0
+        ],
+        "path_length_m": 12.0,
+        "separator_runs_m": [
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          5.5,
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          5.5
+        ]
+      },
+      "realised": {
+        "turn_events": 1,
+        "event_magnitudes_deg": [
+          94.8
+        ],
+        "all_event_magnitudes_deg": [
+          94.8,
+          -4.8
+        ],
+        "path_length_m": 11.6663,
+        "separator_runs_m": [
+          1.458,
+          1.944,
+          2.43,
+          2.917,
+          3.403,
+          3.889,
+          4.375,
+          4.861,
+          1.458,
+          1.944,
+          2.43,
+          2.917,
+          3.403
+        ],
+        "longest_separator_run_m": 4.861,
+        "turning_segments": 6,
+        "low_curvature_segments": 17
+      },
+      "tracking": {
+        "path_length_ratio_realised_over_planned": 0.97219,
+        "cross_track_error_m": {
+          "max": 0.1147,
+          "mean": 0.0296,
+          "p95": 0.0653
+        },
+        "heading_error_deg": {
+          "max": 43.787,
+          "mean": 2.158,
+          "p95": 15.192
+        },
+        "thresholds": "DESCRIPTIVE ONLY. No pass/fail threshold is invented for these here; the defining question is whether distinct turn-event structure survives execution."
+      },
+      "execution": {
+        "reached_goal": true,
+        "steps": 405,
+        "guard_rejections": 0
+      },
+      "trace": {
+        "note": "enough to reconstruct the event decision independently",
+        "realised_positions_first_20": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0292,
+            0.0
+          ],
+          [
+            0.0583,
+            0.0
+          ],
+          [
+            0.0875,
+            0.0
+          ],
+          [
+            0.1167,
+            0.0
+          ],
+          [
+            0.1458,
+            0.0
+          ],
+          [
+            0.175,
+            0.0
+          ],
+          [
+            0.2042,
+            0.0
+          ],
+          [
+            0.2333,
+            0.0
+          ],
+          [
+            0.2625,
+            0.0
+          ],
+          [
+            0.2917,
+            0.0
+          ],
+          [
+            0.3208,
+            0.0
+          ],
+          [
+            0.35,
+            0.0
+          ],
+          [
+            0.3792,
+            0.0
+          ],
+          [
+            0.4083,
+            0.0
+          ],
+          [
+            0.4375,
+            0.0
+          ],
+          [
+            0.4667,
+            0.0
+          ],
+          [
+            0.4958,
+            0.0
+          ],
+          [
+            0.525,
+            0.0
+          ],
+          [
+            0.5542,
+            0.0
+          ]
+        ],
+        "realised_yaws_first_20": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "realised_all_events": [
+          {
+            "net_deg": 94.795,
+            "start_progress_m": 5.347,
+            "end_progress_m": 2.4305,
+            "segments": 4,
+            "qualifies": true
+          },
+          {
+            "net_deg": -4.7987,
+            "start_progress_m": 7.2914,
+            "end_progress_m": 1.4583,
+            "segments": 2,
+            "qualifies": false
+          }
+        ],
+        "semantics": {
+          "resample_interval_m": 0.5,
+          "low_curvature_segment_deg": 1.0,
+          "min_separator_distance_m": 1.0,
+          "qualifying_turn_deg": 30.0,
+          "min_tangent_displacement_m": 0.5,
+          "epsilon": 1e-09,
+          "parameter_provenance": {
+            "resample_interval_m": "REUSED from the original frozen rule",
+            "low_curvature_segment_deg": "REUSED -- the frozen straight_deg",
+            "qualifying_turn_deg": "UNCHANGED from the frozen collection contract",
+            "min_tangent_displacement_m": "equals the resample interval",
+            "min_separator_distance_m": "NEW. Two resample intervals, so a separator is a run rather than a single sample. Derived from the resample interval; not derived from any trajectory."
+          }
+        }
+      }
+    },
+    {
+      "fixture": "THREE_WELL_SEPARATED",
+      "declared_before_running": "three 90 degree turns with 6 m legs; expected realised events = 3. THIS IS THE DEFINING POSITIVE CONTROL.",
+      "expected_realised_events": 3,
+      "corners": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          6.0,
+          0.0
+        ],
+        [
+          6.0,
+          6.0
+        ],
+        [
+          12.0,
+          6.0
+        ],
+        [
+          12.0,
+          12.0
+        ]
+      ],
+      "planned": {
+        "turn_events": 3,
+        "event_magnitudes_deg": [
+          90.0,
+          -90.0,
+          90.0
+        ],
+        "path_length_m": 24.0,
+        "separator_runs_m": [
+          1.469,
+          1.959,
+          2.449,
+          2.939,
+          3.429,
+          3.918,
+          4.408,
+          4.898,
+          5.388,
+          1.469,
+          1.959,
+          2.449,
+          2.939,
+          3.429,
+          3.918,
+          4.408,
+          4.898,
+          1.469,
+          1.959,
+          2.449,
+          2.939,
+          3.429,
+          3.918,
+          4.408,
+          4.898,
+          1.469,
+          1.959,
+          2.449,
+          2.939,
+          3.429,
+          3.918,
+          4.408,
+          4.898,
+          5.388
+        ]
+      },
+      "realised": {
+        "turn_events": 3,
+        "event_magnitudes_deg": [
+          93.65,
+          -94.7,
+          95.03
+        ],
+        "all_event_magnitudes_deg": [
+          93.65,
+          -4.11,
+          -94.7,
+          4.27,
+          95.03,
+          -4.87
+        ],
+        "path_length_m": 23.3618,
+        "separator_runs_m": [
+          1.491,
+          1.988,
+          2.485,
+          2.982,
+          3.479,
+          3.976,
+          4.474,
+          4.971,
+          1.491,
+          1.988,
+          2.485,
+          2.982,
+          1.491,
+          1.988,
+          2.485,
+          2.982,
+          1.491,
+          1.988,
+          2.485,
+          2.982,
+          3.479
+        ],
+        "longest_separator_run_m": 4.971,
+        "turning_segments": 16,
+        "low_curvature_segments": 30
+      },
+      "tracking": {
+        "path_length_ratio_realised_over_planned": 0.97341,
+        "cross_track_error_m": {
+          "max": 0.1147,
+          "mean": 0.0319,
+          "p95": 0.0716
+        },
+        "heading_error_deg": {
+          "max": 44.65,
+          "mean": 3.212,
+          "p95": 24.943
+        },
+        "thresholds": "DESCRIPTIVE ONLY. No pass/fail threshold is invented for these here; the defining question is whether distinct turn-event structure survives execution."
+      },
+      "execution": {
+        "reached_goal": true,
+        "steps": 814,
+        "guard_rejections": 0
+      },
+      "trace": {
+        "note": "enough to reconstruct the event decision independently",
+        "realised_positions_first_20": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0292,
+            0.0
+          ],
+          [
+            0.0583,
+            0.0
+          ],
+          [
+            0.0875,
+            0.0
+          ],
+          [
+            0.1167,
+            0.0
+          ],
+          [
+            0.1458,
+            0.0
+          ],
+          [
+            0.175,
+            0.0
+          ],
+          [
+            0.2042,
+            0.0
+          ],
+          [
+            0.2333,
+            0.0
+          ],
+          [
+            0.2625,
+            0.0
+          ],
+          [
+            0.2917,
+            0.0
+          ],
+          [
+            0.3208,
+            0.0
+          ],
+          [
+            0.35,
+            0.0
+          ],
+          [
+            0.3792,
+            0.0
+          ],
+          [
+            0.4083,
+            0.0
+          ],
+          [
+            0.4375,
+            0.0
+          ],
+          [
+            0.4667,
+            0.0
+          ],
+          [
+            0.4958,
+            0.0
+          ],
+          [
+            0.525,
+            0.0
+          ],
+          [
+            0.5542,
+            0.0
+          ]
+        ],
+        "realised_yaws_first_20": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "realised_all_events": [
+          {
+            "net_deg": 93.6462,
+            "start_progress_m": 5.4677,
+            "end_progress_m": 1.9882,
+            "segments": 3,
+            "qualifies": true
+          },
+          {
+            "net_deg": -4.1097,
+            "start_progress_m": 7.4559,
+            "end_progress_m": 1.4912,
+            "segments": 2,
+            "qualifies": false
+          },
+          {
+            "net_deg": -94.7047,
+            "start_progress_m": 11.4324,
+            "end_progress_m": 1.9882,
+            "segments": 3,
+            "qualifies": true
+          },
+          {
+            "net_deg": 4.2657,
+            "start_progress_m": 12.9235,
+            "end_progress_m": 1.4912,
+            "segments": 2,
+            "qualifies": false
+          },
+          {
+            "net_deg": 95.0301,
+            "start_progress_m": 16.9,
+            "end_progress_m": 2.4853,
+            "segments": 4,
+            "qualifies": true
+          },
+          {
+            "net_deg": -4.8687,
+            "start_progress_m": 18.8882,
+            "end_progress_m": 1.4912,
+            "segments": 2,
+            "qualifies": false
+          }
+        ],
+        "semantics": {
+          "resample_interval_m": 0.5,
+          "low_curvature_segment_deg": 1.0,
+          "min_separator_distance_m": 1.0,
+          "qualifying_turn_deg": 30.0,
+          "min_tangent_displacement_m": 0.5,
+          "epsilon": 1e-09,
+          "parameter_provenance": {
+            "resample_interval_m": "REUSED from the original frozen rule",
+            "low_curvature_segment_deg": "REUSED -- the frozen straight_deg",
+            "qualifying_turn_deg": "UNCHANGED from the frozen collection contract",
+            "min_tangent_displacement_m": "equals the resample interval",
+            "min_separator_distance_m": "NEW. Two resample intervals, so a separator is a run rather than a single sample. Derived from the resample interval; not derived from any trajectory."
+          }
+        }
+      }
+    },
+    {
+      "fixture": "THREE_TIGHTLY_SPACED",
+      "declared_before_running": "three 90 degree corners with 1 m legs between them. DIAGNOSTIC ONLY -- it is NOT required to fail, and no verdict depends on it.",
+      "expected_realised_events": null,
+      "corners": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          4.0,
+          0.0
+        ],
+        [
+          4.0,
+          1.0
+        ],
+        [
+          5.0,
+          1.0
+        ],
+        [
+          5.0,
+          5.0
+        ]
+      ],
+      "planned": {
+        "turn_events": 3,
+        "event_magnitudes_deg": [
+          90.0,
+          -90.0,
+          90.0
+        ],
+        "path_length_m": 10.0,
+        "separator_runs_m": [
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5
+        ]
+      },
+      "realised": {
+        "turn_events": 3,
+        "event_magnitudes_deg": [
+          65.41,
+          -47.21,
+          76.26
+        ],
+        "all_event_magnitudes_deg": [
+          65.41,
+          -47.21,
+          76.26,
+          -4.19
+        ],
+        "path_length_m": 9.2015,
+        "separator_runs_m": [
+          1.453,
+          1.937,
+          2.421,
+          2.906,
+          1.453
+        ],
+        "longest_separator_run_m": 2.906,
+        "turning_segments": 9,
+        "low_curvature_segments": 9
+      },
+      "tracking": {
+        "path_length_ratio_realised_over_planned": 0.92015,
+        "cross_track_error_m": {
+          "max": 0.1616,
+          "mean": 0.0402,
+          "p95": 0.1067
+        },
+        "heading_error_deg": {
+          "max": 48.746,
+          "mean": 7.102,
+          "p95": 36.472
+        },
+        "thresholds": "DESCRIPTIVE ONLY. No pass/fail threshold is invented for these here; the defining question is whether distinct turn-event structure survives execution."
+      },
+      "execution": {
+        "reached_goal": true,
+        "steps": 327,
+        "guard_rejections": 0
+      },
+      "trace": {
+        "note": "enough to reconstruct the event decision independently",
+        "realised_positions_first_20": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0292,
+            0.0
+          ],
+          [
+            0.0583,
+            0.0
+          ],
+          [
+            0.0875,
+            0.0
+          ],
+          [
+            0.1167,
+            0.0
+          ],
+          [
+            0.1458,
+            0.0
+          ],
+          [
+            0.175,
+            0.0
+          ],
+          [
+            0.2042,
+            0.0
+          ],
+          [
+            0.2333,
+            0.0
+          ],
+          [
+            0.2625,
+            0.0
+          ],
+          [
+            0.2917,
+            0.0
+          ],
+          [
+            0.3208,
+            0.0
+          ],
+          [
+            0.35,
+            0.0
+          ],
+          [
+            0.3792,
+            0.0
+          ],
+          [
+            0.4083,
+            0.0
+          ],
+          [
+            0.4375,
+            0.0
+          ],
+          [
+            0.4667,
+            0.0
+          ],
+          [
+            0.4958,
+            0.0
+          ],
+          [
+            0.525,
+            0.0
+          ],
+          [
+            0.5542,
+            0.0
+          ]
+        ],
+        "realised_yaws_first_20": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "realised_all_events": [
+          {
+            "net_deg": 65.4122,
+            "start_progress_m": 3.39,
+            "end_progress_m": 1.9372,
+            "segments": 3,
+            "qualifies": true
+          },
+          {
+            "net_deg": -47.2125,
+            "start_progress_m": 4.8429,
+            "end_progress_m": 0.9686,
+            "segments": 1,
+            "qualifies": true
+          },
+          {
+            "net_deg": 76.2618,
+            "start_progress_m": 5.3272,
+            "end_progress_m": 1.9372,
+            "segments": 3,
+            "qualifies": true
+          },
+          {
+            "net_deg": -4.188,
+            "start_progress_m": 6.7801,
+            "end_progress_m": 1.4529,
+            "segments": 2,
+            "qualifies": false
+          }
+        ],
+        "semantics": {
+          "resample_interval_m": 0.5,
+          "low_curvature_segment_deg": 1.0,
+          "min_separator_distance_m": 1.0,
+          "qualifying_turn_deg": 30.0,
+          "min_tangent_displacement_m": 0.5,
+          "epsilon": 1e-09,
+          "parameter_provenance": {
+            "resample_interval_m": "REUSED from the original frozen rule",
+            "low_curvature_segment_deg": "REUSED -- the frozen straight_deg",
+            "qualifying_turn_deg": "UNCHANGED from the frozen collection contract",
+            "min_tangent_displacement_m": "equals the resample interval",
+            "min_separator_distance_m": "NEW. Two resample intervals, so a separator is a run rather than a single sample. Derived from the resample interval; not derived from any trajectory."
+          }
+        }
+      }
+    }
+  ],
+  "defining_controls": {
+    "ONE_SMOOTH_TURN_realised_is_1": true,
+    "THREE_WELL_SEPARATED_realised_is_at_least_3": true
+  },
+  "CONTROLLER_TURN_SEPARABILITY": "PASS",
+  "tight_fixture_is_diagnostic_only": true,
+  "hospital_authorised": true,
+  "interpretation": {
+    "headline": "the UNCHANGED controller preserves distinct turn-event structure. Three planned corners with 6 m legs realise as three events of 93.65, -94.70 and 95.03 degrees.",
+    "tight_fixture_outcome": {
+      "expected": "declared as diagnostic with no required outcome",
+      "measured": "3 realised events of 65.41, -47.21 and 76.26 degrees",
+      "reading": "it PRESERVED all three even at 1 m spacing. Reported because it was declared diagnostic; no verdict depends on it and the generator is already frozen, so it cannot and does not change anchor spacing."
+    },
+    "direct_evidence_of_local_corner_cutting": {
+      "note": "this vindicates keeping LOCAL_CORNER_CUTTING open rather than ruling it out from total path length",
+      "tight_fixture_path_length_ratio": 0.92015,
+      "well_separated_ratio": 0.97341,
+      "one_turn_ratio": 0.97219,
+      "magnitude_attenuation_tight": "planned 90 degrees realised as 65.41, -47.21, 76.26",
+      "reading": "the controller measurably cuts corners -- realised paths are 3% to 8% SHORTER than planned and turn magnitudes are attenuated, most strongly where corners are close together. Corner-cutting is therefore real and observable, and the earlier inference that it was ruled out by run_00000's longer path was wrong on both sides: length is an aggregate, and here shorter paths accompany cutting."
+    },
+    "consequence_for_SYSTEMATIC_TURN_BLENDING": {
+      "controller_exonerated_as_sole_cause": true,
+      "reasoning": "a controller that blended structure unconditionally would have collapsed the well-separated fixture too. It did not, so run_00000's collapse is not explained by the controller alone.",
+      "now_favoured": "ROUTE_STRUCTURE. Route 050's three planned 'turns' were 73.0, 30.6 and 34.2 degrees measured on a 7-point smoothed polyline; those are consistent with gradual bends rather than the separated corners these fixtures used.",
+      "still_not_proven": "this is an inference from fixtures, not a measurement of route 050. The TURNING_ROUTE_POPULATION_V1 evaluation is what tests it, since that generator enforces 3-9 m anchor separation and 30-135 degree bends.",
+      "classification": "CONTROLLER_TURN_SEPARABILITY is not the cause; ROUTE_STRUCTURE favoured but untested"
+    },
+    "tracking_metrics_are_descriptive": "cross-track max 0.115-0.162 m, mean 0.030-0.040 m; heading error max 43.8-48.7 deg at corners, mean 2.2-7.1 deg. No pass/fail threshold is invented for these; the defining question was turn-event structure."
+  }
+}
