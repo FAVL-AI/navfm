@@ -1,0 +1,354 @@
+{
+  "check": "BO10_PRODUCTION_COLLECTION",
+  "artifact_semantics": "PRODUCTION_TRAJECTORY_EVIDENCE",
+  "scene_id": "hospital_bo10",
+  "timestamp_utc": "2026-09-10T05:22:08.835031+00:00",
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "robot_asset": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    },
+    "isaac_lab": {
+      "isaac_lab_version": "0.54.3",
+      "installed": true,
+      "clone_path": null,
+      "isaac_lab_commit": null,
+      "isaac_lab_tag": null,
+      "clone_worktree_dirty": null
+    }
+  },
+  "occupancy_backend": "physx_cell_overlap_v1",
+  "scope": {
+    "purpose": "BO10_FRAMEWORK_COMPATIBILITY",
+    "e2_eligible": false,
+    "e2_exclusion_reason": "compatibility trajectory collected outside the preregistered E2 population",
+    "scope_declaration": "/home/favl/projects/navfm/gates/BO10/bo10_e2_scope_declaration_20260907.json",
+    "scope_declaration_sha256": "7bc18794bf6242b2652acc597f37ae680f126242bfeb5907d94592bc055e47ec"
+  },
+  "population_kind": "TURNING_ROUTE_POPULATION_V1",
+  "admitted_route": {
+    "route_id": "hospital_turn_route_000",
+    "ordering_index": 0,
+    "start_pose": [
+      -21.827251126595453,
+      32.52519214859307,
+      -3.03774645687452
+    ],
+    "goal_pose": [
+      -5.1272511265954535,
+      27.725192148593067
+    ],
+    "admission_artefact": "gates/BO10/hospital_turning_route_population_20260910.json",
+    "admission_artefact_sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+    "anchors": [
+      [
+        -21.8503,
+        32.4793
+      ],
+      [
+        -18.277,
+        28.1609
+      ],
+      [
+        -14.9473,
+        28.1175
+      ],
+      [
+        -11.7545,
+        22.9375
+      ],
+      [
+        -5.0843,
+        27.6818
+      ]
+    ],
+    "planned_turn_events_v2": 3,
+    "planned_turn_magnitudes_deg": [
+      50.71,
+      -58.39,
+      94.42
+    ],
+    "predicted": null
+  },
+  "occupancy": {
+    "shape": [
+      420,
+      767
+    ],
+    "backend_used": "physx_cell_overlap_v1",
+    "query_failures": 0
+  },
+  "camera_prim": "/World/Robot/base_link/Camera_front",
+  "route_reproduction": {
+    "method": "replay the seeded generator to the selected candidate index; the generator replayed is the one the population was evaluated with",
+    "generator": "TURNING_ROUTE_POPULATION_V1",
+    "target_index": 0,
+    "start_matches_admitted": true,
+    "replayed_start": [
+      -21.827251126595453,
+      32.52519214859307,
+      -3.03774645687452
+    ],
+    "replayed_goal": [
+      -5.1272511265954535,
+      27.725192148593067
+    ],
+    "path_points": 5
+  },
+  "kinematic_drive": {
+    "preregistration": "gates/BO10/kinematic_collection_drive_v1_20260910.json",
+    "config": {
+      "dt": 0.08333333333333333,
+      "max_v": 0.45,
+      "max_vy": 0.35,
+      "max_w": 1.2,
+      "sweep_substeps": 8,
+      "zero_command_eps": 1e-06,
+      "max_step_translation_m": 0.056249999999999994,
+      "max_step_rotation_rad": 0.15
+    },
+    "guard": "PhysX overlap against scene collision geometry, robot self-hits excluded",
+    "footprint_radius_m": 0.24,
+    "probe_spacing_m": 0.05,
+    "steps_applied": 1200,
+    "steps_rejected": 0,
+    "guard_queries": 9600,
+    "self_hits_excluded": 521973,
+    "motion_model": "KINEMATIC_SE2",
+    "contact_response": "NOT_EVALUATED",
+    "wheel_dynamics": "NOT_EVALUATED"
+  },
+  "episode": {
+    "index": 1,
+    "name": "hospital_bo10_run_00001",
+    "accepted": true,
+    "reason": "max_steps",
+    "n_frames": 1200,
+    "path_length_m": 25.707419674775522,
+    "wall_time_s": 20.92568278312683
+  },
+  "trajectory_dir": "runs/bo10/hospital_bo10_run_00001",
+  "post_episode": {
+    "G10_realised": {
+      "gate": "G10_LONG_HORIZON",
+      "status": "PASS",
+      "kind": "POSTCONDITION",
+      "reason": "all six adequacy thresholds met",
+      "detail": {
+        "measurement": {
+          "usable_frames": 1200,
+          "travelled_distance_m": 25.707419674775522,
+          "start_goal_separation_m": 17.976471589800614,
+          "heading_change_count": 3,
+          "heading_changes_deg": [
+            131.2653,
+            -101.9151,
+            166.316
+          ],
+          "windows_per_model": {
+            "gnm": 1190,
+            "vint": 1190,
+            "nomad": 1189
+          },
+          "limiting_window_count": 1189
+        },
+        "thresholds": {
+          "min_usable_frames": 120,
+          "min_travelled_distance_m": 8.0,
+          "min_start_goal_separation_m": 5.0,
+          "min_heading_changes": 3,
+          "heading_change_deg": 30.0,
+          "min_valid_context_windows": 30,
+          "label": "PREDECLARED COLLECTION ADEQUACY THRESHOLDS",
+          "not_defined_by": "elapsed wall-clock seconds; nor by any published model requirement"
+        },
+        "checks": {
+          "usable_frames": true,
+          "travelled_distance": true,
+          "start_goal_separation": true,
+          "heading_changes": true,
+          "context_windows": true
+        },
+        "threshold_semantics": "PREDECLARED COLLECTION ADEQUACY THRESHOLDS -- frozen before any candidate route was evaluated; not requirements published by GNM, ViNT or NoMaD",
+        "window_derivation": "TrajectorySpec.num_samples, mirroring ViNT_Dataset._build_index at the pinned upstream commit; GNM/ViNT context_size 5, NoMaD context_size 3 with len_traj_pred 8",
+        "no_rounding": "values are compared as measured; nothing is rounded into a pass",
+        "source": "recorded positions and yaws",
+        "frame_count_is_recorded_not_estimated": true
+      }
+    },
+    "G8_controller_identity": {
+      "gate": "G8_CONTROLLER_IDENTITY",
+      "status": "PASS",
+      "kind": "POSTCONDITION",
+      "reason": "controller identity unchanged across the episode",
+      "detail": {
+        "before_digest": "023d31452fd21f0ab1f4b9e7575f5ed518e58985360d729602933ed77eb99932",
+        "after_digest": "023d31452fd21f0ab1f4b9e7575f5ed518e58985360d729602933ed77eb99932",
+        "before": {
+          "implementation": "navfm.control.PurePursuit",
+          "control_hz": 12.0,
+          "max_v": 0.45,
+          "max_w": 1.2,
+          "max_vy": 0.35,
+          "max_a": 0.8,
+          "max_alpha": 3.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator_mode": "nonholonomic",
+          "seed": 0,
+          "extra": {}
+        },
+        "after": {
+          "implementation": "navfm.control.PurePursuit",
+          "control_hz": 12.0,
+          "max_v": 0.45,
+          "max_w": 1.2,
+          "max_vy": 0.35,
+          "max_a": 0.8,
+          "max_alpha": 3.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator_mode": "nonholonomic",
+          "seed": 0,
+          "extra": {}
+        },
+        "changed_fields": [],
+        "claim_boundary": "controller identity only. This gate does not establish that the robot moved: a command issued to a wedged articulation produces an identical digest. Realised motion is a postcondition measured from recorded poses."
+      }
+    },
+    "G9_goal_image_seal": {
+      "gate": "G9_GOAL_IMAGE_SEAL",
+      "status": "PASS",
+      "kind": "PRECONDITION",
+      "reason": "goal declared, captured, hashed, sealed, then motion began",
+      "detail": {
+        "goal_xy": [
+          -5.1272511265954535,
+          27.725192148593067
+        ],
+        "source_camera": "/World/Robot/base_link/Camera_front",
+        "goal_image_sha256": "3145cceba575f88e5750d7332019d3529c82e4e877fe98f5a73f336aa0a0b846",
+        "capture_sim_time": null,
+        "events": [
+          [
+            "GOAL_DECLARED",
+            1
+          ],
+          [
+            "GOAL_IMAGE_ACQUIRED",
+            2
+          ],
+          [
+            "GOAL_IMAGE_HASHED",
+            3
+          ],
+          [
+            "GOAL_PROVENANCE_WRITTEN",
+            4
+          ],
+          [
+            "GOAL_SEALED",
+            5
+          ],
+          [
+            "FIRST_MOTION_COMMAND",
+            6
+          ]
+        ],
+        "required_order": [
+          "GOAL_DECLARED",
+          "GOAL_IMAGE_ACQUIRED",
+          "GOAL_IMAGE_HASHED",
+          "GOAL_PROVENANCE_WRITTEN",
+          "GOAL_SEALED",
+          "FIRST_MOTION_COMMAND"
+        ],
+        "provenance_is_the_event_order": "pixel similarity does not establish provenance in either direction: a stationary robot photographs the same scene twice, and two different images do not show which was captured first",
+        "final_observation_digest": "2ab6ba772589360bf5f3c700bb6841d854e417f258852c1da60bfa0219d3c09f"
+      }
+    },
+    "MOTION_REALISED": {
+      "gate": "MOTION_REALISED",
+      "status": "PASS",
+      "kind": "POSTCONDITION",
+      "reason": "travelled 25.707 m",
+      "detail": {
+        "travelled_distance_m": 25.707419674775522,
+        "net_displacement_m": 17.976471589800614,
+        "yaw_span_rad": 4.344913321212212,
+        "min_displacement_m": 0.5,
+        "distinct_from_g8": "G8 proves the controller did not change; this proves the base moved"
+      }
+    }
+  },
+  "data_integrity": {
+    "n_frames": 1200,
+    "n_images": 1200,
+    "positions_shape": [
+      1200,
+      2
+    ],
+    "yaw_shape": [
+      1200
+    ],
+    "positions_finite": true,
+    "yaws_finite": true,
+    "images_match_frames": true,
+    "goal_image_sha256": "3145cceba575f88e5750d7332019d3529c82e4e877fe98f5a73f336aa0a0b846",
+    "final_observation_sha256": "2ab6ba772589360bf5f3c700bb6841d854e417f258852c1da60bfa0219d3c09f",
+    "goal_is_not_final_observation": true
+  },
+  "BO10_COLLECTION": "TRAJECTORY_ADMITTED",
+  "ADMISSION_CAVEATS": {
+    "episode_did_not_reach_its_goal": {
+      "termination_reason": "max_steps (1200)",
+      "final_pose": [
+        -5.06,
+        26.048
+      ],
+      "intended_goal": [
+        -5.127,
+        27.725
+      ],
+      "distance_to_goal_m": 1.679,
+      "goal_tolerance_m": 0.2,
+      "status_under_the_frozen_contract": "ADMITTED. `reached_goal` is not among the frozen post-episode conditions, which are the six adequacy thresholds plus data integrity. The trajectory is admitted because it meets what was frozen, not because reaching the goal was checked and passed.",
+      "why_it_is_reported_prominently": "the trajectory is an INCOMPLETE traversal of its route. A reader assuming an admitted trajectory ran start-to-goal would be wrong, and nothing in the six thresholds would tell them.",
+      "consequence_for_the_goal_image": "G9 sealed the view AT the intended goal, which the robot never reached. That is coherent for image-goal navigation, where the goal is a target rather than a guaranteed endpoint, but it means the final observation and the goal image are 1.679 m apart rather than nearly coincident."
+    },
+    "realised_turns_are_amplified_not_attenuated": {
+      "planned_magnitudes_deg": [
+        50.71,
+        -58.39,
+        94.42
+      ],
+      "realised_magnitudes_deg": [
+        131.27,
+        -101.92,
+        166.32
+      ],
+      "observation": "realised turns are roughly 1.8-2.6x the planned magnitudes, the opposite direction from the controller fixtures where 90 degrees realised as 65. Combined with 25.707 m realised against 23.252 m planned and termination on max_steps, this is consistent with overshoot and circling near the end of the route rather than clean tracking.",
+      "not_claimed": "no cause is asserted. This is a descriptive observation from one trajectory, and the controller fixtures measured the opposite behaviour on analytic geometry.",
+      "does_not_invalidate_admission": "the frozen contract requires >= 3 distinct realised events of >= 30 degrees. Larger events satisfy it. Nothing in the contract caps a turn."
+    },
+    "what_is_established": "a real Hospital trajectory exists with 1200 frames, 1200 matching images, finite poses, three distinct realised turn events, 1189 NoMaD windows, an unchanged controller identity, a sealed pre-motion goal image distinct from the final observation, and zero collision-guard rejections.",
+    "what_is_NOT_established": [
+      "that the demonstrator completes routes",
+      "any drivetrain, contact or slip fidelity",
+      "any physical-robot claim",
+      "that this trajectory is adequate training data -- one trajectory establishes format compatibility, not dataset quality"
+    ]
+  }
+}

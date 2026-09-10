@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -36,6 +37,8 @@ def main() -> int:
     ap.add_argument("--admission-artefact", required=True,
                     help="the route-admission result whose selected_route is collected")
     ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--episode-index", type=int, default=0,
+                    help="episode number; run_00000 is immutable, so a fresh run uses 1")
     ap.add_argument("--evidence", required=True)
     ap.add_argument("--occupancy-backend", default="physx_cell_overlap_v1")
     ap.add_argument("--region-declaration", default=None)
@@ -82,15 +85,30 @@ def main() -> int:
         rec["scope"] = scope.to_manifest_fields()
 
         admission = json.loads(Path(args.admission_artefact).read_text())
-        selected = admission.get("selected_route")
+        # Two admission artefact shapes exist: the shortest-path population uses
+        # `selected_route`, the turning population `selected_candidate`. They are
+        # NOT normalised into one -- they describe different experiments, and a
+        # collector that could not say which it was driving would be unable to
+        # bind the trajectory to its population.
+        turning = "selected_candidate" in admission
+        selected = admission.get("selected_candidate" if turning else "selected_route")
         if not selected:
             raise RuntimeError("the admission artefact selected no route")
+        rec["population_kind"] = ("TURNING_ROUTE_POPULATION_V1" if turning
+                                  else "shortest_path_population")
         rec["admitted_route"] = {
-            "route_id": selected["route_id"],
+            "route_id": selected.get("candidate_id") or selected.get("route_id"),
+            "ordering_index": selected.get("ordering_index"),
             "start_pose": selected["start_pose"], "goal_pose": selected["goal_pose"],
             "admission_artefact": args.admission_artefact,
-            "predicted": ((selected["gates"]["G10_LONG_HORIZON"]["detail"] or {})
-                          .get("measurement")),
+            "admission_artefact_sha256": hashlib.sha256(
+                Path(args.admission_artefact).read_bytes()).hexdigest(),
+            "anchors": selected.get("anchors"),
+            "planned_turn_events_v2": selected.get("planned_turn_events_v2"),
+            "planned_turn_magnitudes_deg": selected.get("planned_turn_magnitudes_deg"),
+            "predicted": (None if turning else
+                          ((selected["gates"]["G10_LONG_HORIZON"]["detail"] or {})
+                           .get("measurement"))),
         }
 
         cfg = CollectConfig(scenes=[args.scene], seed=admission["search"]["seed"],
@@ -177,29 +195,47 @@ def main() -> int:
         # candidate, including the path the gates actually evaluated.
         from navfm.planning import PlannerError, sample_episode_pair
         rng = np.random.default_rng(admission["search"]["seed"])
-        target = int(selected["route_id"].rsplit("_", 1)[-1])
+        target = int((selected.get("candidate_id") or selected["route_id"]).rsplit("_", 1)[-1])
         inflated = collector._inflated
         clearance_map = collector._inflated_clearance
         replayed = None
-        for i in range(target + 1):
-            try:
-                cand = sample_episode_pair(
-                    inflated, rng,
-                    min_path_m=8.0, max_path_m=40.0,
-                    min_clearance_m=cfg.min_clearance_m, clearance_map=clearance_map)
-            except PlannerError:
-                continue
-            if i == target:
-                replayed = cand
+        if turning:
+            from navfm.collection.turning_routes import (
+                TURNING_ROUTE_GENERATOR_V1,
+                sample_turning_route,
+            )
+            for i in range(target + 1):
+                try:
+                    cand = sample_turning_route(inflated, rng,
+                                                generator=TURNING_ROUTE_GENERATOR_V1,
+                                                clearance_map=clearance_map)
+                except PlannerError:
+                    continue
+                if i == target:
+                    replayed = (cand.start, cand.start_yaw, cand.goal, cand.path)
+        else:
+            for i in range(target + 1):
+                try:
+                    cand = sample_episode_pair(
+                        inflated, rng,
+                        min_path_m=8.0, max_path_m=40.0,
+                        min_clearance_m=cfg.min_clearance_m, clearance_map=clearance_map)
+                except PlannerError:
+                    continue
+                if i == target:
+                    replayed = cand
         if replayed is None:
-            raise RuntimeError(f"replaying the sampler did not reproduce candidate {target}")
+            raise RuntimeError(f"replaying the generator did not reproduce candidate {target}")
         start_r, yaw_r, goal_r, path_r = replayed
         matches = (abs(float(start_r[0]) - selected["start_pose"][0]) < 1e-9
                    and abs(float(start_r[1]) - selected["start_pose"][1]) < 1e-9
                    and abs(float(goal_r[0]) - selected["goal_pose"][0]) < 1e-9
                    and abs(float(goal_r[1]) - selected["goal_pose"][1]) < 1e-9)
         rec["route_reproduction"] = {
-            "method": "replay the seeded generator to the selected candidate index",
+            "method": ("replay the seeded generator to the selected candidate index; the "
+                       "generator replayed is the one the population was evaluated with"),
+            "generator": ("TURNING_ROUTE_POPULATION_V1" if turning
+                          else "sample_episode_pair"),
             "target_index": target,
             "start_matches_admitted": bool(matches),
             "replayed_start": [float(start_r[0]), float(start_r[1]), float(yaw_r)],
@@ -278,7 +314,7 @@ def main() -> int:
             "probe_spacing_m": sweep_res.probe_spacing_m,
         }
 
-        result = collector.run_episode(0, args.scene_id)
+        result = collector.run_episode(int(args.episode_index), args.scene_id)
         rec["kinematic_drive"]["steps_applied"] = collector.kinematic_driver.applied
         rec["kinematic_drive"]["steps_rejected"] = collector.kinematic_driver.rejections
         rec["kinematic_drive"]["guard_queries"] = guard.queries

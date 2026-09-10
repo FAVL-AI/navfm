@@ -826,14 +826,16 @@
       "well_separated_ratio": 0.97341,
       "one_turn_ratio": 0.97219,
       "magnitude_attenuation_tight": "planned 90 degrees realised as 65.41, -47.21, 76.26",
-      "reading": "the controller measurably cuts corners -- realised paths are 3% to 8% SHORTER than planned and turn magnitudes are attenuated, most strongly where corners are close together. Corner-cutting is therefore real and observable, and the earlier inference that it was ruled out by run_00000's longer path was wrong on both sides: length is an aggregate, and here shorter paths accompany cutting."
+      "reading": "the controller measurably cuts corners -- realised paths are 3% to 8% SHORTER than planned and turn magnitudes are attenuated, most strongly where corners are close together. Corner-cutting is therefore real and observable, and the earlier inference that it was ruled out by run_00000's longer path was wrong on both sides: length is an aggregate, and here shorter paths accompany cutting.",
+      "scope_limit": "measured on three analytic fixtures. Not a universal controller claim; the magnitudes and ratios are specific to these geometries."
     },
     "consequence_for_SYSTEMATIC_TURN_BLENDING": {
-      "controller_exonerated_as_sole_cause": true,
-      "reasoning": "a controller that blended structure unconditionally would have collapsed the well-separated fixture too. It did not, so run_00000's collapse is not explained by the controller alone.",
+      "reasoning": "a controller that blended structure unconditionally would have collapsed the well-separated fixture too. It did not, so the controller is not supported as a NECESSARY or SOLE cause. It may still be a contributing one.",
       "now_favoured": "ROUTE_STRUCTURE. Route 050's three planned 'turns' were 73.0, 30.6 and 34.2 degrees measured on a 7-point smoothed polyline; those are consistent with gradual bends rather than the separated corners these fixtures used.",
       "still_not_proven": "this is an inference from fixtures, not a measurement of route 050. The TURNING_ROUTE_POPULATION_V1 evaluation is what tests it, since that generator enforces 3-9 m anchor separation and 30-135 degree bends.",
-      "classification": "CONTROLLER_TURN_SEPARABILITY is not the cause; ROUTE_STRUCTURE favoured but untested"
+      "classification": "CONTROLLER_TURN_SEPARABILITY is not the cause; ROUTE_STRUCTURE favoured but untested",
+      "controller_NOT_SUPPORTED_as_the_sole_cause": true,
+      "wording_correction": "an earlier phrasing said the controller was 'exonerated'. That overstates it. The fixtures show the controller CAN preserve three events under controlled geometry; they do not show it contributes nothing to blending on route 050. The measured corner attenuation and 3-8% path shortening are real tracking effects that could contribute alongside route structure."
     },
     "tracking_metrics_are_descriptive": "cross-track max 0.115-0.162 m, mean 0.030-0.040 m; heading error max 43.8-48.7 deg at corners, mean 2.2-7.1 deg. No pass/fail threshold is invented for these; the defining question was turn-event structure."
   }

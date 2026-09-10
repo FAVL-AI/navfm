@@ -1,0 +1,3656 @@
+{
+  "check": "HOSPITAL_TURNING_ROUTE_POPULATION_V1",
+  "artifact_semantics": "FROZEN_POPULATION_EVALUATION",
+  "scene_id": "hospital",
+  "timestamp_utc": "2026-09-10T05:20:13.960204+00:00",
+  "scope": {
+    "purpose": "BO10_FRAMEWORK_COMPATIBILITY",
+    "e2_eligible": false,
+    "e2_exclusion_reason": "compatibility trajectory collected outside the preregistered E2 population"
+  },
+  "generator_artefact": "gates/BO10/turning_route_population_v1_final_20260910.json",
+  "generator_artefact_sha256": "c046364d98314cef3d2809ec92a814d54316ef1153d1c792f60ff9d5ce4742df",
+  "generator_source_sha256": "7d82eb210c920115e30a8cb4347c044703366b54b2e483543cabbcaf4eea324c",
+  "generator": {
+    "legs": 4,
+    "min_anchor_separation_m": 3.0,
+    "max_anchor_separation_m": 9.0,
+    "min_anchor_turn_deg": 30.0,
+    "max_anchor_turn_deg": 135.0,
+    "min_clearance_m": 0.35,
+    "max_tries_per_anchor": 60,
+    "parameter_provenance": {
+      "legs": "4 legs give 3 interior turns, the frozen G10 minimum",
+      "min_anchor_separation_m": "3 x the frozen 1.0 m G10 separator, so a separator run has room either side of it",
+      "max_anchor_separation_m": "keeps summed legs within the frozen max_path_m",
+      "min_anchor_turn_deg": "the frozen turn magnitude from the collection contract; a smaller bend cannot produce an admissible event",
+      "max_anchor_turn_deg": "135 degrees. A bend approaching 180 is a reversal along the same corridor rather than a region transition, and the spacing rules alone do not forbid it.",
+      "min_clearance_m": "unchanged from the collection contract",
+      "derived_from_run_00000": false
+    }
+  },
+  "budget_meaning": "96 ATTEMPTS, not 96 successful constructions. Inherited from the earlier Hospital populations, which loop over the budget and record a generator failure as a consumed index.",
+  "search": {
+    "seed": 0,
+    "budget": 96,
+    "ordering": "seeded generation order",
+    "no_optional_stopping": true
+  },
+  "occupancy_backend": "physx_cell_overlap_v1",
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "robot_asset": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    }
+  },
+  "claim_boundaries": [
+    "F-TWIN-1 OPEN",
+    "PHYSICAL_M3_PRO_GROUND_CLEARANCE NOT_MEASURED",
+    "DYNAMIC_WHEEL_DRIVE_V1 DEFERRED",
+    "kinematic collection establishes no drivetrain fidelity"
+  ],
+  "generator_independent_of_g10": true,
+  "generator_independence_detail": {
+    "imports_turn_events": false,
+    "imports_long_horizon": false,
+    "references_evaluator": false
+  },
+  "occupancy": {
+    "shape": [
+      420,
+      767
+    ],
+    "backend_used": "physx_cell_overlap_v1",
+    "query_failures": 0
+  },
+  "candidates": [
+    {
+      "ordering_index": 0,
+      "candidate_id": "hospital_turn_route_000",
+      "constructed": true,
+      "anchors": [
+        [
+          -21.8503,
+          32.4793
+        ],
+        [
+          -18.277,
+          28.1609
+        ],
+        [
+          -14.9473,
+          28.1175
+        ],
+        [
+          -11.7545,
+          22.9375
+        ],
+        [
+          -5.0843,
+          27.6818
+        ]
+      ],
+      "anchor_turns_deg": [
+        49.645,
+        -57.604,
+        93.775
+      ],
+      "start_pose": [
+        -21.827251126595453,
+        32.52519214859307,
+        -3.03774645687452
+      ],
+      "goal_pose": [
+        -5.1272511265954535,
+        27.725192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 23.251685475651524,
+      "route_length_m": 23.2517,
+      "start_goal_separation_m": 17.3761,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        50.71,
+        -58.39,
+        94.42
+      ],
+      "planned_separator_runs_m": [
+        1.484,
+        1.979,
+        2.474,
+        2.968,
+        3.463,
+        3.958,
+        4.452,
+        4.947,
+        1.484,
+        1.979,
+        2.474,
+        1.484,
+        1.979,
+        2.474,
+        2.968,
+        3.463,
+        3.958,
+        4.452,
+        4.947,
+        1.484,
+        1.979,
+        2.474,
+        2.968,
+        3.463,
+        3.958,
+        4.452,
+        4.947,
+        5.442,
+        5.937,
+        6.431,
+        6.926,
+        7.421
+      ],
+      "estimated_usable_frames": 797,
+      "windows_per_model": {
+        "gnm": 787,
+        "vint": 787,
+        "nomad": 786
+      },
+      "limiting_window_count": 786,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 1,
+      "candidate_id": "hospital_turn_route_001",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 2,
+      "candidate_id": "hospital_turn_route_002",
+      "constructed": true,
+      "anchors": [
+        [
+          -25.2348,
+          27.2732
+        ],
+        [
+          -22.9699,
+          29.7228
+        ],
+        [
+          -18.4186,
+          25.0875
+        ],
+        [
+          -10.9686,
+          23.5448
+        ],
+        [
+          -11.376,
+          30.4465
+        ]
+      ],
+      "anchor_turns_deg": [
+        -92.768,
+        33.826,
+        105.077
+      ],
+      "start_pose": [
+        -25.22725112659545,
+        27.225192148593067,
+        2.9781318484005785
+      ],
+      "goal_pose": [
+        -11.32725112659545,
+        30.42519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 24.412470073837202,
+      "route_length_m": 24.4125,
+      "start_goal_separation_m": 14.2636,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -93.02,
+        33.59,
+        105.36
+      ],
+      "planned_separator_runs_m": [
+        1.495,
+        1.993,
+        2.491,
+        1.495,
+        1.993,
+        2.491,
+        2.989,
+        3.487,
+        3.986,
+        4.484,
+        4.982,
+        5.48,
+        1.495,
+        1.993,
+        2.491,
+        2.989,
+        3.487,
+        3.986,
+        4.484,
+        4.982,
+        5.48,
+        5.979,
+        6.477,
+        6.975,
+        1.495,
+        1.993,
+        2.491,
+        2.989,
+        3.487,
+        3.986,
+        4.484,
+        4.982,
+        5.48,
+        5.979
+      ],
+      "estimated_usable_frames": 836,
+      "windows_per_model": {
+        "gnm": 826,
+        "vint": 826,
+        "nomad": 825
+      },
+      "limiting_window_count": 825,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 3,
+      "candidate_id": "hospital_turn_route_003",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 4,
+      "candidate_id": "hospital_turn_route_004",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 5,
+      "candidate_id": "hospital_turn_route_005",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 6,
+      "candidate_id": "hospital_turn_route_006",
+      "constructed": true,
+      "anchors": [
+        [
+          -3.2608,
+          20.7292
+        ],
+        [
+          -11.0968,
+          18.3075
+        ],
+        [
+          -10.9636,
+          21.8546
+        ],
+        [
+          -7.6405,
+          25.699
+        ],
+        [
+          -12.4632,
+          32.7721
+        ]
+      ],
+      "anchor_turns_deg": [
+        -109.323,
+        -38.691,
+        75.129
+      ],
+      "start_pose": [
+        -3.2272511265954478,
+        20.725192148593067,
+        0.6905686627685528
+      ],
+      "goal_pose": [
+        -12.42725112659545,
+        32.72519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 25.358676188925926,
+      "route_length_m": 25.3587,
+      "start_goal_separation_m": 15.1208,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -110.17,
+        -36.97,
+        74.68
+      ],
+      "planned_separator_runs_m": [
+        1.492,
+        1.989,
+        2.486,
+        2.983,
+        3.481,
+        3.978,
+        4.475,
+        4.972,
+        5.47,
+        5.967,
+        6.464,
+        6.961,
+        7.458,
+        1.492,
+        1.989,
+        2.486,
+        1.492,
+        1.989,
+        2.486,
+        2.983,
+        3.481,
+        3.978,
+        1.492,
+        1.989,
+        2.486,
+        2.983,
+        3.481,
+        3.978,
+        4.475,
+        4.972,
+        5.47,
+        5.967,
+        6.464,
+        6.961,
+        7.458,
+        7.956
+      ],
+      "estimated_usable_frames": 869,
+      "windows_per_model": {
+        "gnm": 859,
+        "vint": 859,
+        "nomad": 858
+      },
+      "limiting_window_count": 858,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 7,
+      "candidate_id": "hospital_turn_route_007",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 8,
+      "candidate_id": "hospital_turn_route_008",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 9,
+      "candidate_id": "hospital_turn_route_009",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 10,
+      "candidate_id": "hospital_turn_route_010",
+      "constructed": true,
+      "anchors": [
+        [
+          1.0318,
+          26.2115
+        ],
+        [
+          -6.1129,
+          27.6766
+        ],
+        [
+          -6.0173,
+          20.4767
+        ],
+        [
+          2.6698,
+          19.5031
+        ],
+        [
+          6.0668,
+          21.1279
+        ]
+      ],
+      "anchor_turns_deg": [
+        102.35,
+        82.843,
+        31.957
+      ],
+      "start_pose": [
+        1.0727488734045494,
+        26.225192148593067,
+        2.561742777859668
+      ],
+      "goal_pose": [
+        6.072748873404549,
+        21.12519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 27.070226343420394,
+      "route_length_m": 27.0702,
+      "start_goal_separation_m": 7.1421,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        102.56,
+        82.65,
+        31.76
+      ],
+      "planned_separator_runs_m": [
+        1.477,
+        1.969,
+        2.461,
+        2.953,
+        3.445,
+        3.937,
+        4.43,
+        4.922,
+        5.414,
+        5.906,
+        6.398,
+        1.477,
+        1.969,
+        2.461,
+        2.953,
+        3.445,
+        3.937,
+        4.43,
+        4.922,
+        5.414,
+        5.906,
+        6.398,
+        1.477,
+        1.969,
+        2.461,
+        2.953,
+        3.445,
+        3.937,
+        4.43,
+        4.922,
+        5.414,
+        5.906,
+        6.398,
+        6.891,
+        7.383,
+        7.875,
+        1.477,
+        1.969,
+        2.461,
+        2.953
+      ],
+      "estimated_usable_frames": 928,
+      "windows_per_model": {
+        "gnm": 918,
+        "vint": 918,
+        "nomad": 917
+      },
+      "limiting_window_count": 917,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.8047559261322021,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 11,
+      "candidate_id": "hospital_turn_route_011",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 12,
+      "candidate_id": "hospital_turn_route_012",
+      "constructed": true,
+      "anchors": [
+        [
+          4.303,
+          5.4136
+        ],
+        [
+          0.3443,
+          1.3197
+        ],
+        [
+          4.5979,
+          0.8553
+        ],
+        [
+          6.2356,
+          5.7034
+        ],
+        [
+          8.5277,
+          3.5464
+        ]
+      ],
+      "anchor_turns_deg": [
+        127.808,
+        77.566,
+        -114.596
+      ],
+      "start_pose": [
+        4.272748873404552,
+        5.425192148593068,
+        1.766221266199386
+      ],
+      "goal_pose": [
+        8.57274887340455,
+        3.5251921485930673
+      ],
+      "path_points": 12,
+      "path_length_m": 24.12205173738307,
+      "route_length_m": 24.1221,
+      "start_goal_separation_m": 4.7011,
+      "planned_turn_events_v2": 4,
+      "planned_turn_magnitudes_deg": [
+        -140.79,
+        169.48,
+        96.66,
+        -76.1
+      ],
+      "planned_separator_runs_m": [
+        1.477,
+        1.969,
+        2.461,
+        2.954,
+        3.446,
+        3.938,
+        1.477,
+        1.969,
+        2.461,
+        2.954,
+        3.446,
+        1.477,
+        1.969,
+        2.461,
+        2.954,
+        3.446,
+        1.477,
+        1.969,
+        2.461
+      ],
+      "estimated_usable_frames": 827,
+      "windows_per_model": {
+        "gnm": 817,
+        "vint": 817,
+        "nomad": 816
+      },
+      "limiting_window_count": 816,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.3996822237968445,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 13,
+      "candidate_id": "hospital_turn_route_013",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 14,
+      "candidate_id": "hospital_turn_route_014",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 15,
+      "candidate_id": "hospital_turn_route_015",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 16,
+      "candidate_id": "hospital_turn_route_016",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 17,
+      "candidate_id": "hospital_turn_route_017",
+      "constructed": true,
+      "anchors": [
+        [
+          -16.4789,
+          36.065
+        ],
+        [
+          -16.8682,
+          29.6594
+        ],
+        [
+          -23.2199,
+          29.3243
+        ],
+        [
+          -19.6239,
+          35.7992
+        ],
+        [
+          -10.8849,
+          36.9004
+        ]
+      ],
+      "anchor_turns_deg": [
+        -83.502,
+        -122.067,
+        -53.771
+      ],
+      "start_pose": [
+        -16.527251126595452,
+        36.02519214859307,
+        -0.6099857440786192
+      ],
+      "goal_pose": [
+        -10.92725112659545,
+        36.92519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 29.013662486374557,
+      "route_length_m": 29.0137,
+      "start_goal_separation_m": 5.6719,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -84.63,
+        -121.66,
+        -53.81
+      ],
+      "planned_separator_runs_m": [
+        1.475,
+        1.967,
+        2.459,
+        2.951,
+        3.442,
+        3.934,
+        4.426,
+        4.918,
+        5.409,
+        5.901,
+        1.475,
+        1.967,
+        2.459,
+        2.951,
+        3.442,
+        3.934,
+        4.426,
+        4.918,
+        5.409,
+        1.475,
+        1.967,
+        2.459,
+        2.951,
+        3.442,
+        3.934,
+        4.426,
+        4.918,
+        5.409,
+        5.901,
+        6.393,
+        1.475,
+        1.967,
+        2.459,
+        2.951,
+        3.442,
+        3.934,
+        4.426,
+        4.918,
+        5.409,
+        5.901,
+        6.393,
+        6.885,
+        7.376,
+        7.868
+      ],
+      "estimated_usable_frames": 994,
+      "windows_per_model": {
+        "gnm": 984,
+        "vint": 984,
+        "nomad": 983
+      },
+      "limiting_window_count": 983,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 18,
+      "candidate_id": "hospital_turn_route_018",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 19,
+      "candidate_id": "hospital_turn_route_019",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 20,
+      "candidate_id": "hospital_turn_route_020",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 21,
+      "candidate_id": "hospital_turn_route_021",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 22,
+      "candidate_id": "hospital_turn_route_022",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 23,
+      "candidate_id": "hospital_turn_route_023",
+      "constructed": true,
+      "anchors": [
+        [
+          -40.6213,
+          19.844
+        ],
+        [
+          -37.3206,
+          11.7323
+        ],
+        [
+          -32.3767,
+          11.8229
+        ],
+        [
+          -30.9478,
+          7.2569
+        ],
+        [
+          -26.9751,
+          5.628
+        ]
+      ],
+      "anchor_turns_deg": [
+        68.908,
+        -73.672,
+        50.328
+      ],
+      "start_pose": [
+        -40.62725112659545,
+        19.825192148593068,
+        1.8141426373466416
+      ],
+      "goal_pose": [
+        -26.92725112659545,
+        5.625192148593067
+      ],
+      "path_points": 7,
+      "path_length_m": 23.029350475282833,
+      "route_length_m": 23.0294,
+      "start_goal_separation_m": 19.7314,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        73.04,
+        -77.18,
+        55.06
+      ],
+      "planned_separator_runs_m": [
+        1.47,
+        1.96,
+        2.45,
+        2.94,
+        3.43,
+        3.92,
+        4.41,
+        4.9,
+        5.39,
+        5.88,
+        6.37,
+        6.858,
+        1.47,
+        1.96,
+        2.45,
+        2.94,
+        3.43,
+        3.92,
+        1.47,
+        1.96,
+        2.45,
+        1.47,
+        1.96,
+        2.45,
+        2.94,
+        3.43
+      ],
+      "estimated_usable_frames": 789,
+      "windows_per_model": {
+        "gnm": 779,
+        "vint": 779,
+        "nomad": 778
+      },
+      "limiting_window_count": 778,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.335364431142807,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 24,
+      "candidate_id": "hospital_turn_route_024",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 25,
+      "candidate_id": "hospital_turn_route_025",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 26,
+      "candidate_id": "hospital_turn_route_026",
+      "constructed": true,
+      "anchors": [
+        [
+          16.7198,
+          5.6483
+        ],
+        [
+          16.0425,
+          1.8346
+        ],
+        [
+          7.9853,
+          3.0881
+        ],
+        [
+          10.0246,
+          -0.4122
+        ],
+        [
+          7.0005,
+          -2.0619
+        ]
+      ],
+      "anchor_turns_deg": [
+        -88.772,
+        129.069,
+        -91.614
+      ],
+      "start_pose": [
+        16.672748873404544,
+        5.625192148593067,
+        2.374832899075109
+      ],
+      "goal_pose": [
+        6.972748873404548,
+        -2.0748078514069332
+      ],
+      "path_points": 8,
+      "path_length_m": 21.2957990261495,
+      "route_length_m": 21.2958,
+      "start_goal_separation_m": 12.3847,
+      "planned_turn_events_v2": 4,
+      "planned_turn_magnitudes_deg": [
+        -137.85,
+        56.82,
+        96.66,
+        -92.22
+      ],
+      "planned_separator_runs_m": [
+        1.486,
+        1.981,
+        2.476,
+        2.972,
+        1.486,
+        1.981,
+        2.476,
+        1.486,
+        1.981,
+        1.486,
+        1.981,
+        2.476,
+        1.486,
+        1.981,
+        2.476,
+        2.972,
+        1.486,
+        1.981,
+        2.476,
+        2.972
+      ],
+      "estimated_usable_frames": 730,
+      "windows_per_model": {
+        "gnm": 720,
+        "vint": 720,
+        "nomad": 719
+      },
+      "limiting_window_count": 719,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.32708877325057983,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 27,
+      "candidate_id": "hospital_turn_route_027",
+      "constructed": true,
+      "anchors": [
+        [
+          -19.8547,
+          34.586
+        ],
+        [
+          -23.7902,
+          30.9514
+        ],
+        [
+          -15.988,
+          29.2739
+        ],
+        [
+          -15.362,
+          34.9166
+        ],
+        [
+          -20.5879,
+          35.4457
+        ]
+      ],
+      "anchor_turns_deg": [
+        125.142,
+        95.803,
+        90.55
+      ],
+      "start_pose": [
+        -19.827251126595453,
+        34.62519214859307,
+        -2.3773678889907566
+      ],
+      "goal_pose": [
+        -20.627251126595453,
+        35.42519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 24.498314522663893,
+      "route_length_m": 24.4983,
+      "start_goal_separation_m": 1.1314,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        124.94,
+        95.29,
+        91.61
+      ],
+      "planned_separator_runs_m": [
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5,
+        5.0,
+        5.5,
+        6.0,
+        6.5,
+        7.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5,
+        5.0,
+        1.5,
+        2.0,
+        2.5,
+        3.0,
+        3.5,
+        4.0,
+        4.5
+      ],
+      "estimated_usable_frames": 839,
+      "windows_per_model": {
+        "gnm": 829,
+        "vint": 829,
+        "nomad": 828
+      },
+      "limiting_window_count": 828,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 28,
+      "candidate_id": "hospital_turn_route_028",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 29,
+      "candidate_id": "hospital_turn_route_029",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 30,
+      "candidate_id": "hospital_turn_route_030",
+      "constructed": true,
+      "anchors": [
+        [
+          -6.0228,
+          28.2353
+        ],
+        [
+          -11.0321,
+          34.9376
+        ],
+        [
+          -16.2946,
+          28.6743
+        ],
+        [
+          -16.62,
+          20.0362
+        ],
+        [
+          -21.7357,
+          20.2173
+        ]
+      ],
+      "anchor_turns_deg": [
+        103.188,
+        37.88,
+        -89.87
+      ],
+      "start_pose": [
+        -6.027251126595452,
+        28.225192148593067,
+        -3.0580753046163403
+      ],
+      "goal_pose": [
+        -21.72725112659545,
+        20.225192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 30.302035937848157,
+      "route_length_m": 30.302,
+      "start_goal_separation_m": 17.6207,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        103.19,
+        38.08,
+        -90.25
+      ],
+      "planned_separator_runs_m": [
+        1.49,
+        1.987,
+        2.484,
+        2.981,
+        3.477,
+        3.974,
+        4.471,
+        4.968,
+        5.464,
+        5.961,
+        6.458,
+        6.955,
+        7.451,
+        1.49,
+        1.987,
+        2.484,
+        2.981,
+        3.477,
+        3.974,
+        4.471,
+        4.968,
+        5.464,
+        5.961,
+        6.458,
+        6.955,
+        7.451,
+        1.49,
+        1.987,
+        2.484,
+        2.981,
+        3.477,
+        3.974,
+        4.471,
+        4.968,
+        5.464,
+        5.961,
+        6.458,
+        6.955,
+        7.451,
+        1.49,
+        1.987,
+        2.484,
+        2.981,
+        3.477,
+        3.974,
+        4.471
+      ],
+      "estimated_usable_frames": 1038,
+      "windows_per_model": {
+        "gnm": 1028,
+        "vint": 1028,
+        "nomad": 1027
+      },
+      "limiting_window_count": 1027,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 1.630575180053711,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 31,
+      "candidate_id": "hospital_turn_route_031",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 32,
+      "candidate_id": "hospital_turn_route_032",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 33,
+      "candidate_id": "hospital_turn_route_033",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 34,
+      "candidate_id": "hospital_turn_route_034",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 35,
+      "candidate_id": "hospital_turn_route_035",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 36,
+      "candidate_id": "hospital_turn_route_036",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 37,
+      "candidate_id": "hospital_turn_route_037",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 38,
+      "candidate_id": "hospital_turn_route_038",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 39,
+      "candidate_id": "hospital_turn_route_039",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 40,
+      "candidate_id": "hospital_turn_route_040",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 41,
+      "candidate_id": "hospital_turn_route_041",
+      "constructed": false,
+      "generator_failure": "could not place anchor 1 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 42,
+      "candidate_id": "hospital_turn_route_042",
+      "constructed": true,
+      "anchors": [
+        [
+          6.9349,
+          1.0497
+        ],
+        [
+          2.4739,
+          -1.8767
+        ],
+        [
+          -0.6951,
+          1.4365
+        ],
+        [
+          4.4122,
+          8.6815
+        ],
+        [
+          5.9691,
+          5.7179
+        ]
+      ],
+      "anchor_turns_deg": [
+        -79.54,
+        -78.907,
+        -117.104
+      ],
+      "start_pose": [
+        6.972748873404548,
+        1.0251921485930673,
+        -2.0162360500791294
+      ],
+      "goal_pose": [
+        5.972748873404548,
+        5.725192148593067
+      ],
+      "path_points": 9,
+      "path_length_m": 27.993007833292033,
+      "route_length_m": 27.993,
+      "start_goal_separation_m": 4.8052,
+      "planned_turn_events_v2": 4,
+      "planned_turn_magnitudes_deg": [
+        -78.68,
+        -137.81,
+        109.51,
+        -167.75
+      ],
+      "planned_separator_runs_m": [
+        1.5,
+        2.0,
+        2.499,
+        2.999,
+        3.499,
+        3.999,
+        4.499,
+        1.5,
+        2.0,
+        2.499,
+        2.999,
+        3.499,
+        1.5,
+        2.0,
+        2.499,
+        2.999,
+        3.499,
+        3.999,
+        4.499,
+        4.999,
+        5.499,
+        1.5,
+        2.0,
+        2.499,
+        2.999,
+        3.499,
+        3.999,
+        4.499,
+        4.999,
+        5.499,
+        1.5,
+        2.0,
+        2.499
+      ],
+      "estimated_usable_frames": 959,
+      "windows_per_model": {
+        "gnm": 949,
+        "vint": 949,
+        "nomad": 948
+      },
+      "limiting_window_count": 948,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.3825942575931549,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 43,
+      "candidate_id": "hospital_turn_route_043",
+      "constructed": true,
+      "anchors": [
+        [
+          -5.5376,
+          33.5407
+        ],
+        [
+          -10.8551,
+          30.8512
+        ],
+        [
+          -15.7649,
+          32.6146
+        ],
+        [
+          -8.6275,
+          36.8905
+        ],
+        [
+          -5.1684,
+          31.2023
+        ]
+      ],
+      "anchor_turns_deg": [
+        -46.586,
+        -129.319,
+        -89.621
+      ],
+      "start_pose": [
+        -5.527251126595452,
+        33.52519214859307,
+        -0.1173387625616722
+      ],
+      "goal_pose": [
+        -5.1272511265954535,
+        31.225192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 26.157661188695613,
+      "route_length_m": 26.1577,
+      "start_goal_separation_m": 2.3345,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -47.17,
+        -92.5,
+        -89.65
+      ],
+      "planned_separator_runs_m": [
+        1.481,
+        1.974,
+        2.468,
+        2.961,
+        3.455,
+        3.948,
+        4.442,
+        4.935,
+        5.429,
+        1.481,
+        1.974,
+        2.468,
+        2.961,
+        3.455,
+        3.948,
+        1.481,
+        1.974,
+        2.468,
+        2.961,
+        3.455,
+        3.948,
+        4.442,
+        4.935,
+        5.429,
+        5.922,
+        6.416,
+        6.91,
+        7.403,
+        1.481,
+        1.974,
+        2.468,
+        2.961,
+        3.455,
+        3.948,
+        4.442,
+        4.935,
+        5.429,
+        5.922
+      ],
+      "estimated_usable_frames": 896,
+      "windows_per_model": {
+        "gnm": 886,
+        "vint": 886,
+        "nomad": 885
+      },
+      "limiting_window_count": 885,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 44,
+      "candidate_id": "hospital_turn_route_044",
+      "constructed": false,
+      "generator_failure": "could not place anchor 1 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 45,
+      "candidate_id": "hospital_turn_route_045",
+      "constructed": true,
+      "anchors": [
+        [
+          -3.5978,
+          23.083
+        ],
+        [
+          -6.5214,
+          27.1695
+        ],
+        [
+          -12.6298,
+          24.7689
+        ],
+        [
+          -9.2722,
+          19.0653
+        ],
+        [
+          -16.8347,
+          19.3534
+        ]
+      ],
+      "anchor_turns_deg": [
+        75.875,
+        99.029,
+        -122.666
+      ],
+      "start_pose": [
+        -3.6272511265954535,
+        23.12519214859307,
+        -3.071851526712097
+      ],
+      "goal_pose": [
+        -16.82725112659545,
+        19.325192148593068
+      ],
+      "path_points": 5,
+      "path_length_m": 25.738734527783823,
+      "route_length_m": 25.7387,
+      "start_goal_separation_m": 13.7361,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        75.53,
+        99.34,
+        -123.08
+      ],
+      "planned_separator_runs_m": [
+        1.485,
+        1.98,
+        2.475,
+        2.97,
+        3.465,
+        3.96,
+        1.485,
+        1.98,
+        2.475,
+        2.97,
+        3.465,
+        3.96,
+        4.455,
+        4.95,
+        5.445,
+        5.94,
+        1.485,
+        1.98,
+        2.475,
+        2.97,
+        3.465,
+        3.96,
+        4.455,
+        4.95,
+        5.445,
+        1.485,
+        1.98,
+        2.475,
+        2.97,
+        3.465,
+        3.96,
+        4.455,
+        4.95,
+        5.445,
+        5.94,
+        6.435,
+        6.93
+      ],
+      "estimated_usable_frames": 882,
+      "windows_per_model": {
+        "gnm": 872,
+        "vint": 872,
+        "nomad": 871
+      },
+      "limiting_window_count": 871,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 46,
+      "candidate_id": "hospital_turn_route_046",
+      "constructed": true,
+      "anchors": [
+        [
+          -20.5367,
+          20.9614
+        ],
+        [
+          -16.6318,
+          24.4001
+        ],
+        [
+          -21.2059,
+          30.9312
+        ],
+        [
+          -29.7261,
+          32.4294
+        ],
+        [
+          -28.8837,
+          36.706
+        ]
+      ],
+      "anchor_turns_deg": [
+        83.639,
+        45.02,
+        -91.171
+      ],
+      "start_pose": [
+        -20.527251126595452,
+        20.92519214859307,
+        -2.8470152514463356
+      ],
+      "goal_pose": [
+        -28.92725112659545,
+        36.72519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 26.208392419818782,
+      "route_length_m": 26.2084,
+      "start_goal_separation_m": 17.8941,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        83.38,
+        44.71,
+        -90.53
+      ],
+      "planned_separator_runs_m": [
+        1.483,
+        1.978,
+        2.472,
+        2.967,
+        3.461,
+        3.956,
+        4.45,
+        1.483,
+        1.978,
+        2.472,
+        2.967,
+        3.461,
+        3.956,
+        4.45,
+        4.945,
+        5.439,
+        5.934,
+        6.428,
+        6.923,
+        1.483,
+        1.978,
+        2.472,
+        2.967,
+        3.461,
+        3.956,
+        4.45,
+        4.945,
+        5.439,
+        5.934,
+        6.428,
+        6.923,
+        7.417,
+        7.912,
+        1.483,
+        1.978,
+        2.472,
+        2.967,
+        3.461
+      ],
+      "estimated_usable_frames": 898,
+      "windows_per_model": {
+        "gnm": 888,
+        "vint": 888,
+        "nomad": 887
+      },
+      "limiting_window_count": 887,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 47,
+      "candidate_id": "hospital_turn_route_047",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 48,
+      "candidate_id": "hospital_turn_route_048",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 49,
+      "candidate_id": "hospital_turn_route_049",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 50,
+      "candidate_id": "hospital_turn_route_050",
+      "constructed": true,
+      "anchors": [
+        [
+          -16.9651,
+          34.9509
+        ],
+        [
+          -20.4319,
+          36.9614
+        ],
+        [
+          -22.6716,
+          34.73
+        ],
+        [
+          -17.0244,
+          30.3699
+        ],
+        [
+          -20.1611,
+          24.6985
+        ]
+      ],
+      "anchor_turns_deg": [
+        75.003,
+        97.436,
+        -81.275
+      ],
+      "start_pose": [
+        -16.92725112659545,
+        34.92519214859307,
+        -1.2807495669592117
+      ],
+      "goal_pose": [
+        -20.127251126595453,
+        24.725192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 20.66497743959814,
+      "route_length_m": 20.665,
+      "start_goal_separation_m": 10.6902,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        74.74,
+        96.84,
+        -80.29
+      ],
+      "planned_separator_runs_m": [
+        1.476,
+        1.968,
+        2.46,
+        2.952,
+        3.444,
+        1.476,
+        1.968,
+        1.476,
+        1.968,
+        2.46,
+        2.952,
+        3.444,
+        3.936,
+        4.428,
+        4.92,
+        5.412,
+        5.904,
+        6.393,
+        1.476,
+        1.968,
+        2.46,
+        2.952,
+        3.444,
+        3.936,
+        4.428,
+        4.92,
+        5.412,
+        5.904
+      ],
+      "estimated_usable_frames": 708,
+      "windows_per_model": {
+        "gnm": 698,
+        "vint": 698,
+        "nomad": 697
+      },
+      "limiting_window_count": 697,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 51,
+      "candidate_id": "hospital_turn_route_051",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 52,
+      "candidate_id": "hospital_turn_route_052",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 53,
+      "candidate_id": "hospital_turn_route_053",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 54,
+      "candidate_id": "hospital_turn_route_054",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 55,
+      "candidate_id": "hospital_turn_route_055",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 56,
+      "candidate_id": "hospital_turn_route_056",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 57,
+      "candidate_id": "hospital_turn_route_057",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 58,
+      "candidate_id": "hospital_turn_route_058",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 59,
+      "candidate_id": "hospital_turn_route_059",
+      "constructed": true,
+      "anchors": [
+        [
+          8.815,
+          -0.5767
+        ],
+        [
+          12.6628,
+          7.1199
+        ],
+        [
+          18.169,
+          1.205
+        ],
+        [
+          9.7435,
+          -0.9085
+        ],
+        [
+          7.9617,
+          5.0342
+        ]
+      ],
+      "anchor_turns_deg": [
+        -110.487,
+        -118.869,
+        -87.392
+      ],
+      "start_pose": [
+        8.772748873404552,
+        -0.5748078514069332,
+        2.4017745131118886
+      ],
+      "goal_pose": [
+        7.972748873404548,
+        5.025192148593067
+      ],
+      "path_points": 9,
+      "path_length_m": 37.195642660335174,
+      "route_length_m": 37.1956,
+      "start_goal_separation_m": 5.6569,
+      "planned_turn_events_v2": 5,
+      "planned_turn_magnitudes_deg": [
+        -101.17,
+        -172.28,
+        40.24,
+        90.0,
+        -121.31
+      ],
+      "planned_separator_runs_m": [
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.968,
+        4.463,
+        4.959,
+        5.455,
+        5.951,
+        6.447,
+        6.943,
+        7.331,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.968,
+        4.463,
+        1.488,
+        1.984,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.968,
+        4.463,
+        4.959,
+        5.455
+      ],
+      "estimated_usable_frames": 1275,
+      "windows_per_model": {
+        "gnm": 1265,
+        "vint": 1265,
+        "nomad": 1264
+      },
+      "limiting_window_count": 1264,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.30896055698394775,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 60,
+      "candidate_id": "hospital_turn_route_060",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 61,
+      "candidate_id": "hospital_turn_route_061",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 62,
+      "candidate_id": "hospital_turn_route_062",
+      "constructed": true,
+      "anchors": [
+        [
+          -23.2123,
+          36.9155
+        ],
+        [
+          -21.0803,
+          28.6103
+        ],
+        [
+          -13.1084,
+          25.388
+        ],
+        [
+          -5.8613,
+          26.6797
+        ],
+        [
+          -6.9759,
+          20.6349
+        ]
+      ],
+      "anchor_turns_deg": [
+        53.594,
+        32.115,
+        -110.553
+      ],
+      "start_pose": [
+        -23.22725112659545,
+        36.92519214859307,
+        -1.3197429967354992
+      ],
+      "goal_pose": [
+        -6.927251126595451,
+        20.62519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 30.79104246030815,
+      "route_length_m": 30.791,
+      "start_goal_separation_m": 23.0517,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        54.0,
+        31.9,
+        -110.32
+      ],
+      "planned_separator_runs_m": [
+        1.49,
+        1.987,
+        2.483,
+        2.98,
+        3.476,
+        3.973,
+        4.47,
+        4.966,
+        5.463,
+        5.96,
+        6.456,
+        6.953,
+        7.449,
+        7.946,
+        1.49,
+        1.987,
+        2.483,
+        2.98,
+        3.476,
+        3.973,
+        4.47,
+        4.966,
+        5.463,
+        5.96,
+        6.456,
+        6.953,
+        7.449,
+        1.49,
+        1.987,
+        2.483,
+        2.98,
+        3.476,
+        3.973,
+        4.47,
+        4.966,
+        5.463,
+        5.96,
+        6.456,
+        1.49,
+        1.987,
+        2.483,
+        2.98,
+        3.476,
+        3.973,
+        4.47,
+        4.966,
+        5.463
+      ],
+      "estimated_usable_frames": 1055,
+      "windows_per_model": {
+        "gnm": 1045,
+        "vint": 1045,
+        "nomad": 1044
+      },
+      "limiting_window_count": 1044,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 63,
+      "candidate_id": "hospital_turn_route_063",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 64,
+      "candidate_id": "hospital_turn_route_064",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 65,
+      "candidate_id": "hospital_turn_route_065",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 66,
+      "candidate_id": "hospital_turn_route_066",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 67,
+      "candidate_id": "hospital_turn_route_067",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 68,
+      "candidate_id": "hospital_turn_route_068",
+      "constructed": true,
+      "anchors": [
+        [
+          -11.6163,
+          28.8187
+        ],
+        [
+          -10.9105,
+          36.5712
+        ],
+        [
+          -17.8317,
+          31.1297
+        ],
+        [
+          -18.2896,
+          24.7624
+        ],
+        [
+          -13.2545,
+          20.2225
+        ]
+      ],
+      "anchor_turns_deg": [
+        133.377,
+        47.712,
+        52.074
+      ],
+      "start_pose": [
+        -11.627251126595453,
+        28.825192148593068,
+        -0.040458298133672965
+      ],
+      "goal_pose": [
+        -13.227251126595455,
+        20.225192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 29.71457379947162,
+      "route_length_m": 29.7146,
+      "start_goal_separation_m": 8.7476,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        94.02,
+        47.49,
+        53.04
+      ],
+      "planned_separator_runs_m": [
+        1.486,
+        1.981,
+        2.476,
+        2.971,
+        3.467,
+        3.962,
+        4.457,
+        4.952,
+        5.448,
+        5.943,
+        6.438,
+        6.933,
+        1.486,
+        1.981,
+        2.476,
+        2.971,
+        3.467,
+        3.962,
+        4.457,
+        4.952,
+        5.448,
+        5.943,
+        6.438,
+        6.933,
+        7.429,
+        7.924,
+        1.486,
+        1.981,
+        2.476,
+        2.971,
+        3.467,
+        3.962,
+        4.457,
+        4.952,
+        5.448,
+        1.486,
+        1.981,
+        2.476,
+        2.971,
+        3.467,
+        3.962,
+        4.457,
+        4.952,
+        5.448,
+        5.943
+      ],
+      "estimated_usable_frames": 1018,
+      "windows_per_model": {
+        "gnm": 1008,
+        "vint": 1008,
+        "nomad": 1007
+      },
+      "limiting_window_count": 1007,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 69,
+      "candidate_id": "hospital_turn_route_069",
+      "constructed": true,
+      "anchors": [
+        [
+          -2.2959,
+          18.8943
+        ],
+        [
+          2.1145,
+          17.5018
+        ],
+        [
+          5.8371,
+          20.6778
+        ],
+        [
+          -0.1118,
+          27.0654
+        ],
+        [
+          -3.1147,
+          23.4406
+        ]
+      ],
+      "anchor_turns_deg": [
+        57.992,
+        92.494,
+        97.398
+      ],
+      "start_pose": [
+        -2.327251126595449,
+        18.92519214859307,
+        2.8201987653851885
+      ],
+      "goal_pose": [
+        -3.1272511265954535,
+        23.42519214859307
+      ],
+      "path_points": 6,
+      "path_length_m": 23.154043926962036,
+      "route_length_m": 23.154,
+      "start_goal_separation_m": 4.5706,
+      "planned_turn_events_v2": 4,
+      "planned_turn_magnitudes_deg": [
+        64.56,
+        -40.18,
+        127.26,
+        96.59
+      ],
+      "planned_separator_runs_m": [
+        1.478,
+        1.971,
+        2.463,
+        2.956,
+        3.448,
+        3.941,
+        1.478,
+        1.971,
+        2.463,
+        2.956,
+        3.447,
+        1.478,
+        1.971,
+        2.463,
+        2.956,
+        3.448,
+        3.941,
+        4.434,
+        4.926,
+        5.419,
+        5.912,
+        6.404,
+        6.897,
+        7.39,
+        7.882,
+        1.478,
+        1.971,
+        2.463,
+        2.956,
+        3.448,
+        3.941
+      ],
+      "estimated_usable_frames": 793,
+      "windows_per_model": {
+        "gnm": 783,
+        "vint": 783,
+        "nomad": 782
+      },
+      "limiting_window_count": 782,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.3788645565509796,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 70,
+      "candidate_id": "hospital_turn_route_070",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 71,
+      "candidate_id": "hospital_turn_route_071",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 72,
+      "candidate_id": "hospital_turn_route_072",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 73,
+      "candidate_id": "hospital_turn_route_073",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 74,
+      "candidate_id": "hospital_turn_route_074",
+      "constructed": true,
+      "anchors": [
+        [
+          -3.0964,
+          23.4075
+        ],
+        [
+          -11.7132,
+          24.9567
+        ],
+        [
+          -9.7612,
+          17.8616
+        ],
+        [
+          -12.7532,
+          19.4518
+        ],
+        [
+          -7.3161,
+          24.9752
+        ]
+      ],
+      "anchor_turns_deg": [
+        115.575,
+        -133.371,
+        -106.56
+      ],
+      "start_pose": [
+        -3.1272511265954535,
+        23.42519214859307,
+        0.9989609076668744
+      ],
+      "goal_pose": [
+        -7.327251126595449,
+        25.025192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 27.28560748236568,
+      "route_length_m": 27.2856,
+      "start_goal_separation_m": 4.4944,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        115.63,
+        -57.69,
+        -105.89
+      ],
+      "planned_separator_runs_m": [
+        1.488,
+        1.984,
+        2.481,
+        2.977,
+        3.473,
+        3.969,
+        4.465,
+        4.961,
+        5.457,
+        5.953,
+        6.449,
+        6.945,
+        7.442,
+        7.938,
+        1.488,
+        1.984,
+        2.481,
+        2.977,
+        3.473,
+        3.969,
+        4.465,
+        4.961,
+        5.457,
+        5.953,
+        6.449,
+        1.488,
+        1.984,
+        2.481,
+        1.488,
+        1.984,
+        2.481,
+        2.977,
+        3.473,
+        3.969,
+        4.465,
+        4.961,
+        5.457,
+        5.953,
+        6.449,
+        6.945
+      ],
+      "estimated_usable_frames": 935,
+      "windows_per_model": {
+        "gnm": 925,
+        "vint": 925,
+        "nomad": 924
+      },
+      "limiting_window_count": 924,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 1.9884350299835205,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 75,
+      "candidate_id": "hospital_turn_route_075",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 76,
+      "candidate_id": "hospital_turn_route_076",
+      "constructed": true,
+      "anchors": [
+        [
+          -12.6313,
+          24.8711
+        ],
+        [
+          -20.2151,
+          24.6834
+        ],
+        [
+          -23.8902,
+          30.597
+        ],
+        [
+          -15.4209,
+          29.0362
+        ],
+        [
+          -16.544,
+          34.681
+        ]
+      ],
+      "anchor_turns_deg": [
+        -59.558,
+        -132.301,
+        111.694
+      ],
+      "start_pose": [
+        -12.627251126595453,
+        24.825192148593068,
+        -2.6622862148782427
+      ],
+      "goal_pose": [
+        -16.527251126595452,
+        34.72519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 29.019299540803477,
+      "route_length_m": 29.0193,
+      "start_goal_separation_m": 10.6405,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -58.66,
+        -93.54,
+        111.58
+      ],
+      "planned_separator_runs_m": [
+        1.476,
+        1.967,
+        2.459,
+        2.951,
+        3.443,
+        3.935,
+        4.427,
+        4.919,
+        5.41,
+        5.902,
+        6.394,
+        6.886,
+        1.476,
+        1.967,
+        2.459,
+        2.951,
+        3.443,
+        3.935,
+        4.427,
+        4.919,
+        5.41,
+        5.902,
+        1.476,
+        1.967,
+        2.459,
+        2.951,
+        3.443,
+        3.935,
+        4.427,
+        4.919,
+        5.41,
+        5.902,
+        6.394,
+        6.886,
+        7.378,
+        7.87,
+        1.476,
+        1.967,
+        2.459,
+        2.951,
+        3.443,
+        3.935,
+        4.427,
+        4.919
+      ],
+      "estimated_usable_frames": 994,
+      "windows_per_model": {
+        "gnm": 984,
+        "vint": 984,
+        "nomad": 983
+      },
+      "limiting_window_count": 983,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 77,
+      "candidate_id": "hospital_turn_route_077",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 78,
+      "candidate_id": "hospital_turn_route_078",
+      "constructed": true,
+      "anchors": [
+        [
+          -6.391,
+          24.5157
+        ],
+        [
+          -2.5433,
+          23.797
+        ],
+        [
+          -0.3314,
+          28.0348
+        ],
+        [
+          3.0139,
+          28.8516
+        ],
+        [
+          1.3108,
+          35.5239
+        ]
+      ],
+      "anchor_turns_deg": [
+        73.018,
+        -48.717,
+        90.598
+      ],
+      "start_pose": [
+        -6.427251126595451,
+        24.525192148593067,
+        2.4344627632675007
+      ],
+      "goal_pose": [
+        1.2727488734045522,
+        35.52519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 19.01152362046778,
+      "route_length_m": 19.0115,
+      "start_goal_separation_m": 13.4272,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        72.53,
+        -48.73,
+        90.61
+      ],
+      "planned_separator_runs_m": [
+        1.462,
+        1.95,
+        2.437,
+        2.925,
+        3.412,
+        1.462,
+        1.95,
+        2.437,
+        2.925,
+        3.412,
+        1.462,
+        1.95,
+        2.437,
+        1.462,
+        1.95,
+        2.437,
+        2.925,
+        3.412,
+        3.9,
+        4.387,
+        4.875,
+        5.362,
+        5.85,
+        6.337
+      ],
+      "estimated_usable_frames": 651,
+      "windows_per_model": {
+        "gnm": 641,
+        "vint": 641,
+        "nomad": 640
+      },
+      "limiting_window_count": 640,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 79,
+      "candidate_id": "hospital_turn_route_079",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 80,
+      "candidate_id": "hospital_turn_route_080",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 81,
+      "candidate_id": "hospital_turn_route_081",
+      "constructed": true,
+      "anchors": [
+        [
+          -19.8654,
+          33.2296
+        ],
+        [
+          -14.4152,
+          32.9083
+        ],
+        [
+          -19.7303,
+          26.4887
+        ],
+        [
+          -15.6151,
+          22.6681
+        ],
+        [
+          -18.9329,
+          20.1787
+        ]
+      ],
+      "anchor_turns_deg": [
+        -126.249,
+        86.749,
+        -100.246
+      ],
+      "start_pose": [
+        -19.827251126595453,
+        33.22519214859307,
+        -2.570418955193806
+      ],
+      "goal_pose": [
+        -18.92725112659545,
+        20.225192148593067
+      ],
+      "path_points": 5,
+      "path_length_m": 23.457022770351553,
+      "route_length_m": 23.457,
+      "start_goal_separation_m": 13.0311,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -126.45,
+        86.06,
+        -100.4
+      ],
+      "planned_separator_runs_m": [
+        1.497,
+        1.996,
+        2.495,
+        2.995,
+        3.494,
+        3.993,
+        4.492,
+        1.497,
+        1.996,
+        2.495,
+        2.995,
+        3.494,
+        3.993,
+        4.492,
+        4.991,
+        5.49,
+        5.989,
+        6.488,
+        6.987,
+        7.486,
+        1.497,
+        1.996,
+        2.495,
+        2.995,
+        3.494,
+        3.993,
+        4.492,
+        1.497,
+        1.996,
+        2.495,
+        2.995,
+        3.494
+      ],
+      "estimated_usable_frames": 804,
+      "windows_per_model": {
+        "gnm": 794,
+        "vint": 794,
+        "nomad": 793
+      },
+      "limiting_window_count": 793,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 82,
+      "candidate_id": "hospital_turn_route_082",
+      "constructed": true,
+      "anchors": [
+        [
+          5.9603,
+          24.5807
+        ],
+        [
+          5.5255,
+          33.1491
+        ],
+        [
+          0.0756,
+          30.675
+        ],
+        [
+          8.028,
+          27.0265
+        ],
+        [
+          8.6021,
+          33.0247
+        ]
+      ],
+      "anchor_turns_deg": [
+        111.511,
+        130.938,
+        109.178
+      ],
+      "start_pose": [
+        5.972748873404548,
+        24.62519214859307,
+        0.8832157784987551
+      ],
+      "goal_pose": [
+        8.57274887340455,
+        33.02519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 29.344411715779877,
+      "route_length_m": 29.3444,
+      "start_goal_separation_m": 8.7932,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        111.75,
+        131.33,
+        109.46
+      ],
+      "planned_separator_runs_m": [
+        1.492,
+        1.989,
+        2.487,
+        2.984,
+        3.482,
+        3.979,
+        4.476,
+        4.974,
+        5.471,
+        5.968,
+        6.466,
+        6.963,
+        7.46,
+        7.958,
+        1.492,
+        1.989,
+        2.487,
+        2.984,
+        3.482,
+        3.979,
+        4.476,
+        4.974,
+        1.492,
+        1.989,
+        2.487,
+        2.984,
+        3.482,
+        3.979,
+        4.476,
+        4.974,
+        5.471,
+        5.968,
+        6.466,
+        6.963,
+        7.46,
+        1.492,
+        1.989,
+        2.487,
+        2.984,
+        3.482,
+        3.979,
+        4.476,
+        4.974,
+        5.471
+      ],
+      "estimated_usable_frames": 1006,
+      "windows_per_model": {
+        "gnm": 996,
+        "vint": 996,
+        "nomad": 995
+      },
+      "limiting_window_count": 995,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 1.9232451915740967,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 83,
+      "candidate_id": "hospital_turn_route_083",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 84,
+      "candidate_id": "hospital_turn_route_084",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 85,
+      "candidate_id": "hospital_turn_route_085",
+      "constructed": false,
+      "generator_failure": "could not place anchor 2 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 86,
+      "candidate_id": "hospital_turn_route_086",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 87,
+      "candidate_id": "hospital_turn_route_087",
+      "constructed": true,
+      "anchors": [
+        [
+          19.5998,
+          9.6735
+        ],
+        [
+          17.7296,
+          5.3745
+        ],
+        [
+          18.7791,
+          -0.9774
+        ],
+        [
+          15.9146,
+          0.5957
+        ],
+        [
+          19.1764,
+          7.3714
+        ]
+      ],
+      "anchor_turns_deg": [
+        32.892,
+        -128.156,
+        -86.932
+      ],
+      "start_pose": [
+        19.57274887340455,
+        9.625192148593067,
+        -0.8109179679110547
+      ],
+      "goal_pose": [
+        19.172748873404544,
+        7.325192148593068
+      ],
+      "path_points": 5,
+      "path_length_m": 21.82111615412047,
+      "route_length_m": 21.8211,
+      "start_goal_separation_m": 2.3345,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        31.73,
+        -127.91,
+        -87.34
+      ],
+      "planned_separator_runs_m": [
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.967,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.967,
+        4.463,
+        4.959,
+        5.455,
+        1.488,
+        1.984,
+        1.488,
+        1.984,
+        2.48,
+        2.976,
+        3.472,
+        3.967,
+        4.463,
+        4.959,
+        5.455,
+        5.951,
+        6.447,
+        6.943
+      ],
+      "estimated_usable_frames": 748,
+      "windows_per_model": {
+        "gnm": 738,
+        "vint": 738,
+        "nomad": 737
+      },
+      "limiting_window_count": 737,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": false,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "FAIL",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 0.9580445885658264,
+      "G4_first_failure": null,
+      "all_gate_failures": [
+        "G10_V2_PLAN:start_goal_separation"
+      ],
+      "pre_motion_admissible": false
+    },
+    {
+      "ordering_index": 88,
+      "candidate_id": "hospital_turn_route_088",
+      "constructed": true,
+      "anchors": [
+        [
+          -20.2071,
+          23.3289
+        ],
+        [
+          -22.7768,
+          31.745
+        ],
+        [
+          -19.6593,
+          32.2713
+        ],
+        [
+          -20.4892,
+          28.6918
+        ],
+        [
+          -25.6721,
+          30.9223
+        ]
+      ],
+      "anchor_turns_deg": [
+        -97.398,
+        -112.634,
+        -100.233
+      ],
+      "start_pose": [
+        -20.22725112659545,
+        23.325192148593068,
+        0.861161893386571
+      ],
+      "goal_pose": [
+        -25.627251126595453,
+        30.92519214859307
+      ],
+      "path_points": 5,
+      "path_length_m": 21.072334970181767,
+      "route_length_m": 21.0723,
+      "start_goal_separation_m": 9.3231,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -97.41,
+        -113.58,
+        -98.91
+      ],
+      "planned_separator_runs_m": [
+        1.47,
+        1.96,
+        2.45,
+        2.94,
+        3.43,
+        3.92,
+        4.41,
+        4.901,
+        5.391,
+        5.881,
+        6.371,
+        6.861,
+        7.351,
+        7.841,
+        1.47,
+        1.96,
+        2.45,
+        1.47,
+        1.96,
+        2.45,
+        1.47,
+        1.96,
+        2.45,
+        2.94,
+        3.43,
+        3.92,
+        4.41,
+        4.901
+      ],
+      "estimated_usable_frames": 722,
+      "windows_per_model": {
+        "gnm": 712,
+        "vint": 712,
+        "nomad": 711
+      },
+      "limiting_window_count": 711,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 89,
+      "candidate_id": "hospital_turn_route_089",
+      "constructed": false,
+      "generator_failure": "could not place anchor 3 under the frozen spacing and bend rules"
+    },
+    {
+      "ordering_index": 90,
+      "candidate_id": "hospital_turn_route_090",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 91,
+      "candidate_id": "hospital_turn_route_091",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 92,
+      "candidate_id": "hospital_turn_route_092",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 93,
+      "candidate_id": "hospital_turn_route_093",
+      "constructed": true,
+      "anchors": [
+        [
+          -7.2055,
+          26.7631
+        ],
+        [
+          -13.5524,
+          22.9784
+        ],
+        [
+          -19.8124,
+          28.2671
+        ],
+        [
+          -19.8718,
+          24.9367
+        ],
+        [
+          -15.7566,
+          19.7941
+        ]
+      ],
+      "anchor_turns_deg": [
+        -71.001,
+        129.171,
+        39.69
+      ],
+      "start_pose": [
+        -7.227251126595448,
+        26.725192148593067,
+        -3.0473862018402555
+      ],
+      "goal_pose": [
+        -15.727251126595455,
+        19.825192148593068
+      ],
+      "path_points": 5,
+      "path_length_m": 25.318704290000017,
+      "route_length_m": 25.3187,
+      "start_goal_separation_m": 10.9481,
+      "planned_turn_events_v2": 3,
+      "planned_turn_magnitudes_deg": [
+        -69.96,
+        129.54,
+        38.8
+      ],
+      "planned_separator_runs_m": [
+        1.489,
+        1.986,
+        2.482,
+        2.979,
+        3.475,
+        3.972,
+        4.468,
+        4.964,
+        5.461,
+        5.957,
+        6.454,
+        1.489,
+        1.986,
+        2.482,
+        2.979,
+        3.475,
+        3.972,
+        4.468,
+        4.964,
+        5.461,
+        5.957,
+        6.454,
+        6.95,
+        7.447,
+        1.489,
+        1.986,
+        1.489,
+        1.986,
+        2.482,
+        2.979,
+        3.475,
+        3.972,
+        4.468,
+        4.964,
+        5.461,
+        5.957
+      ],
+      "estimated_usable_frames": 868,
+      "windows_per_model": {
+        "gnm": 858,
+        "vint": 858,
+        "nomad": 857
+      },
+      "limiting_window_count": 857,
+      "G10_V2_PLAN_checks": {
+        "frames_capability": true,
+        "planned_distance": true,
+        "start_goal_separation": true,
+        "planned_turn_events": true,
+        "context_windows": true
+      },
+      "G10_V2_PLAN": "PASS",
+      "G3_START_SUPPORT": "PASS",
+      "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+      "G5_OBSTACLE_CLEARANCE": "PASS",
+      "G6_END_SUPPORT": "PASS",
+      "G5_min_clearance_m": 2.0,
+      "G4_first_failure": null,
+      "all_gate_failures": [],
+      "pre_motion_admissible": true
+    },
+    {
+      "ordering_index": 94,
+      "candidate_id": "hospital_turn_route_094",
+      "constructed": false,
+      "generator_failure": "no path found"
+    },
+    {
+      "ordering_index": 95,
+      "candidate_id": "hospital_turn_route_095",
+      "constructed": false,
+      "generator_failure": "could not place anchor 4 under the frozen spacing and bend rules"
+    }
+  ],
+  "attempted": 96,
+  "constructed": 27,
+  "generator_failures": 69,
+  "pre_motion_admissible_count": 20,
+  "selected_candidate": {
+    "ordering_index": 0,
+    "candidate_id": "hospital_turn_route_000",
+    "constructed": true,
+    "anchors": [
+      [
+        -21.8503,
+        32.4793
+      ],
+      [
+        -18.277,
+        28.1609
+      ],
+      [
+        -14.9473,
+        28.1175
+      ],
+      [
+        -11.7545,
+        22.9375
+      ],
+      [
+        -5.0843,
+        27.6818
+      ]
+    ],
+    "anchor_turns_deg": [
+      49.645,
+      -57.604,
+      93.775
+    ],
+    "start_pose": [
+      -21.827251126595453,
+      32.52519214859307,
+      -3.03774645687452
+    ],
+    "goal_pose": [
+      -5.1272511265954535,
+      27.725192148593067
+    ],
+    "path_points": 5,
+    "path_length_m": 23.251685475651524,
+    "route_length_m": 23.2517,
+    "start_goal_separation_m": 17.3761,
+    "planned_turn_events_v2": 3,
+    "planned_turn_magnitudes_deg": [
+      50.71,
+      -58.39,
+      94.42
+    ],
+    "planned_separator_runs_m": [
+      1.484,
+      1.979,
+      2.474,
+      2.968,
+      3.463,
+      3.958,
+      4.452,
+      4.947,
+      1.484,
+      1.979,
+      2.474,
+      1.484,
+      1.979,
+      2.474,
+      2.968,
+      3.463,
+      3.958,
+      4.452,
+      4.947,
+      1.484,
+      1.979,
+      2.474,
+      2.968,
+      3.463,
+      3.958,
+      4.452,
+      4.947,
+      5.442,
+      5.937,
+      6.431,
+      6.926,
+      7.421
+    ],
+    "estimated_usable_frames": 797,
+    "windows_per_model": {
+      "gnm": 787,
+      "vint": 787,
+      "nomad": 786
+    },
+    "limiting_window_count": 786,
+    "G10_V2_PLAN_checks": {
+      "frames_capability": true,
+      "planned_distance": true,
+      "start_goal_separation": true,
+      "planned_turn_events": true,
+      "context_windows": true
+    },
+    "G10_V2_PLAN": "PASS",
+    "G3_START_SUPPORT": "PASS",
+    "G4_CONTINUOUS_ROUTE_SUPPORT": "PASS",
+    "G5_OBSTACLE_CLEARANCE": "PASS",
+    "G6_END_SUPPORT": "PASS",
+    "G5_min_clearance_m": 2.0,
+    "G4_first_failure": null,
+    "all_gate_failures": [],
+    "pre_motion_admissible": true
+  },
+  "selection_rule": "first pre-motion-admissible candidate in frozen ordering",
+  "distributions": {
+    "planned_turn_events_v2": {
+      "3": 22,
+      "4": 4,
+      "5": 1
+    },
+    "gate_failure_counts": {
+      "G10_V2_PLAN": 7
+    },
+    "g10_subcheck_failures": {
+      "start_goal_separation": 7
+    },
+    "multi_gate_failure_combinations": {
+      "NONE": 20,
+      "G10_V2_PLAN": 7
+    }
+  },
+  "probe_queries": {
+    "support": 1258857,
+    "clearance": 13968
+  },
+  "controls": {
+    "budget_fully_enumerated": true,
+    "no_optional_stopping": true,
+    "generator_independent_of_g10": true,
+    "support_fails_off_scene": true
+  },
+  "controls_all_pass": true,
+  "TURNING_ROUTE_ADMISSION": "ROUTE_ADMITTED_FOR_COLLECTION"
+}
