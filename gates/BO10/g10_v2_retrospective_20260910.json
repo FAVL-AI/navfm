@@ -67,7 +67,10 @@
       "4": 3
     },
     "candidates_passing_all_route_gates_v1": 3,
-    "repair": "store planned polylines in future route-admission artefacts. Recomputing them now would mean re-running admission, which is a separate action and is not taken here."
+    "repair": "store planned polylines in future route-admission artefacts. Recomputing them now would mean re-running admission, which is a separate action and is not taken here.",
+    "status": "CLOSED",
+    "closed_how": "the polylines were not lost. The population is a seeded sampler against a fixed map, so replaying it regenerates every candidate's path exactly -- already proved for candidate 050 during collection. Recorded earlier as a gap too readily.",
+    "result_artefact": "gates/BO10/g10_v2_plan_precondition_20260910.json"
   },
   "status": {
     "F_DRIVE_1": "RESOLVED for BO-10 via KINEMATIC_COLLECTION_DRIVE_V1, dynamics claims excluded",
@@ -76,5 +79,28 @@
     "BO10": "COLLECTION MECHANISM WORKING; ADMISSION BLOCKED on realised turn events",
     "BO03_REAL_DATA_COMPATIBILITY": "OUTSTANDING -- requires an admitted trajectory",
     "DYNAMIC_WHEEL_DRIVE_V1": "DEFERRED"
+  },
+  "plan_precondition_result": {
+    "candidates_evaluated": 96,
+    "identity_matches_frozen_population": 96,
+    "v1_plan_pass": 5,
+    "v2_plan_pass": 5,
+    "verdict_changed_for": 0,
+    "v1_turn_distribution": {
+      "0": 73,
+      "1": 10,
+      "2": 8,
+      "3": 2,
+      "4": 3
+    },
+    "v2_event_distribution": {
+      "0": 72,
+      "1": 11,
+      "2": 8,
+      "3": 5
+    },
+    "interpretation": "V2 merges some planned turns -- the three candidates with 4 v1-turns have 3 v2-events -- but no PASS/FAIL verdict flips. The plan side of G10 is therefore NOT the blocker: the same three candidates (050, 083, 086) satisfy the V2 plan precondition and every other route gate.",
+    "first_under_frozen_selection_rule": "hospital_repaired_map_route_050",
+    "consequence": "route_050 is exactly the candidate whose realised execution already failed. Recollecting it would reproduce SYSTEMATIC_TURN_BLENDING, and 083/086 share the controller. Item 14 applies: stop rather than retry."
   }
 }

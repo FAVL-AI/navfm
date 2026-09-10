@@ -1,0 +1,1238 @@
+{
+  "check": "G10_V2_PLAN_PRECONDITION_ON_FROZEN_POPULATION",
+  "artifact_semantics": "METRIC_RE_EVALUATION_ON_AN_UNCHANGED_POPULATION",
+  "timestamp_utc": "2026-09-10T04:29:21.991325+00:00",
+  "semantics": "gates/BO10/g10_turn_semantics_v2_20260910.json",
+  "semantics_sha256": "a8f8b383c5a392ea3f200c5704e265b7a31f14b0585397e6bb4dda836258eaf3",
+  "source_admission_artefact": "gates/BO10/hospital_repaired_map_rerun_20260910.json",
+  "held_fixed": {
+    "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "seed": 0,
+    "budget": 96,
+    "ordering": "seeded generation order",
+    "obstacle_map_backend": "physx_cell_overlap_v1",
+    "start_goal_population": "unchanged",
+    "G3_to_G9": "unchanged",
+    "selection_rule": "unchanged"
+  },
+  "only_thing_changed": "the turn metric",
+  "method": "replay the seeded sampler against the same map to regenerate each candidate's planned path, then measure turns under v1 and V2",
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "route_id": "hospital_repaired_map_route_000",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 11.405,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_001",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 21.825,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_002",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 7.938,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_003",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 39.237,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_004",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 26.876,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_005",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 12.894,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_006",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 35.949,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_007",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 8.77,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_008",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 31.837,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_009",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 8.545,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_010",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        72.35,
+        58.94
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        72.35,
+        58.94
+      ],
+      "v2_longest_separator_run_m": 11.886,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_011",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 12.405,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_012",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 24.293,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_013",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 39.494,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_014",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 19.707,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_015",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 28.243,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_016",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 17.723,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_017",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 7.911,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_018",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        -32.66
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -32.66
+      ],
+      "v2_longest_separator_run_m": 9.424,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_019",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 27.07,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_020",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 20.569,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_021",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 24.93,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_022",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 13.48,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_023",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 4.344,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_024",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 21.117,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_025",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 18.235,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_026",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 31.377,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_027",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        47.82,
+        42.18
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        47.82,
+        42.18
+      ],
+      "v2_longest_separator_run_m": 3.466,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_028",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 34.946,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_029",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        38.66
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        38.66
+      ],
+      "v2_longest_separator_run_m": 25.63,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_030",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 26.371,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_031",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 38.105,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_032",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        77.83,
+        -37.28
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        87.38,
+        -37.28
+      ],
+      "v2_longest_separator_run_m": 5.906,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_033",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        82.57,
+        56.33
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        82.57,
+        56.33
+      ],
+      "v2_longest_separator_run_m": 21.991,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_034",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 10.023,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_035",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 4,
+      "v1_turn_magnitudes": [
+        58.04,
+        31.74,
+        82.94,
+        65.89
+      ],
+      "v2_planned_turn_events": 3,
+      "v2_event_magnitudes": [
+        89.78,
+        82.94,
+        65.89
+      ],
+      "v2_longest_separator_run_m": 9.943,
+      "v2_plan_precondition": "PASS",
+      "all_route_gates_pass_v1": false
+    },
+    {
+      "route_id": "hospital_repaired_map_route_036",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -45.11
+      ],
+      "v2_longest_separator_run_m": 11.31,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_037",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 11.235,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_038",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        -43.46,
+        -42.51
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        -43.46,
+        -42.51
+      ],
+      "v2_longest_separator_run_m": 20.76,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_039",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 12.934,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_040",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 19.135,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_041",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 9.037,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_042",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        62.78
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        62.78
+      ],
+      "v2_longest_separator_run_m": 16.906,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_043",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        -84.1,
+        -42.19
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        -84.1,
+        -42.19
+      ],
+      "v2_longest_separator_run_m": 11.926,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_044",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 15.72,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_045",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 20.377,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_046",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 16.112,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_047",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        -85.76
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -85.76
+      ],
+      "v2_longest_separator_run_m": 15.7,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_048",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 4.846,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_049",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 24.032,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_050",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 3,
+      "v1_turn_magnitudes": [
+        73.01,
+        30.58,
+        34.22
+      ],
+      "v2_planned_turn_events": 3,
+      "v2_event_magnitudes": [
+        73.01,
+        30.58,
+        34.22
+      ],
+      "v2_longest_separator_run_m": 5.945,
+      "v2_plan_precondition": "PASS",
+      "all_route_gates_pass_v1": true
+    },
+    {
+      "route_id": "hospital_repaired_map_route_051",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 9.227,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_052",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        -76.97
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -76.97
+      ],
+      "v2_longest_separator_run_m": 11.39,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_053",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 16.161,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_054",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 13.054,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_055",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 26.253,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_056",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 7.661,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_057",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        52.12
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        52.13
+      ],
+      "v2_longest_separator_run_m": 19.836,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_058",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 19.443,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_059",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        -43.42
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -43.42
+      ],
+      "v2_longest_separator_run_m": 24.837,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_060",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 20.887,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_061",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        -42.55,
+        -38.05
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        -42.55,
+        -38.05
+      ],
+      "v2_longest_separator_run_m": 10.932,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_062",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 8.77,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_063",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 29.538,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_064",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 30.669,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_065",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 25.773,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_066",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 15.153,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_067",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        39.21
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        39.21
+      ],
+      "v2_longest_separator_run_m": 6.454,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_068",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 9.728,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_069",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 18.516,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_070",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 20.52,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_071",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 13.893,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_072",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 15.106,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_073",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 17.422,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_074",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 32.804,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_075",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 8.436,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_076",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 26.2,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_077",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 15.515,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_078",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        -58.35
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        -58.35
+      ],
+      "v2_longest_separator_run_m": 7.956,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_079",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 2,
+      "v1_turn_magnitudes": [
+        -47.26,
+        -41.99
+      ],
+      "v2_planned_turn_events": 2,
+      "v2_event_magnitudes": [
+        -47.26,
+        -41.99
+      ],
+      "v2_longest_separator_run_m": 6.973,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_080",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 1,
+      "v1_turn_magnitudes": [
+        36.3
+      ],
+      "v2_planned_turn_events": 1,
+      "v2_event_magnitudes": [
+        36.3
+      ],
+      "v2_longest_separator_run_m": 8.976,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_081",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 11.808,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_082",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 16.864,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_083",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 4,
+      "v1_turn_magnitudes": [
+        72.26,
+        47.49,
+        44.06,
+        37.43
+      ],
+      "v2_planned_turn_events": 3,
+      "v2_event_magnitudes": [
+        72.26,
+        91.55,
+        37.43
+      ],
+      "v2_longest_separator_run_m": 4.478,
+      "v2_plan_precondition": "PASS",
+      "all_route_gates_pass_v1": true
+    },
+    {
+      "route_id": "hospital_repaired_map_route_084",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 12.375,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_085",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 25.803,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_086",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 3,
+      "v1_turn_magnitudes": [
+        32.4,
+        -38.67,
+        -37.97
+      ],
+      "v2_planned_turn_events": 3,
+      "v2_event_magnitudes": [
+        32.4,
+        -38.67,
+        -37.97
+      ],
+      "v2_longest_separator_run_m": 14.475,
+      "v2_plan_precondition": "PASS",
+      "all_route_gates_pass_v1": true
+    },
+    {
+      "route_id": "hospital_repaired_map_route_087",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 26.481,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_088",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 22.137,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_089",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 13.11,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_090",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 4,
+      "v1_turn_magnitudes": [
+        -54.93,
+        58.04,
+        31.73,
+        82.94
+      ],
+      "v2_planned_turn_events": 3,
+      "v2_event_magnitudes": [
+        -54.93,
+        89.77,
+        82.94
+      ],
+      "v2_longest_separator_run_m": 10.474,
+      "v2_plan_precondition": "PASS",
+      "all_route_gates_pass_v1": false
+    },
+    {
+      "route_id": "hospital_repaired_map_route_091",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 12.724,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_092",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 13.143,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_093",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 10.451,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_094",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 9.911,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    },
+    {
+      "route_id": "hospital_repaired_map_route_095",
+      "identity_matches_frozen_population": true,
+      "v1_planned_turns": 0,
+      "v1_turn_magnitudes": [],
+      "v2_planned_turn_events": 0,
+      "v2_event_magnitudes": [],
+      "v2_longest_separator_run_m": 9.182,
+      "v2_plan_precondition": "FAIL",
+      "all_route_gates_pass_v1": null
+    }
+  ],
+  "candidates_evaluated": 96,
+  "identity_matches": 96,
+  "v1_pass_count": 5,
+  "v2_pass_count": 5,
+  "changed_verdict": 0,
+  "v2_pass_and_all_other_gates_pass": [
+    "hospital_repaired_map_route_050",
+    "hospital_repaired_map_route_083",
+    "hospital_repaired_map_route_086"
+  ],
+  "first_candidate_under_frozen_selection_rule": "hospital_repaired_map_route_050",
+  "qualifying_turn_deg": 30.0,
+  "G10_V2_PLAN_EVALUATION": "COMPLETE"
+}
