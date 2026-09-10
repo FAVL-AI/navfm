@@ -583,5 +583,8 @@
   "blocking_false_negatives_total": 0,
   "negative_control_false_positives_total": 0,
   "boundary_convention_measured": "TOUCH",
-  "OBSTACLE_MAP_INTEGRITY": "PASS"
+  "OBSTACLE_MAP_INTEGRITY": "SEE_OBSTACLE_PROBE_LOCAL_VALIDATION_AND_FULL_ACCEPTANCE",
+  "OBSTACLE_PROBE_LOCAL_VALIDATION": "PASS",
+  "OBSTACLE_MAP_FULL_ACCEPTANCE": "PENDING",
+  "label_note": "OBSTACLE_MAP_INTEGRITY was too broad a name for a fixture-level result and could later be misread as a system verdict. This artefact establishes the probe's LOCAL validation only. Full acceptance additionally requires the G2 V2 regression, planner-inflation validation and the analytic/planner/PhysX clearance reconciliation."
 }

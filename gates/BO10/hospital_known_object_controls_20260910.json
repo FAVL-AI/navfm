@@ -1038,5 +1038,7 @@
   "objects_total": 5,
   "total_false_negatives": 0,
   "KNOWN_OBJECT_CONTROLS": "PASS",
-  "np_version": "1.26.0"
+  "np_version": "1.26.0",
+  "OBSTACLE_PROBE_LOCAL_VALIDATION": "PASS",
+  "OBSTACLE_MAP_FULL_ACCEPTANCE": "PENDING"
 }

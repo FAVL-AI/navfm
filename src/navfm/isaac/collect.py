@@ -63,7 +63,16 @@ from .app import IsaacApp, SimConfig
 from .randomize import RandomizationConfig, SceneRandomizer, apply_sensor_noise
 from .robot import M3PRO, RobotConfig, SimRobot
 
-__all__ = ["CollectConfig", "Collector", "EpisodeResult"]
+__all__ = [
+    "OCCUPANCY_BACKENDS",
+    "OCCUPANCY_BACKEND_LEGACY",
+    "OCCUPANCY_BACKEND_PHYSX",
+    "UNKNOWN_CELL_POLICY",
+    "CollectConfig",
+    "Collector",
+    "EpisodeResult",
+    "OccupancyBackendError",
+]
 
 #: Cell values the Isaac occupancy generator is asked to write. UNKNOWN is a
 #: third state and must never be folded into either of the other two: a cell the
@@ -71,6 +80,31 @@ __all__ = ["CollectConfig", "Collector", "EpisodeResult"]
 OCCUPIED = 4
 UNOCCUPIED = 5
 UNKNOWN = 6
+
+#: Which implementation answers "is this cell occupied?".
+#:
+#: The two are not interchangeable and the choice is never inferred. LEGACY is
+#: the Isaac occupancy-map extension, which is known to omit solid geometry --
+#: a reception desk at 0 of 725 cells, a supply cart at 0 of 72
+#: (gates/failures/F-G5-2.md). PHYSX_CELL_OVERLAP_V1 is the validated
+#: cell-volume probe. LEGACY is retained rather than deleted because it is the
+#: causal control: the repair is only demonstrated by showing the old backend
+#: reproduces the omission and the new one does not.
+OCCUPANCY_BACKEND_LEGACY = "legacy"
+OCCUPANCY_BACKEND_PHYSX = "physx_cell_overlap_v1"
+OCCUPANCY_BACKENDS = (OCCUPANCY_BACKEND_LEGACY, OCCUPANCY_BACKEND_PHYSX)
+
+#: How a cell the backend could not classify is treated. Frozen explicitly
+#: because the alternative already happened: `buf == OCCUPIED` silently made
+#: every UNKNOWN cell traversable, and 62% of the planner's free space came from
+#: cells the generator had declined to classify. UNKNOWN and QUERY_FAILED are
+#: BLOCKED, and they are counted separately so a map that is mostly unknown
+#: cannot look like a map that is mostly clear.
+UNKNOWN_CELL_POLICY = "BLOCKED"
+
+
+class OccupancyBackendError(RuntimeError):
+    """An occupancy backend was requested that does not exist, or failed."""
 
 
 @dataclasses.dataclass
@@ -131,8 +165,23 @@ class Collector:
         robot_config: RobotConfig = M3PRO,
         randomization: RandomizationConfig | None = None,
         scope: CollectionScope | None = None,
+        occupancy_backend: str = OCCUPANCY_BACKEND_LEGACY,
     ) -> None:
         self.out_dir = Path(out_dir)
+        if occupancy_backend not in OCCUPANCY_BACKENDS:
+            raise OccupancyBackendError(
+                f"unknown occupancy backend {occupancy_backend!r}; valid backends: "
+                f"{list(OCCUPANCY_BACKENDS)}")
+        #: Default stays LEGACY deliberately. Changing it would silently alter
+        #: the map for every existing caller, including the ones whose results
+        #: are frozen, and a different map means different sampling. The
+        #: scientific tranche selects the new backend explicitly.
+        self.occupancy_backend = occupancy_backend
+        #: What actually ran, recorded so an artefact can state it rather than
+        #: a reader having to infer it from a default.
+        self.occupancy_backend_used: str | None = None
+        #: Cells whose query raised. Blocked, and counted rather than absorbed.
+        self.occupancy_query_failures: int = 0
         #: What this collection is for, and whether it may enter the E2
         #: population. Stamped into every episode's metadata and into the
         #: manifest, so a trajectory carries its own scope rather than relying on
@@ -193,6 +242,8 @@ class Collector:
         self,
         scene_usd: str,
         bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
+        *,
+        backend: str | None = None,
     ) -> OccupancyGrid:
         """Build a 2-D occupancy grid by ray-casting a horizontal slice.
 
@@ -217,6 +268,18 @@ class Collector:
         exterior. Such a scene has no intrinsic boundary, so the region is
         declared and recorded rather than derived.
         """
+        # The backend is DISPATCHED, never fallen back to. An ambiguous fallback
+        # would mean an artefact could not say which instrument produced it, and
+        # these two disagree about whether a reception desk exists.
+        chosen = backend or self.occupancy_backend
+        if chosen not in OCCUPANCY_BACKENDS:
+            raise OccupancyBackendError(
+                f"unknown occupancy backend {chosen!r}; valid backends: "
+                f"{list(OCCUPANCY_BACKENDS)}")
+        self.occupancy_backend_used = chosen
+        if chosen == OCCUPANCY_BACKEND_PHYSX:
+            return self.build_occupancy_physx(bounds)
+
         res = self.collect.grid_resolution
         try:
             import omni.usd
@@ -321,12 +384,25 @@ class Collector:
         identity = [0.0, 0.0, 0.0, 1.0]  # xyzw
 
         grid = np.zeros((ny, nx), dtype=bool)
+        failed = 0
         for j in range(ny):
             y = min_y + j * res
             for i in range(nx):
                 x = min_x + i * res
-                if q.overlap_box(half, [x, y, z_mid], identity, lambda _h: False, True):
+                try:
+                    hit = q.overlap_box(half, [x, y, z_mid], identity,
+                                        lambda _h: False, True)
+                except Exception:
+                    # A cell whose query FAILED is not a cell found empty. It is
+                    # blocked and counted, because the opposite convention is
+                    # exactly how 54% of a map became traversable.
                     grid[j, i] = True
+                    failed += 1
+                    continue
+                if hit:
+                    grid[j, i] = True
+        self.occupancy_query_failures = failed
+        self.occupancy_backend_used = OCCUPANCY_BACKEND_PHYSX
         return OccupancyGrid(grid, res, origin=(min_x, min_y))
 
     def _stage_bounds(self) -> tuple[tuple[float, float], tuple[float, float]]:
