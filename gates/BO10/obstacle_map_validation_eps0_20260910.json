@@ -1,0 +1,587 @@
+{
+  "check": "OBSTACLE_CELL_OCCUPANCY_V1_VALIDATION",
+  "artifact_semantics": "INSTRUMENT_VALIDATION_NOT_A_SCENE_RESULT",
+  "timestamp_utc": "2026-09-10T00:38:09.989310+00:00",
+  "estimand": "OCCUPIED(C) iff blocking collision geometry intersects C x Z, C the FULL cell area",
+  "resolution_m": 0.1,
+  "slab_z_m": [
+    0.1,
+    0.6
+  ],
+  "query": {
+    "kind": "PhysX overlap_box",
+    "half_extents_m": [
+      0.05,
+      0.05,
+      0.25
+    ],
+    "epsilon_m": 0.0,
+    "rotation": "identity"
+  },
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "python": "3.11.15",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    }
+  },
+  "aggregate_rule": "scene-wide agreement is CORROBORATIVE ONLY; a false negative on blocking geometry fails the fixture",
+  "claim_boundary": "simulated obstacle-map correctness is not physical-robot validation; F-TWIN-1 remains OPEN",
+  "fixtures": {
+    "A_box_inside_one_cell": {
+      "note": "",
+      "origin": [
+        -0.27,
+        -0.27
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "B_box_crossing_two_cells": {
+      "note": "",
+      "origin": [
+        0.75,
+        0.73
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "C_wall_on_cell_boundary": {
+      "note": "boundary tangency is the SUBJECT here; convention decided by measurement",
+      "origin": [
+        1.8,
+        1.383
+      ],
+      "shape": [
+        14,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 18,
+        "measured_cells": 18,
+        "true_positives": 18,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 18,
+        "measured_cells": 18,
+        "true_positives": 18,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "D_wall_offset_inside_cell": {
+      "note": "",
+      "origin": [
+        2.74,
+        1.35
+      ],
+      "shape": [
+        14,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 8,
+        "measured_cells": 8,
+        "true_positives": 8,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 8,
+        "measured_cells": 8,
+        "true_positives": 8,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "E_hollow_double_face_wall": {
+      "note": "cavity between faces is genuinely empty; enclosure comes from inflation",
+      "origin": [
+        3.83,
+        1.35
+      ],
+      "shape": [
+        14,
+        10
+      ],
+      "strict_convention": {
+        "expected_cells": 16,
+        "measured_cells": 16,
+        "true_positives": 16,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 16,
+        "measured_cells": 16,
+        "true_positives": 16,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "F_furniture_many_cells": {
+      "note": "",
+      "origin": [
+        4.74,
+        0.74
+      ],
+      "shape": [
+        9,
+        12
+      ],
+      "strict_convention": {
+        "expected_cells": 18,
+        "measured_cells": 18,
+        "true_positives": 18,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 18,
+        "measured_cells": 18,
+        "true_positives": 18,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "G_rotated_obstacle": {
+      "note": "rotated; the measured AABB over-covers the true shape, so only false negatives judge it",
+      "origin": [
+        5.8366,
+        0.7415
+      ],
+      "shape": [
+        9,
+        10
+      ],
+      "strict_convention": {
+        "expected_cells": 12,
+        "measured_cells": 8,
+        "true_positives": 8,
+        "false_negatives": 4,
+        "false_positives": 0,
+        "recall": 0.6666666666666666,
+        "precision": 1.0,
+        "exact_agreement": false,
+        "false_negative_cells": [
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ]
+        ],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 12,
+        "measured_cells": 8,
+        "true_positives": 8,
+        "false_negatives": 4,
+        "false_positives": 0,
+        "recall": 0.6666666666666666,
+        "precision": 1.0,
+        "exact_agreement": false,
+        "false_negative_cells": [
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ]
+        ],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "containment in the AABB expectation, which over-covers a rotated shape",
+      "PASS": true
+    },
+    "H_partial_slab_overlap": {
+      "note": "",
+      "origin": [
+        6.73,
+        0.73
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "N1_above_slab": {
+      "note": "",
+      "origin": [
+        7.73,
+        0.73
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "N2_below_slab": {
+      "note": "",
+      "origin": [
+        8.73,
+        0.73
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "N3_visual_only_no_collider": {
+      "note": "",
+      "origin": [
+        9.73,
+        0.73
+      ],
+      "shape": [
+        9,
+        9
+      ],
+      "strict_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 0,
+        "measured_cells": 0,
+        "true_positives": 0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": null,
+        "precision": null,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "N4_nearby_obstacle_outside_cell": {
+      "note": "a real collider; judged like any blocking fixture, present to show that cells NOT containing it stay free",
+      "origin": [
+        11.73,
+        0.73
+      ],
+      "shape": [
+        7,
+        7
+      ],
+      "strict_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 1,
+        "measured_cells": 1,
+        "true_positives": 1,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    },
+    "I_instanced_collider": {
+      "note": "USD instanceable prim; PhysX must still resolve the collider. Its AABB is measured through the instance, not assumed.",
+      "origin": [
+        510.7,
+        500.7
+      ],
+      "shape": [
+        8,
+        8
+      ],
+      "strict_convention": {
+        "expected_cells": 4,
+        "measured_cells": 4,
+        "true_positives": 4,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "touch_convention": {
+        "expected_cells": 4,
+        "measured_cells": 4,
+        "true_positives": 4,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "exact_agreement": true,
+        "false_negative_cells": [],
+        "false_positive_cells": [],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "exact set agreement under either boundary convention",
+      "PASS": true
+    }
+  },
+  "fixtures_passed": 13,
+  "fixtures_total": 13,
+  "blocking_false_negatives_total": 0,
+  "negative_control_false_positives_total": 0,
+  "boundary_convention_measured": "TOUCH",
+  "OBSTACLE_MAP_INTEGRITY": "PASS"
+}

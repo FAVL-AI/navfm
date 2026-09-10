@@ -1,0 +1,93 @@
+{
+  "check": "OBSTACLE_CELL_OCCUPANCY_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_PROBE_IMPLEMENTED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "9daa7d53239a656b0be7bba5cc48c652ba7bf5af",
+  "estimand": {
+    "statement": "For grid cell C and frozen obstacle vertical interval Z, OCCUPIED(C) is true iff blocking collision geometry intersects the volume C x Z, where C is the FULL horizontal cell area and not merely its centre point.",
+    "question_asked": "does blocking collision geometry intersect this cell volume?",
+    "question_NOT_asked": "does something exist at the cell centre?"
+  },
+  "occupancy_must_not_be_defined_from": [
+    "mesh name",
+    "semantic label alone",
+    "centre-point inclusion",
+    "a favourable example",
+    "route outcome",
+    "aggregate occupancy improvement"
+  ],
+  "frozen_parameters": {
+    "grid_cell_size_m": 0.1,
+    "cell_horizontal_extent": "[cx - 0.05, cx + 0.05] x [cy - 0.05, cy + 0.05]; cell centres at origin + i*resolution, matching OccupancyGrid's stated convention that origin is the CENTRE of cell (0,0)",
+    "vertical_obstacle_slab_m": [
+      0.1,
+      0.6
+    ],
+    "slab_provenance": "the planner obstacle slab already frozen in build_occupancy; unchanged by this tranche",
+    "epsilon_convention": {
+      "default": 0.0,
+      "rule": "no inflation is applied until the known-geometry controls are run at epsilon = 0. If and only if a boundary-tangency false negative is demonstrated, a minimal epsilon may be introduced, fixed before the Hospital rerun, justified numerically, and tested independently.",
+      "forbidden": "inflating the query until a scene passes"
+    },
+    "collision_filtering": "any collider PhysX reports for the overlap query is blocking. No name-based or semantic filtering.",
+    "instance_traversal": "the query must resolve colliders from direct prims, referenced assets, USD instances and instance proxies. Plain stage traversal is NOT relied upon; PhysX scene queries operate on the physics scene.",
+    "touching_cell_boundaries": "a face lying exactly on a cell boundary is a boundary-tangency case. Its handling is decided by measurement in the analytic fixtures, recorded, and frozen before production evaluation."
+  },
+  "primary_query": {
+    "kind": "PhysX box overlap representing one occupancy cell",
+    "half_extents_m": [
+      0.05,
+      0.05,
+      0.25
+    ],
+    "centre_z_m": 0.35,
+    "rotation": "identity (axis-aligned)",
+    "rationale": "the box IS the cell volume; a sphere or a ray answers a different question"
+  },
+  "rejected_probes_and_why": {
+    "downward_raycast_from_slab_top": "a ray beginning inside a collider reports no hit, so every object taller than the slab vanished. Measured: Geo_W_WallBase10 went from 12.5% of its footprint to 0% while furniture improved, so the aggregate looked better while walls were destroyed.",
+    "centre_point_overlap_sphere": "falls in the empty interior between the shell faces of hollow wall meshes. Measured at Geo_W_WallBase10: overlap_sphere(0.05) at the wall centre returns 0 hits, overlap_sphere(0.20) returns 2.",
+    "status": "both preserved in the evidence ledger; neither is shipped"
+  },
+  "acceptance_rule": {
+    "OBSTACLE_MAP_INTEGRITY_PASS_requires_all_of": [
+      "analytic fixtures PASS",
+      "shell-wall control PASS",
+      "furniture controls PASS",
+      "negative controls PASS",
+      "instance control PASS",
+      "G2 regression PASS",
+      "planner-vs-PhysX clearance semantics reconciled",
+      "no unexplained blocking-geometry false negatives remain"
+    ],
+    "otherwise": "INSTRUMENT_REVIEW_REQUIRED",
+    "aggregate_rule": "scene-wide occupancy improvement is CORROBORATIVE ONLY and can never override a failed causal control"
+  },
+  "metrics_required": {
+    "per_fixture": [
+      "expected occupied-cell SET",
+      "measured occupied-cell SET",
+      "false negatives",
+      "false positives",
+      "precision",
+      "recall",
+      "exact-cell agreement"
+    ],
+    "adjudication": "false negatives are safety-critical for obstacle rasterisation and require explicit adjudication; they may not be averaged away"
+  },
+  "claim_boundaries": [
+    "Correctness of a simulated obstacle map is not physical-robot validation.",
+    "F-TWIN-1 remains OPEN.",
+    "PHYSICAL_M3_PRO_GROUND_CLEARANCE remains NOT_MEASURED.",
+    "No route is admitted and no data is collected by this tranche."
+  ],
+  "unchanged_by_this_tranche": [
+    "all six G10 thresholds",
+    "G3-G10 semantics",
+    "candidate budget, seed and ordering",
+    "planner inflation values",
+    "TURNING_ROUTE_POPULATION_V1 (still not preregistered)",
+    "the frozen Hospital and Office route-set results"
+  ]
+}
