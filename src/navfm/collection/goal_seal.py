@@ -95,6 +95,7 @@ class GoalSeal:
     capture_sim_time: float | None = None
     _sealed_digest: str | None = None
     _counter: int = 0
+    _has_first_motion: bool = False
 
     def _record(self, event: SealEvent) -> None:
         self._counter += 1

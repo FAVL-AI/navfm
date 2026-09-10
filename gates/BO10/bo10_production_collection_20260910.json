@@ -1,0 +1,104 @@
+{
+  "check": "BO10_PRODUCTION_COLLECTION",
+  "artifact_semantics": "PRODUCTION_TRAJECTORY_EVIDENCE",
+  "scene_id": "hospital_bo10",
+  "timestamp_utc": "2026-09-10T03:55:19.353851+00:00",
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "robot_asset": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    },
+    "isaac_lab": {
+      "isaac_lab_version": "0.54.3",
+      "installed": true,
+      "clone_path": null,
+      "isaac_lab_commit": null,
+      "isaac_lab_tag": null,
+      "clone_worktree_dirty": null
+    }
+  },
+  "occupancy_backend": "physx_cell_overlap_v1",
+  "scope": {
+    "purpose": "BO10_FRAMEWORK_COMPATIBILITY",
+    "e2_eligible": false,
+    "e2_exclusion_reason": "compatibility trajectory collected outside the preregistered E2 population",
+    "scope_declaration": "/home/favl/projects/navfm/gates/BO10/bo10_e2_scope_declaration_20260907.json",
+    "scope_declaration_sha256": "7bc18794bf6242b2652acc597f37ae680f126242bfeb5907d94592bc055e47ec"
+  },
+  "admitted_route": {
+    "route_id": "hospital_repaired_map_route_050",
+    "start_pose": [
+      -39.90271172754076,
+      23.12059657138799,
+      -1.3986055122719583
+    ],
+    "goal_pose": [
+      -28.7009700284671,
+      16.971295079647238
+    ],
+    "admission_artefact": "gates/BO10/hospital_repaired_map_rerun_20260910.json",
+    "predicted": {
+      "usable_frames": 713,
+      "travelled_distance_m": 20.80842388694475,
+      "start_goal_separation_m": 12.801562404644207,
+      "heading_change_count": 3,
+      "heading_changes_deg": [
+        73.0092,
+        30.5792,
+        34.2196
+      ],
+      "windows_per_model": {
+        "gnm": 703,
+        "vint": 703,
+        "nomad": 702
+      },
+      "limiting_window_count": 702
+    }
+  },
+  "occupancy": {
+    "shape": [
+      420,
+      767
+    ],
+    "backend_used": "physx_cell_overlap_v1",
+    "query_failures": 0
+  },
+  "camera_prim": "/World/Robot/base_link/Camera_front",
+  "route_reproduction": {
+    "method": "replay the seeded generator to the selected candidate index",
+    "target_index": 50,
+    "start_matches_admitted": true,
+    "replayed_start": [
+      -39.90271172754076,
+      23.12059657138799,
+      -1.3986055122719583
+    ],
+    "replayed_goal": [
+      -28.7009700284671,
+      16.971295079647238
+    ],
+    "path_points": 7
+  },
+  "episode": {
+    "index": 0,
+    "name": "hospital_bo10_run_00000",
+    "accepted": false,
+    "reason": "stalled",
+    "n_frames": 51,
+    "path_length_m": 0.0,
+    "wall_time_s": 11.503358840942383
+  },
+  "trajectory_dir": "runs/bo10/hospital_bo10_run_00000",
+  "BO10_COLLECTION": "EPISODE_NOT_ACCEPTED",
+  "reason": "stalled"
+}

@@ -63,6 +63,11 @@ from .app import IsaacApp, SimConfig
 from .randomize import RandomizationConfig, SceneRandomizer, apply_sensor_noise
 from .robot import M3PRO, RobotConfig, SimRobot
 
+
+class _UseFixedRoute(Exception):
+    """Internal control flow: a pre-admitted route replaces sampling."""
+
+
 __all__ = [
     "OCCUPANCY_BACKENDS",
     "OCCUPANCY_BACKEND_LEGACY",
@@ -182,6 +187,16 @@ class Collector:
         self.occupancy_backend_used: str | None = None
         #: Cells whose query raised. Blocked, and counted rather than absorbed.
         self.occupancy_query_failures: int = 0
+        #: A pre-admitted (start, yaw, goal, path) to drive instead of sampling.
+        #: BO-10 collects a route that route admission already cleared; re-sampling
+        #: inside the episode would drive a DIFFERENT route from the one the gates
+        #: passed, which is the whole point of admitting one.
+        self.fixed_route: tuple[Any, float, Any, Any] | None = None
+        #: When set, the episode seals a goal image before its first motion
+        #: command and records the controller identity across the episode.
+        self.enforce_premotion_gates: bool = False
+        #: Populated by run_episode when enforce_premotion_gates is set.
+        self.episode_gate_records: list[dict[str, Any]] = []
         #: What this collection is for, and whether it may enter the E2
         #: population. Stamped into every episode's metadata and into the
         #: manifest, so a trajectory carries its own scope rather than relying on
@@ -431,7 +446,14 @@ class Collector:
         result = EpisodeResult(index=index, name=name, accepted=False)
 
         inflated = self._inflated
+        if self.fixed_route is not None:
+            start, yaw, goal, path = self.fixed_route
+            gate_record: dict[str, Any] = {"route": "PRE_ADMITTED", "resampled": False}
+        else:
+            gate_record = {"route": "SAMPLED", "resampled": True}
         try:
+            if self.fixed_route is not None:
+                raise _UseFixedRoute
             start, yaw, goal, path = sample_episode_pair(
                 inflated,
                 self.rng,
@@ -440,12 +462,17 @@ class Collector:
                 min_clearance_m=self.collect.min_clearance_m,
                 clearance_map=self._inflated_clearance,
             )
+        except _UseFixedRoute:
+            pass
         except PlannerError as exc:
             result.reason = f"planner: {exc}"
             self.results.append(result)
             return result
 
-        if self.rng.random() < self.collect.perturb_fraction:
+        # A pre-admitted route is never perturbed. Perturbation exists to widen
+        # the training distribution during bulk collection; applying it here
+        # would drive a route the gates did not clear.
+        if self.fixed_route is None and self.rng.random() < self.collect.perturb_fraction:
             path = perturb_path(path, inflated, self.rng, sigma=self.collect.perturb_sigma_m)
 
         randomization_draw = (
@@ -453,6 +480,45 @@ class Collector:
         )
         self._robot.teleport(start, yaw)
         self._app.step()  # settle physics and flush the renderer after the teleport
+
+        if self.enforce_premotion_gates:
+            from ..collection.controller import ControllerIdentity
+            from ..collection.goal_seal import GoalSeal
+
+            # G9. The goal image is captured AT THE GOAL, before the robot has
+            # moved along the route, and the robot is returned to the start
+            # afterwards. Taking it from the episode's final observation would
+            # make the goal reachable by construction and framed from wherever
+            # the demonstrator happened to stop.
+            seal = GoalSeal(goal_xy=(float(goal[0]), float(goal[1])),
+                            source_camera=self._robot.camera_path)
+            seal.declare()
+            self._robot.teleport((float(goal[0]), float(goal[1])), float(yaw))
+            for _ in range(3):
+                self._app.step()
+            seal.acquire(self._robot.rgb(), sim_time=None)
+            goal_provenance = seal.write_provenance()
+            seal.seal()
+            # Back to the start, and settle again before anything is recorded.
+            self._robot.teleport(start, yaw)
+            for _ in range(3):
+                self._app.step()
+
+            limits = self.robot_config.limits
+            identity_before = ControllerIdentity(
+                implementation="navfm.control.PurePursuit",
+                control_hz=float(self.sim.hz), max_v=limits.max_v, max_w=limits.max_w,
+                max_vy=limits.max_vy, max_a=limits.max_a, max_alpha=limits.max_alpha,
+                cruise_v=self.collect.cruise_v, lookahead_m=self.collect.lookahead_m,
+                goal_tol_m=self.collect.goal_tol_m,
+                demonstrator_mode=self.collect.demonstrator, seed=int(self.collect.seed))
+            gate_record["goal_provenance"] = goal_provenance
+            gate_record["controller_identity_before"] = identity_before.digest
+            self._goal_seal = seal
+            self._identity_before = identity_before
+            metadata_goal = goal_provenance
+        else:
+            metadata_goal = None
 
         tracker = PurePursuit(
             path,
@@ -476,6 +542,8 @@ class Collector:
         }
         if self.scope is not None:
             metadata.update(self.scope.to_manifest_fields())
+        if metadata_goal is not None:
+            metadata["goal_image_provenance"] = metadata_goal
 
         writer = TrajectoryWriter(self.out_dir / name, metadata=metadata)
         writer.open()
@@ -491,6 +559,13 @@ class Collector:
                     reason = "reached_goal"
                     break
 
+                # Raises if the goal was not sealed first, at the moment it would
+                # matter rather than in a later audit.
+                _seal = getattr(self, "_goal_seal", None)
+                if (self.enforce_premotion_gates and _seal is not None
+                        and not _seal._has_first_motion):
+                    _seal.note_first_motion()
+                    _seal._has_first_motion = True
                 self._robot.set_body_velocity(vx, vy, wz)
                 sim_t = self._app.step()
 

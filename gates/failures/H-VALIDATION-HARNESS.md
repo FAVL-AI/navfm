@@ -178,3 +178,42 @@ stayed exact.
 The one direction that would have been far more dangerous — a proxy that
 manufactured **false confidence** — did not occur here, and that is luck rather
 than method. The rule above is what removes the luck.
+
+
+---
+
+## `H-ORDER-1` — the robot contaminated its own occupancy map
+
+**Toward a wrong route.** Found 2026-09-10 in the BO-10 collection script.
+
+The collection script spawned the robot and *then* built the occupancy map. The
+robot carries colliders, so a robot standing in the scene is rasterised as an
+obstacle: its cells leave the free set, and `sample_episode_pair` draws start and
+goal poses from a different population than route admission did.
+
+Replaying the admitted candidate 050 produced start (−25.099, 36.082) against the
+admitted (−39.903, 23.121) — a different route entirely. The guard refused to
+collect rather than silently driving a route the gates had never evaluated.
+
+**Repair.** The map is built before the robot is spawned, matching route
+admission, which builds its map with no robot present. Reproduction then matches
+the admitted route exactly.
+
+**Same genus as `H-INSTANCE-1`**, where the instancing prototype's collider sat
+at the world origin inside a fixture. Both are a test or production fixture
+placing collidable geometry into the scene it is measuring.
+
+## `H-REPLAN-1` — re-planning from stored poses is not reproduction
+
+**Toward a wrong route.** Same session.
+
+The first collection attempt rebuilt the admitted route by running A* from the
+stored start and goal poses. `sample_free_pose` returns a *continuous* pose,
+which can round back into a different cell than the one it was sampled from: the
+stored start (−39.903, 23.121) maps to cell (279, 97), which A* reports as
+occupied, and the attempt failed with `PlannerError`.
+
+**Repair.** The route is reproduced by replaying the seeded generator to the
+selected candidate index, which regenerates the identical candidate including
+the path the gates actually evaluated, and the result is checked against the
+stored poses before anything is driven.
