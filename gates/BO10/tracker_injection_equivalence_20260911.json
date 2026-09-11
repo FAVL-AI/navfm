@@ -1,0 +1,518 @@
+{
+  "check": "TRACKER_INJECTION_HOOK_V1_ARM_A_EQUIVALENCE",
+  "artifact_semantics": "INSTRUMENT_EQUIVALENCE_PROOF_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-11T19:11:15.967963+00:00",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "repository_head": "a869729c0614991a114e9d241713eead31faa38d",
+  "pre_seam_reference": {
+    "commit": "437ebfc63f828fb1200df1f01df56bc339209349",
+    "path": "src/navfm/control.py",
+    "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+    "why_pinned_not_head": "committing the seam moves HEAD; a reference that follows HEAD would compare the new implementation with itself"
+  },
+  "implementations": {
+    "PRE_SEAM": "437ebfc63f82:src/navfm/control.py PurePursuit",
+    "LEGACY_DIRECT": "navfm.control.PurePursuit (no explicit selector)",
+    "LEGACY_INJECTED": "navfm.control.PurePursuit(target_selector=LegacyVertexTargetSelector())",
+    "these_are_not_intervention_arms": true
+  },
+  "selector_identity": {
+    "class": "navfm.target_selection.LegacyVertexTargetSelector",
+    "target_type": "PATH_VERTEX",
+    "module_sha256": "490d623c5f58f6a0943ec78af7f5435ef1dfee2d2daac3aadf655e9cbdf2a472"
+  },
+  "controller_identity": {
+    "path": "src/navfm/control.py",
+    "current_sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+    "pre_seam_sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074"
+  },
+  "configuration": {
+    "lookahead": 0.45,
+    "goal_tol": 0.2,
+    "cruise_v": 0.35,
+    "mode": "nonholonomic",
+    "max_v": 0.45,
+    "max_w": 1.2
+  },
+  "route_identity": {
+    "source": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+    "preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+    "vertices": 5
+  },
+  "run_00001_source": {
+    "path": "runs/bo10/hospital_bo10_run_00001/traj_data.pkl",
+    "sha256": "40b9890d96973b3b910e218cfd0e64fd5453e881822ebcce62bd7da99b30ef09",
+    "used_as": "OFFLINE_POSE_TRACE_ONLY",
+    "dynamics_replayed": false,
+    "modified": false
+  },
+  "override_surface": {
+    "BEHAVIOURAL_OVERRIDE_SURFACE": [
+      "select_target"
+    ],
+    "surface_is_target_selection_only": true,
+    "selector_parameters": [
+      "path",
+      "position",
+      "index",
+      "lookahead"
+    ],
+    "selector_cannot_reach": [
+      "cruise_v",
+      "dt",
+      "goal",
+      "goal_tol",
+      "limits",
+      "max_steps",
+      "mode",
+      "route",
+      "self_tracker",
+      "tracker"
+    ],
+    "forbidden_parameters_present": [],
+    "why_it_is_structural": "the selector is never handed the tracker, so it has no path to the speed law, the gains, the limits, the stop branch, dt, max_steps or the goal criteria. A treatment wanting those would have to edit the tracker, where the change is a visible source diff rather than an injected object",
+    "intervention_contract_field": "target"
+  },
+  "control_law_invariance": {
+    "CONTROL_LAW_INVARIANCE": "PASS",
+    "method": "byte comparison of each law's source between the pinned pre-seam module and now",
+    "members": {
+      "speed_and_angular_law_step": {
+        "pre_seam_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "current_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "identical": true
+      },
+      "route_completion_finished": {
+        "pre_seam_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "current_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "identical": true
+      },
+      "velocity_clipping_clamp": {
+        "pre_seam_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "current_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "identical": true
+      },
+      "se2_integration_unicycle": {
+        "pre_seam_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "current_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "identical": true
+      },
+      "se2_integration_holonomic": {
+        "pre_seam_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "current_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "identical": true
+      },
+      "waypoint_to_twist": {
+        "pre_seam_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "current_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "identical": true
+      }
+    },
+    "control_py_file_hash_changed": true,
+    "why_the_file_hash_is_not_the_claim": "the seam is an edit to control.py, so the file hash necessarily moved. Claiming unchanged-by-hash would be false. The claim made here is that the source of every law OUTSIDE the target seam is byte-identical",
+    "what_changed_in_control_py": [
+      "an import of the seam module",
+      "a target_selector keyword argument defaulting to None",
+      "assignment of the default LegacyVertexTargetSelector",
+      "PurePursuit.target now delegates selection and applies the returned index"
+    ]
+  },
+  "numerical_standard": {
+    "criterion": "exact equality",
+    "tolerance": 0.0,
+    "justification": "both paths execute the same arithmetic on the same inputs, so a refactor should agree bitwise. No tolerance was fitted to an observed discrepancy, because none was observed"
+  },
+  "analytic_fixtures": {
+    "count": 15,
+    "verdict": "PASS",
+    "max_numerical_difference": 0.0,
+    "results": {
+      "A_straight_path": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "B_pose_exactly_on_vertex": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "C_pose_between_vertices": {
+        "steps": 1,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "D_single_corner": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "E_multiple_corners": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "F_near_lookahead_boundary": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "G_exactly_on_lookahead_boundary": {
+        "steps": 1,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "H_off_route_pose": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "I_final_segment": {
+        "steps": 1,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "J_near_route_end_short_remainder": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "K_final_goal_vertex": {
+        "steps": 1,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "L_target_index_advancement": {
+        "steps": 20,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "M_persistent_state_repeated_calls": {
+        "steps": 30,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "N_zero_heading_error": {
+        "steps": 2,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      },
+      "O_large_heading_error_regime_boundary": {
+        "steps": 4,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "failing": {}
+      }
+    }
+  },
+  "recorded_pose_equivalence": {
+    "verdict": "PASS",
+    "max_numerical_difference": 0.0,
+    "traces": {
+      "frozen_route_polyline": {
+        "path_vertices": 5,
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        }
+      },
+      "frozen_route_resampled_0m25": {
+        "path_vertices": 94,
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatch_total": 0,
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "max_numerical_difference": 0.0,
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        }
+      }
+    }
+  },
+  "negative_controls": {
+    "verdict": "PASS",
+    "fired": {
+      "wrong_selector": true,
+      "state_drift": true,
+      "command_drift": true,
+      "refusal_malformed_poses": true,
+      "refusal_mismatched_lengths": true
+    },
+    "state_drift_detected_on_index_after": true,
+    "detail": {
+      "wrong_selector": {
+        "EQUIVALENCE": "FAIL",
+        "mismatch_total": 8310,
+        "mismatches_by_channel": {
+          "target_x": 1200,
+          "target_y": 1200,
+          "index_after": 1200,
+          "finished_after": 1110,
+          "target_distance": 1200,
+          "target_bearing": 1200,
+          "heading_error": 1200
+        },
+        "first_mismatch": {
+          "step": 0,
+          "channel": "target_x",
+          "LEGACY": -21.510609278630753,
+          "OFF_BY_ONE": -21.352288354648405,
+          "difference": 0.1583209239823482,
+          "kind": "VALUE_MISMATCH"
+        },
+        "reason": null
+      },
+      "state_drift": {
+        "EQUIVALENCE": "FAIL",
+        "mismatch_total": 6940,
+        "mismatches_by_channel": {
+          "target_x": 1148,
+          "target_y": 1148,
+          "index_after": 1200,
+          "finished_after": 0,
+          "target_distance": 1148,
+          "target_bearing": 1148,
+          "heading_error": 1148
+        },
+        "first_mismatch": {
+          "step": 0,
+          "channel": "index_after",
+          "LEGACY": 2,
+          "STATE_DRIFT": 0,
+          "difference": 2.0,
+          "kind": "VALUE_MISMATCH"
+        },
+        "reason": null
+      },
+      "command_drift": {
+        "EQUIVALENCE": "FAIL",
+        "mismatch_total": 1200,
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 1200,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0
+        },
+        "first_mismatch": {
+          "step": 0,
+          "channel": "wz",
+          "LEGACY": 1.2,
+          "COMMAND_PERTURBED": 1.200000000001,
+          "difference": 1.000088900582341e-12,
+          "kind": "VALUE_MISMATCH"
+        },
+        "reason": null
+      },
+      "refusal_malformed_poses": {
+        "EQUIVALENCE": "EQUIVALENCE_REFUSED",
+        "mismatch_total": null,
+        "mismatches_by_channel": null,
+        "first_mismatch": null,
+        "reason": "pose trace is not a finite (N, 3) array of x, y, yaw"
+      },
+      "refusal_mismatched_lengths": {
+        "EQUIVALENCE": "EQUIVALENCE_REFUSED",
+        "mismatch_total": null,
+        "mismatches_by_channel": null,
+        "first_mismatch": null,
+        "reason": "sequences have different lengths, so no step-by-step comparison exists"
+      }
+    }
+  },
+  "claim_boundary": "this establishes that the seam is behaviour-neutral for the legacy selector, over these fixtures and this recorded pose trace, under the frozen configuration. It does not establish anything about the treatment selector, which does not exist in this tranche, and it is not an intervention result: no arm has run",
+  "EXECUTION_MANIFEST_OWES_ARM_OUTPUT_ALLOWLIST": true,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "ARM_A_LEGACY_INJECTION_EQUIVALENCE": "PASS"
+}
