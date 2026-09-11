@@ -221,6 +221,40 @@ stored poses before anything is driven.
 
 ---
 
+## `H-ADVANCE-1` — a fixture modelled the advance rule as a nearest-vertex search
+
+**Toward false failure.** Found 2026-09-11 while building the pre-Hospital
+target-selection controls for `TERMINAL_APPROACH_INTERVENTION_V1`.
+
+Three fixtures scored `PurePursuit.target` on a *fresh* tracker and expected the
+index to land on whichever vertex was nearest. One failed: from a fresh tracker
+at `(10, 0.2)`, a hand's breadth from the corner vertex, the implementation
+returned vertex 0 — ten metres behind the robot.
+
+The implementation was right. The advance is **sequential from the current
+index**: the loop tests only `path[_idx]` and breaks the moment that vertex is
+further away than the look-ahead. It never searches. A tracker that has not yet
+walked its index forward cannot skip ahead, however close a later vertex is.
+
+The expectation had been built from a convenient mental model of what pure
+pursuit "does" rather than from the seven lines that implement it. That is the
+same genus as `H-AABB-1`, `H-SAMPLING-1` and the rest: a proxy standing in for
+the thing under test, and again in the direction that manufactures a false
+failure.
+
+Repaired by running the three cases as one **stateful walk** on a single
+tracker, with the index asserted after every pose, so the fixture now encodes the
+sequential rule instead of assuming a search. Scoring the index separately from
+the returned point is what makes the rule itself observable rather than inferred
+from the target.
+
+Worth noting for the intervention: this quirk is not incidental to it. That a
+tracker steers at a vertex behind itself until the index advances is part of the
+behaviour arm B replaces, and the fixture that exposed it is now the record of
+what arm A actually does.
+
+---
+
 ## Attribution-guard collision, recorded not bypassed
 
 The machine-level pre-push attribution guard blocked a commit for the phrase

@@ -1,0 +1,295 @@
+{
+  "check": "TARGET_SELECTION_UNIT_CONTROLS",
+  "artifact_semantics": "ANALYTIC_CONTROLS_NO_SIMULATOR_PRE_HOSPITAL",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-11T09:28:58.204964+00:00",
+  "purpose": "settle corner and endpoint semantics for both arms before either runs against Hospital, so no endpoint behaviour can be invented afterwards",
+  "frozen_lookahead_m": 0.45,
+  "expectations_are_independent": "every expected value is arithmetic on an L-shaped route with integer arc lengths, computed by hand rather than by the code under test",
+  "arm_implementations": {
+    "control": {
+      "class": "navfm.control.PurePursuit",
+      "source": "src/navfm/control.py",
+      "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "target_type": "PATH_VERTEX",
+      "modified_for_this_experiment": false
+    },
+    "treatment": {
+      "class": "navfm.collection.interpolated_target.InterpolatedLookaheadPursuit",
+      "source": "src/navfm/collection/interpolated_target.py",
+      "sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290",
+      "target_type": "ARC_LENGTH_INTERPOLATED",
+      "overrides": [
+        "target"
+      ],
+      "inherits_unchanged": [
+        "the goal predicate",
+        "the speed law",
+        "the curvature law",
+        "the turn-in-place regime",
+        "velocity clamps",
+        "finished"
+      ]
+    },
+    "shared_geometry": {
+      "source": "src/navfm/collection/route_projection.py",
+      "sha256": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a"
+    }
+  },
+  "endpoint_semantics_fixed_here": {
+    "past_route_end": "the target clamps to the final path point. Arm B is defined as a point ON the polyline, and beyond the final vertex there is none",
+    "vertex_index": "advanced by the inherited rule in both arms, so `finished` carries the same meaning and the experiment keeps one factor",
+    "projection_basis": "the pose's own nearest valid projection, with the parametric foot clamped to each segment",
+    "fixed_before_any_hospital_run": true
+  },
+  "controls": [
+    {
+      "control": "interpolated::straight_segment",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        2.45,
+        0.0
+      ],
+      "expected_from": "s=2 on the first leg; s+L=2.45 is still on it, so x=2.45, y=0",
+      "actual_xy": [
+        2.45,
+        0.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::exact_route_vertex",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        10.0,
+        0.45
+      ],
+      "expected_from": "s=10 is the corner; s+L=10.45 lies 0.45 up the second leg",
+      "actual_xy": [
+        10.0,
+        0.45
+      ],
+      "error_m": 7.216449660063518e-16,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::between_vertices",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        10.0,
+        0.25
+      ],
+      "expected_from": "s=9.8; s+L=10.25 is 0.25 past the corner, so the target turns it",
+      "actual_xy": [
+        10.0,
+        0.25
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::around_one_corner",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        10.0,
+        0.15
+      ],
+      "expected_from": "s=9.7; s+L=10.15 crosses the corner onto the second leg",
+      "actual_xy": [
+        10.0,
+        0.15
+      ],
+      "error_m": 1.4155343563970746e-15,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::projection_off_route",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        5.45,
+        0.0
+      ],
+      "expected_from": "nearest projection is (5,0) so s=5 despite a 3 m lateral offset; s+L=5.45 on the first leg",
+      "actual_xy": [
+        5.45,
+        0.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::near_route_end",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        10.0,
+        10.0
+      ],
+      "expected_from": "s=19.8; s+L=20.25 exceeds the 20 m route, so the target clamps to the final point rather than extrapolating past it",
+      "actual_xy": [
+        10.0,
+        10.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::insufficient_remaining_route",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        10.0,
+        10.0
+      ],
+      "expected_from": "s=20 is the end; the target is the final point and stays there",
+      "actual_xy": [
+        10.0,
+        10.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "interpolated::multi_segment_lookahead",
+      "what_it_tests": "treatment-arm target selection",
+      "expected_xy": [
+        0.25,
+        0.2
+      ],
+      "expected_from": "cum=[0,.2,.4,.6]; s=0 and s+L=0.45 lands 0.05 into the third segment, which starts at (0.2,0.2) heading +x, so (0.25, 0.2)",
+      "actual_xy": [
+        0.25,
+        0.2
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "vertex::seq_pose_2.0_0.0",
+      "what_it_tests": "control-arm frozen behaviour",
+      "expected_xy": [
+        0.0,
+        0.0
+      ],
+      "expected_from": "2 m from vertex 0, outside the 0.45 m radius, so the loop breaks immediately and the target is vertex 0 -- behind the robot",
+      "actual_xy": [
+        0.0,
+        0.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "vertex::index_after_pose_2.0_0.0",
+      "what_it_tests": "the sequential advance rule, index by index",
+      "expected_index": 0,
+      "actual_index": 0,
+      "PASS": true
+    },
+    {
+      "control": "vertex::seq_pose_0.2_0.0",
+      "what_it_tests": "control-arm frozen behaviour",
+      "expected_xy": [
+        10.0,
+        0.0
+      ],
+      "expected_from": "0.2 m from vertex 0 is inside the radius so the index advances to 1; vertex 1 is then 9.8 m away, so the loop breaks and targets it",
+      "actual_xy": [
+        10.0,
+        0.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "vertex::index_after_pose_0.2_0.0",
+      "what_it_tests": "the sequential advance rule, index by index",
+      "expected_index": 1,
+      "actual_index": 1,
+      "PASS": true
+    },
+    {
+      "control": "vertex::seq_pose_10.0_0.2",
+      "what_it_tests": "control-arm frozen behaviour",
+      "expected_xy": [
+        10.0,
+        10.0
+      ],
+      "expected_from": "0.2 m from vertex 1 advances the index to 2, the last vertex, where the loop condition ends the walk",
+      "actual_xy": [
+        10.0,
+        10.0
+      ],
+      "error_m": 0.0,
+      "PASS": true
+    },
+    {
+      "control": "vertex::index_after_pose_10.0_0.2",
+      "what_it_tests": "the sequential advance rule, index by index",
+      "expected_index": 2,
+      "actual_index": 2,
+      "PASS": true
+    },
+    {
+      "control": "arms::vertex_index_advances_identically",
+      "what_it_tests": "the inherited index drives `finished`, so if the arms advanced it differently the experiment would carry a second uncontrolled factor",
+      "index_sequence_control": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "index_sequence_treatment": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "PASS": true
+    },
+    {
+      "control": "arms::targets_actually_differ",
+      "what_it_tests": "a manipulation that changed nothing would make the experiment vacuous, so the arms must disagree somewhere on the same poses",
+      "poses_compared": 8,
+      "poses_with_different_targets": 6,
+      "PASS": true
+    },
+    {
+      "control": "projection::agrees_with_the_pinned_implementation",
+      "what_it_tests": "the preregistration pins a projection implementation and requires both arms to be measured by it. The controller now steers by the same geometry, so a second implementation drifting from the first would corrupt both the steering and the cross-track measure at once",
+      "poses_compared": 1200,
+      "max_arclength_disagreement_m": 0.0,
+      "max_cross_track_disagreement_m": 0.0,
+      "tolerance_m": 1e-12,
+      "PASS": true
+    },
+    {
+      "control": "endpoint::arclength_clamps_never_extrapolates",
+      "what_it_tests": "an arbitrarily large arc length must return the final route point. Extrapolation here would steer the base past the goal it is approaching, and would do so only near the end of a route, which is exactly where it would be hardest to notice",
+      "queried_arclength_m": 1000000.0,
+      "route_length_m": 20.0,
+      "returned_xy": [
+        10.0,
+        10.0
+      ],
+      "PASS": true
+    },
+    {
+      "control": "negative::fixtures_can_fail",
+      "what_it_tests": "a check that cannot fail certifies nothing. The same fixture is scored against the right answer and a deliberately wrong one 1 cm away",
+      "accepts_correct_answer": true,
+      "rejects_wrong_answer_1cm_away": true,
+      "PASS": true
+    }
+  ],
+  "controls_total": 19,
+  "controls_passed": 19,
+  "TARGET_SELECTION_CONTROLS": "PASS"
+}
