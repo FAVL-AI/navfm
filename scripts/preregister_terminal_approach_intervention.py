@@ -31,10 +31,12 @@ recomputed at analysis time.
 
 from __future__ import annotations
 
+import copy
 import datetime as _dt
 import json
 import pathlib
 import sys
+from typing import Any
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
@@ -48,6 +50,17 @@ PROJ_SRC = REPO / "scripts/diagnose_q2_margin_consumption.py"
 CONTROL_SRC = REPO / "src/navfm/control.py"
 OUT = REPO / "gates/BO10/terminal_approach_intervention_v1_20260911.json"
 
+#: Raise this AND the output path together to issue a versioned amendment.
+PREREG_VERSION = "V1"
+
+
+def _rel(path: pathlib.Path) -> str:
+    """Repo-relative where possible; the guard harness redirects OUT to a tmpdir."""
+    try:
+        return str(path.relative_to(REPO))
+    except ValueError:
+        return str(path)
+
 STATS = [
     "mean_absolute_cross_track_m",
     "median_absolute_cross_track_m",
@@ -58,19 +71,8 @@ STATS = [
 ]
 
 
-def main() -> int:
-    # A preregistration is frozen once. Re-running this emitter must therefore
-    # VERIFY the artefact rather than re-freeze it: if the file already exists,
-    # its original freeze timestamp is preserved, so the digest that gets cited
-    # stays stable and any real change to the design shows up as a hash change
-    # instead of being masked by a moving timestamp.
-    if OUT.exists():
-        prior = json.loads(OUT.read_text())
-        stamp = str(prior["preregistered_at"])
-        refrozen = False
-    else:
-        stamp = _dt.datetime.now(_dt.UTC).isoformat()
-        refrozen = True
+def build_payload(stamp: str) -> dict[str, Any]:
+    """The canonical preregistration payload, for a given freeze timestamp."""
     q3 = json.loads(Q3.read_text())
     draft = q3["next_experiment"]
     lookahead = float(q3["inputs"]["frozen_parameters"]["lookahead_m"])
@@ -345,6 +347,83 @@ def main() -> int:
         },
     }
 
+    return result
+
+
+TIMESTAMP_FIELDS = (("preregistered_at",), ("amendment", "timestamp_utc"))
+
+
+def strip_timestamps(payload: dict[str, Any]) -> dict[str, Any]:
+    """The payload with freeze timestamps removed, for design comparison."""
+    d = copy.deepcopy(payload)
+    for fpath in TIMESTAMP_FIELDS:
+        node: Any = d
+        for key in fpath[:-1]:
+            node = node.get(key, {})
+        if isinstance(node, dict):
+            node.pop(fpath[-1], None)
+    return d
+
+
+def diff_paths(a: Any, b: Any, prefix: str = "") -> list[str]:
+    """Field paths at which two payloads differ, for the refusal message."""
+    out: list[str] = []
+    if isinstance(a, dict) and isinstance(b, dict):
+        for k in sorted(set(a) | set(b)):
+            if k not in b:
+                out.append(f"{prefix}{k} (added)")
+            elif k not in a:
+                out.append(f"{prefix}{k} (removed)")
+            else:
+                out.extend(diff_paths(a[k], b[k], f"{prefix}{k}."))
+    elif isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            out.append(f"{prefix.rstrip('.')} (length {len(b)} -> {len(a)})")
+        else:
+            for i, (x, y) in enumerate(zip(a, b, strict=True)):
+                out.extend(diff_paths(x, y, f"{prefix}{i}."))
+    elif a != b:
+        out.append(prefix.rstrip(".") or "<root>")
+    return out
+
+
+def main() -> int:
+    # A preregistration is frozen once, and "frozen" has to mean more than "a
+    # file is present". Returning the existing artefact merely because it exists
+    # would hide a design change behind an unchanged digest, which is the exact
+    # opposite of what a preregistration is for. Overwriting it with a changed
+    # design would be worse still: the record that gets cited would quietly stop
+    # describing the experiment that was frozen.
+    #
+    # So the canonical payload is always REGENERATED, the original freeze
+    # timestamp is preserved, and every other field is compared against the
+    # frozen record. A match rewrites identical bytes and the digest is stable.
+    # A mismatch REFUSES and demands an explicit new version.
+    if OUT.exists():
+        prior = json.loads(OUT.read_text())
+        stamp = str(prior["preregistered_at"])
+        result = build_payload(stamp)
+        drift = diff_paths(strip_timestamps(result), strip_timestamps(prior))
+        if drift:
+            shown = "\n  ".join(drift[:20]) + ("\n  ..." if len(drift) > 20 else "")
+            raise SystemExit(
+                "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED\n\n"
+                f"The canonical design no longer matches the frozen artefact at "
+                f"{_rel(OUT)}.\n"
+                f"Fields that differ ({len(drift)}):\n  {shown}\n\n"
+                f"The frozen preregistration is {PREREG_VERSION} and is cited by "
+                "hash. It will NOT be overwritten, and execution under it is "
+                "refused.\n"
+                "A changed design requires an explicit versioned amendment: raise "
+                "PREREG_VERSION and write to a new artefact path, leaving this "
+                "record and its digest intact."
+            )
+        refrozen = False
+    else:
+        stamp = _dt.datetime.now(_dt.UTC).isoformat()
+        result = build_payload(stamp)
+        refrozen = True
+
     OUT.write_text(json.dumps(result, indent=2) + "\n")
     back = json.loads(OUT.read_text())
 
@@ -366,11 +445,12 @@ def main() -> int:
         raise SystemExit("evidence guard: status must record that nothing has run")
     if set(ct["statistics_to_report_per_arm_per_window"]) != set(STATS):
         raise SystemExit("evidence guard: statistic list does not round-trip")
-    if back["design_carried_forward_unchanged"]["primary_outcome"] != draft["primary_outcome"]:
+    q3_draft = json.loads(Q3.read_text())["next_experiment"]
+    if back["design_carried_forward_unchanged"]["primary_outcome"] != q3_draft["primary_outcome"]:
         raise SystemExit("evidence guard: the primary outcome was altered")
 
     digest = sha256(OUT)
-    print(f"preregistration   {OUT.relative_to(REPO)}")
+    print(f"preregistration   {_rel(OUT)}")
     print(f"freeze            {'FIRST FREEZE' if refrozen else 'PRESERVED from the existing artefact'}"
           f" at {stamp}")
     print(f"sha256            {digest}")
@@ -381,7 +461,9 @@ def main() -> int:
     print(f"new thresholds    {'none' if back['amendment']['no_new_pass_fail_threshold'] else 'SOME'}")
     print(f"statistics        {', '.join(STATS)}")
     print("windows           whole_trajectory, terminal_planned_leg")
-    print(f"lookahead domain  |cross_track| <= {lookahead} m  (frozen radius, not a threshold)")
+    print(f"lookahead domain  |cross_track| <= "
+          f"{back['secondary_outcome_lookahead_domain']['lookahead_radius_m']} m"
+          "  (frozen radius, not a threshold)")
     print(f"projection pinned {ct['instrument_pinned']['module']} "
           f"@ {ct['instrument_pinned']['module_sha256'][:16]}...")
     return 0
