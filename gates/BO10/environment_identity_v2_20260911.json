@@ -1,0 +1,385 @@
+{
+  "check": "TERMINAL_APPROACH_INTERVENTION_V1_ENVIRONMENT_V2",
+  "artifact_semantics": "AMENDMENT_AND_INSTRUMENTATION_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "amendment_id": "TAI-V1-A2-ENV",
+  "amendment_version": "V2",
+  "amended_at_utc": "2026-09-11T17:37:28.282685+00:00",
+  "STATUS": "FROZEN",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "authorisation": "NOT AUTHORISED. Neither arm may run under this amendment.",
+  "amends": {
+    "original_preregistration": {
+      "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "preregistered_at": "2026-09-11T09:01:51.369827+00:00",
+      "version": "V1"
+    },
+    "original_freeze_timestamp_utc": "2026-09-11T09:33:12.858582+00:00",
+    "repository_head_at_amendment": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3",
+    "reason": "execution environment identity was not sufficiently pinned in V1; one provenance field was incorrectly recomputed from live ISAAC_SLOT state rather than preserved as a historical freeze-time fact",
+    "append_only": true,
+    "the_intervention_itself_is_unchanged": true,
+    "unchanged_by_this_amendment": [
+      "the target-selection factor",
+      "the route and the frozen polyline",
+      "the initial pose and start yaw",
+      "the goal and the goal tolerance",
+      "the seed",
+      "controller gains",
+      "the look-ahead distance",
+      "cruise speed and every velocity limit",
+      "max_steps",
+      "the primary outcome",
+      "the secondary cross-track outcome",
+      "arm order"
+    ]
+  },
+  "design_freeze": {
+    "frozen_at_utc": "2026-09-11T09:33:12.858582+00:00",
+    "outcomes_observable_at_freeze": false,
+    "basis": {
+      "source_artifact": "gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_commit_path": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3:gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_sha256": "13c6b583f9fac24af1436033f510254be49123daf923eddd140f34d194f05dbf",
+      "repository_commit": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3",
+      "isaac_execution_available_at_freeze": false,
+      "evidence_type": "historical_frozen_assertion",
+      "supporting_values_read_from_the_frozen_source": {
+        "ISAAC_SLOT": "BLOCKED",
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_error_code": "804",
+        "loaded_kernel_module_version": "580.173.02",
+        "userspace_driver_version": "580.178.04",
+        "EXECUTION_STATUS": "NOT_RUN",
+        "arms_executed": 0
+      },
+      "corroboration_first_boot_after_freeze_utc": "2026-09-11T17:27:36+00:00",
+      "not_derived_from": "any live reading of the machine. Re-running the preflight, repairing the GPU, or rebooting cannot change this block"
+    },
+    "STATUS": "VERIFIED"
+  },
+  "PROVENANCE_FIELD_REGRESSION_V1": {
+    "record_id": "PROVENANCE_FIELD_REGRESSION_V1",
+    "old_field": "arm_identity_and_order.frozen_while_results_were_impossible_to_observe",
+    "old_computation": "bool(isaac_slot['ISAAC_SLOT'] == 'BLOCKED'), evaluated at preflight run time in scripts/preflight_terminal_approach_intervention.py",
+    "why_it_is_invalid": "it is a statement about the design freeze whose value is a function of the machine's present state. Repairing the GPU rewrote the past: the same field, describing the same historical moment, changed from true to false because a driver was reloaded. A provenance field that live state can flip records nothing, and is worse than an absent field because it reads as evidence",
+    "observed_value_pre_reboot": true,
+    "observed_value_post_reboot": false,
+    "pre_reboot_source": {
+      "path": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3:gates/BO10/intervention_execution_preflight_20260911.json",
+      "sha256": "13c6b583f9fac24af1436033f510254be49123daf923eddd140f34d194f05dbf"
+    },
+    "post_reboot_source": {
+      "path": "gates/BO10/intervention_execution_preflight_20260911.json",
+      "note": "the working-tree artefact regenerated after the GPU was repaired"
+    },
+    "correction_introduced_in_v2": "design_freeze, above: an immutable assertion read from the artefact frozen at 09:33 UTC and verified by hash against a pinned commit, separated from live execution readiness which is recomputed every run",
+    "status": "DEPRECATED_FOR_PROVENANCE_INTERPRETATION",
+    "old_artefacts_rewritten": false,
+    "old_artefacts_note": "the committed pre-reboot artefact is left exactly as it was. The field is deprecated for interpretation, not erased from history, and the live emitter no longer produces it as a boolean"
+  },
+  "provenance_verification": {
+    "PROVENANCE": "VERIFIED",
+    "controls": "8/8",
+    "checks": [
+      {
+        "check": "source_retrievable_and_hash_matches",
+        "verdict": "PASS",
+        "detail": "git show 0ac2fb04a6ff:gates/BO10/intervention_execution_preflight_20260911.json -> sha256 13c6b583f9fac24a..."
+      },
+      {
+        "check": "source_parses",
+        "verdict": "PASS",
+        "detail": "the frozen artefact is valid JSON"
+      },
+      {
+        "check": "isaac_execution_unavailable_at_freeze",
+        "verdict": "PASS",
+        "detail": "ISAAC_SLOT=BLOCKED, cuda_available=False, device_count=0, cuda_error=804"
+      },
+      {
+        "check": "no_outcome_existed_at_freeze",
+        "verdict": "PASS",
+        "detail": "EXECUTION_STATUS=NOT_RUN, arms_executed=0"
+      },
+      {
+        "check": "design_unchanged_since_freeze",
+        "verdict": "PASS",
+        "detail": "preregistration sha256 at freeze 941e44da35c8a414... and now 941e44da35c8a414..."
+      },
+      {
+        "check": "design_already_frozen_before_the_source_artefact",
+        "verdict": "PASS",
+        "detail": "preregistered_at 2026-09-11T09:01:51.369827+00:00 precedes preflight timestamp 2026-09-11T09:33:12.858582+00:00"
+      },
+      {
+        "check": "arm_order_frozen_in_the_source",
+        "verdict": "PASS",
+        "detail": "['ARM_A_CONTROL', 'ARM_B_TREATMENT']"
+      },
+      {
+        "check": "source_committed_to_history_at_freeze_time",
+        "verdict": "PASS",
+        "detail": "commit 0ac2fb04a6ff recorded at 2026-09-11T10:33:47+01:00; the artefact was generated at 2026-09-11T09:33:12.858582+00:00 and committed, not reconstructed later"
+      }
+    ]
+  },
+  "EXECUTION_ENVIRONMENT_IDENTITY_V2": {
+    "contract_version": "EXECUTION_ENVIRONMENT_IDENTITY_V2",
+    "implementation": "src/navfm/execution_environment.py",
+    "what_it_is_for": "an arm pair differing in one factor is evidence only if everything else that can change the trajectory was the same. These are the fields that can",
+    "frozen_contract_values": {
+      "host.kernel_release": "6.8.0-138-generic",
+      "host.architecture": "x86_64",
+      "gpu.model": "NVIDIA GeForce RTX 4080 SUPER",
+      "gpu.uuid": "GPU-58834766-9fcc-9520-d400-d170f527c040",
+      "gpu.pci_bus_id": "00000000:01:00.0",
+      "gpu.driver_version": "580.178.04",
+      "gpu.kernel_module_version": "580.178.04",
+      "python.executable": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "python.version": "3.11.15",
+      "python.environment_path": "/home/favl/miniforge3/envs/isaac",
+      "python.torch_version": "2.7.0+cu128",
+      "python.torch_cuda_build": "12.8",
+      "python.cuda_available": true,
+      "python.visible_device_count": 1,
+      "isaac.isaacsim_version": "5.1.0.0",
+      "isaac.isaacsim_core_version": "5.1.0.0",
+      "isaac.interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "repository.path": "/home/favl/projects/navfm",
+      "repository.worktree_policy": "CLEAN_REQUIRED_AT_PRE_ARM_CAPTURE",
+      "scientific_code.control_sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "scientific_code.interpolated_target_sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290",
+      "scientific_code.route_projection_sha256": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a",
+      "scientific_code.kinematic_drive_sha256": "c947a68669d0ebaec1a050f2e62c6e1795ed437eabd2b765749c5f8f9e58c647",
+      "scientific_code.collect_sha256": "5c5694dc178eef47f4e5593673270bb1ffb327997e4ea648914658355b4811c5",
+      "scientific_code.app_sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "scientific_code.planning_sha256": "b785e67a8d048e515f68da069313951ffed1e60746718cf3312362bba61e79de",
+      "scientific_code.kinematics_sha256": "160e3a5ebe7e2cd2eabbbc2fe4aab8134603ed2ed2e8739f3f816e9aa2d0dec3",
+      "scientific_code.measurement_instrument_sha256": "b0449acfc1fe2903fe84add7b85eacedce1acad24af063c7d5e78b7eaac112dd",
+      "scientific_code.preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "scientific_code.route_population_sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+      "scientific_code.route_polyline_sha256": "07cb85711380a71f88aa626804f57d48435335288783bec4e82122939b86c0d8",
+      "scene.scene_id": "hospital_bo10",
+      "scene.scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+      "runtime_contract.physics_dt": 0.08333333333333333,
+      "runtime_contract.rendering_dt": 0.08333333333333333,
+      "runtime_contract.control_dt": 0.08333333333333333,
+      "runtime_contract.control_hz": 12.0,
+      "runtime_contract.max_steps": 1200,
+      "runtime_contract.lookahead_m": 0.45,
+      "runtime_contract.goal_tol_m": 0.2,
+      "runtime_contract.cruise_v": 0.35,
+      "runtime_contract.max_v": 0.45,
+      "runtime_contract.max_vy": 0.35,
+      "runtime_contract.max_w": 1.2,
+      "runtime_contract.seed": 0
+    },
+    "contract_digest": "1fdb85fce0cbc5f586909984ca37f3fa74d92b3b2a8c43b85af82fba700d6391",
+    "contract_critical_fields": [
+      "host.kernel_release",
+      "host.architecture",
+      "gpu.model",
+      "gpu.uuid",
+      "gpu.pci_bus_id",
+      "gpu.driver_version",
+      "gpu.kernel_module_version",
+      "python.executable",
+      "python.version",
+      "python.environment_path",
+      "python.torch_version",
+      "python.torch_cuda_build",
+      "python.cuda_available",
+      "python.visible_device_count",
+      "isaac.isaacsim_version",
+      "isaac.isaacsim_core_version",
+      "isaac.interpreter",
+      "repository.path",
+      "repository.worktree_policy",
+      "scientific_code.control_sha256",
+      "scientific_code.interpolated_target_sha256",
+      "scientific_code.route_projection_sha256",
+      "scientific_code.kinematic_drive_sha256",
+      "scientific_code.collect_sha256",
+      "scientific_code.app_sha256",
+      "scientific_code.planning_sha256",
+      "scientific_code.kinematics_sha256",
+      "scientific_code.measurement_instrument_sha256",
+      "scientific_code.preregistration_sha256",
+      "scientific_code.route_population_sha256",
+      "scientific_code.route_polyline_sha256",
+      "scene.scene_id",
+      "scene.scene_asset",
+      "runtime_contract.physics_dt",
+      "runtime_contract.rendering_dt",
+      "runtime_contract.control_dt",
+      "runtime_contract.control_hz",
+      "runtime_contract.max_steps",
+      "runtime_contract.lookahead_m",
+      "runtime_contract.goal_tol_m",
+      "runtime_contract.cruise_v",
+      "runtime_contract.max_v",
+      "runtime_contract.max_vy",
+      "runtime_contract.max_w",
+      "runtime_contract.seed"
+    ],
+    "pairwise_critical_fields": [
+      "repository.branch",
+      "repository.head",
+      "repository.worktree_state",
+      "session.boot_id"
+    ],
+    "equality_critical_fields": [
+      "host.kernel_release",
+      "host.architecture",
+      "gpu.model",
+      "gpu.uuid",
+      "gpu.pci_bus_id",
+      "gpu.driver_version",
+      "gpu.kernel_module_version",
+      "python.executable",
+      "python.version",
+      "python.environment_path",
+      "python.torch_version",
+      "python.torch_cuda_build",
+      "python.cuda_available",
+      "python.visible_device_count",
+      "isaac.isaacsim_version",
+      "isaac.isaacsim_core_version",
+      "isaac.interpreter",
+      "repository.path",
+      "repository.worktree_policy",
+      "scientific_code.control_sha256",
+      "scientific_code.interpolated_target_sha256",
+      "scientific_code.route_projection_sha256",
+      "scientific_code.kinematic_drive_sha256",
+      "scientific_code.collect_sha256",
+      "scientific_code.app_sha256",
+      "scientific_code.planning_sha256",
+      "scientific_code.kinematics_sha256",
+      "scientific_code.measurement_instrument_sha256",
+      "scientific_code.preregistration_sha256",
+      "scientific_code.route_population_sha256",
+      "scientific_code.route_polyline_sha256",
+      "scene.scene_id",
+      "scene.scene_asset",
+      "runtime_contract.physics_dt",
+      "runtime_contract.rendering_dt",
+      "runtime_contract.control_dt",
+      "runtime_contract.control_hz",
+      "runtime_contract.max_steps",
+      "runtime_contract.lookahead_m",
+      "runtime_contract.goal_tol_m",
+      "runtime_contract.cruise_v",
+      "runtime_contract.max_v",
+      "runtime_contract.max_vy",
+      "runtime_contract.max_w",
+      "runtime_contract.seed",
+      "repository.branch",
+      "repository.head",
+      "repository.worktree_state",
+      "session.boot_id"
+    ],
+    "observational_fields_recorded_never_compared": [
+      "observational.captured_at_utc",
+      "observational.hostname",
+      "observational.pid",
+      "observational.uptime_seconds",
+      "observational.gpu_memory_used_mib",
+      "observational.gpu_memory_total_mib",
+      "observational.gpu_utilization_pct",
+      "observational.disk_free_gib"
+    ],
+    "why_the_split_is_three_ways_and_not_two": "contract-critical fields are frozen here and must still hold when an arm runs. Pairwise-critical fields must match between the arms but cannot be frozen here, because their correct value does not exist yet: the commit carrying this amendment is not known to it, and the boot the arms will run under has not happened. Observational fields locate a run without defining it; requiring them to match would make every run unrepeatable by construction",
+    "boot_id_is_the_no_reboot_instrument": "session.boot_id is redrawn by the kernel on every boot. Two arms sharing one did not have a reboot between them; two arms that do not share one did, whatever the kernel release says. Kernel release alone would not detect a reboot into the same kernel",
+    "amendment_binding": {
+      "rule": "a per-arm capture must record the sha256 of this amendment file and it must equal the amendment in force",
+      "why_it_is_not_a_field_inside_this_payload": "a file cannot contain its own hash. The binding is checked from outside by the per-arm guard, not asserted from within"
+    }
+  },
+  "KERNEL_UPDATE_POLICY": {
+    "no_new_kernel_holds_added": true,
+    "why": "a staged kernel update cannot alter the running kernel without a reboot, so holding kernel packages protects against nothing this experiment is exposed to. Recording and comparing what actually ran is the protection that discriminates",
+    "rule": "NO_REBOOT_PERMITTED_BETWEEN_ARM_A_AND_ARM_B",
+    "per_arm_recording_required": [
+      "uname -r (host.kernel_release)",
+      "loaded NVIDIA kernel module version (gpu.kernel_module_version)",
+      "NVIDIA driver version (gpu.driver_version)",
+      "Isaac Sim version (isaac.isaacsim_version)",
+      "boot id (session.boot_id)"
+    ],
+    "if_the_machine_reboots_between_arms": "ENVIRONMENT_EQUIVALENCE = FAIL and the comparison is refused until environment identity is re-established under a new amendment"
+  },
+  "NVIDIA_HOLD_POLICY": {
+    "hold_list_path": "~/navfm-nvidia-580-held-20260911.txt",
+    "expected_hold_count": 22,
+    "expected_driver_version": "580.178.04",
+    "holds_must_remain_through": [
+      "Arm A",
+      "Arm B",
+      "artefact write",
+      "artefact read-back",
+      "validation",
+      "hashing"
+    ],
+    "release_command": "xargs -r sudo apt-mark unhold < ~/navfm-nvidia-580-held-20260911.txt",
+    "released_in_this_tranche": false,
+    "why": "unattended-upgrades moved this driver once already, at 06:24 on the day of the design freeze. The holds are what stop it moving between Arm A and Arm B, which would make the one-factor claim false without making it look false",
+    "hold_list_formatting_note": "the frozen list carries explicit :amd64 qualifiers where apt-mark showhold prints bare names for the native architecture. The sets are identical once normalised; a count of 22 is the check that matters"
+  },
+  "WORKING_TREE_POLICY": {
+    "pre_arm_requirement": "clean",
+    "mechanism": "navfm.execution_environment.worktree_state(repo, allowed)",
+    "allow_list_semantics": "deny by default. A path is tolerated only if it is on the explicit allow-list; anything else makes the state dirty and fails the gate",
+    "during_arm_allowed_paths": "SEALED_IN_THE_FROZEN_EXECUTION_MANIFEST",
+    "why_not_declared_here": "the arms' output paths are defined by the execution manifest, which is a later tranche. Inventing them now would freeze a guess",
+    "generic_dirty_but_expected_is_forbidden": true,
+    "preflight_artefact_disposition": "gates/BO10/intervention_execution_preflight_20260911.json is intended scientific evidence and is committed with this amendment, so the tree is clean rather than tolerated-dirty at arm execution"
+  },
+  "ENVIRONMENT_MISMATCH_POLICY": {
+    "if_any_equality_critical_field_differs_between_arms": {
+      "ENVIRONMENT_EQUIVALENCE": "FAIL",
+      "INTERVENTION_COMPARISON": "INVALID"
+    },
+    "forbidden": [
+      "averaging across environments",
+      "repairing one arm and comparing anyway",
+      "silently re-running only the less favourable arm",
+      "reporting the comparison with a caveat instead of refusing it"
+    ],
+    "a_valid_retry_requires": "the preregistered retry policy already frozen in the V1 preflight, or a new amendment. It does not require a different analysis of two runs that were not comparable"
+  },
+  "ISAAC_SLOT_CLAIM_BOUNDARY": {
+    "the_cuda_probe_establishes": [
+      "CUDA context creation succeeds in the Isaac Python environment",
+      "one CUDA device is visible",
+      "approximately 15 GB of GPU memory was free at probe time"
+    ],
+    "it_does_not_establish": [
+      "that full Isaac Sim rendering succeeds",
+      "that scene loading succeeds",
+      "that both intervention arms will execute"
+    ],
+    "status_of_ISAAC_SLOT_AVAILABLE": "an execution-readiness INFERENCE, not proof of a completed Isaac run. Those claims require actual arm execution"
+  },
+  "ARM_ENVIRONMENT_GUARD": {
+    "defined_here": true,
+    "implemented_here": false,
+    "captures_required_later": [
+      "PRE_ARM_A",
+      "POST_ARM_A",
+      "PRE_ARM_B",
+      "POST_ARM_B"
+    ],
+    "comparison_rule": "ENV_A == ENV_B over every equality-critical field",
+    "api": "navfm.execution_environment.arm_equivalence(env_a, env_b)"
+  },
+  "milestone_unaffected": {
+    "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
+    "BO-10_HOSPITAL_COLLECTION": "COMPLETE_FOR_COMPATIBILITY_PURPOSE",
+    "run_00001": "IMMUTABLE and excluded from the two-arm comparison"
+  }
+}

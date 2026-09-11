@@ -21,6 +21,14 @@ chosen after a crash or a suggestive trace is order chosen by the experimenter.
 absence of a test, never a result, and a GPU that has silently become unusable is
 worse than one that is plainly absent: the simulator may still start and produce
 a trajectory that looks like evidence.
+
+**Historical facts and live readiness are kept apart.** Everything under
+``design_freeze`` is read from the V2 amendment, which read it from an artefact
+frozen before any outcome could be seen and verified it by hash. Everything under
+``live_execution_readiness`` is recomputed on every run. An earlier version of
+this script mixed the two: it emitted a statement about the design freeze whose
+value it recomputed from the current ISAAC_SLOT, so repairing the GPU flipped a
+claim about the past from true to false. See PROVENANCE_FIELD_REGRESSION_V1.
 """
 
 from __future__ import annotations
@@ -47,6 +55,7 @@ from navfm.control import PurePursuit  # noqa: E402
 PREREG = REPO / "gates/BO10/terminal_approach_intervention_v1_20260911.json"
 GUARD = REPO / "gates/BO10/prereg_immutability_guard_20260911.json"
 CONTROLS = REPO / "gates/BO10/target_selection_controls_20260911.json"
+AMENDMENT = REPO / "gates/BO10/environment_identity_v2_20260911.json"
 OUT = REPO / "gates/BO10/intervention_execution_preflight_20260911.json"
 
 ISAAC_PY = pathlib.Path.home() / "miniforge3/envs/isaac/bin/python"
@@ -180,18 +189,28 @@ def isaac_slot() -> dict[str, Any]:
 
 def main() -> int:
     stamp = _dt.datetime.now(_dt.UTC).isoformat()
-    for path in (PREREG, GUARD, CONTROLS):
+    for path in (PREREG, GUARD, CONTROLS, AMENDMENT):
         if not path.exists():
             raise SystemExit(f"preflight cannot proceed: {path} is absent")
 
     guard = json.loads(GUARD.read_text())
     controls = json.loads(CONTROLS.read_text())
+    amendment = json.loads(AMENDMENT.read_text())
     audit = implementation_audit()
     slot = isaac_slot()
 
     arms: dict[str, Any] = {
         "frozen_before_execution": True,
-        "frozen_while_results_were_impossible_to_observe": slot["ISAAC_SLOT"] == "BLOCKED",
+        # Was: bool(slot["ISAAC_SLOT"] == "BLOCKED"). That recomputed a statement
+        # about the design freeze from the machine's present state, so repairing
+        # the GPU rewrote the past. The fact now lives in design_freeze, sourced
+        # from a hash-verified artefact frozen before any outcome was observable.
+        "frozen_while_results_were_impossible_to_observe": (
+            "DEPRECATED_FOR_PROVENANCE_INTERPRETATION"),
+        "frozen_while_results_were_impossible_to_observe_superseded_by": (
+            "design_freeze, sourced from "
+            "gates/BO10/environment_identity_v2_20260911.json"),
+        "see": "PROVENANCE_FIELD_REGRESSION_V1",
         "execution_order": ["ARM_A_CONTROL", "ARM_B_TREATMENT"],
         "order_selection_rule": (
             "control before treatment, fixed by protocol rather than chosen. Order "
@@ -269,8 +288,36 @@ def main() -> int:
                 "sha256": sha256(CONTROLS),
             },
         },
+        "amendment": {
+            "path": str(AMENDMENT.relative_to(REPO)),
+            "sha256": sha256(AMENDMENT),
+            "amendment_id": amendment["amendment_id"],
+            "version": amendment["amendment_version"],
+        },
+        # A. HISTORICAL FREEZE FACTS. Immutable, read from a frozen artefact,
+        #    never recomputed from the machine as it stands now.
+        "design_freeze": {
+            **amendment["design_freeze"],
+            "read_from": str(AMENDMENT.relative_to(REPO)),
+            "recomputed_by_this_preflight": False,
+        },
+        "PROVENANCE_FIELD_REGRESSION_V1": (
+            amendment["PROVENANCE_FIELD_REGRESSION_V1"]["status"]),
         "implementation_difference_audit": audit,
         "arm_identity_and_order": arms,
+        # B. CURRENT EXECUTION READINESS. Live, recomputed every run.
+        "live_execution_readiness": {
+            "recomputed_every_run": True,
+            "isaac_slot": slot["ISAAC_SLOT"],
+            "driver_version": slot.get("userspace_version"),
+            "kernel_module_version": slot.get("kernel_module_version"),
+            "kernel_userspace_mismatch": slot.get("kernel_userspace_mismatch"),
+            "cuda_available": slot.get("cuda_probe", {}).get("available"),
+            "may_not_be_used_to_infer": (
+                "anything about what was true at the design freeze. Readiness is a "
+                "fact about now; provenance is a fact about then"
+            ),
+        },
         "isaac_slot": slot,
         "SOFTWARE_PREFLIGHT": "PASS" if ready else "FAIL",
         "EXECUTION_GATE": (

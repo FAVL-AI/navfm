@@ -2,7 +2,7 @@
   "check": "TERMINAL_APPROACH_INTERVENTION_V1_EXECUTION_PREFLIGHT",
   "artifact_semantics": "PREFLIGHT_ONLY_NO_ARM_HAS_RUN",
   "author": "Frank Asante Van Laarhoven",
-  "timestamp_utc": "2026-09-11T09:33:12.858582+00:00",
+  "timestamp_utc": "2026-09-11T17:40:48.197586+00:00",
   "EXECUTION_STATUS": "NOT_RUN",
   "arms_executed": 0,
   "preregistration": {
@@ -24,6 +24,40 @@
       "sha256": "fc6da5030a30e957dfe16877d2aad92dc19f643aee49f64acf68650835ee0f37"
     }
   },
+  "amendment": {
+    "path": "gates/BO10/environment_identity_v2_20260911.json",
+    "sha256": "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a",
+    "amendment_id": "TAI-V1-A2-ENV",
+    "version": "V2"
+  },
+  "design_freeze": {
+    "frozen_at_utc": "2026-09-11T09:33:12.858582+00:00",
+    "outcomes_observable_at_freeze": false,
+    "basis": {
+      "source_artifact": "gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_commit_path": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3:gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_sha256": "13c6b583f9fac24af1436033f510254be49123daf923eddd140f34d194f05dbf",
+      "repository_commit": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3",
+      "isaac_execution_available_at_freeze": false,
+      "evidence_type": "historical_frozen_assertion",
+      "supporting_values_read_from_the_frozen_source": {
+        "ISAAC_SLOT": "BLOCKED",
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_error_code": "804",
+        "loaded_kernel_module_version": "580.173.02",
+        "userspace_driver_version": "580.178.04",
+        "EXECUTION_STATUS": "NOT_RUN",
+        "arms_executed": 0
+      },
+      "corroboration_first_boot_after_freeze_utc": "2026-09-11T17:27:36+00:00",
+      "not_derived_from": "any live reading of the machine. Re-running the preflight, repairing the GPU, or rebooting cannot change this block"
+    },
+    "STATUS": "VERIFIED",
+    "read_from": "gates/BO10/environment_identity_v2_20260911.json",
+    "recomputed_by_this_preflight": false
+  },
+  "PROVENANCE_FIELD_REGRESSION_V1": "DEPRECATED_FOR_PROVENANCE_INTERPRETATION",
   "implementation_difference_audit": {
     "method": "the class dictionary is inspected directly, so an override cannot be hidden behind a comment or a docstring claim",
     "control_class": "navfm.control.PurePursuit",
@@ -52,7 +86,9 @@
   },
   "arm_identity_and_order": {
     "frozen_before_execution": true,
-    "frozen_while_results_were_impossible_to_observe": true,
+    "frozen_while_results_were_impossible_to_observe": "DEPRECATED_FOR_PROVENANCE_INTERPRETATION",
+    "frozen_while_results_were_impossible_to_observe_superseded_by": "design_freeze, sourced from gates/BO10/environment_identity_v2_20260911.json",
+    "see": "PROVENANCE_FIELD_REGRESSION_V1",
     "execution_order": [
       "ARM_A_CONTROL",
       "ARM_B_TREATMENT"
@@ -97,34 +133,39 @@
     ],
     "arm_b_must_not_start_from_arm_a_terminal_state": true
   },
+  "live_execution_readiness": {
+    "recomputed_every_run": true,
+    "isaac_slot": "AVAILABLE",
+    "driver_version": "580.178.04",
+    "kernel_module_version": "580.178.04",
+    "kernel_userspace_mismatch": false,
+    "cuda_available": true,
+    "may_not_be_used_to_infer": "anything about what was true at the design freeze. Readiness is a fact about now; provenance is a fact about then"
+  },
   "isaac_slot": {
     "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
-    "nvidia_smi_returncode": 18,
+    "nvidia_smi_returncode": 0,
     "nvidia_smi_stderr": [
-      "Failed to initialize NVML: Driver/library version mismatch",
-      "NVML library version: 580.178"
+      "Fri Sep 11 18:40:48 2026       ",
+      "+-----------------------------------------------------------------------------------------+"
     ],
-    "kernel_module_version": "580.173.02",
+    "kernel_module_version": "580.178.04",
     "userspace_libcuda": [
       "libcuda.so.580.178.04"
     ],
     "userspace_version": "580.178.04",
-    "kernel_userspace_mismatch": true,
+    "kernel_userspace_mismatch": false,
     "cuda_probe": {
       "torch": "2.7.0+cu128",
-      "available": false,
-      "count": 0
+      "available": true,
+      "count": 1
     },
-    "cuda_error_code": "804",
-    "ISAAC_SLOT": "BLOCKED",
-    "diagnosis": "the loaded NVIDIA kernel module is 580.173.02 while the userspace driver libraries on disk are 580.178.04. CUDA reports error 804, forward compatibility attempted on unsupported hardware, and torch sees zero devices. The driver userspace was upgraded without the kernel module being reloaded",
-    "why_import_isaacsim_still_succeeds": "importing isaacsim touches no GPU, so it is not evidence that the simulator can run. This is the shape of false green this repository has a standing rule about",
-    "remedy_requires_operator_action": "reload the NVIDIA kernel modules or reboot, then re-verify. Both are system-level and disruptive, so neither is performed here",
-    "what_must_not_be_done": "running the arms anyway. The simulator might start and produce a trajectory that looks like evidence while rendering or physics ran somewhere other than the frozen configuration"
+    "cuda_error_code": "none",
+    "ISAAC_SLOT": "AVAILABLE"
   },
   "SOFTWARE_PREFLIGHT": "PASS",
-  "EXECUTION_GATE": "BLOCKED",
-  "blocking_reason": "the Isaac slot is unavailable; every software gate passes",
+  "EXECUTION_GATE": "OPEN",
+  "blocking_reason": null,
   "classification_of_the_arms": "NOT_RUN. Neither arm has been attempted. This is the absence of an experiment, not a failed one, and it must never be recorded as a result",
   "milestone_unaffected": {
     "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
