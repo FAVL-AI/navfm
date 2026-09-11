@@ -35,6 +35,8 @@ from typing import Any
 
 import numpy as np
 
+from navfm.target_selection import LegacyVertexTargetSelector, TargetSelector
+
 __all__ = [
     "M3PRO_LIMITS",
     "BaseKinematics",
@@ -193,6 +195,7 @@ class PurePursuit:
         limits: BaseLimits = M3PRO_LIMITS,
         mode: DemonstratorMode = DemonstratorMode.NONHOLONOMIC,
         cruise_v: float | None = None,
+        target_selector: TargetSelector | None = None,
     ) -> None:
         self.path = np.asarray(path, dtype=np.float64).reshape(-1, 2)
         if self.path.shape[0] < 2:
@@ -203,20 +206,27 @@ class PurePursuit:
         self.mode = mode
         self.cruise_v = float(cruise_v) if cruise_v is not None else limits.max_v
         self._idx = 0
+        # Omitting the selector yields the frozen behaviour, so no existing
+        # caller changes because the seam now exists.
+        self._selector: TargetSelector = (
+            target_selector if target_selector is not None else LegacyVertexTargetSelector()
+        )
 
     @property
     def finished(self) -> bool:
         return self._idx >= self.path.shape[0] - 1
 
     def target(self, position: np.ndarray) -> np.ndarray:
-        """Advance the path index and return the current look-ahead point."""
+        """Advance the path index and return the current look-ahead point.
+
+        The selection itself lives behind the injection seam. The index
+        advancement it reports is applied here, so ``finished`` means what it
+        always meant.
+        """
         pos = np.asarray(position, dtype=np.float64)[:2]
-        while self._idx < self.path.shape[0] - 1:
-            if np.linalg.norm(self.path[self._idx] - pos) < self.lookahead:
-                self._idx += 1
-            else:
-                break
-        return self.path[min(self._idx, self.path.shape[0] - 1)]
+        selection = self._selector.select_target(self.path, pos, self._idx, self.lookahead)
+        self._idx = selection.next_index
+        return selection.point
 
     def step(self, position: np.ndarray, yaw: float) -> tuple[float, float, float, bool]:
         """Return ``(vx, vy, wz, done)`` for the current pose."""

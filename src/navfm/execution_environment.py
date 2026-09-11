@@ -470,7 +470,14 @@ def capture(
     """A full environment snapshot: contract-critical, pairwise, observational."""
     import datetime as _dt
 
-    root = Path(repo_root) if repo_root is not None else Path(__file__).resolve().parents[2]
+    # Resolved, because repository.path is contract-critical: a caller passing
+    # "." would otherwise report drift against an absolute frozen value and be
+    # refused for a path spelling rather than for anything about the machine.
+    root = (
+        Path(repo_root).resolve()
+        if repo_root is not None
+        else Path(__file__).resolve().parents[2]
+    )
     interpreter = isaac_python or (Path.home() / "miniforge3/envs/isaac/bin/python")
     gpu = _gpu()
     isaac = probe_isaac_python(interpreter)
