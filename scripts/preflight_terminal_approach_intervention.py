@@ -31,12 +31,14 @@ import pathlib
 import re
 import subprocess
 import sys
+from typing import Any
 
 REPO = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
 from diagnose_q2_margin_consumption import sha256  # noqa: E402
+
 from navfm.collection.interpolated_target import (  # noqa: E402
     InterpolatedLookaheadPursuit,
 )
@@ -61,7 +63,7 @@ SHARED = [
 ]
 
 
-def implementation_audit() -> dict[str, object]:
+def implementation_audit() -> dict[str, Any]:
     """Which behaviours the treatment arm overrides, asked of Python not prose."""
     base = {n for n in dir(PurePursuit) if not n.startswith("__")}
     overridden = sorted(
@@ -108,9 +110,9 @@ def implementation_audit() -> dict[str, object]:
     }
 
 
-def isaac_slot() -> dict[str, object]:
+def isaac_slot() -> dict[str, Any]:
     """Is the simulator actually usable, as opposed to merely importable?"""
-    out: dict[str, object] = {"interpreter": str(ISAAC_PY)}
+    out: dict[str, Any] = {"interpreter": str(ISAAC_PY)}
 
     nv = subprocess.run(["nvidia-smi"], capture_output=True, text=True, check=False)
     out["nvidia_smi_returncode"] = nv.returncode
@@ -187,7 +189,7 @@ def main() -> int:
     audit = implementation_audit()
     slot = isaac_slot()
 
-    arms = {
+    arms: dict[str, Any] = {
         "frozen_before_execution": True,
         "frozen_while_results_were_impossible_to_observe": slot["ISAAC_SLOT"] == "BLOCKED",
         "execution_order": ["ARM_A_CONTROL", "ARM_B_TREATMENT"],
