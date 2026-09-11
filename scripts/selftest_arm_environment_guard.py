@@ -22,10 +22,13 @@ REPO = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from navfm.arm_environment_guard import (  # noqa: E402
+    AUTHORITATIVE_CONTRACT_VERSION,
+    CONTRACTS,
     PREFLIGHT_REL,
     PREFLIGHT_VOLATILE_FIELDS,
     arm_environment_equivalence,
     capture_arm_environment,
+    check_contract,
     nvidia_hold_state,
     preflight_exception,
     preflight_identity,
@@ -183,11 +186,32 @@ def main() -> int:
           f"reboot={four['REBOOT_DETECTED']}")
     print()
 
+    # V3_VALIDATION: the authoritative contract must accept the post-seam tree
+    # while its predecessor must still refuse it. A successor that made V2 pass
+    # again would have rewritten history rather than superseded it.
+    contracts = {version: check_contract(REPO, version) for version in sorted(CONTRACTS)}
+    for version, result in contracts.items():
+        drift = [d["field"] for d in result["drift"]]
+        marker = "AUTHORITATIVE" if version == AUTHORITATIVE_CONTRACT_VERSION else "historical"
+        print(f"contract {version} ({marker:13s}) {result['CONTRACT_SATISFIED']:7s} "
+              f"fields={result.get('fields_compared')}  drift={drift}")
+    v2_refuses = contracts["V2"]["CONTRACT_SATISFIED"] == "FAIL"
+    v3_accepts = contracts["V3"]["CONTRACT_SATISFIED"] == "PASS"
+    print(f"V3 superseded without weakening V2: {v2_refuses and v3_accepts}")
+    print()
+
     barrier = validate_pre_arm_environment(
         "SELFTEST_A", repo_root=REPO, frozen_head=head, fresh_preflight=False)
-    print(f"pre-arm barrier     {barrier['PRE_ARM_BARRIER']}")
+    print(f"pre-arm barrier     {barrier['PRE_ARM_BARRIER']}  "
+          f"(contract {barrier.get('contract_version')})")
     for reason in barrier["reasons"]:
         print(f"                    - {reason}")
+
+    barrier_v2 = validate_pre_arm_environment(
+        "SELFTEST_A", repo_root=REPO, frozen_head=head, fresh_preflight=False,
+        contract_version="V2")
+    print(f"pre-arm barrier V2  {barrier_v2['PRE_ARM_BARRIER']}  "
+          f"(expected REFUSED: V2 pins the pre-seam controller)")
     print()
 
     summary = {
@@ -207,6 +231,16 @@ def main() -> int:
             "mismatch_count": four["mismatch_count"],
         },
         "pre_arm_barrier": barrier["PRE_ARM_BARRIER"],
+        "authoritative_contract": AUTHORITATIVE_CONTRACT_VERSION,
+        "contract_checks": {
+            version: {
+                "CONTRACT_SATISFIED": result["CONTRACT_SATISFIED"],
+                "drift": [d["field"] for d in result["drift"]],
+            }
+            for version, result in contracts.items()
+        },
+        "pre_arm_barrier_against_v2": barrier_v2["PRE_ARM_BARRIER"],
+        "v3_superseded_without_weakening_v2": v2_refuses and v3_accepts,
         "scene_equality_semantics": a["scene_identity"]["equality_semantics"],
         "scene_byte_identity": a["scene_identity"]["scene_byte_identity"],
         "EXECUTION_STATUS": "NOT_RUN",
@@ -228,6 +262,9 @@ def main() -> int:
         and a["critical_digest"] == b["critical_digest"]
         and four["ENVIRONMENT_EQUIVALENCE"] == "PASS"
         and barrier["PRE_ARM_BARRIER"] == "PASS"
+        and v2_refuses
+        and v3_accepts
+        and barrier_v2["PRE_ARM_BARRIER"] == "REFUSED"
     )
     print(f"summary artefact    runs/env_guard/selftest_summary.json  {sha[:16]}...")
     print(f"SELFTEST            {'PASS' if passed else 'FAIL'}")

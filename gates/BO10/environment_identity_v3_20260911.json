@@ -1,0 +1,452 @@
+{
+  "check": "TERMINAL_APPROACH_INTERVENTION_V1_ENVIRONMENT_V3",
+  "artifact_semantics": "AMENDMENT_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "amendment_id": "TAI-V1-A3-ENV",
+  "amendment_version": "V3",
+  "amended_at_utc": "2026-09-11T19:21:07.100480+00:00",
+  "STATUS": "FROZEN",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "authorisation": "NOT AUTHORISED. Neither arm may run under this amendment.",
+  "authoritative_contract_for_future_arms": "V3",
+  "amends": {
+    "predecessor": {
+      "path": "gates/BO10/environment_identity_v2_20260911.json",
+      "sha256": "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a",
+      "version": "V2"
+    },
+    "original_preregistration": {
+      "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "version": "V1"
+    },
+    "append_only": true,
+    "v1_and_v2_rewritten": false,
+    "reason": "a behaviour-neutral dependency-injection seam was intentionally introduced after V2. This changed the source-byte identity of control.py while the frozen equivalence experiment demonstrated that legacy controller behaviour was unchanged",
+    "tracker_injection_commits": [
+      "a869729c0614991a114e9d241713eead31faa38d",
+      "033e52a7c2350fc5b89508cf630f965088140a34"
+    ],
+    "the_intervention_design_is_unchanged": true,
+    "unchanged_by_this_amendment": [
+      "the target-selection factor",
+      "the route and frozen polyline",
+      "the initial pose and start yaw",
+      "the goal and goal tolerance",
+      "the seed",
+      "controller gains",
+      "the look-ahead distance",
+      "cruise speed and every velocity limit",
+      "max_steps",
+      "the primary outcome",
+      "the secondary cross-track outcome",
+      "arm order",
+      "the kernel contract",
+      "the NVIDIA driver and module contract",
+      "the NVIDIA hold count",
+      "the Python, torch and CUDA identity",
+      "the Isaac identity",
+      "the remote Hospital scene limitation",
+      "the runtime dt, control rate and limits",
+      "the repository identity rules",
+      "the dirty-tree rules",
+      "the arm environment-equivalence policy"
+    ]
+  },
+  "SOURCE_IDENTITY_TRANSITION": {
+    "V2_CONTROL_SOURCE_IDENTITY": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+    "V3_CONTROL_SOURCE_IDENTITY": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+    "SOURCE_BYTE_IDENTITY_ACROSS_V2_TO_V3": "CHANGED",
+    "expected_and_intentional": true,
+    "retired_claim": "control.py is byte-identical to the V2 freeze. This was true under V2 and is now false. It is retired, not concealed: V2 keeps its hash and continues to refuse the post-seam tree when checked against V2",
+    "replacement_claim": "the controller source changed solely to introduce the preregistered injection seam, and the legacy default and explicitly injected legacy paths were demonstrated behaviourally equivalent to the pre-seam tracker before any treatment selector existed",
+    "what_changed_in_control_py": [
+      "an import of the seam module",
+      "a target_selector keyword argument defaulting to None",
+      "assignment of the default LegacyVertexTargetSelector",
+      "PurePursuit.target now delegates selection and applies the returned index"
+    ],
+    "this_is_not_a_claim_of_semantic_equivalence_by_inspection": "no one read the diff and pronounced it harmless. The claim rests on the frozen behavioural equivalence evidence bound below"
+  },
+  "changed_from_v2": {
+    "scientific_code.control_sha256": {
+      "old": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "new": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+      "justification": "tracker injection seam",
+      "evidence": {
+        "path": "gates/BO10/tracker_injection_equivalence_20260911.json",
+        "sha256": "ff0cd687a9b6c7a1b5c0bb88f5f23eb6dead6cdf365860e452f15d0a7e62a52b"
+      }
+    },
+    "scientific_code.target_selection_sha256": {
+      "old": "<NOT_PINNED_BY_V2>",
+      "new": "490d623c5f58f6a0943ec78af7f5435ef1dfee2d2daac3aadf655e9cbdf2a472",
+      "justification": "the seam moved Arm A's default target selection into a module V2 could not have pinned. Leaving it unpinned would be a hole opened by this very change",
+      "evidence": {
+        "path": "gates/BO10/tracker_injection_equivalence_20260911.json",
+        "sha256": "ff0cd687a9b6c7a1b5c0bb88f5f23eb6dead6cdf365860e452f15d0a7e62a52b"
+      },
+      "field_added_not_replaced": true
+    },
+    "no_other_field_changed": true,
+    "unexplained_hash_replacements": []
+  },
+  "INJECTION_SEAM_BEHAVIOURAL_NEUTRALITY": {
+    "status": "PROVEN_OVER_THE_PREREGISTERED_EQUIVALENCE_DOMAIN",
+    "proven_by": "ARM_A_LEGACY_INJECTION_EQUIVALENCE",
+    "artefact": {
+      "path": "gates/BO10/tracker_injection_equivalence_20260911.json",
+      "sha256": "ff0cd687a9b6c7a1b5c0bb88f5f23eb6dead6cdf365860e452f15d0a7e62a52b",
+      "repository_head_used": "a869729c0614991a114e9d241713eead31faa38d",
+      "verdict": "PASS"
+    },
+    "implementations_compared": {
+      "PRE_SEAM": "437ebfc63f82:src/navfm/control.py PurePursuit",
+      "LEGACY_DIRECT": "navfm.control.PurePursuit (no explicit selector)",
+      "LEGACY_INJECTED": "navfm.control.PurePursuit(target_selector=LegacyVertexTargetSelector())",
+      "these_are_not_intervention_arms": true
+    },
+    "pre_seam_reference": {
+      "commit": "437ebfc63f828fb1200df1f01df56bc339209349",
+      "path": "src/navfm/control.py",
+      "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "why_pinned_not_head": "committing the seam moves HEAD; a reference that follows HEAD would compare the new implementation with itself"
+    },
+    "selector_identity": {
+      "class": "navfm.target_selection.LegacyVertexTargetSelector",
+      "target_type": "PATH_VERTEX",
+      "module_sha256": "490d623c5f58f6a0943ec78af7f5435ef1dfee2d2daac3aadf655e9cbdf2a472"
+    },
+    "recorded_step_count": 1200,
+    "analytic_fixture_count": 15,
+    "numerical_standard": {
+      "criterion": "exact equality",
+      "tolerance": 0.0,
+      "justification": "both paths execute the same arithmetic on the same inputs, so a refactor should agree bitwise. No tolerance was fitted to an observed discrepancy, because none was observed"
+    },
+    "target_mismatch_count": 0,
+    "state_mismatch_count": 0,
+    "command_mismatch_count": 0,
+    "predicate_mismatch_count": 0,
+    "per_channel": {
+      "vx": 0,
+      "vy": 0,
+      "wz": 0,
+      "done": 0,
+      "index_after": 0,
+      "finished_after": 0,
+      "target_x": 0,
+      "target_y": 0,
+      "target_distance": 0,
+      "target_bearing": 0,
+      "heading_error": 0
+    },
+    "negative_controls": {
+      "wrong_selector": true,
+      "state_drift": true,
+      "command_drift": true,
+      "refusal_malformed_poses": true,
+      "refusal_mismatched_lengths": true
+    },
+    "state_drift_detected_on_index_after": true,
+    "CLAIM": "No behavioural difference was detected over the preregistered equivalence domain, including all 1200 recorded run_00001 poses and 15 analytic fixtures, across selected targets, target index and tracker-state evolution, commands and predicates. Equality was exact; the maximum numerical difference was zero",
+    "CLAIM_BOUNDARY": "this establishes equivalence over the declared analytic fixtures, the complete available recorded run_00001 pose sequence, the tested tracker-state evolution and the tested command and predicate surface. It is not a mathematical proof of equivalence for every possible future input, and the implementations are NOT claimed to be universally equivalent"
+  },
+  "OUTSIDE_SEAM_LAW_IDENTITY": {
+    "verdict": "PASS",
+    "method": "byte comparison of each law's source between the pinned pre-seam module and now",
+    "members": {
+      "speed_and_angular_law_step": {
+        "pre_seam_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "current_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "identical": true
+      },
+      "route_completion_finished": {
+        "pre_seam_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "current_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "identical": true
+      },
+      "velocity_clipping_clamp": {
+        "pre_seam_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "current_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "identical": true
+      },
+      "se2_integration_unicycle": {
+        "pre_seam_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "current_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "identical": true
+      },
+      "se2_integration_holonomic": {
+        "pre_seam_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "current_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "identical": true
+      },
+      "waypoint_to_twist": {
+        "pre_seam_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "current_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "identical": true
+      }
+    },
+    "file_changed": true,
+    "mathematics_outside_seam_changed": false,
+    "why_region_hashes_not_a_file_hash": "the laws share the file the seam edited, so the old file hash cannot be retained and claiming it would be false. What is bound instead is the source of each law, hashed separately and compared against the pinned pre-seam module"
+  },
+  "TREATMENT_ABSENCE_AT_FREEZE": {
+    "TREATMENT_SELECTOR_IMPLEMENTED": false,
+    "ARC_LENGTH_INTERPOLATED_TARGET_SELECTOR": "NOT_PRESENT_BEHIND_INJECTION_SEAM",
+    "concrete_selectors_declared_under_src": [
+      "src/navfm/target_selection.py::LegacyVertexTargetSelector"
+    ],
+    "selector_protocols_declared_under_src": [
+      "src/navfm/target_selection.py::TargetSelector"
+    ],
+    "default_selector_is_legacy": true,
+    "method": "AST scan for classes declaring select_target, with Protocol bases classified separately because the interface defines the seam rather than occupying it, plus a check on the default instance",
+    "pre_existing_subclass_note": "navfm.collection.interpolated_target.InterpolatedLookaheadPursuit exists from an earlier tranche and overrides PurePursuit.target by subclassing. It is NOT a TargetSelector and does not occupy the injection seam. Stating this precisely matters: the claim is that the seam is empty, not that no interpolated code exists anywhere in the repository",
+    "ok": true
+  },
+  "causal_chronology": [
+    "V2 froze the pre-seam source identity",
+    "the injection seam changed control.py",
+    "legacy equivalence was demonstrated independently, with no treatment present",
+    "V3 records and justifies the source transition",
+    "only then may treatment code appear"
+  ],
+  "why_the_order_matters": "a re-pin written after the treatment had landed would bundle the neutral refactor and the manipulated factor into a single justification, and no later reader could separate what the equivalence proof actually covered",
+  "VERSION_CHAIN": [
+    {
+      "node": "INTERVENTION_V1",
+      "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "timestamp_utc": "2026-09-11T09:01:51.369827+00:00",
+      "predecessor": null,
+      "reason": "the preregistered one-factor intervention",
+      "evidence_basis": "Q2 and Q3 diagnostics"
+    },
+    {
+      "node": "ENVIRONMENT_V2",
+      "path": "gates/BO10/environment_identity_v2_20260911.json",
+      "sha256": "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a",
+      "timestamp_utc": "2026-09-11T17:37:28.282685+00:00",
+      "predecessor": "INTERVENTION_V1",
+      "reason": "execution environment identity was not sufficiently pinned in V1; one provenance field was incorrectly recomputed from live ISAAC_SLOT state rather than preserved as a historical freeze-time fact",
+      "evidence_basis": "the hash-verified pre-reboot preflight blob"
+    },
+    {
+      "node": "TRACKER_INJECTION_EQUIVALENCE",
+      "path": "gates/BO10/tracker_injection_equivalence_20260911.json",
+      "sha256": "ff0cd687a9b6c7a1b5c0bb88f5f23eb6dead6cdf365860e452f15d0a7e62a52b",
+      "timestamp_utc": "2026-09-11T19:11:15.967963+00:00",
+      "predecessor": "ENVIRONMENT_V2",
+      "reason": "prove the injection seam behaviour-neutral before treatment",
+      "evidence_basis": "15 analytic fixtures and 1200 recorded poses against the pre-seam tracker read from git"
+    },
+    {
+      "node": "ENVIRONMENT_V3",
+      "path": "gates/BO10/environment_identity_v3_20260911.json",
+      "sha256": "<this artefact>",
+      "timestamp_utc": "2026-09-11T19:21:07.100480+00:00",
+      "predecessor": "TRACKER_INJECTION_EQUIVALENCE",
+      "reason": "re-pin scientific-code identity after the validated seam",
+      "evidence_basis": "the bound equivalence artefact"
+    }
+  ],
+  "EXECUTION_ENVIRONMENT_IDENTITY_V3": {
+    "contract_version": "EXECUTION_ENVIRONMENT_IDENTITY_V2",
+    "supersedes": "V2",
+    "implementation": "src/navfm/execution_environment.py",
+    "frozen_contract_values": {
+      "host.kernel_release": "6.8.0-138-generic",
+      "host.architecture": "x86_64",
+      "gpu.model": "NVIDIA GeForce RTX 4080 SUPER",
+      "gpu.uuid": "GPU-58834766-9fcc-9520-d400-d170f527c040",
+      "gpu.pci_bus_id": "00000000:01:00.0",
+      "gpu.driver_version": "580.178.04",
+      "gpu.kernel_module_version": "580.178.04",
+      "python.executable": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "python.version": "3.11.15",
+      "python.environment_path": "/home/favl/miniforge3/envs/isaac",
+      "python.torch_version": "2.7.0+cu128",
+      "python.torch_cuda_build": "12.8",
+      "python.cuda_available": true,
+      "python.visible_device_count": 1,
+      "isaac.isaacsim_version": "5.1.0.0",
+      "isaac.isaacsim_core_version": "5.1.0.0",
+      "isaac.interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "repository.path": "/home/favl/projects/navfm",
+      "repository.worktree_policy": "CLEAN_REQUIRED_AT_PRE_ARM_CAPTURE",
+      "scientific_code.control_sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+      "scientific_code.interpolated_target_sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290",
+      "scientific_code.route_projection_sha256": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a",
+      "scientific_code.kinematic_drive_sha256": "c947a68669d0ebaec1a050f2e62c6e1795ed437eabd2b765749c5f8f9e58c647",
+      "scientific_code.collect_sha256": "5c5694dc178eef47f4e5593673270bb1ffb327997e4ea648914658355b4811c5",
+      "scientific_code.app_sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "scientific_code.planning_sha256": "b785e67a8d048e515f68da069313951ffed1e60746718cf3312362bba61e79de",
+      "scientific_code.kinematics_sha256": "160e3a5ebe7e2cd2eabbbc2fe4aab8134603ed2ed2e8739f3f816e9aa2d0dec3",
+      "scientific_code.measurement_instrument_sha256": "b0449acfc1fe2903fe84add7b85eacedce1acad24af063c7d5e78b7eaac112dd",
+      "scientific_code.preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "scientific_code.route_population_sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+      "scientific_code.route_polyline_sha256": "07cb85711380a71f88aa626804f57d48435335288783bec4e82122939b86c0d8",
+      "scene.scene_id": "hospital_bo10",
+      "scene.scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+      "runtime_contract.physics_dt": 0.08333333333333333,
+      "runtime_contract.rendering_dt": 0.08333333333333333,
+      "runtime_contract.control_dt": 0.08333333333333333,
+      "runtime_contract.control_hz": 12.0,
+      "runtime_contract.max_steps": 1200,
+      "runtime_contract.lookahead_m": 0.45,
+      "runtime_contract.goal_tol_m": 0.2,
+      "runtime_contract.cruise_v": 0.35,
+      "runtime_contract.max_v": 0.45,
+      "runtime_contract.max_vy": 0.35,
+      "runtime_contract.max_w": 1.2,
+      "runtime_contract.seed": 0,
+      "scientific_code.target_selection_sha256": "490d623c5f58f6a0943ec78af7f5435ef1dfee2d2daac3aadf655e9cbdf2a472"
+    },
+    "contract_digest": "89950c21646cb0da10aa035b68ce7fac91c06f7b62b8592a08184b3c3d110337",
+    "contract_critical_fields": [
+      "host.kernel_release",
+      "host.architecture",
+      "gpu.model",
+      "gpu.uuid",
+      "gpu.pci_bus_id",
+      "gpu.driver_version",
+      "gpu.kernel_module_version",
+      "python.executable",
+      "python.version",
+      "python.environment_path",
+      "python.torch_version",
+      "python.torch_cuda_build",
+      "python.cuda_available",
+      "python.visible_device_count",
+      "isaac.isaacsim_version",
+      "isaac.isaacsim_core_version",
+      "isaac.interpreter",
+      "repository.path",
+      "repository.worktree_policy",
+      "scientific_code.control_sha256",
+      "scientific_code.interpolated_target_sha256",
+      "scientific_code.route_projection_sha256",
+      "scientific_code.kinematic_drive_sha256",
+      "scientific_code.collect_sha256",
+      "scientific_code.app_sha256",
+      "scientific_code.planning_sha256",
+      "scientific_code.kinematics_sha256",
+      "scientific_code.measurement_instrument_sha256",
+      "scientific_code.preregistration_sha256",
+      "scientific_code.route_population_sha256",
+      "scientific_code.route_polyline_sha256",
+      "scene.scene_id",
+      "scene.scene_asset",
+      "runtime_contract.physics_dt",
+      "runtime_contract.rendering_dt",
+      "runtime_contract.control_dt",
+      "runtime_contract.control_hz",
+      "runtime_contract.max_steps",
+      "runtime_contract.lookahead_m",
+      "runtime_contract.goal_tol_m",
+      "runtime_contract.cruise_v",
+      "runtime_contract.max_v",
+      "runtime_contract.max_vy",
+      "runtime_contract.max_w",
+      "runtime_contract.seed",
+      "scientific_code.target_selection_sha256"
+    ],
+    "fields_added_since_v2": [
+      "scientific_code.target_selection_sha256"
+    ],
+    "pairwise_critical_fields": [
+      "repository.branch",
+      "repository.head",
+      "repository.worktree_state",
+      "session.boot_id"
+    ],
+    "equality_critical_fields": [
+      "host.kernel_release",
+      "host.architecture",
+      "gpu.model",
+      "gpu.uuid",
+      "gpu.pci_bus_id",
+      "gpu.driver_version",
+      "gpu.kernel_module_version",
+      "python.executable",
+      "python.version",
+      "python.environment_path",
+      "python.torch_version",
+      "python.torch_cuda_build",
+      "python.cuda_available",
+      "python.visible_device_count",
+      "isaac.isaacsim_version",
+      "isaac.isaacsim_core_version",
+      "isaac.interpreter",
+      "repository.path",
+      "repository.worktree_policy",
+      "scientific_code.control_sha256",
+      "scientific_code.interpolated_target_sha256",
+      "scientific_code.route_projection_sha256",
+      "scientific_code.kinematic_drive_sha256",
+      "scientific_code.collect_sha256",
+      "scientific_code.app_sha256",
+      "scientific_code.planning_sha256",
+      "scientific_code.kinematics_sha256",
+      "scientific_code.measurement_instrument_sha256",
+      "scientific_code.preregistration_sha256",
+      "scientific_code.route_population_sha256",
+      "scientific_code.route_polyline_sha256",
+      "scene.scene_id",
+      "scene.scene_asset",
+      "runtime_contract.physics_dt",
+      "runtime_contract.rendering_dt",
+      "runtime_contract.control_dt",
+      "runtime_contract.control_hz",
+      "runtime_contract.max_steps",
+      "runtime_contract.lookahead_m",
+      "runtime_contract.goal_tol_m",
+      "runtime_contract.cruise_v",
+      "runtime_contract.max_v",
+      "runtime_contract.max_vy",
+      "runtime_contract.max_w",
+      "runtime_contract.seed",
+      "repository.branch",
+      "repository.head",
+      "repository.worktree_state",
+      "session.boot_id"
+    ],
+    "observational_fields_recorded_never_compared": [
+      "observational.captured_at_utc",
+      "observational.hostname",
+      "observational.pid",
+      "observational.uptime_seconds",
+      "observational.gpu_memory_used_mib",
+      "observational.gpu_memory_total_mib",
+      "observational.gpu_utilization_pct",
+      "observational.disk_free_gib"
+    ],
+    "arm_to_arm_comparison_unchanged": "the four-way comparator's field set is untouched. Per-file hashes are not needed there because repository.head plus a clean worktree already subsumes every source file across the four captures"
+  },
+  "V2_REMAINS_VALID_HISTORY": {
+    "v2_is_not_rewritten": true,
+    "v2_still_refuses_the_post_seam_tree": true,
+    "why": "V2 asserted a source identity that was true when it was frozen. Checking today's tree against V2 must still fail on scientific_code.control_sha256, or V2 would have been retroactively weakened and its refusal would have meant nothing",
+    "required_control": {
+      "current_repo_against_V2": "REFUSE on control hash",
+      "current_repo_against_V3": "PASS if all V3 fields match"
+    }
+  },
+  "EXECUTION_MANIFEST_OWES_ARM_OUTPUT_ALLOWLIST": true,
+  "EXECUTION_MANIFEST": "NOT_FROZEN",
+  "TREATMENT_SELECTOR": "NOT_IMPLEMENTED",
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "scene_limitation_carried_forward": {
+    "scene_asset_identifier_can_be_established": true,
+    "scene_byte_identity": "NOT_VERIFIED_REMOTE_STREAMED_ASSET",
+    "no_scene_sha_generated": true
+  },
+  "milestone_unaffected": {
+    "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
+    "BO-10_HOSPITAL_COLLECTION": "COMPLETE_FOR_COMPATIBILITY_PURPOSE",
+    "run_00001": "IMMUTABLE and excluded from the two-arm comparison"
+  }
+}

@@ -52,6 +52,7 @@ from navfm.execution_environment import (
     SCENE_CLAIM_BOUNDARY,
     SCENE_ID,
     capture,
+    contract_fields,
     contract_satisfied,
     digest,
     select,
@@ -59,7 +60,9 @@ from navfm.execution_environment import (
 )
 
 __all__ = [
+    "AUTHORITATIVE_CONTRACT_VERSION",
     "CAPTURE_REQUIRED_KEYS",
+    "CONTRACTS",
     "EXPECTED_DRIVER_VERSION",
     "EXPECTED_HOLD_COUNT",
     "GUARD_VERSION",
@@ -71,9 +74,12 @@ __all__ = [
     "SELFTEST_LABELS",
     "V2_AMENDMENT_REL",
     "V2_AMENDMENT_SHA256",
+    "V3_AMENDMENT_REL",
+    "V3_AMENDMENT_SHA256",
     "arm_environment_equivalence",
     "canonical_preflight",
     "capture_arm_environment",
+    "check_contract",
     "nvidia_hold_state",
     "parse_label",
     "preflight_exception",
@@ -92,7 +98,22 @@ SELFTEST_LABELS: tuple[str, ...] = ("SELFTEST_A", "SELFTEST_B")
 
 V2_AMENDMENT_REL = "gates/BO10/environment_identity_v2_20260911.json"
 V2_AMENDMENT_SHA256 = "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a"
+V3_AMENDMENT_REL = "gates/BO10/environment_identity_v3_20260911.json"
+V3_AMENDMENT_SHA256 = "0105d34b8090a736f94532d90ae0e171518e9413e267c2b518ff089f43045148"
 PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
+
+#: Which amendment authorises a future arm. Named, never inferred: a barrier
+#: that tried V3 and fell back to V2 would silently accept a tree that the
+#: authoritative contract rejects, which is the opposite of what a contract is.
+AUTHORITATIVE_CONTRACT_VERSION = "V3"
+
+#: Every amendment stays checkable. V2 must continue to refuse the post-seam
+#: tree -- it asserted a source identity that was true when frozen, and a
+#: superseding amendment does not get to make its predecessor pass again.
+CONTRACTS: dict[str, tuple[str, str, str]] = {
+    "V2": (V2_AMENDMENT_REL, V2_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V2"),
+    "V3": (V3_AMENDMENT_REL, V3_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V3"),
+}
 
 NVIDIA_HOLD_LIST = "~/navfm-nvidia-580-held-20260911.txt"
 EXPECTED_HOLD_COUNT = 22
@@ -341,6 +362,57 @@ def preflight_exception(repo_root: Path, frozen_head: str) -> dict[str, Any]:
         "excluded_volatile_fields": list(PREFLIGHT_VOLATILE_FIELDS),
         "reasons": reasons,
     }
+
+
+def check_contract(
+    repo_root: Path | str,
+    version: str = AUTHORITATIVE_CONTRACT_VERSION,
+    *,
+    snapshot: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Does the current tree satisfy a named amendment's frozen contract?
+
+    Explicit about which amendment it is answering for. Checking today's tree
+    against V2 and against V3 must give different answers, and that difference
+    is the evidence that V3 did not retroactively weaken V2.
+    """
+    if version not in CONTRACTS:
+        return {
+            "CONTRACT_SATISFIED": "UNKNOWN_VERSION",
+            "version": version,
+            "known_versions": sorted(CONTRACTS),
+            "drift": [],
+        }
+    rel, expected_sha, block = CONTRACTS[version]
+    root = Path(repo_root)
+    path = root / rel
+    observed_sha = sha256_file(path)
+    if observed_sha != expected_sha:
+        return {
+            "CONTRACT_SATISFIED": "FAIL",
+            "version": version,
+            "amendment_path": rel,
+            "amendment_sha256": observed_sha,
+            "expected_amendment_sha256": expected_sha,
+            "drift": [],
+            "reason": "the amendment file is not the one this guard pins",
+        }
+    try:
+        frozen = json.loads(path.read_text())[block]["frozen_contract_values"]
+    except (OSError, json.JSONDecodeError, KeyError) as exc:
+        return {
+            "CONTRACT_SATISFIED": "FAIL",
+            "version": version,
+            "amendment_path": rel,
+            "drift": [],
+            "reason": f"the amendment carries no readable frozen contract: {exc!r}"[:200],
+        }
+    env = snapshot if snapshot is not None else capture(root)
+    result = contract_satisfied(env, frozen, fields=contract_fields(version))
+    result["version"] = version
+    result["amendment_path"] = rel
+    result["amendment_sha256"] = observed_sha
+    return result
 
 
 def nvidia_hold_state(hold_list: str = NVIDIA_HOLD_LIST) -> dict[str, Any]:
@@ -668,6 +740,7 @@ def validate_pre_arm_environment(
     fresh_preflight: bool = True,
     post_arm_a: Mapping[str, Any] | None = None,
     pre_arm_a: Mapping[str, Any] | None = None,
+    contract_version: str = AUTHORITATIVE_CONTRACT_VERSION,
 ) -> dict[str, Any]:
     """Refuse an arm unless the frozen environment is demonstrably still here.
 
@@ -688,12 +761,23 @@ def validate_pre_arm_environment(
     if fresh_preflight and PREFLIGHT_REL not in allowed:
         allowed.append(PREFLIGHT_REL)
 
-    amendment_path = root / V2_AMENDMENT_REL
+    if contract_version not in CONTRACTS:
+        return {
+            "check": GUARD_VERSION,
+            "barrier": "PRE_ARM",
+            "label": label,
+            "PRE_ARM_BARRIER": "REFUSED",
+            "reasons": [f"unknown contract version {contract_version!r}"],
+            "EXECUTION_STATUS": "NOT_RUN",
+        }
+    amendment_rel, expected_amendment_sha, _block = CONTRACTS[contract_version]
+    amendment_path = root / amendment_rel
     amendment_sha = sha256_file(amendment_path)
-    if amendment_sha != V2_AMENDMENT_SHA256:
+    if amendment_sha != expected_amendment_sha:
         reasons.append(
-            f"V2 amendment sha256 is {str(amendment_sha)[:16]}..., expected "
-            f"{V2_AMENDMENT_SHA256[:16]}...; the frozen contract is not the one in force"
+            f"{contract_version} amendment sha256 is {str(amendment_sha)[:16]}..., "
+            f"expected {expected_amendment_sha[:16]}...; the frozen contract is not "
+            "the one in force"
         )
 
     head = _git(root, "rev-parse", "HEAD")
@@ -738,26 +822,24 @@ def validate_pre_arm_environment(
         if preflight.get("missing_required_keys"):
             reasons.append(f"preflight missing keys {preflight['missing_required_keys']}")
 
-    contract_drift: dict[str, Any] = {"CONTRACT_SATISFIED": "NOT_CHECKED", "drift": []}
-    if amendment_path.is_file():
-        frozen_contract = json.loads(amendment_path.read_text())[
-            "EXECUTION_ENVIRONMENT_IDENTITY_V2"
-        ]["frozen_contract_values"]
-        environment = capture_payload.get("environment", {})
-        env_view = {
-            "host": environment.get("host", {}),
-            "gpu": environment.get("gpu", {}),
-            "python": environment.get("python", {}),
-            "isaac": environment.get("isaac", {}),
-            "repository": capture_payload.get("repository", {}),
-            "scientific_code": capture_payload.get("scientific_code", {}),
-            "scene": {"scene_id": SCENE_ID, "scene_asset": SCENE_ASSET},
-            "runtime_contract": capture_payload.get("runtime_contract", {}),
-        }
-        contract_drift = contract_satisfied(env_view, frozen_contract)
-        if contract_drift["CONTRACT_SATISFIED"] != "PASS":
-            fields = [d["field"] for d in contract_drift["drift"]]
-            reasons.append(f"frozen V2 contract no longer satisfied: {fields}")
+    environment = capture_payload.get("environment", {})
+    env_view = {
+        "host": environment.get("host", {}),
+        "gpu": environment.get("gpu", {}),
+        "python": environment.get("python", {}),
+        "isaac": environment.get("isaac", {}),
+        "repository": capture_payload.get("repository", {}),
+        "scientific_code": capture_payload.get("scientific_code", {}),
+        "scene": {"scene_id": SCENE_ID, "scene_asset": SCENE_ASSET},
+        "runtime_contract": capture_payload.get("runtime_contract", {}),
+    }
+    contract_drift = check_contract(root, contract_version, snapshot=env_view)
+    if contract_drift["CONTRACT_SATISFIED"] != "PASS":
+        fields = [d["field"] for d in contract_drift["drift"]]
+        reasons.append(
+            f"frozen {contract_version} contract no longer satisfied: "
+            f"{fields or contract_drift.get('reason')}"
+        )
 
     arm_b_checks: dict[str, Any] = {}
     if arm == "B" and phase == "PRE":
@@ -800,7 +882,9 @@ def validate_pre_arm_environment(
         ),
         "frozen_head": frozen_head,
         "observed_head": head or None,
-        "v2_amendment_sha256": amendment_sha,
+        "contract_version": contract_version,
+        "amendment_path": amendment_rel,
+        "amendment_sha256": amendment_sha,
         "contract_check": contract_drift,
         "preflight_exception": exception,
         "nvidia_hold_state": holds,

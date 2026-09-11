@@ -723,7 +723,34 @@ def test_pre_arm_barrier_refuses_a_wrong_amendment(
     verdict = validate_pre_arm_environment(
         "PRE_ARM_A", repo_root=tmp_path, frozen_head="0" * 40, fresh_preflight=False)
     assert verdict["PRE_ARM_BARRIER"] == "REFUSED"
-    assert any("V2 amendment sha256" in r for r in verdict["reasons"])
+    # Asserted against the authoritative version rather than a hardcoded name,
+    # so a future amendment does not silently turn this into a test of nothing.
+    assert verdict["contract_version"] == guard.AUTHORITATIVE_CONTRACT_VERSION
+    assert any(
+        f"{guard.AUTHORITATIVE_CONTRACT_VERSION} amendment sha256" in r
+        for r in verdict["reasons"]
+    )
+
+
+def test_pre_arm_barrier_can_be_asked_about_a_superseded_contract(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Every amendment stays checkable. Naming a superseded one must answer for
+    that one, not quietly answer for the authoritative one."""
+    monkeypatch.setattr(
+        guard, "capture_arm_environment", lambda label, **kw: _capture(label))
+    verdict = validate_pre_arm_environment(
+        "PRE_ARM_A", repo_root=tmp_path, frozen_head="0" * 40, fresh_preflight=False,
+        contract_version="V2")
+    assert verdict["contract_version"] == "V2"
+    assert verdict["PRE_ARM_BARRIER"] == "REFUSED"
+
+
+def test_pre_arm_barrier_refuses_an_unknown_contract_version(tmp_path: Path) -> None:
+    verdict = validate_pre_arm_environment(
+        "PRE_ARM_A", repo_root=tmp_path, frozen_head="0" * 40, contract_version="V9")
+    assert verdict["PRE_ARM_BARRIER"] == "REFUSED"
+    assert any("unknown contract version" in r for r in verdict["reasons"])
 
 
 def test_passing_the_barrier_is_not_execution_authorisation(

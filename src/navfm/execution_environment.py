@@ -50,16 +50,19 @@ from typing import Any
 
 __all__ = [
     "CONTRACT_CRITICAL_FIELDS",
+    "CONTRACT_FIELDS_BY_VERSION",
     "CONTRACT_VERSION",
     "EQUALITY_CRITICAL_FIELDS",
     "OBSERVATIONAL_FIELDS",
     "PAIRWISE_CRITICAL_FIELDS",
+    "V3_ADDITIONAL_CRITICAL_FIELDS",
     "Mismatch",
     "arm_equivalence",
     "canonical_json",
     "capture",
     "compare",
     "contract_digest",
+    "contract_fields",
     "contract_satisfied",
     "digest",
     "select",
@@ -117,6 +120,14 @@ CONTRACT_CRITICAL_FIELDS: tuple[str, ...] = (
     "runtime_contract.seed",
 )
 
+#: V3 adds the seam module, because after the tracker-injection seam the
+#: default selector -- Arm A's actual behaviour -- lives in a file V2 could not
+#: have known about. V2's own tuple is left exactly as it was frozen: a
+#: superseding amendment does not get to edit its predecessor's contract.
+V3_ADDITIONAL_CRITICAL_FIELDS: tuple[str, ...] = (
+    "scientific_code.target_selection_sha256",
+)
+
 #: Must match across arms; cannot be frozen ahead of the commit that carries
 #: this amendment, or ahead of the boot the arms will actually run under.
 PAIRWISE_CRITICAL_FIELDS: tuple[str, ...] = (
@@ -143,6 +154,25 @@ EQUALITY_CRITICAL_FIELDS: tuple[str, ...] = (
     CONTRACT_CRITICAL_FIELDS + PAIRWISE_CRITICAL_FIELDS
 )
 
+#: Which fields each amendment version pins. Versioned rather than mutated so
+#: that checking the current tree against V2 still means what V2 meant.
+CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
+    "V2": CONTRACT_CRITICAL_FIELDS,
+    "V3": CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS,
+}
+
+
+def contract_fields(version: str) -> tuple[str, ...]:
+    """The contract-critical field set an amendment version pins."""
+    try:
+        return CONTRACT_FIELDS_BY_VERSION[version]
+    except KeyError:
+        raise ValueError(
+            f"unknown contract version {version!r}; known: "
+            f"{sorted(CONTRACT_FIELDS_BY_VERSION)}"
+        ) from None
+
+
 _MISSING = "<ABSENT>"
 
 _SCIENTIFIC_SOURCES: dict[str, str] = {
@@ -154,6 +184,7 @@ _SCIENTIFIC_SOURCES: dict[str, str] = {
     "app_sha256": "src/navfm/isaac/app.py",
     "planning_sha256": "src/navfm/planning.py",
     "kinematics_sha256": "src/navfm/kinematics.py",
+    "target_selection_sha256": "src/navfm/target_selection.py",
     "measurement_instrument_sha256": "scripts/diagnose_q2_margin_consumption.py",
     "preregistration_sha256": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
     "route_population_sha256": "gates/BO10/hospital_turning_route_population_20260910.json",
@@ -270,17 +301,24 @@ def arm_equivalence(
 def contract_satisfied(
     snapshot: Mapping[str, Any],
     frozen_contract: Mapping[str, Any],
+    *,
+    fields: Sequence[str] = CONTRACT_CRITICAL_FIELDS,
 ) -> dict[str, Any]:
-    """Does a live environment still match what the amendment froze?"""
-    live = select(snapshot, CONTRACT_CRITICAL_FIELDS)
+    """Does a live environment still match what an amendment froze?
+
+    ``fields`` is passed explicitly by callers that know which version they are
+    checking against, so that a later amendment pinning more fields does not
+    retroactively change what an earlier one asserted.
+    """
+    live = select(snapshot, fields)
     drift = [
         Mismatch(f, live[f], frozen_contract.get(f, _MISSING))
-        for f in CONTRACT_CRITICAL_FIELDS
+        for f in fields
         if live[f] != frozen_contract.get(f, _MISSING)
     ]
     return {
         "CONTRACT_SATISFIED": "PASS" if not drift else "FAIL",
-        "fields_compared": len(CONTRACT_CRITICAL_FIELDS),
+        "fields_compared": len(fields),
         "drift": [m.as_dict() for m in drift],
     }
 
