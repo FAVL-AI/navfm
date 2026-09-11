@@ -204,6 +204,24 @@ distinguishes it from a number produced somewhere else.
 8. **Don't chase upstream.** The reference repo is unmaintained; treat its
    quirks (documented as findings F1–F11 in `paper/draft.md` §3) as fixed
    facts to reproduce or consciously patch — each patch recorded.
+9. **Causal order for a failed execution.** A failed execution must not be
+   attributed to the controller until the task has first been shown feasible
+   under the frozen route, budget, cadence and motion limits. Diagnose in this
+   order, and do not skip a stage:
+
+       feasibility → execution efficiency → terminal/stop behaviour
+                   → controller / root-cause attribution
+
+   The reason is that the first two stages can settle the question without the
+   controller, and the failure they rule out is invisible afterwards: a run that
+   exhausts its budget looks identical whether the budget was too small for the
+   route or the execution wasted a budget that was ample. Attributing blame
+   before separating those two diagnoses a controller for a task no controller
+   could have completed. Each stage may only claim what its own evidence
+   supports — a stage that locates *where* steps or distance were lost has not
+   thereby established *why*, and must say so. Worked instance:
+   `gates/BO10/bo10_execution_completion_diagnostic_v1_20260911.json` (frozen
+   decomposition) with `q1_budget_feasibility_20260911.json` (stage 1).
 
 ## Adversarial review policy (when to red-team, and when not to)
 
