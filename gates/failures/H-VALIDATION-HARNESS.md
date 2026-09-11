@@ -234,6 +234,29 @@ disabled and `--no-verify` was not used: a false positive costs one rewording,
 and a disabled attribution guard costs the authorship rule the repository is
 built on. This is the second such collision recorded in this programme.
 
+### Third collision, 2026-09-11, Q2
+
+The guard blocked the Q2 commit on a different construction: the literal
+configuration-directory name appearing inside a path string in
+`scripts/diagnose_q2_margin_consumption.py` and in the artefact it writes.
+The script was recording which authorities it worked from, the project router
+among them, after skill retrieval was unavailable.
+
+That name is a technical identifier rather than attribution, and the
+`.attribution-allow` list names exactly where it may appear. These two files
+are not on that list, and the correct response is to reword rather than to
+widen the allowlist, because the allowlist earns its value from being narrow.
+
+Reworded to *"the repository project router"* and *"the repository
+standing-instructions file, rule 9"*, which is the convention the standing
+instructions already require for their own filename. The guard was not
+disabled and `--no-verify` was not used.
+
+The pattern across all three is worth stating: every collision so far has been
+ordinary prose or an ordinary path, never an actual attribution, and every one
+was cheaper to reword than to argue with. That asymmetry is the reason the
+rule is absolute rather than discretionary.
+
 ---
 
 ## `H-LMDB-1` — one open LMDB environment produced two false incompatibilities
