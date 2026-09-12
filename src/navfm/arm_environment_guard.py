@@ -76,6 +76,8 @@ __all__ = [
     "V2_AMENDMENT_SHA256",
     "V3_AMENDMENT_REL",
     "V3_AMENDMENT_SHA256",
+    "V4_AMENDMENT_REL",
+    "V4_AMENDMENT_SHA256",
     "arm_environment_equivalence",
     "canonical_preflight",
     "capture_arm_environment",
@@ -100,19 +102,24 @@ V2_AMENDMENT_REL = "gates/BO10/environment_identity_v2_20260911.json"
 V2_AMENDMENT_SHA256 = "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a"
 V3_AMENDMENT_REL = "gates/BO10/environment_identity_v3_20260911.json"
 V3_AMENDMENT_SHA256 = "0105d34b8090a736f94532d90ae0e171518e9413e267c2b518ff089f43045148"
+V4_AMENDMENT_REL = "gates/BO10/environment_identity_v4_20260912.json"
+V4_AMENDMENT_SHA256 = "226a3b20cab9b02ca5e71c01ddb24f0aa7b1ca1e03b72bc2e4d45a1adb46aa93"
 PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
 
 #: Which amendment authorises a future arm. Named, never inferred: a barrier
 #: that tried V3 and fell back to V2 would silently accept a tree that the
 #: authoritative contract rejects, which is the opposite of what a contract is.
-AUTHORITATIVE_CONTRACT_VERSION = "V3"
+AUTHORITATIVE_CONTRACT_VERSION = "V4"
 
-#: Every amendment stays checkable. V2 must continue to refuse the post-seam
-#: tree -- it asserted a source identity that was true when frozen, and a
-#: superseding amendment does not get to make its predecessor pass again.
+#: Every amendment stays checkable, and each answers for the state it froze.
+#: The invariants that matter are historical: V2 accepts its freeze state and
+#: rejects the later seam state; V3 accepts its freeze state and rejects the
+#: later treatment state; V4 accepts the final treatment-capable execution
+#: state. A superseding amendment never makes its predecessor pass again.
 CONTRACTS: dict[str, tuple[str, str, str]] = {
     "V2": (V2_AMENDMENT_REL, V2_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V2"),
     "V3": (V3_AMENDMENT_REL, V3_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V3"),
+    "V4": (V4_AMENDMENT_REL, V4_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V4"),
 }
 
 NVIDIA_HOLD_LIST = "~/navfm-nvidia-580-held-20260911.txt"

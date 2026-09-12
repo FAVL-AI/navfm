@@ -159,6 +159,11 @@ EQUALITY_CRITICAL_FIELDS: tuple[str, ...] = (
 CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
     "V2": CONTRACT_CRITICAL_FIELDS,
     "V3": CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS,
+    # V4 adds nothing. The treatment was implemented inside the seam module V3
+    # already pins, so the field that would have been added is the field that
+    # already exists -- and adding a redundant one would make the contract look
+    # stricter without checking anything more.
+    "V4": CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS,
 }
 
 

@@ -122,12 +122,16 @@ def test_v2_field_set_is_not_mutated_by_v3() -> None:
 
 
 def test_the_guard_does_not_fall_back_between_versions() -> None:
-    """A barrier that tried V3 then fell back to V2 -- or the reverse -- would
-    accept a tree the authoritative contract rejects."""
-    assert AUTHORITATIVE_CONTRACT_VERSION == "V3"
-    assert set(CONTRACTS) == {"V2", "V3"}
-    assert check_contract(REPO, "V2")["version"] == "V2"
-    assert check_contract(REPO, "V3")["version"] == "V3"
+    """A barrier that tried one contract and fell back to another would accept a
+    tree the authoritative one rejects.
+
+    Which version is authoritative is asserted by that version's own suite; what
+    is checked here is that naming a version answers for that version, and that
+    V3 remains reachable after being superseded."""
+    assert AUTHORITATIVE_CONTRACT_VERSION in CONTRACTS
+    assert {"V2", "V3"} <= set(CONTRACTS)
+    for version in ("V2", "V3"):
+        assert check_contract(REPO, version)["version"] == version
 
 
 def test_unknown_contract_version_is_refused_not_guessed() -> None:
