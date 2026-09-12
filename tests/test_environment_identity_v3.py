@@ -19,6 +19,7 @@ import hashlib
 import importlib.util
 import itertools
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +44,7 @@ REPO = Path(__file__).resolve().parents[1]
 V3 = REPO / V3_AMENDMENT_REL
 V2 = REPO / V2_AMENDMENT_REL
 EQUIVALENCE = REPO / "gates/BO10/tracker_injection_equivalence_20260911.json"
+V3_FREEZE_COMMIT = "58825a6bdb36a09721e481640082ac5fca429550"
 
 _SPEC = importlib.util.spec_from_file_location(
     "amend_v3", REPO / "scripts" / "amend_environment_identity_v3.py")
@@ -68,17 +70,43 @@ def test_current_tree_still_fails_against_v2() -> None:
     assert [d["field"] for d in result["drift"]] == ["scientific_code.control_sha256"]
 
 
-def test_current_tree_passes_against_v3() -> None:
+def test_v3_accepted_the_tree_at_its_own_freeze_commit() -> None:
+    """The historically meaningful claim. V3 pinned what was there when it
+    froze; asserting that it still accepts today's tree would just be asserting
+    that nothing has happened since."""
+    frozen = json.loads(V3.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V3"][
+        "frozen_contract_values"]
+    at_freeze = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{V3_FREEZE_COMMIT}:src/navfm/target_selection.py"],
+        capture_output=True, check=False)
+    assert at_freeze.returncode == 0
+    assert frozen["scientific_code.target_selection_sha256"] == hashlib.sha256(
+        at_freeze.stdout).hexdigest()
+    control_at_freeze = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{V3_FREEZE_COMMIT}:src/navfm/control.py"],
+        capture_output=True, check=False)
+    assert frozen["scientific_code.control_sha256"] == hashlib.sha256(
+        control_at_freeze.stdout).hexdigest()
+
+
+def test_current_tree_now_refuses_against_v3_because_the_treatment_landed() -> None:
+    """Expected, and the reason is reported rather than assumed: the treatment
+    was implemented in the seam module V3 pins, after V3 froze."""
     result = check_contract(REPO, "V3")
-    assert result["CONTRACT_SATISFIED"] == "PASS"
-    assert result["drift"] == []
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    assert [d["field"] for d in result["drift"]] == [
+        "scientific_code.target_selection_sha256"]
 
 
-def test_v2_and_v3_give_different_answers() -> None:
-    assert (
-        check_contract(REPO, "V2")["CONTRACT_SATISFIED"]
-        != check_contract(REPO, "V3")["CONTRACT_SATISFIED"]
-    )
+def test_v2_and_v3_refuse_for_different_reasons() -> None:
+    """Both refuse now, which is correct, but not for the same thing. V2 fails
+    on the controller the seam edited; V3 fails on the selector module the
+    treatment edited. Collapsing them into one verdict would lose that."""
+    v2_drift = [d["field"] for d in check_contract(REPO, "V2")["drift"]]
+    v3_drift = [d["field"] for d in check_contract(REPO, "V3")["drift"]]
+    assert v2_drift == ["scientific_code.control_sha256"]
+    assert v3_drift == ["scientific_code.target_selection_sha256"]
+    assert v2_drift != v3_drift
 
 
 def test_v2_file_is_untouched() -> None:
@@ -324,11 +352,37 @@ def _artefact_sha() -> str:
     return hashlib.sha256(V3.read_bytes()).hexdigest()
 
 
-def test_unchanged_regeneration_reproduces_the_payload() -> None:
+def test_regeneration_now_refuses_and_demands_a_new_amendment() -> None:
+    """V3 is frozen and cited by hash. The treatment changed a field it pins, so
+    regenerating under the same identity is refused -- which is the mechanism
+    that forces V4 to exist rather than letting V3 quietly absorb the change."""
     before = _artefact_sha()
     outcome = v3mod.freeze()
-    assert outcome["V3_AMENDMENT"] == "FROZEN"
-    assert outcome["refrozen"] is False
+    assert outcome["V3_AMENDMENT"] == "REFUSED"
+    # The chronology guard fires first, and it is the stronger refusal: V3 can
+    # never be re-frozen now, because it is defined as the amendment that froze
+    # while the seam was empty.
+    assert outcome["stage"] == "treatment absence"
+    assert "ArcLengthInterpolatedTargetSelector" in " ".join(outcome["reasons"])
+    assert _artefact_sha() == before, "a refusal must not touch the frozen artefact"
+
+
+def test_contract_drift_would_also_refuse_underneath_the_chronology_guard(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Two independent mechanisms, not one. With the chronology check satisfied,
+    the frozen contract still refuses on the field the treatment moved."""
+    before = _artefact_sha()
+    monkeypatch.setattr(
+        v3mod, "selectors_defined_in_source",
+        lambda: {"concrete": ["src/navfm/target_selection.py::LegacyVertexTargetSelector"],
+                 "protocols": ["src/navfm/target_selection.py::TargetSelector"]})
+    outcome = v3mod.freeze()
+    assert outcome["V3_AMENDMENT"] == "REFUSED"
+    assert outcome["stage"] == "canonical regeneration"
+    joined = " ".join(outcome["reasons"])
+    assert "target_selection_sha256" in joined
+    assert "V4" in joined
     assert _artefact_sha() == before
 
 
@@ -347,10 +401,11 @@ def test_a_mutated_pin_refuses_and_writes_nothing(
     assert _artefact_sha() == before, "a refusal must not touch the frozen artefact"
 
 
-def test_restoring_the_pins_reproduces_the_original_sha() -> None:
+def test_the_frozen_v3_artefact_is_never_rewritten() -> None:
+    """Whatever the freeze path decides, the committed record keeps its hash."""
     before = _artefact_sha()
-    assert v3mod.freeze()["V3_AMENDMENT"] == "FROZEN"
-    assert _artefact_sha() == before
+    v3mod.freeze()
+    assert _artefact_sha() == before == V3_AMENDMENT_SHA256
 
 
 def test_refusal_is_structured_not_a_traceback(monkeypatch: pytest.MonkeyPatch) -> None:

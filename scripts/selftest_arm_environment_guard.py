@@ -195,9 +195,19 @@ def main() -> int:
         marker = "AUTHORITATIVE" if version == AUTHORITATIVE_CONTRACT_VERSION else "historical"
         print(f"contract {version} ({marker:13s}) {result['CONTRACT_SATISFIED']:7s} "
               f"fields={result.get('fields_compared')}  drift={drift}")
+    # V2 must always refuse the post-seam tree: it asserted a source identity
+    # that was true when it froze, and a successor does not get to make it pass
+    # again. Whether the AUTHORITATIVE contract currently accepts is a fact
+    # about where the work has got to, not about whether the guard works -- once
+    # code lands after an amendment freezes, that amendment refuses by design.
     v2_refuses = contracts["V2"]["CONTRACT_SATISFIED"] == "FAIL"
-    v3_accepts = contracts["V3"]["CONTRACT_SATISFIED"] == "PASS"
-    print(f"V3 superseded without weakening V2: {v2_refuses and v3_accepts}")
+    authoritative = contracts[AUTHORITATIVE_CONTRACT_VERSION]
+    authoritative_answers = authoritative["CONTRACT_SATISFIED"] in {"PASS", "FAIL"}
+    authoritative_accepts = authoritative["CONTRACT_SATISFIED"] == "PASS"
+    print(f"V2 still refuses the post-seam tree: {v2_refuses}")
+    print(f"{AUTHORITATIVE_CONTRACT_VERSION} accepts the current tree: {authoritative_accepts}"
+          + ("" if authoritative_accepts else
+             "  (a later amendment is owed before an arm may run)"))
     print()
 
     barrier = validate_pre_arm_environment(
@@ -212,6 +222,11 @@ def main() -> int:
         contract_version="V2")
     print(f"pre-arm barrier V2  {barrier_v2['PRE_ARM_BARRIER']}  "
           f"(expected REFUSED: V2 pins the pre-seam controller)")
+    # The barrier must agree with the contract it was asked about. A barrier
+    # that passed while its own contract failed would be the worst outcome here.
+    barrier_consistent = (
+        (barrier["PRE_ARM_BARRIER"] == "PASS") == authoritative_accepts)
+    print(f"barrier agrees with {AUTHORITATIVE_CONTRACT_VERSION}: {barrier_consistent}")
     print()
 
     summary = {
@@ -240,7 +255,9 @@ def main() -> int:
             for version, result in contracts.items()
         },
         "pre_arm_barrier_against_v2": barrier_v2["PRE_ARM_BARRIER"],
-        "v3_superseded_without_weakening_v2": v2_refuses and v3_accepts,
+        "v2_still_refuses_the_post_seam_tree": v2_refuses,
+        "authoritative_contract_accepts_current_tree": authoritative_accepts,
+        "barrier_agrees_with_authoritative_contract": barrier_consistent,
         "scene_equality_semantics": a["scene_identity"]["equality_semantics"],
         "scene_byte_identity": a["scene_identity"]["scene_byte_identity"],
         "EXECUTION_STATUS": "NOT_RUN",
@@ -261,9 +278,9 @@ def main() -> int:
         and b["CAPTURE_VALIDATION"] == "PASS"
         and a["critical_digest"] == b["critical_digest"]
         and four["ENVIRONMENT_EQUIVALENCE"] == "PASS"
-        and barrier["PRE_ARM_BARRIER"] == "PASS"
         and v2_refuses
-        and v3_accepts
+        and authoritative_answers
+        and barrier_consistent
         and barrier_v2["PRE_ARM_BARRIER"] == "REFUSED"
     )
     print(f"summary artefact    runs/env_guard/selftest_summary.json  {sha[:16]}...")

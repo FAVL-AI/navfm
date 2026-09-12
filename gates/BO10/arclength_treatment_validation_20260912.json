@@ -1,0 +1,1002 @@
+{
+  "check": "ARC_LENGTH_INTERPOLATED_TARGET_SELECTOR_V1_VALIDATION",
+  "artifact_semantics": "TREATMENT_VALIDATION_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-12T02:39:07.631119+00:00",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "repository_head": "58825a6bdb36a09721e481640082ac5fca429550",
+  "implementation": {
+    "class": "navfm.target_selection.ArcLengthInterpolatedTargetSelector",
+    "target_type": "ARC_LENGTH_INTERPOLATED",
+    "source": "src/navfm/target_selection.py",
+    "source_sha256": "4678e5ebe9c7fa3771a71ac0f8944a9f92e72fb18891ce3100f29a77f2dcee58",
+    "interface": "select_target(path, position, index, lookahead) -> TargetSelection",
+    "geometry_function": "navfm.target_selection.interpolated_selection",
+    "frozen_lookahead_m": 0.45
+  },
+  "frozen_semantics_used": {
+    "source_of_truth": [
+      "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "gates/BO10/target_selection_controls_20260911.json",
+      "src/navfm/collection/route_projection.py",
+      "src/navfm/collection/interpolated_target.py"
+    ],
+    "projection_basis": "the pose's nearest valid projection, parametric foot clamped",
+    "tie_rule": "ties resolve to the earlier segment (strict less-than)",
+    "arc_length_coordinate": "cumulative polyline length from the first vertex",
+    "forward_distance": "the frozen look-ahead, 0.45 m, along the route",
+    "route_end_rule": "clamps to the final path point; never extrapolates",
+    "vertex_index": "advanced by the inherited legacy rule so finished matches",
+    "not_circle_intersection": "this is an arc-length interpolated point on the polyline. It is NOT look-ahead-circle pure pursuit, and a small cross-track error does not establish that a forward circle intersection exists"
+  },
+  "numerical_standard": {
+    "tolerance_m": 1e-12,
+    "declared_before_fixtures_ran": true,
+    "justification": "expected values are hand-computed decimal literals; the implementation accumulates the same decimals in IEEE-754, differing by a few ulps (order 1e-15 m here). The tolerance is three orders above that and ten below the look-ahead, so it cannot absorb a geometric error"
+  },
+  "independent_oracle": {
+    "method": "every expected projection_s, target_s, segment and target coordinate is arithmetic on routes with integer arc lengths, written as literals",
+    "not_validated_against": "the production interpolation helpers. A helper checked with a helper that shares its code proves only self-consistency"
+  },
+  "analytic_fixtures": {
+    "count": 13,
+    "verdict": "PASS",
+    "max_abs_difference_m": 4.440892098500626e-16,
+    "results": [
+      {
+        "name": "A_STRAIGHT_SEGMENT",
+        "verdict": "PASS",
+        "why": "s=1 on the 3 m leg; 1 + 0.45 stays on the same leg",
+        "expected": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "B_EXACT_VERTEX",
+        "verdict": "PASS",
+        "why": "the pose is the shared corner; the tie resolves to the earlier segment so s=3, and 0.45 past the corner is 0.45 up the second leg",
+        "expected": {
+          "projection_s": 3.0,
+          "target_s": 3.45,
+          "target_x": 3.0,
+          "target_y": 0.45,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 3.0,
+          "target_s": 3.45,
+          "target_x": 3.0,
+          "target_y": 0.4500000000000002,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 1.6653345369377348e-16,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 1.6653345369377348e-16
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "C_BETWEEN_VERTICES",
+        "verdict": "PASS",
+        "why": "interpolation within one segment",
+        "expected": {
+          "projection_s": 1.5,
+          "target_s": 1.95,
+          "target_x": 1.95,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 1.5,
+          "target_s": 1.95,
+          "target_x": 1.9500000000000002,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 2.220446049250313e-16,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 2.220446049250313e-16,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "D_CROSS_ONE_VERTEX",
+        "verdict": "PASS",
+        "why": "2.8 + 0.45 = 3.25 crosses the corner at s=3 by 0.25",
+        "expected": {
+          "projection_s": 2.8,
+          "target_s": 3.25,
+          "target_x": 3.0,
+          "target_y": 0.25,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 2.7999999999999994,
+          "target_s": 3.2499999999999996,
+          "target_x": 3.0,
+          "target_y": 0.24999999999999956,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 4.440892098500626e-16,
+        "deltas": {
+          "projection_s": 4.440892098500626e-16,
+          "target_s": 4.440892098500626e-16,
+          "target_x": 0.0,
+          "target_y": 4.440892098500626e-16
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "E_CROSS_MULTIPLE_VERTICES",
+        "verdict": "PASS",
+        "why": "0.45 spans three 0.1 m segments and lands 0.15 into the fourth",
+        "expected": {
+          "projection_s": 0.0,
+          "target_s": 0.45,
+          "target_x": 0.45,
+          "target_y": 0.0,
+          "target_segment": 3,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 0.0,
+          "target_s": 0.45,
+          "target_x": 0.45,
+          "target_y": 0.0,
+          "target_segment": 3,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "F_RIGHT_ANGLE_CORNER",
+        "verdict": "PASS",
+        "why": "arc length turns the corner. A Euclidean chord of 0.45 m would reach (3.15, 0), which is not on the route at all",
+        "expected": {
+          "projection_s": 2.7,
+          "target_s": 3.15,
+          "target_x": 3.0,
+          "target_y": 0.15,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 2.7,
+          "target_s": 3.1500000000000004,
+          "target_x": 3.0,
+          "target_y": 0.15000000000000036,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 4.440892098500626e-16,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 4.440892098500626e-16,
+          "target_x": 0.0,
+          "target_y": 3.608224830031759e-16
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "G_MULTI_CORNER_ROUTE",
+        "verdict": "PASS",
+        "why": "cumulative length across the first corner of a three-leg route",
+        "expected": {
+          "projection_s": 0.8,
+          "target_s": 1.25,
+          "target_x": 1.0,
+          "target_y": 0.25,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 0.8,
+          "target_s": 1.25,
+          "target_x": 1.0,
+          "target_y": 0.25,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "H_OFF_ROUTE_POSE",
+        "verdict": "PASS",
+        "why": "1 m off the first leg; the clamped foot is (1, 0) at s=1, and interpolation proceeds from the projection, not the pose",
+        "expected": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "I_FINAL_SEGMENT",
+        "verdict": "PASS",
+        "why": "1.0 m of route remains, which exceeds the look-ahead",
+        "expected": {
+          "projection_s": 6.0,
+          "target_s": 6.45,
+          "target_x": 3.0,
+          "target_y": 3.45,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 6.0,
+          "target_s": 6.45,
+          "target_x": 3.0,
+          "target_y": 3.45,
+          "target_segment": 1,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "J_REMAINING_SHORTER_THAN_LOOKAHEAD",
+        "verdict": "PASS",
+        "why": "6.8 + 0.45 = 7.25 exceeds the 7 m route, so the target clamps to the final point rather than extrapolating past the goal",
+        "expected": {
+          "projection_s": 6.8,
+          "target_s": 7.0,
+          "target_x": 3.0,
+          "target_y": 4.0,
+          "target_segment": 1,
+          "clamped_at_route_end": true
+        },
+        "observed": {
+          "projection_s": 6.8,
+          "target_s": 7.0,
+          "target_x": 3.0,
+          "target_y": 4.0,
+          "target_segment": 1,
+          "clamped_at_route_end": true
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "K_EXACT_ROUTE_ENDPOINT",
+        "verdict": "PASS",
+        "why": "at the end of the route the target is the end of the route",
+        "expected": {
+          "projection_s": 7.0,
+          "target_s": 7.0,
+          "target_x": 3.0,
+          "target_y": 4.0,
+          "target_segment": 1,
+          "clamped_at_route_end": true
+        },
+        "observed": {
+          "projection_s": 7.0,
+          "target_s": 7.0,
+          "target_x": 3.0,
+          "target_y": 4.0,
+          "target_segment": 1,
+          "clamped_at_route_end": true
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "L_PROJECTION_TIE_CASE",
+        "verdict": "PASS",
+        "why": "exactly 2 m from both legs. The frozen rule resolves a tie to the earlier segment, giving s=1 rather than s=5",
+        "expected": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 1.0,
+          "target_s": 1.45,
+          "target_x": 1.45,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      },
+      {
+        "name": "M_DEGENERATE_REPEATED_VERTEX",
+        "verdict": "PASS",
+        "why": "a repeated vertex contributes a zero-length segment, which the projection skips; the arc-length coordinate is unaffected",
+        "expected": {
+          "projection_s": 0.5,
+          "target_s": 0.95,
+          "target_x": 0.95,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "observed": {
+          "projection_s": 0.5,
+          "target_s": 0.95,
+          "target_x": 0.95,
+          "target_y": 0.0,
+          "target_segment": 0,
+          "clamped_at_route_end": false
+        },
+        "max_abs_difference_m": 0.0,
+        "deltas": {
+          "projection_s": 0.0,
+          "target_s": 0.0,
+          "target_x": 0.0,
+          "target_y": 0.0
+        },
+        "segment_matches": true,
+        "clamp_matches": true,
+        "invariants": {
+          "target_s_not_behind_projection": true,
+          "target_s_within_route": true,
+          "target_s_is_min_of_sum_and_total": true,
+          "target_lies_on_declared_segment": true
+        }
+      }
+    ]
+  },
+  "refusal_controls": {
+    "verdict": "PASS",
+    "count": 9,
+    "results": {
+      "N_EMPTY_ROUTE": {
+        "REFUSED": true,
+        "reason": "route needs at least two points; got 0"
+      },
+      "N_SINGLE_POINT_ROUTE": {
+        "REFUSED": true,
+        "reason": "route needs at least two points; got 1"
+      },
+      "O_NONFINITE_POSE": {
+        "REFUSED": true,
+        "reason": "position must carry two finite coordinates"
+      },
+      "O_NONFINITE_ROUTE": {
+        "REFUSED": true,
+        "reason": "route contains a non-finite coordinate"
+      },
+      "P_MALFORMED_POINT_SHAPE": {
+        "REFUSED": true,
+        "reason": "route must be an (N, 2) array of points; got shape (3,)"
+      },
+      "P_THREE_COLUMN_ROUTE": {
+        "REFUSED": true,
+        "reason": "route must be an (N, 2) array of points; got shape (3, 3)"
+      },
+      "Q_NEGATIVE_LOOKAHEAD": {
+        "REFUSED": true,
+        "reason": "look-ahead must be finite and non-negative; got -0.45"
+      },
+      "Q_NONFINITE_LOOKAHEAD": {
+        "REFUSED": true,
+        "reason": "look-ahead must be finite and non-negative; got nan"
+      },
+      "R_ZERO_LENGTH_ROUTE": {
+        "REFUSED": true,
+        "reason": "route has no segment of non-zero length"
+      }
+    }
+  },
+  "treatment_sensitivity": {
+    "TREATMENT_IS_NOT_A_NO_OP": true,
+    "TREATMENT_AGREES_WHERE_GEOMETRY_COINCIDES": true,
+    "differs": {
+      "route": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          3.0,
+          0.0
+        ],
+        [
+          3.0,
+          4.0
+        ]
+      ],
+      "pose": [
+        1.0,
+        0.0
+      ],
+      "legacy_target": [
+        0.0,
+        0.0
+      ],
+      "treatment_target": [
+        1.45,
+        0.0
+      ],
+      "reason": "the legacy rule has not advanced past vertex 0, so it steers at the route start 1 m behind the pose. The treatment steers 0.45 m ahead along the route. This is the geometric difference the intervention exists to test",
+      "targets_differ": true
+    },
+    "agrees": {
+      "route": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          3.0,
+          0.0
+        ],
+        [
+          3.0,
+          4.0
+        ]
+      ],
+      "index": 2,
+      "cases": [
+        {
+          "pose": [
+            3.0,
+            4.0
+          ],
+          "legacy_target": [
+            3.0,
+            4.0
+          ],
+          "treatment_target": [
+            3.0,
+            4.0
+          ],
+          "agree": true
+        },
+        {
+          "pose": [
+            3.0,
+            3.9
+          ],
+          "legacy_target": [
+            3.0,
+            4.0
+          ],
+          "treatment_target": [
+            3.0,
+            4.0
+          ],
+          "agree": true
+        },
+        {
+          "pose": [
+            5.0,
+            5.0
+          ],
+          "legacy_target": [
+            3.0,
+            4.0
+          ],
+          "treatment_target": [
+            3.0,
+            4.0
+          ],
+          "agree": true
+        }
+      ],
+      "targets_agree": true,
+      "reason": "at the route end the legacy index has saturated at the final vertex and the arc-length target has clamped to the final point, so both rules name it. Agreement here shows the difference elsewhere is geometric rather than an artefact of running two code paths",
+      "why_interior_agreement_does_not_exist": "whenever the interpolated target lands on a vertex, the Euclidean distance from the pose to that vertex is at most the 0.45 m of route between them, so the legacy strict-less-than advance test passes and the control arm steps past that vertex. The two rules can therefore only coincide where the legacy index can no longer advance"
+    }
+  },
+  "negative_controls": {
+    "verdict": "PASS",
+    "results": {
+      "wrong_offset": {
+        "DETECTED": true,
+        "fixtures_rejected": [
+          "A_STRAIGHT_SEGMENT",
+          "B_EXACT_VERTEX",
+          "C_BETWEEN_VERTICES",
+          "D_CROSS_ONE_VERTEX",
+          "E_CROSS_MULTIPLE_VERTICES",
+          "F_RIGHT_ANGLE_CORNER",
+          "G_MULTI_CORNER_ROUTE",
+          "H_OFF_ROUTE_POSE",
+          "I_FINAL_SEGMENT",
+          "L_PROJECTION_TIE_CASE",
+          "M_DEGENERATE_REPEATED_VERTEX"
+        ],
+        "fixtures_total": 13,
+        "first_rejection": {
+          "fixture": "A_STRAIGHT_SEGMENT",
+          "expected_target": [
+            1.45,
+            0.0
+          ],
+          "observed_target": [
+            1.9,
+            0.0
+          ],
+          "separation_m": 0.44999999999999996,
+          "quantity": "target coordinates (and therefore target_s)"
+        }
+      },
+      "backward_interpolation": {
+        "DETECTED": true,
+        "fixtures_rejected": [
+          "A_STRAIGHT_SEGMENT",
+          "B_EXACT_VERTEX",
+          "C_BETWEEN_VERTICES",
+          "D_CROSS_ONE_VERTEX",
+          "E_CROSS_MULTIPLE_VERTICES",
+          "F_RIGHT_ANGLE_CORNER",
+          "G_MULTI_CORNER_ROUTE",
+          "H_OFF_ROUTE_POSE",
+          "I_FINAL_SEGMENT",
+          "J_REMAINING_SHORTER_THAN_LOOKAHEAD",
+          "K_EXACT_ROUTE_ENDPOINT",
+          "L_PROJECTION_TIE_CASE",
+          "M_DEGENERATE_REPEATED_VERTEX"
+        ],
+        "fixtures_total": 13,
+        "first_rejection": {
+          "fixture": "A_STRAIGHT_SEGMENT",
+          "expected_target": [
+            1.45,
+            0.0
+          ],
+          "observed_target": [
+            0.55,
+            0.0
+          ],
+          "separation_m": 0.8999999999999999,
+          "quantity": "target coordinates (and therefore target_s)"
+        }
+      },
+      "extrapolates_past_route_end": {
+        "DETECTED": true,
+        "fixtures_rejected": [
+          "J_REMAINING_SHORTER_THAN_LOOKAHEAD",
+          "K_EXACT_ROUTE_ENDPOINT"
+        ],
+        "fixtures_total": 13,
+        "first_rejection": {
+          "fixture": "J_REMAINING_SHORTER_THAN_LOOKAHEAD",
+          "expected_target": [
+            3.0,
+            4.0
+          ],
+          "observed_target": [
+            3.0,
+            4.25
+          ],
+          "separation_m": 0.25,
+          "quantity": "target coordinates (and therefore target_s)"
+        }
+      },
+      "tie_resolves_to_later_segment": {
+        "DETECTED": true,
+        "fixtures_rejected": [
+          "L_PROJECTION_TIE_CASE"
+        ],
+        "fixtures_total": 13,
+        "first_rejection": {
+          "fixture": "L_PROJECTION_TIE_CASE",
+          "expected_target": [
+            1.45,
+            0.0
+          ],
+          "observed_target": [
+            3.0,
+            2.45
+          ],
+          "separation_m": 2.899137802864845,
+          "quantity": "target coordinates (and therefore target_s)"
+        }
+      }
+    }
+  },
+  "port_fidelity": {
+    "PORT_FIDELITY": "PASS",
+    "poses_checked": 240,
+    "mismatches": 0,
+    "frozen_reference": {
+      "class": "navfm.collection.interpolated_target.InterpolatedLookaheadPursuit",
+      "source": "src/navfm/collection/interpolated_target.py",
+      "sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290"
+    },
+    "claim_boundary": "both implementations share route_projection, so this establishes that the port is faithful to the frozen subclass. It does NOT independently establish that the geometry is correct -- the hand-computed fixtures do"
+  },
+  "override_surface": {
+    "BEHAVIOURAL_OVERRIDE_SURFACE": [
+      "target"
+    ],
+    "selector_behavioural_members": [
+      "select_target"
+    ],
+    "selector_surface_is_one_method": true,
+    "selector_parameters": [
+      "path",
+      "position",
+      "index",
+      "lookahead"
+    ],
+    "forbidden_parameters_present": [],
+    "subclass_behavioural_overrides": [
+      "target"
+    ],
+    "subclass_override_is_target_only": true,
+    "why_it_is_structural": "the selector is handed a path, a position, an index and the look-ahead. It is never handed the tracker, so it has no route to the speed law, the gains, the stop branch, the goal predicate, dt or max_steps"
+  },
+  "shared_controller_laws": {
+    "SHARED_CONTROLLER_LAWS": "UNCHANGED",
+    "method": "byte comparison of each law's source against the pinned pre-seam module",
+    "members": {
+      "speed_and_angular_law_step": {
+        "pre_seam_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "current_sha256": "dbb265e42d3ca1cc275fc11ecf1bdc31503db47a406d520dce96bc2675fe5e8e",
+        "identical": true
+      },
+      "route_completion_finished": {
+        "pre_seam_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "current_sha256": "b9d34d9beef584d667ee93abd1c7b80fb4e7bea5d6296b94961d13a9570559b8",
+        "identical": true
+      },
+      "velocity_clipping_clamp": {
+        "pre_seam_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "current_sha256": "a1cf7d7bec62b8e614041f9012984250946577c891685bb638da7d8e88622ee2",
+        "identical": true
+      },
+      "se2_integration_unicycle": {
+        "pre_seam_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "current_sha256": "a96a58ba91a258a1fe29bb20ba1f9b3a438fbe204978abd67f3ce837c880dae2",
+        "identical": true
+      },
+      "se2_integration_holonomic": {
+        "pre_seam_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "current_sha256": "f2322211685b8e93e8764e462e238628ed2ee332a3b0db3251080c651a93548b",
+        "identical": true
+      },
+      "waypoint_to_twist": {
+        "pre_seam_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "current_sha256": "1f9c7b585158310bb514665571457a3c3b4afb8e37a0954d75f4ebc0936dacb8",
+        "identical": true
+      }
+    },
+    "control_py_unchanged_by_this_tranche": true,
+    "control_py_sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+    "what_this_tranche_changed": [
+      "src/navfm/target_selection.py: added ArcLengthInterpolatedTargetSelector, interpolated_selection, InterpolatedSelection and TargetSelectionRefused"
+    ],
+    "runtime_limits": {
+      "lookahead_m": 0.45,
+      "goal_tol_m": 0.2,
+      "cruise_v": 0.35,
+      "max_v": 0.45,
+      "max_w": 1.2
+    }
+  },
+  "arm_a_post_treatment_regression": {
+    "verdict": "PASS",
+    "pre_seam_reference": {
+      "commit": "437ebfc63f828fb1200df1f01df56bc339209349",
+      "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074"
+    },
+    "recorded_traces": {
+      "frozen_route_polyline": {
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "max_numerical_difference": 0.0
+      },
+      "frozen_route_resampled_0m25": {
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+        },
+        "max_numerical_difference": 0.0
+      }
+    },
+    "analytic_domain": {
+      "verdict": "PASS",
+      "comparisons": {
+        "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+        "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+        "command:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS",
+        "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+        "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+        "target:LEGACY_DIRECT_vs_LEGACY_INJECTED": "PASS"
+      }
+    }
+  },
+  "offline_command_field": {
+    "LABEL": "COMMAND_FIELD_COUNTERFACTUAL_ONLY",
+    "steps_evaluated": 1200,
+    "differing_steps": {
+      "target_coordinate": 1200,
+      "target_distance": 1200,
+      "heading_error": 1200,
+      "vx": 1187,
+      "wz": 1187
+    },
+    "descriptive": {
+      "target_separation_m": {
+        "mean": 3.685548851076258,
+        "median": 3.823692092683963,
+        "max": 7.396414391235157,
+        "min": 0.003585297444465603
+      },
+      "target_distance_difference_m": {
+        "mean": 3.1269812128242287,
+        "median": 2.867036133132334,
+        "max": 7.328840798963114,
+        "min": 0.0018253319735139772
+      },
+      "abs_heading_error_difference_rad": {
+        "mean": 0.6359453983453927,
+        "median": 0.7234524660292501,
+        "max": 1.0585782460312334,
+        "min": 0.001364279597715179
+      },
+      "abs_vx_difference_m_s": {
+        "mean": 0.14374438003758253,
+        "median": 0.14859138867193747,
+        "max": 0.29975538243293176,
+        "min": 0.0
+      },
+      "abs_wz_difference_rad_s": {
+        "mean": 0.7047961889935863,
+        "median": 1.1152422408375156,
+        "max": 1.1670381366956273,
+        "min": 0.0
+      }
+    },
+    "index_advancement_identical": true,
+    "WHAT_THIS_ANSWERS": "how the two target rules differ in the commands they would issue AT THESE RECORDED STATES, under identical frozen controller laws",
+    "WHAT_THIS_DOES_NOT_ANSWER": [
+      "what trajectory Arm B would produce",
+      "whether Arm B reaches the goal",
+      "whether cross-track error improves",
+      "whether success rate or SPL changes"
+    ],
+    "why_the_domain_is_endogenous": "these poses were produced by the control behaviour. An interpolated tracker steering differently from step one would not have visited them, so the comparison is a command field evaluated on the control arm's trajectory and never a miniature Arm B",
+    "no_threshold_is_introduced": "the 2.589 m cross-track observed in run_00001 against a 0.45 m look-ahead motivated this experiment. It is not a success threshold, not a target to beat, and not an arm result"
+  },
+  "run_00001_source": {
+    "path": "runs/bo10/hospital_bo10_run_00001/traj_data.pkl",
+    "sha256": "40b9890d96973b3b910e218cfd0e64fd5453e881822ebcce62bd7da99b30ef09",
+    "used_as": "OFFLINE_POSE_TRACE_ONLY",
+    "dynamics_replayed": false,
+    "modified": false
+  },
+  "contract_status": {
+    "V2": {
+      "CONTRACT_SATISFIED": "FAIL",
+      "drift": [
+        "scientific_code.control_sha256"
+      ]
+    },
+    "V3": {
+      "CONTRACT_SATISFIED": "FAIL",
+      "drift": [
+        "scientific_code.target_selection_sha256"
+      ]
+    }
+  },
+  "claim_boundary": "this establishes that the treatment implements the preregistered geometry over the declared analytic fixtures, that it differs from the control where the geometry says it should, that only target selection differs, and that Arm A is unchanged now that the treatment exists. It establishes nothing about what either arm would produce in the simulator; no arm has run",
+  "V4_AMENDMENT": "NOT_CREATED",
+  "EXECUTION_MANIFEST": "NOT_FROZEN",
+  "EXECUTION_MANIFEST_OWES_ARM_OUTPUT_ALLOWLIST": true,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "TREATMENT_SELECTOR": "IMPLEMENTED_AND_VALIDATED",
+  "ARC_LENGTH_TREATMENT_VALIDATION": "PASS"
+}
