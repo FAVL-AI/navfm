@@ -49,13 +49,25 @@ from typing import NamedTuple, Protocol, runtime_checkable
 import numpy as np
 
 __all__ = [
+    "SELECTOR_REGISTRY",
     "ArcLengthInterpolatedTargetSelector",
     "LegacyVertexTargetSelector",
+    "SelectorResolutionRefused",
     "TargetSelection",
     "TargetSelectionRefused",
     "TargetSelector",
     "interpolated_selection",
+    "resolve_target_selector",
 ]
+
+
+class SelectorResolutionRefused(ValueError):
+    """An arm asked for a selector this repository does not implement.
+
+    Refused by name rather than falling back to a default. A fallback would let
+    a mistyped arm declaration run the wrong behaviour under the right label,
+    which is the one error a one-factor experiment cannot survive.
+    """
 
 
 class TargetSelectionRefused(ValueError):
@@ -232,3 +244,36 @@ class ArcLengthInterpolatedTargetSelector:
         inherited = self._legacy.select_target(path, position, index, lookahead)
         selection = interpolated_selection(path, position, lookahead)
         return TargetSelection(selection.point, inherited.next_index)
+
+
+#: Selector identity -> implementation. Keyed by ``target_type`` because that is
+#: the string the manifest, the preflight and the arm evidence already use, so
+#: there is one name for an arm's behaviour rather than three that must agree.
+SELECTOR_REGISTRY: dict[str, type] = {
+    LegacyVertexTargetSelector.target_type: LegacyVertexTargetSelector,
+    ArcLengthInterpolatedTargetSelector.target_type: ArcLengthInterpolatedTargetSelector,
+}
+
+
+def resolve_target_selector(declaration: str | None) -> TargetSelector:
+    """Turn a declared selector identity into the selector itself.
+
+    ``None`` resolves to the legacy selector, which is what every pre-existing
+    collection caller has always used and must keep using: absence is the frozen
+    control behaviour, never the treatment. An *unknown* declaration is refused,
+    because a typo that silently produced legacy behaviour under a treatment
+    label would be indistinguishable from a null result.
+
+    An intervention arm must still declare its selector explicitly; that
+    requirement lives in the runner, where an arm identity exists to check it
+    against, rather than here where it would change every unrelated caller.
+    """
+    if declaration is None:
+        return LegacyVertexTargetSelector()
+    if declaration not in SELECTOR_REGISTRY:
+        raise SelectorResolutionRefused(
+            f"unknown target selector {declaration!r}; declared selectors are "
+            f"{sorted(SELECTOR_REGISTRY)}"
+        )
+    selector: TargetSelector = SELECTOR_REGISTRY[declaration]()
+    return selector

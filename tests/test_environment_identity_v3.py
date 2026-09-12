@@ -64,10 +64,14 @@ def amendment() -> dict[str, Any]:
 
 
 def test_current_tree_still_fails_against_v2() -> None:
-    """The load-bearing control. If this ever passes, V2 was rewritten."""
+    """The load-bearing control. If this ever passes, V2 was rewritten.
+
+    Membership rather than equality: later tranches legitimately move more
+    fields, so V2's drift list grows. What must never change is that V2 still
+    names the controller it froze."""
     result = check_contract(REPO, "V2")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
-    assert [d["field"] for d in result["drift"]] == ["scientific_code.control_sha256"]
+    assert "scientific_code.control_sha256" in [d["field"] for d in result["drift"]]
 
 
 def test_v3_accepted_the_tree_at_its_own_freeze_commit() -> None:
@@ -94,18 +98,18 @@ def test_current_tree_now_refuses_against_v3_because_the_treatment_landed() -> N
     was implemented in the seam module V3 pins, after V3 froze."""
     result = check_contract(REPO, "V3")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
-    assert [d["field"] for d in result["drift"]] == [
-        "scientific_code.target_selection_sha256"]
+    assert "scientific_code.target_selection_sha256" in [
+        d["field"] for d in result["drift"]]
 
 
 def test_v2_and_v3_refuse_for_different_reasons() -> None:
-    """Both refuse now, which is correct, but not for the same thing. V2 fails
-    on the controller the seam edited; V3 fails on the selector module the
-    treatment edited. Collapsing them into one verdict would lose that."""
-    v2_drift = [d["field"] for d in check_contract(REPO, "V2")["drift"]]
-    v3_drift = [d["field"] for d in check_contract(REPO, "V3")["drift"]]
-    assert v2_drift == ["scientific_code.control_sha256"]
-    assert v3_drift == ["scientific_code.target_selection_sha256"]
+    """Both refuse, which is correct, but not for the same thing. V2 names the
+    controller the seam edited; V3 does not, because V3 froze after it."""
+    v2_drift = {d["field"] for d in check_contract(REPO, "V2")["drift"]}
+    v3_drift = {d["field"] for d in check_contract(REPO, "V3")["drift"]}
+    assert "scientific_code.control_sha256" in v2_drift
+    assert "scientific_code.control_sha256" not in v3_drift
+    assert "scientific_code.target_selection_sha256" in v3_drift
     assert v2_drift != v3_drift
 
 

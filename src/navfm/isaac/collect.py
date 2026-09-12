@@ -58,6 +58,7 @@ from ..control import DemonstratorMode, PurePursuit
 from ..kinematics import arc_length
 from ..planning import OccupancyGrid, PlannerError, perturb_path, sample_episode_pair
 from ..schema import TrajectorySpec
+from ..target_selection import resolve_target_selector
 from ..writer import TrajectoryWriter
 from .app import IsaacApp, SimConfig
 from .randomize import RandomizationConfig, SceneRandomizer, apply_sensor_noise
@@ -137,6 +138,11 @@ class CollectConfig:
     stall_patience: int = 40
     seed: int = 0
     scene_name: str | None = None
+    #: Declared target-selector identity for the intervention arms. ``None`` is
+    #: the frozen legacy behaviour every existing caller has always had; an
+    #: intervention arm declares its own, and an unknown value is refused rather
+    #: than defaulted. This is the only behavioural knob the arms differ on.
+    target_selector: str | None = None
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> CollectConfig:
@@ -525,6 +531,7 @@ class Collector:
         else:
             metadata_goal = None
 
+        selector = resolve_target_selector(self.collect.target_selector)
         tracker = PurePursuit(
             path,
             lookahead=self.collect.lookahead_m,
@@ -532,6 +539,7 @@ class Collector:
             limits=self.robot_config.limits,
             mode=DemonstratorMode(self.collect.demonstrator),
             cruise_v=self.collect.cruise_v,
+            target_selector=selector,
         )
 
         metadata = {

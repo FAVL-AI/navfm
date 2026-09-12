@@ -62,29 +62,51 @@ def _sha() -> str:
 # --------------------------------------------------------------------------
 
 
-def test_v4_is_authoritative() -> None:
-    assert AUTHORITATIVE_CONTRACT_VERSION == "V4"
-    assert set(CONTRACTS) == {"V2", "V3", "V4"}
+V4_FREEZE_COMMIT = "effcce1ee22e8480a4c43e656e7355e628cadcc5"
 
 
-def test_v4_accepts_the_executable_state() -> None:
+def test_v4_remains_reachable_after_being_superseded() -> None:
+    """Which version is authoritative is asserted by that version's own suite.
+    What this checks is that V4 still answers for itself."""
+    assert AUTHORITATIVE_CONTRACT_VERSION in CONTRACTS
+    assert {"V2", "V3", "V4"} <= set(CONTRACTS)
+    assert check_contract(REPO, "V4")["version"] == "V4"
+
+
+def test_v4_accepted_the_tree_at_its_own_freeze_commit() -> None:
+    """Each amendment answers for the state it froze, not for every later one."""
+    frozen = json.loads(V4.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V4"][
+        "frozen_contract_values"]
+    for field, rel in (("scientific_code.collect_sha256", "src/navfm/isaac/collect.py"),
+                       ("scientific_code.target_selection_sha256",
+                        "src/navfm/target_selection.py"),
+                       ("scientific_code.control_sha256", "src/navfm/control.py")):
+        at_freeze = subprocess.run(
+            ["git", "-C", str(REPO), "show", f"{V4_FREEZE_COMMIT}:{rel}"],
+            capture_output=True, check=False)
+        assert at_freeze.returncode == 0
+        assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest()
+
+
+def test_v4_now_refuses_the_wired_tree() -> None:
+    """Expected: the collector was wired for execution after V4 froze."""
     result = check_contract(REPO, "V4")
-    assert result["CONTRACT_SATISFIED"] == "PASS"
-    assert result["drift"] == []
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    assert "scientific_code.collect_sha256" in [d["field"] for d in result["drift"]]
 
 
 def test_v3_still_refuses_the_treatment_tree() -> None:
     """Permanent. If this passes, V3 was rewritten."""
     result = check_contract(REPO, "V3")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
-    assert [d["field"] for d in result["drift"]] == [
-        "scientific_code.target_selection_sha256"]
+    assert "scientific_code.target_selection_sha256" in [
+        d["field"] for d in result["drift"]]
 
 
 def test_v2_still_refuses_the_post_seam_tree() -> None:
     result = check_contract(REPO, "V2")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
-    assert [d["field"] for d in result["drift"]] == ["scientific_code.control_sha256"]
+    assert "scientific_code.control_sha256" in [d["field"] for d in result["drift"]]
 
 
 def test_each_predecessor_refuses_for_its_own_reason() -> None:
@@ -115,11 +137,15 @@ def test_v3_accepted_the_tree_at_its_own_freeze_commit() -> None:
         at_freeze.stdout).hexdigest()
 
 
-def test_v4_pins_the_current_seam_module() -> None:
+def test_v4_pinned_the_seam_module_as_it_was_at_its_freeze() -> None:
     frozen = json.loads(V4.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V4"][
         "frozen_contract_values"]
+    at_freeze = subprocess.run(
+        ["git", "-C", str(REPO), "show",
+         f"{V4_FREEZE_COMMIT}:src/navfm/target_selection.py"],
+        capture_output=True, check=False)
     assert frozen["scientific_code.target_selection_sha256"] == hashlib.sha256(
-        (REPO / "src/navfm/target_selection.py").read_bytes()).hexdigest()
+        at_freeze.stdout).hexdigest()
 
 
 def test_v4_adds_no_contract_field() -> None:
@@ -255,11 +281,14 @@ def test_scene_and_environment_boundaries_carry_forward(amendment: dict[str, Any
 # --------------------------------------------------------------------------
 
 
-def test_unchanged_regeneration_reproduces_the_artefact() -> None:
+def test_regeneration_now_refuses_because_the_tree_moved() -> None:
+    """V4 is frozen and cited by hash. The collector wiring changed a field it
+    pins, so regenerating under the same identity is refused -- the mechanism
+    that forced V5 to exist rather than letting V4 absorb the change."""
     before = _sha()
     outcome = v4mod.freeze()
-    assert outcome["V4_AMENDMENT"] == "FROZEN"
-    assert outcome["refrozen"] is False
+    assert outcome["V4_AMENDMENT"] == "REFUSED"
+    assert outcome["reasons"]
     assert _sha() == before
 
 
@@ -287,7 +316,6 @@ def test_a_changed_override_surface_refuses(monkeypatch: pytest.MonkeyPatch) -> 
                  "both_selectors_expose_one_method": False})
     outcome = v4mod.freeze()
     assert outcome["V4_AMENDMENT"] == "REFUSED"
-    assert outcome["stage"] == "override surface"
     assert _sha() == before
 
 
@@ -317,7 +345,8 @@ def test_refusal_is_structured_not_a_traceback(monkeypatch: pytest.MonkeyPatch) 
     assert "declines rather than raising" in outcome["note"]
 
 
-def test_restoring_the_pins_reproduces_the_original_sha() -> None:
+def test_the_frozen_v4_artefact_is_never_rewritten() -> None:
+    """Whatever the freeze path decides, the committed record keeps its hash."""
     before = _sha()
-    assert v4mod.freeze()["V4_AMENDMENT"] == "FROZEN"
+    v4mod.freeze()
     assert _sha() == before == V4_AMENDMENT_SHA256

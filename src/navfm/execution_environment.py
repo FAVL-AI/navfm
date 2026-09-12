@@ -56,6 +56,7 @@ __all__ = [
     "OBSERVATIONAL_FIELDS",
     "PAIRWISE_CRITICAL_FIELDS",
     "V3_ADDITIONAL_CRITICAL_FIELDS",
+    "V5_ADDITIONAL_CRITICAL_FIELDS",
     "Mismatch",
     "arm_equivalence",
     "canonical_json",
@@ -128,6 +129,15 @@ V3_ADDITIONAL_CRITICAL_FIELDS: tuple[str, ...] = (
     "scientific_code.target_selection_sha256",
 )
 
+#: V5 adds the execution machinery itself. The runner and its library decide
+#: which selector an arm gets and which artefacts an arm produces, so leaving
+#: them unpinned would let the thing that performs the experiment change without
+#: the contract noticing -- the same hole the seam opened in V3, one layer up.
+V5_ADDITIONAL_CRITICAL_FIELDS: tuple[str, ...] = (
+    "scientific_code.intervention_runner_sha256",
+    "scientific_code.arm_runner_sha256",
+)
+
 #: Must match across arms; cannot be frozen ahead of the commit that carries
 #: this amendment, or ahead of the boot the arms will actually run under.
 PAIRWISE_CRITICAL_FIELDS: tuple[str, ...] = (
@@ -164,6 +174,8 @@ CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
     # already exists -- and adding a redundant one would make the contract look
     # stricter without checking anything more.
     "V4": CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS,
+    "V5": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
+           + V5_ADDITIONAL_CRITICAL_FIELDS),
 }
 
 
@@ -190,6 +202,8 @@ _SCIENTIFIC_SOURCES: dict[str, str] = {
     "planning_sha256": "src/navfm/planning.py",
     "kinematics_sha256": "src/navfm/kinematics.py",
     "target_selection_sha256": "src/navfm/target_selection.py",
+    "intervention_runner_sha256": "src/navfm/intervention_runner.py",
+    "arm_runner_sha256": "scripts/run_terminal_approach_intervention.py",
     "measurement_instrument_sha256": "scripts/diagnose_q2_margin_consumption.py",
     "preregistration_sha256": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
     "route_population_sha256": "gates/BO10/hospital_turning_route_population_20260910.json",

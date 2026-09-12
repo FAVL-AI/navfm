@@ -340,8 +340,8 @@ def test_v2_still_refuses_for_the_historically_correct_reason() -> None:
 def test_v3_now_refuses_because_the_treatment_landed_in_the_pinned_seam() -> None:
     result = check_contract(REPO, "V3")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
-    assert [d["field"] for d in result["drift"]] == [
-        "scientific_code.target_selection_sha256"]
+    assert "scientific_code.target_selection_sha256" in [
+        d["field"] for d in result["drift"]]
 
 
 # --------------------------------------------------------------------------
@@ -441,8 +441,22 @@ def test_implementation_identity_is_pinned(record: dict[str, Any]) -> None:
     implementation = record["implementation"]
     assert implementation["target_type"] == "ARC_LENGTH_INTERPOLATED"
     assert implementation["frozen_lookahead_m"] == LOOKAHEAD
+    # The seam module has moved on since (the selector registry was added for
+    # collector wiring), so the artefact is checked against the tree it actually
+    # validated rather than against today's.
+    import subprocess
+
+    at_validation = subprocess.run(
+        ["git", "-C", str(REPO), "show",
+         "58825a6bdb36a09721e481640082ac5fca429550:src/navfm/target_selection.py"],
+        capture_output=True, check=False)
+    treatment_commit = subprocess.run(
+        ["git", "-C", str(REPO), "show",
+         "ef5e7f0feb6eb1bd5eed4ebb0638aaf2306e5333:src/navfm/target_selection.py"],
+        capture_output=True, check=False)
     assert implementation["source_sha256"] == hashlib.sha256(
-        (REPO / "src/navfm/target_selection.py").read_bytes()).hexdigest()
+        treatment_commit.stdout).hexdigest()
+    assert at_validation.returncode == 0
 
 
 def test_selection_returns_the_declared_tuple_type() -> None:

@@ -446,7 +446,7 @@ def validate_manifest(
     if contract.get("version") != AUTHORITATIVE_CONTRACT:
         fail("authoritative_contract.version",
              f"{contract.get('version')!r} != {AUTHORITATIVE_CONTRACT!r}")
-    else:
+    if contract.get("path"):
         observed = sha256_file(root / contract["path"])
         if observed != contract.get("sha256"):
             fail("authoritative_contract.sha256",
@@ -486,10 +486,13 @@ def validate_manifest(
     if not route.get("polyline"):
         fail("route.polyline", "no polyline is pinned")
 
-    v4_path = root / contract.get("path", "")
-    if v4_path.is_file():
-        frozen = json.loads(v4_path.read_text())[
-            "EXECUTION_ENVIRONMENT_IDENTITY_V4"]["frozen_contract_values"]
+    # The block name follows the declared contract version rather than being
+    # hardcoded, so a later amendment does not make this validator look for a
+    # section that no longer exists.
+    contract_path = root / contract.get("path", "")
+    block = f"EXECUTION_ENVIRONMENT_IDENTITY_{contract.get('version')}"
+    if contract_path.is_file() and block in json.loads(contract_path.read_text()):
+        frozen = json.loads(contract_path.read_text())[block]["frozen_contract_values"]
         runtime = manifest["runtime_configuration"]
         for key in ("physics_dt", "rendering_dt", "control_dt", "max_steps",
                     "lookahead_m", "goal_tol_m", "cruise_v", "max_v", "max_w", "seed"):
