@@ -111,7 +111,7 @@ V4_AMENDMENT_SHA256 = "226a3b20cab9b02ca5e71c01ddb24f0aa7b1ca1e03b72bc2e4d45a1ad
 V5_AMENDMENT_REL = "gates/BO10/environment_identity_v5_20260912.json"
 V5_AMENDMENT_SHA256 = "b4d53a7f5734c87bac5279173aba085513ecece822a058438aafa8ff659108bc"
 V6_AMENDMENT_REL = "gates/BO10/environment_identity_v6_20260912.json"
-V6_AMENDMENT_SHA256 = "2ada66ffdeb1ad5056b17cd33227d7b457af684e774c9e458f6ebf88ac55b40e"
+V6_AMENDMENT_SHA256 = "b17d3c9372034efc4fdda0953fc726ef93673b8bab0cc99ed4736ae0331358fb"
 PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
 
 #: Which amendment authorises a future arm. Named, never inferred: a barrier

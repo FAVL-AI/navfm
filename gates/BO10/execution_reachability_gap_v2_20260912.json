@@ -1,0 +1,66 @@
+{
+  "check": "EXECUTION_REACHABILITY_GAP_V2",
+  "artifact_semantics": "GOVERNANCE_RECORD_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-16T19:17:37.551093+00:00",
+  "classification": "EXECUTION_REACHABILITY_GAP_V2",
+  "observed": {
+    "runner_resolves": true,
+    "arm_identities_resolve": true,
+    "selector_propagation_resolves": true,
+    "collector_class_resolves": true,
+    "declared_output_producers_resolve_to_callables": true,
+    "but_the_authorised_entry_point_had_no_lifecycle": "nothing constructed the collector, executed the episode, or invoked any producer. Each producer's only reference in the source tree was its own def line"
+  },
+  "readiness_hierarchy": [
+    "COMPONENT_RESOLUTION does not imply ENTRYPOINT_REACHABILITY",
+    "ENTRYPOINT_REACHABILITY does not imply LIFECYCLE_INVOCATION",
+    "LIFECYCLE_INVOCATION does not imply RUNTIME_EXECUTION"
+  ],
+  "attempted_arm_a_authorisation": "AUTHORISED_BUT_NOT_STARTED",
+  "explicitly_not": "ARM_A_FAILED",
+  "evidence": {
+    "pre_arm_a_created": false,
+    "post_arm_a_created": false,
+    "isaac_started": false,
+    "hospital_loaded": false,
+    "collector_executed": false,
+    "trajectory_produced": false,
+    "structured_refusal_exit_code": 2,
+    "traceback": false,
+    "partial_scientific_artefacts": false
+  },
+  "manifest_v2_limitation": "EXECUTION_MANIFEST_V2 demonstrated component resolution, selector dispatch resolution and producer name/callable coverage. It did NOT establish lifecycle reachability from the authorised runner. It is kept as history and not overwritten",
+  "v5_and_manifest_v2_preserved": true,
+  "EVIDENCE_PROVENANCE_FINDING": {
+    "CHECKED": true,
+    "artefact": "gates/BO10/collector_wiring_regression_20260912.json",
+    "as_committed_at": "c542e216653f2a711dacce9ae0f50f782d2e356b",
+    "claimed_repository_head": "effcce1ee22e8480a4c43e656e7355e628cadcc5",
+    "sources": [
+      {
+        "path": "src/navfm/isaac/collect.py",
+        "recorded_sha256": "430a57f8f2f46c5f0ded2e537c2179e4220c709eead6feb534e2d8e28dc4911e",
+        "sha256_at_claimed_head": "5c5694dc178eef47f4e5593673270bb1ffb327997e4ea648914658355b4811c5",
+        "matches_claimed_head": false,
+        "exists_at_any_commit": null
+      },
+      {
+        "path": "src/navfm/target_selection.py",
+        "recorded_sha256": "536dbd1d3204d52d9788a0f054469e78b480c13407c24f6e452da0b3d794e95c",
+        "sha256_at_claimed_head": "4678e5ebe9c7fa3771a71ac0f8944a9f92e72fb18891ce3100f29a77f2dcee58",
+        "matches_claimed_head": false,
+        "exists_at_any_commit": null
+      }
+    ],
+    "REPRODUCIBLE_FROM_A_COMMIT": false,
+    "finding": "the artefact V5 binds for ARM_A_COLLECTOR_WIRING_REGRESSION records source identities that exist at no commit in this history, under a repository_head that does not contain them. It was measured against an uncommitted working tree. V5's own pins are internally consistent with its freeze commit, so the contract and the evidence it cites describe different trees",
+    "defect_class": "EVIDENCE_MEASURED_AGAINST_AN_UNCOMMITTED_TREE",
+    "repair": "the regression was re-measured against the committed tree and the re-measurement records identities that do match its head. The original is left byte-unchanged as history",
+    "NOT_A_SCIENTIFIC_RESULT_CHANGE": "this concerns whether the measurement can be reproduced, not whether Arm A's controller behaviour changed. The re-measurement returns the same verdict: 1200 steps, zero mismatches"
+  },
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}
