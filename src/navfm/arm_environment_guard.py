@@ -80,6 +80,8 @@ __all__ = [
     "V4_AMENDMENT_SHA256",
     "V5_AMENDMENT_REL",
     "V5_AMENDMENT_SHA256",
+    "V6_AMENDMENT_REL",
+    "V6_AMENDMENT_SHA256",
     "arm_environment_equivalence",
     "canonical_preflight",
     "capture_arm_environment",
@@ -108,12 +110,14 @@ V4_AMENDMENT_REL = "gates/BO10/environment_identity_v4_20260912.json"
 V4_AMENDMENT_SHA256 = "226a3b20cab9b02ca5e71c01ddb24f0aa7b1ca1e03b72bc2e4d45a1adb46aa93"
 V5_AMENDMENT_REL = "gates/BO10/environment_identity_v5_20260912.json"
 V5_AMENDMENT_SHA256 = "b4d53a7f5734c87bac5279173aba085513ecece822a058438aafa8ff659108bc"
+V6_AMENDMENT_REL = "gates/BO10/environment_identity_v6_20260912.json"
+V6_AMENDMENT_SHA256 = "2ada66ffdeb1ad5056b17cd33227d7b457af684e774c9e458f6ebf88ac55b40e"
 PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
 
 #: Which amendment authorises a future arm. Named, never inferred: a barrier
 #: that tried V3 and fell back to V2 would silently accept a tree that the
 #: authoritative contract rejects, which is the opposite of what a contract is.
-AUTHORITATIVE_CONTRACT_VERSION = "V5"
+AUTHORITATIVE_CONTRACT_VERSION = "V6"
 
 #: Every amendment stays checkable, and each answers for the state it froze.
 #: The invariants that matter are historical: V2 accepts its freeze state and
@@ -126,6 +130,7 @@ CONTRACTS: dict[str, tuple[str, str, str]] = {
     "V3": (V3_AMENDMENT_REL, V3_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V3"),
     "V4": (V4_AMENDMENT_REL, V4_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V4"),
     "V5": (V5_AMENDMENT_REL, V5_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V5"),
+    "V6": (V6_AMENDMENT_REL, V6_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V6"),
 }
 
 NVIDIA_HOLD_LIST = "~/navfm-nvidia-580-held-20260911.txt"

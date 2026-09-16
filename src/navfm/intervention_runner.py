@@ -390,6 +390,28 @@ def executability(
     }
 
 
+def _v2_validator() -> Any:
+    from navfm.execution_manifest_v2 import validate_manifest_v2
+
+    return validate_manifest_v2
+
+
+def _v3_validator() -> Any:
+    from navfm.execution_manifest_v2 import validate_manifest_v3
+
+    return validate_manifest_v3
+
+
+#: Every manifest version this runner will check, and the validator that knows
+#: its rules. A version absent from this table is refused by name. Falling back
+#: to the oldest validator is how a stricter manifest gets reported as invalid.
+_MANIFEST_VALIDATORS: dict[str, Any] = {
+    "EXECUTION_MANIFEST_V1": lambda: validate_manifest,
+    "EXECUTION_MANIFEST_V2": _v2_validator,
+    "EXECUTION_MANIFEST_V3": _v3_validator,
+}
+
+
 def validate_only(
     manifest_path: Path | str, arm: str, repo_root: Path | str
 ) -> dict[str, Any]:
@@ -409,16 +431,22 @@ def validate_only(
         return {"VALIDATE_ONLY": "REFUSED", "arm": arm,
                 "reason": f"the manifest does not parse: {exc}"[:200]}
 
-    # Validate a manifest against its own declared version. A V2 manifest checked
-    # by the V1 validator fails on the version field alone, which would report a
-    # newer, stricter manifest as invalid. Imported here rather than at module
-    # scope because execution_manifest_v2 imports this module.
-    if manifest.get("manifest_version") == "EXECUTION_MANIFEST_V2":
-        from navfm.execution_manifest_v2 import validate_manifest_v2
-
-        validation = validate_manifest_v2(manifest, root)
+    # Validate a manifest against its own declared version. A manifest checked by
+    # an older validator fails on the version field alone, which reports a newer,
+    # stricter manifest as invalid -- so the dispatch is a table rather than a
+    # chain of branches: an unmapped version must be refused by name, not fall
+    # through to the oldest validator that happens to be last. Imported here
+    # rather than at module scope because execution_manifest_v2 imports this
+    # module.
+    declared = manifest.get("manifest_version")
+    if declared in _MANIFEST_VALIDATORS:
+        validation = _MANIFEST_VALIDATORS[declared]()(manifest, root)
     else:
-        validation = validate_manifest(manifest, root)
+        return {"VALIDATE_ONLY": "REFUSED", "arm": arm,
+                "reason": f"no validator is registered for manifest version "
+                          f"{declared!r}; refusing rather than checking it with "
+                          f"an older validator",
+                "known_versions": sorted(_MANIFEST_VALIDATORS)}
     if validation["MANIFEST_VALID"] != "PASS":
         return {"VALIDATE_ONLY": "REFUSED", "arm": arm,
                 "reason": "the manifest did not validate against this repository",

@@ -68,6 +68,8 @@ PREFLIGHT_CURRENCY_FIELDS: tuple[str, ...] = (
     "collect_sha256",
     "control_sha256",
     "target_selection_sha256",
+    "intervention_runner_sha256",
+    "arm_lifecycle_sha256",
 )
 
 _SOURCES: dict[str, str] = {
@@ -75,6 +77,8 @@ _SOURCES: dict[str, str] = {
     "collect_sha256": "src/navfm/isaac/collect.py",
     "control_sha256": "src/navfm/control.py",
     "target_selection_sha256": "src/navfm/target_selection.py",
+    "intervention_runner_sha256": "src/navfm/intervention_runner.py",
+    "arm_lifecycle_sha256": "src/navfm/arm_lifecycle.py",
 }
 
 
@@ -307,22 +311,29 @@ def freeze_manifest_v2(
 
 def generate_live_preflight(
     path: Path | str, repo_root: Path | str, *, manifest_path: Path | str,
+    contract_rel: str = V5_REL, check_name: str = "LIVE_EXECUTION_PREFLIGHT_V2",
 ) -> dict[str, Any]:
-    """Runtime preflight, generated after the final commit, binding this tree."""
+    """Runtime preflight, generated after the final commit, binding this tree.
+
+    ``contract_rel`` is the contract the preflight binds. It is a parameter and
+    not a constant because a preflight that silently bound a superseded contract
+    would report PASS for the wrong agreement.
+    """
     root = Path(repo_root)
     manifest_file = Path(manifest_path)
     manifest = json.loads(manifest_file.read_text())
     bound = {
         "repository_head": _git(root, "rev-parse", "HEAD"),
-        "authoritative_contract_sha256": sha256_file(root / V5_REL),
+        "authoritative_contract_sha256": sha256_file(root / contract_rel),
         "manifest_sha256": sha256_file(manifest_file),
     }
     for key, rel in _SOURCES.items():
         bound[key] = sha256_file(root / rel)
 
     record = {
-        "check": "LIVE_EXECUTION_PREFLIGHT_V2",
+        "check": check_name,
         "artifact_semantics": "RUNTIME_PREFLIGHT_NO_ARM_HAS_RUN",
+        "authoritative_contract_path": contract_rel,
         "author": "Frank Asante Van Laarhoven",
         "generated_at_utc": _dt.datetime.now(_dt.UTC).isoformat(),
         "bound": bound,
@@ -348,7 +359,7 @@ def generate_live_preflight(
 
 def preflight_currency(
     preflight: Mapping[str, Any], repo_root: Path | str, *,
-    manifest_path: Path | str,
+    manifest_path: Path | str, contract_rel: str = V5_REL,
 ) -> dict[str, Any]:
     """Does this preflight describe THIS tree, or an older one?"""
     root = Path(repo_root)
@@ -360,7 +371,7 @@ def preflight_currency(
 
     expected = {
         "repository_head": _git(root, "rev-parse", "HEAD"),
-        "authoritative_contract_sha256": sha256_file(root / V5_REL),
+        "authoritative_contract_sha256": sha256_file(root / contract_rel),
         "manifest_sha256": sha256_file(manifest_file),
     }
     for key, rel in _SOURCES.items():
@@ -379,4 +390,286 @@ def preflight_currency(
             "a preflight binding an older value is stale, not passing. It is a true "
             "statement about a repository that no longer exists"
         ),
+    }
+
+
+# --- EXECUTION_MANIFEST_V3 ---------------------------------------------------
+#
+# V2 established component resolution and producer name coverage, and froze a
+# manifest that could not be run. V3 adds the layer that was missing: the
+# lifecycle is traversed, in order, by the same orchestration a real run uses,
+# and every required producer is observed being invoked. V1 and V2 are kept.
+
+MANIFEST_V3_VERSION = "EXECUTION_MANIFEST_V3"
+AUTHORITATIVE_CONTRACT_V3 = "V6"
+V6_REL = "gates/BO10/environment_identity_v6_20260912.json"
+
+
+def _lifecycle_readiness(
+    repo_root: Path, candidate: Mapping[str, Any] | None = None
+) -> dict[str, Any]:
+    """Levels 1-3, measured now rather than asserted.
+
+    ``candidate`` is the manifest about to be frozen. It is rehearsed directly,
+    because readiness measured against a synthetic probe is a fact about the
+    probe: the first version of this rehearsed a V2 stand-in and recorded
+    arm_a_rehearsal=True onto a V3 manifest the lifecycle then refused.
+    """
+    import tempfile
+
+    from navfm.arm_lifecycle import (
+        PRODUCER_BINDINGS,
+        RehearsalRuntimeAdapter,
+        entrypoint_reachability,
+        execute_arm,
+    )
+
+    structural = entrypoint_reachability()
+    rehearsals: dict[str, Any] = {}
+    with tempfile.TemporaryDirectory(prefix="manifest_v3_") as raw:
+        tmp = Path(raw)
+        probe = tmp / "manifest_probe.json"
+        if candidate is not None:
+            probe.write_text(json.dumps(candidate, indent=2))
+        else:
+            probe.write_text(json.dumps(build_manifest_v2(
+                repo_root, head=_git(repo_root, "rev-parse", "HEAD"),
+                frozen_at_utc="1970-01-01T00:00:00+00:00",
+                manifest_path=str(probe)), indent=2))
+        for arm in ARM_ORDER:
+            outcome = execute_arm(
+                probe, arm, repo_root, runtime=RehearsalRuntimeAdapter(),
+                mode="REHEARSAL", output_root=tmp / arm.lower())
+            rehearsals[arm] = {
+                "status": outcome.status,
+                "lifecycle": outcome.lifecycle["LIFECYCLE"],
+                "invocation_counts": outcome.lifecycle["invocation_counts"],
+                "stages_entered": outcome.lifecycle["stages_entered"],
+                "selector": outcome.outputs.get("collect_config", {}).get(
+                    "target_selector"),
+            }
+    required = [b for b in PRODUCER_BINDINGS if b.required and b.arm_scoped]
+    order_ok = all(r["lifecycle"] == "PASS" for r in rehearsals.values())
+    multiplicity_ok = all(
+        all(count == 1 for count in r["invocation_counts"].values())
+        for r in rehearsals.values())
+    coverage_ok = all(
+        set(r["invocation_counts"]) >= {b.output_id for b in required}
+        for r in rehearsals.values())
+    return {
+        "structural": structural,
+        "rehearsals": rehearsals,
+        "entrypoint_reachability": structural["ENTRYPOINT_REACHABILITY"] == "PASS",
+        "arm_a_rehearsal": rehearsals["ARM_A_CONTROL"]["status"] == "VALID",
+        "arm_b_rehearsal": rehearsals["ARM_B_TREATMENT"]["status"] == "VALID",
+        "producer_reachability": coverage_ok,
+        "lifecycle_order_validation": order_ok,
+        "multiplicity_validation": multiplicity_ok,
+    }
+
+
+def build_manifest_v3(
+    repo_root: Path | str, *, head: str, frozen_at_utc: str, manifest_path: str,
+) -> dict[str, Any]:
+    """V2's declarations plus measured lifecycle readiness."""
+    from navfm.arm_lifecycle import LIFECYCLE_STAGES, PRODUCER_BINDINGS
+    from navfm.intervention_runner import RUNNER_ENTRY_POINT
+
+    root = Path(repo_root)
+    base = build_manifest_v2(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=manifest_path)
+    base["manifest_version"] = MANIFEST_V3_VERSION
+    base["supersedes"] = {
+        "versions": ["EXECUTION_MANIFEST_V1", "EXECUTION_MANIFEST_V2"],
+        "not_overwritten": True,
+        "v1_limitation": "declared outputs without establishing that code produced them",
+        "v2_limitation": (
+            "established component resolution and producer name coverage, and did not "
+            "establish that the authorised entry point reaches or invokes them"),
+    }
+    base["authoritative_contract"] = {
+        "version": AUTHORITATIVE_CONTRACT_V3,
+        "path": V6_REL,
+        "sha256": sha256_file(root / V6_REL),
+        "no_automatic_fallback": (
+            "execution requires V6. Older contracts remain checkable against the state "
+            "they froze and are never substituted for V6"),
+    }
+    base["lifecycle"] = {
+        "stages": [s.value for s in LIFECYCLE_STAGES],
+        "orchestration": "navfm.arm_lifecycle:execute_arm",
+        "plan_table": "navfm.arm_lifecycle:ARM_PLAN",
+        "real_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+        "rehearsal_adapter": "navfm.arm_lifecycle:RehearsalRuntimeAdapter",
+        "one_orchestration_for_both_modes": True,
+        "producer_lifecycle_map": [
+            {"output_id": b.output_id, "arm_scoped": b.arm_scoped,
+             "lifecycle_stage": b.stage.value, "producer": b.producer,
+             "required": b.required, "multiplicity": b.multiplicity,
+             "invocation_precondition": b.invocation_precondition}
+            for b in PRODUCER_BINDINGS],
+    }
+    base["authorised_invocation"] = {
+        "arm_a": f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                 "--arm ARM_A_CONTROL",
+        "arm_b": f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                 "--arm ARM_B_TREATMENT",
+        "rehearsal_arm_a": f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                           "--arm ARM_A_CONTROL --rehearse",
+        "rehearsal_arm_b": f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                           "--arm ARM_B_TREATMENT --rehearse",
+        "validate_only_suffix": "--validate-only",
+        "no_other_invocation_is_authorised": (
+            "scientific values come from this manifest and are refused on the command "
+            "line, so there is no ad-hoc invocation to construct later"),
+    }
+    # The candidate is rehearsed as it will be frozen, minus the executability
+    # block the rehearsal produces. A manifest whose readiness facts describe a
+    # different document is the defect this ordering exists to prevent.
+    readiness = _lifecycle_readiness(root, candidate=base)
+    base["executability"] = {
+        **base["executability"],
+        "component_resolution": True,
+        "entrypoint_reachability": readiness["entrypoint_reachability"],
+        "arm_a_rehearsal": readiness["arm_a_rehearsal"],
+        "arm_b_rehearsal": readiness["arm_b_rehearsal"],
+        "producer_reachability": readiness["producer_reachability"],
+        "lifecycle_order_validation": readiness["lifecycle_order_validation"],
+        "multiplicity_validation": readiness["multiplicity_validation"],
+        "arm_a_selector": "PATH_VERTEX",
+        "arm_b_selector": "ARC_LENGTH_INTERPOLATED",
+        "behavioural_overrides": ["target"],
+        "arm_lifecycle_sha256": sha256_file(root / "src/navfm/arm_lifecycle.py"),
+        "rehearsal_traces": readiness["rehearsals"],
+        "claim_boundary": (
+            "component resolution, entry-point reachability and a non-Isaac lifecycle "
+            "rehearsal are established. Isaac runtime success is NOT established and "
+            "cannot be by any of them"),
+    }
+    return base
+
+
+def validate_manifest_v3(
+    manifest: Mapping[str, Any], repo_root: Path | str, *,
+    expected_head: str | None = None, require_executability: bool = True,
+) -> dict[str, Any]:
+    """V2's checks, plus every lifecycle readiness fact.
+
+    ``require_executability`` is False only for the lifecycle itself. The
+    rehearsal is what establishes those facts, so demanding that the manifest
+    already assert them would make execution depend on its own result: the
+    manifest could never be rehearsed into validity. Every consumer of a frozen
+    manifest -- the freeze, the runner, the preflight -- leaves it True, so the
+    frozen document is still held to the full contract.
+    """
+    root = Path(repo_root)
+    base = validate_manifest_v2(manifest, root, expected_head=expected_head)
+    failures = [f for f in base["failures"]
+                if f["field"] not in {"manifest_version",
+                                      "authoritative_contract.version"}]
+
+    def fail(field: str, detail: str) -> None:
+        failures.append({"field": field, "detail": detail})
+
+    if manifest.get("manifest_version") != MANIFEST_V3_VERSION:
+        fail("manifest_version",
+             f"{manifest.get('manifest_version')!r} != {MANIFEST_V3_VERSION!r}")
+    if manifest.get("authoritative_contract", {}).get("version") != AUTHORITATIVE_CONTRACT_V3:
+        fail("authoritative_contract.version",
+             f"{manifest.get('authoritative_contract', {}).get('version')!r} != "
+             f"{AUTHORITATIVE_CONTRACT_V3!r}")
+
+    readiness = manifest.get("executability", {})
+    if require_executability:
+        for key in ("component_resolution", "entrypoint_reachability",
+                    "arm_a_rehearsal", "arm_b_rehearsal", "producer_reachability",
+                    "lifecycle_order_validation", "multiplicity_validation"):
+            if readiness.get(key) is not True:
+                fail(f"executability.{key}", f"{readiness.get(key)!r} is not True")
+    if require_executability and readiness.get("arm_a_selector") != "PATH_VERTEX":
+        fail("executability.arm_a_selector", f"{readiness.get('arm_a_selector')!r}")
+    if require_executability and readiness.get(
+            "arm_b_selector") != "ARC_LENGTH_INTERPOLATED":
+        fail("executability.arm_b_selector", f"{readiness.get('arm_b_selector')!r}")
+    if require_executability and readiness.get("behavioural_overrides") != ["target"]:
+        fail("executability.behavioural_overrides",
+             f"{readiness.get('behavioural_overrides')!r} != ['target']")
+    declared_lifecycle = readiness.get("arm_lifecycle_sha256")
+    actual_lifecycle = sha256_file(root / "src/navfm/arm_lifecycle.py")
+    if require_executability and declared_lifecycle != actual_lifecycle:
+        fail("executability.arm_lifecycle_sha256",
+             f"manifest says {str(declared_lifecycle)[:16]}..., file is "
+             f"{str(actual_lifecycle)[:16]}...")
+
+    lifecycle = manifest.get("lifecycle")
+    if not isinstance(lifecycle, Mapping) or not lifecycle.get("producer_lifecycle_map"):
+        fail("lifecycle", "no producer/lifecycle map is declared")
+    elif not lifecycle.get("one_orchestration_for_both_modes"):
+        fail("lifecycle.one_orchestration_for_both_modes",
+             "rehearsal must walk the same orchestration as real execution")
+    if not manifest.get("authorised_invocation", {}).get("rehearsal_arm_a"):
+        fail("authorised_invocation.rehearsal_arm_a", "no rehearsal invocation recorded")
+
+    return {
+        "MANIFEST_VALID": "PASS" if not failures else "FAIL",
+        "failures": failures,
+        "checked_head": base.get("checked_head"),
+        "manifest_digest": manifest_digest(manifest),
+    }
+
+
+def freeze_manifest_v3(
+    path: Path | str, repo_root: Path | str, *, head: str, frozen_at_utc: str,
+) -> dict[str, Any]:
+    """Write V3 once. Refuses unless the lifecycle demonstrably executes."""
+    target = Path(path)
+    root = Path(repo_root)
+    try:
+        relative = str(target.relative_to(root))
+    except ValueError:
+        relative = str(target)
+
+    candidate = build_manifest_v3(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=relative)
+    readiness = candidate["executability"]
+    unmet = [k for k, v in readiness.items() if isinstance(v, bool) and not v]
+    if unmet:
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the lifecycle is not demonstrably executable",
+                "unmet_executability_facts": unmet}
+
+    if target.is_file():
+        try:
+            prior = json.loads(target.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": f"the existing manifest does not parse: {exc!r}"[:200]}
+        candidate = build_manifest_v3(
+            root, head=head, manifest_path=relative,
+            frozen_at_utc=str(prior.get("frozen_at_utc", frozen_at_utc)))
+        if manifest_digest(candidate) != manifest_digest(prior):
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": ("a frozen V3 manifest already exists and the canonical "
+                               "payload differs. Freeze a versioned replacement rather "
+                               "than overwriting it")}
+        first = False
+    else:
+        first = True
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(candidate, indent=2) + "\n")
+    back = json.loads(target.read_text())
+    validation = validate_manifest_v3(back, root, expected_head=head)
+    if validation["MANIFEST_VALID"] != "PASS":
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the written manifest did not validate",
+                "validation": validation}
+    return {
+        "EXECUTION_MANIFEST": "FROZEN", "path": str(target),
+        "sha256": sha256_file(target), "manifest_digest": manifest_digest(back),
+        "bound_head": back["repository"]["head"],
+        "frozen_at_utc": back["frozen_at_utc"], "first_freeze": first,
+        "validation": validation,
+        "rehearsal": {a: r["status"] for a, r in
+                      back["executability"]["rehearsal_traces"].items()},
     }

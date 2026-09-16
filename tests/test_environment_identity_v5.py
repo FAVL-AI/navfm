@@ -83,16 +83,47 @@ def manifest(tmp_path: Path) -> dict[str, Any]:
 # --------------------------------------------------------------------------
 
 
-def test_v5_is_authoritative() -> None:
-    assert AUTHORITATIVE_CONTRACT_VERSION == "V5"
-    assert set(CONTRACTS) == {"V2", "V3", "V4", "V5"}
+def test_v5_remains_reachable_after_being_superseded() -> None:
+    """Which version is authoritative is asserted by that version's own suite.
+    What this checks is that V5 still answers for itself."""
+    assert AUTHORITATIVE_CONTRACT_VERSION in CONTRACTS
+    assert {"V2", "V3", "V4", "V5"} <= set(CONTRACTS)
+    assert check_contract(REPO, "V5")["version"] == "V5"
 
 
-def test_v5_accepts_the_executable_state() -> None:
+V5_FREEZE_COMMIT = "c542e216653f2a711dacce9ae0f50f782d2e356b"
+
+
+def test_v5_accepted_the_tree_at_its_own_freeze_commit() -> None:
+    """Each amendment answers for the state it froze, not for every later one.
+
+    Asserting that V5 accepts *the current tree* would have made this control
+    mean something different every time the tree moved -- and it would go green
+    again only by V5 being rewritten. Pinned to its own commit, the claim stays
+    true permanently.
+    """
+    frozen = json.loads(V5.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V5"][
+        "frozen_contract_values"]
+    for field, rel in (
+            ("scientific_code.arm_runner_sha256",
+             "scripts/run_terminal_approach_intervention.py"),
+            ("scientific_code.collect_sha256", "src/navfm/isaac/collect.py"),
+            ("scientific_code.control_sha256", "src/navfm/control.py")):
+        at_freeze = subprocess.run(
+            ["git", "-C", str(REPO), "show", f"{V5_FREEZE_COMMIT}:{rel}"],
+            capture_output=True, check=False)
+        assert at_freeze.returncode == 0, rel
+        assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest(), field
+
+
+def test_v5_now_refuses_the_lifecycle_tree() -> None:
+    """Expected: the arm execution body was added after V5 froze.
+
+    Permanent historical control. If this ever passes, V5 was rewritten.
+    """
     result = check_contract(REPO, "V5")
-    assert result["CONTRACT_SATISFIED"] == "PASS"
-    assert result["drift"] == []
-    assert result["fields_compared"] == 48
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    assert "scientific_code.arm_runner_sha256" in [d["field"] for d in result["drift"]]
 
 
 @pytest.mark.parametrize("version", ["V2", "V3", "V4"])
@@ -166,8 +197,15 @@ def test_the_controller_did_not_change_in_this_tranche(amendment: dict[str, Any]
 def test_wiring_regression_is_bound_with_its_counts(amendment: dict[str, Any]) -> None:
     regression = amendment["ARM_A_COLLECTOR_WIRING_REGRESSION"]
     assert regression["verdict"] == "PASS"
+    # Bound to the artefact as it stood at V5's freeze, not as it stands now:
+    # the regression has since been re-measured against the committed tree,
+    # which is a different -- and reproducible -- measurement.
+    at_freeze = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{V5_FREEZE_COMMIT}:{WIRING_REL}"],
+        capture_output=True, check=False)
+    assert at_freeze.returncode == 0
     assert regression["artefact"]["sha256"] == hashlib.sha256(
-        (REPO / WIRING_REL).read_bytes()).hexdigest()
+        at_freeze.stdout).hexdigest()
     for trace in regression["traces"].values():
         assert trace["steps_evaluated"] == 1200
         assert sum(trace["mismatches_by_channel"].values()) == 0
@@ -217,11 +255,12 @@ def test_no_arm_ran(amendment: dict[str, Any]) -> None:
 # --------------------------------------------------------------------------
 
 
-def test_unchanged_regeneration_reproduces_the_artefact() -> None:
+def test_v5_refuses_to_refreeze_on_a_tree_it_no_longer_describes() -> None:
+    """A superseded amendment must not quietly re-freeze itself onto a later
+    tree. It refuses, and -- the part that matters -- it writes nothing."""
     before = _sha()
     outcome = v5mod.freeze()
-    assert outcome["V5_AMENDMENT"] == "FROZEN"
-    assert outcome["refrozen"] is False
+    assert outcome["V5_AMENDMENT"] == "REFUSED"
     assert _sha() == before
 
 
@@ -257,10 +296,11 @@ def test_refusal_is_structured(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "declines rather than raising" in outcome["note"]
 
 
-def test_restoring_the_pins_reproduces_the_sha() -> None:
-    before = _sha()
-    assert v5mod.freeze()["V5_AMENDMENT"] == "FROZEN"
-    assert _sha() == before == V5_AMENDMENT_SHA256
+def test_the_v5_artefact_is_byte_unchanged_by_any_of_this() -> None:
+    """The whole point of an append-only chain: V5's bytes never move."""
+    assert _sha() == V5_AMENDMENT_SHA256
+    assert hashlib.sha256(
+        (REPO / V5_AMENDMENT_REL).read_bytes()).hexdigest() == V5_AMENDMENT_SHA256
 
 
 # --------------------------------------------------------------------------

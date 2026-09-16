@@ -57,6 +57,7 @@ __all__ = [
     "PAIRWISE_CRITICAL_FIELDS",
     "V3_ADDITIONAL_CRITICAL_FIELDS",
     "V5_ADDITIONAL_CRITICAL_FIELDS",
+    "V6_ADDITIONAL_CRITICAL_FIELDS",
     "Mismatch",
     "arm_equivalence",
     "canonical_json",
@@ -138,6 +139,14 @@ V5_ADDITIONAL_CRITICAL_FIELDS: tuple[str, ...] = (
     "scientific_code.arm_runner_sha256",
 )
 
+#: V6 adds the orchestration itself. The plan table decides which producers an
+#: arm invokes and in what order, so a change to it changes what an arm does
+#: even when every other pinned file is identical. That is precisely the layer
+#: whose absence made two authorisations fail.
+V6_ADDITIONAL_CRITICAL_FIELDS: tuple[str, ...] = (
+    "scientific_code.arm_lifecycle_sha256",
+)
+
 #: Must match across arms; cannot be frozen ahead of the commit that carries
 #: this amendment, or ahead of the boot the arms will actually run under.
 PAIRWISE_CRITICAL_FIELDS: tuple[str, ...] = (
@@ -176,6 +185,8 @@ CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
     "V4": CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS,
     "V5": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
            + V5_ADDITIONAL_CRITICAL_FIELDS),
+    "V6": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
+           + V5_ADDITIONAL_CRITICAL_FIELDS + V6_ADDITIONAL_CRITICAL_FIELDS),
 }
 
 
@@ -204,6 +215,7 @@ _SCIENTIFIC_SOURCES: dict[str, str] = {
     "target_selection_sha256": "src/navfm/target_selection.py",
     "intervention_runner_sha256": "src/navfm/intervention_runner.py",
     "arm_runner_sha256": "scripts/run_terminal_approach_intervention.py",
+    "arm_lifecycle_sha256": "src/navfm/arm_lifecycle.py",
     "measurement_instrument_sha256": "scripts/diagnose_q2_margin_consumption.py",
     "preregistration_sha256": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
     "route_population_sha256": "gates/BO10/hospital_turning_route_population_20260910.json",

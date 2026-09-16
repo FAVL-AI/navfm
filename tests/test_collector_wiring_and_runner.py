@@ -409,3 +409,45 @@ def test_the_cli_validate_only_succeeds(
 def test_the_cli_rejects_an_unknown_arm_choice(manifest_file: Path) -> None:
     with pytest.raises(SystemExit):
         cli.main(["--manifest", str(manifest_file), "--arm", "ARM_C", "--validate-only"])
+
+
+# --------------------------------------------------------------------------
+# manifest version dispatch
+#
+# A manifest checked by an older validator fails on its version field alone,
+# which reports a newer and stricter manifest as invalid. That happened to V2
+# once and was fixed with a branch; the branch then did the same thing to V3,
+# because "everything else" still meant the V1 validator. The dispatch is a
+# table so that an unmapped version is refused by name instead of quietly
+# falling through to the oldest checker in the chain.
+# --------------------------------------------------------------------------
+
+
+def test_every_shipped_manifest_version_has_a_validator() -> None:
+    from navfm.execution_manifest import MANIFEST_VERSION
+    from navfm.execution_manifest_v2 import MANIFEST_V2_VERSION, MANIFEST_V3_VERSION
+    from navfm.intervention_runner import _MANIFEST_VALIDATORS
+
+    for version in (MANIFEST_VERSION, MANIFEST_V2_VERSION, MANIFEST_V3_VERSION):
+        assert version in _MANIFEST_VALIDATORS, version
+
+
+def test_each_version_dispatches_to_a_distinct_validator() -> None:
+    """A table that mapped everything to one validator would pass the test
+    above and reintroduce the defect it exists to prevent."""
+    from navfm.intervention_runner import _MANIFEST_VALIDATORS
+
+    resolved = {name: factory() for name, factory in _MANIFEST_VALIDATORS.items()}
+    assert len(set(resolved.values())) == len(resolved), resolved
+
+
+def test_an_unmapped_manifest_version_is_refused_by_name(tmp_path: Path) -> None:
+    """Negative control. Falling back to the V1 validator is the failure mode."""
+    from navfm.intervention_runner import validate_only
+
+    target = tmp_path / "future.json"
+    target.write_text(json.dumps({"manifest_version": "EXECUTION_MANIFEST_V9"}))
+    outcome = validate_only(target, "ARM_A_CONTROL", Path(__file__).resolve().parents[1])
+    assert outcome["VALIDATE_ONLY"] == "REFUSED"
+    assert "EXECUTION_MANIFEST_V9" in outcome["reason"]
+    assert "known_versions" in outcome

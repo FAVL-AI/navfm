@@ -14,9 +14,15 @@ Canonical invocation:
         --arm ARM_A_CONTROL [--validate-only]
 
 ``--validate-only`` resolves the manifest, the arm, the selector, the collector
-and the output producers, then stops. It launches no simulator, creates no
-production capture and writes no scientific artefact. Passing it means the
-experiment is invokable; it does not mean Isaac will succeed.
+and the output producers, then stops. ``--rehearse`` goes further: it walks the
+*same* orchestration the real run walks, substituting a fake runtime at every
+external boundary, and records that each mandatory stage and producer was
+invoked in order. Neither starts a simulator, consumes a production label, or
+writes a scientific artefact.
+
+Passing both means the experiment is invokable and its lifecycle actually
+executes. Neither means Isaac will succeed -- that is the one thing only a real
+attempt can establish.
 """
 
 from __future__ import annotations
@@ -49,6 +55,9 @@ def build_parser() -> argparse.ArgumentParser:
                         help="which frozen arm to run")
     parser.add_argument("--validate-only", action="store_true",
                         help="resolve the execution path and stop; launches nothing")
+    parser.add_argument("--rehearse", action="store_true",
+                        help=("traverse the real arm lifecycle with a fake runtime; "
+                              "starts no simulator and consumes no production label"))
     return parser
 
 
@@ -82,11 +91,27 @@ def main(argv: list[str] | None = None) -> int:
 
     args = build_parser().parse_args(arguments)
 
+    if args.rehearse:
+        from navfm.arm_lifecycle import RehearsalRuntimeAdapter, execute_arm
+
+        runtime = RehearsalRuntimeAdapter()
+        outcome = execute_arm(args.manifest, args.arm, REPO,
+                              runtime=runtime, mode="REHEARSAL")
+        print(json.dumps(outcome.as_dict(), indent=2, default=str))
+        print()
+        print(f"REHEARSAL           {outcome.status}  arm={args.arm}")
+        print(f"lifecycle           {outcome.lifecycle['LIFECYCLE']}")
+        print(f"adapter boundaries  {runtime.calls}")
+        print("isaac launched      False")
+        print("production label    not consumed")
+        return 0 if outcome.status == "VALID" else 1
+
     if not args.validate_only:
         print("RUNNER = REFUSED")
-        print("  execution of an arm requires explicit authorisation and is not")
-        print("  performed by default. Re-run with --validate-only to resolve the")
-        print("  execution path without launching anything.")
+        print("  real execution of an arm requires explicit authorisation and is not")
+        print("  performed by default. Use --validate-only to resolve the execution")
+        print("  path, or --rehearse to traverse the full lifecycle without a")
+        print("  simulator.")
         return 2
 
     report = validate_only(args.manifest, args.arm, REPO)
