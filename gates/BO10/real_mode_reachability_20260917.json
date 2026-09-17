@@ -1,0 +1,145 @@
+{
+  "check": "REAL_MODE_ENTRYPOINT_REACHABILITY",
+  "artifact_semantics": "REACHABILITY_PROBE_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T05:20:15.665408+00:00",
+  "repository_head": "e44c8fe984118a6e6f3e70faf8de3ce664be6d23",
+  "runner": {
+    "path": "scripts/run_terminal_approach_intervention.py",
+    "sha256": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05"
+  },
+  "supersedes_gap": {
+    "classification": "REAL_MODE_UNREACHABLE_FROM_ENTRYPOINT",
+    "observed_at": "356ef56cee20e2d82e5275e8316d9d3158fbd665",
+    "detail": "EXECUTION_MANIFEST_V3 declared real_adapter as a dotted path while IsaacRuntimeAdapter was never instantiated and mode=REAL was passed nowhere. The canonical Arm-A invocation could only refuse, and every readiness level had been measured through the rehearsal adapter"
+  },
+  "READINESS_LEVEL": "LEVEL_4_5_REAL_MODE_ENTRYPOINT_REACHABILITY",
+  "structural": {
+    "REAL_MODE_STRUCTURAL_REACHABILITY": "PASS",
+    "entry_point": "scripts/run_terminal_approach_intervention.py:run_real_arm",
+    "signature": "(manifest_path: 'str | pathlib.Path', arm: 'str', repo_root: 'str | pathlib.Path', *, runtime_factory: 'Callable[[], Any] | None' = None) -> 'tuple[Any, Any]'",
+    "defaults_to_real_adapter": true,
+    "passes_mode_real": true,
+    "runtime_factory_not_on_command_line": true,
+    "real_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+    "reasons": [],
+    "method": "read from the entry point's own signature and body rather than matched against source text, because a dotted path in a docstring would satisfy a regex and satisfied the manifest last time",
+    "sufficient_on_its_own": false,
+    "why_not_sufficient": "a default can be correct while nothing ever calls the function. The probe below establishes that the path is actually entered"
+  },
+  "probe": {
+    "REAL_MODE_ENTRYPOINT_REACHABILITY": "PASS",
+    "mode_entered": "REAL",
+    "real_adapter_instantiated": true,
+    "adapter_type_built": "_ProbeAdapter",
+    "status": "REFUSED",
+    "refused_at_stage": "MANIFEST_VALIDATED",
+    "refusal_reason": "manifest unreadable: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)",
+    "stages_entered_before_refusal": [],
+    "production_labels_present": [],
+    "isaac_launched": false,
+    "filesystem_writes": "none -- the lifecycle returns before it creates a root",
+    "reasons": [],
+    "CLAIM": "the authorised entry point constructs the real adapter and enters the real lifecycle",
+    "CLAIM_BOUNDARY": "this does NOT establish that the PRE capture succeeds, that Isaac launches, that Hospital loads, that the render loop runs or that the collector completes. Those are LEVEL 5 and only a real attempt reaches them"
+  },
+  "negative_controls": {
+    "verdict": "PASS",
+    "results": {
+      "a_correct_probe_is_accepted": {
+        "DETECTED": true,
+        "detail": "the criterion must be able to pass, not merely able to fail",
+        "reasons": []
+      },
+      "mode_was_not_real": {
+        "DETECTED": true,
+        "mutation": {
+          "mode": "REHEARSAL"
+        },
+        "reasons": [
+          "the lifecycle ran in mode 'REHEARSAL', not REAL"
+        ]
+      },
+      "adapter_never_constructed": {
+        "DETECTED": true,
+        "mutation": {
+          "constructed": 0
+        },
+        "reasons": [
+          "the entry point built the adapter 0 times"
+        ]
+      },
+      "adapter_constructed_twice": {
+        "DETECTED": true,
+        "mutation": {
+          "constructed": 2
+        },
+        "reasons": [
+          "the entry point built the adapter 2 times"
+        ]
+      },
+      "a_different_adapter_was_built": {
+        "DETECTED": true,
+        "mutation": {
+          "used_given_factory": false
+        },
+        "reasons": [
+          "the entry point did not use the factory it was given"
+        ]
+      },
+      "lifecycle_never_began": {
+        "DETECTED": true,
+        "mutation": {
+          "refused_at": "<entry>"
+        },
+        "reasons": [
+          "refused at '<entry>', not MANIFEST_VALIDATED"
+        ]
+      },
+      "stages_ran_before_the_refusal": {
+        "DETECTED": true,
+        "mutation": {
+          "entered": [
+            "MANIFEST_VALIDATED"
+          ]
+        },
+        "reasons": [
+          "stages were entered before the refusal: ['MANIFEST_VALIDATED']"
+        ]
+      },
+      "production_label_leaked": {
+        "DETECTED": true,
+        "mutation": {
+          "production_labels": [
+            "PRE_ARM_A"
+          ]
+        },
+        "reasons": [
+          "a production label appeared: ['PRE_ARM_A']"
+        ]
+      },
+      "the_runner_at_the_v6_freeze_has_no_real_entry_point": {
+        "DETECTED": true,
+        "detail": "the V6 runner is the tree this gate exists to reject. If it ever passes, the gate stopped measuring anything",
+        "source": "356ef56cee20:scripts/run_terminal_approach_intervention.py",
+        "reasons": [
+          "the runner exposes no run_real_arm entry point",
+          "run_real_arm does not default to IsaacRuntimeAdapter",
+          "run_real_arm does not pass mode=\"REAL\""
+        ]
+      },
+      "real_path_using_the_rehearsal_adapter": {
+        "DETECTED": true,
+        "detail": "the probe reports which adapter was built, so a real path wired to the fake runtime is visible rather than silently green",
+        "adapter_built": "RehearsalRuntimeAdapter"
+      }
+    }
+  },
+  "REAL_MODE_REACHABILITY": "PASS",
+  "LEVEL_5_REAL_RUNTIME_ATTEMPT": "NOT_ESTABLISHED",
+  "isaac_launched": false,
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}
