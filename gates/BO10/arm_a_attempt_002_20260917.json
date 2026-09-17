@@ -1,0 +1,198 @@
+{
+  "check": "ARM_A_ATTEMPT_002",
+  "artifact_semantics": "EXECUTION_ATTEMPT_RECORD_NO_SCIENTIFIC_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T18:48:01.473895+00:00",
+  "repository_head": "4ba61f8999caa290a3fca5bf38e9033518c97da2",
+  "intervention_id": "TERMINAL_APPROACH_INTERVENTION_V1",
+  "arm_id": "ARM_A_CONTROL",
+  "attempt_id": "002",
+  "CLASSIFICATION": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE",
+  "executed_at_head": "4ba61f8999caa290a3fca5bf38e9033518c97da2",
+  "executed_under_contract": {
+    "version": "V8",
+    "path": "gates/BO10/environment_identity_v8_20260917.json",
+    "sha256": "f504414b6d8b07a154489f3709f6b9f69a175bdc060ba68182ca9c180ae95eec"
+  },
+  "executed_under_manifest": {
+    "version": "EXECUTION_MANIFEST_V5",
+    "path": "runs/bo10/intervention/execution_manifest_v5.json",
+    "sha256": "4e4b7c992d6901c0feeccb7955999ee91b926eefb8bb1f5c61750fe63a6d50fc"
+  },
+  "ESTABLISHED": {
+    "runner_entered_real_execution_mode": true,
+    "execution_mode": "REAL",
+    "attempt_provenance_path_worked": true,
+    "pre_capture_created_and_validated": true,
+    "attempt_001_pre_unchanged": true,
+    "isaac_process_launched": true,
+    "isaac_runtime_available": true,
+    "real_collector_constructed": true,
+    "isaac_app_propagated_to_collector": true,
+    "same_object_app_binding": true,
+    "robot_instantiation_path_reached": true,
+    "selector_resolved": "PATH_VERTEX",
+    "detail": "the adapter/collector live-application seam repaired in V8 held under real execution: the collector reported isaac_app_bound=true with the production IsaacRuntimeAdapter and the production Collector. The defect that ended Attempt 001 did not recur"
+  },
+  "NOT_ESTABLISHED": {
+    "hospital_scene_loaded": false,
+    "first_render_succeeded": false,
+    "robot_spawned": false,
+    "camera_initialised": false,
+    "collector_episode_ran": false,
+    "trajectory_produced": false,
+    "detail": "Isaac reported a stage opened, but the adapter's HOSPITAL_SCENE_LOADED flag was never set because open_scene raised before returning. Whether the remote Hospital content fully resolved is not established and is not claimed"
+  },
+  "stages_entered": [
+    "MANIFEST_VALIDATED",
+    "PRE_ENV_CAPTURED",
+    "RUNTIME_INITIALISING",
+    "COLLECTOR_READY",
+    "SCENE_READY"
+  ],
+  "EARLIEST_FAILING_STAGE": "ROBOT_INSTANTIATION_PRECONDITION",
+  "why_the_stage_label_reads_scene_ready": "Collector.open_scene performs stage-open, robot spawn and camera attach inside the single SCENE_READY plan step, so the recorded stage is coarser than the failure. The sub-step that failed is the second",
+  "observed_refusal": {
+    "stage": "SCENE_READY",
+    "exception_type": "ValueError",
+    "reason": "unhandled ValueError: RobotConfig.usd_path is unset. Convert yahboomcar_description to USD first:\n  python -m navfm.isaac.urdf_import --urdf .../yahboomcar.urdf --out assets/m3pro.usd --holonomic",
+    "escaped_exception": true,
+    "raised_at": "src/navfm/isaac/robot.py:150 (SimRobot.spawn, guard at :148)"
+  },
+  "STRUCTURED_REFUSAL": false,
+  "claim_boundary_on_the_diagnostic": "the message was actionable -- it named the missing asset and the command that would produce it -- but the boundary raised a bare ValueError that propagated to the outer catch-all. Good diagnostic text is not a structured refusal, and escaped_exception=true is recorded rather than smoothed. Repairing that boundary belongs to a future tranche",
+  "robot_asset_state": {
+    "m3pro_usd_path_config": null,
+    "expected_asset_path": "assets/m3pro.usd",
+    "expected_asset_present": false,
+    "referenced_converter_module": "src/navfm/isaac/urdf_import.py",
+    "referenced_converter_present": false,
+    "declared_at": "src/navfm/isaac/robot.py:100",
+    "enforced_at": "src/navfm/isaac/robot.py:148-151",
+    "ROBOT_ASSET_ADMISSION": "FAIL"
+  },
+  "ATTEMPT_002_PRE_CAPTURE": {
+    "path": "runs/bo10/intervention/arm_a_attempt_002/pre_capture.json",
+    "sha256": "cb917c50247e6f9b789965c0e5ddc9cb56001eab3ad099c83ceab848b1f6f453",
+    "label": "PRE_ARM_A_ATTEMPT_002",
+    "attempt": "002",
+    "timestamp_utc": "2026-09-17T11:20:18.089011+00:00",
+    "capture_validation": "PASS",
+    "critical_digest": "10aaac429b29f554d55eef37907e38e40b8d14951f5cddc16b598943146f1986",
+    "is_production_label": true,
+    "PRESERVED": true,
+    "never_reused": "this capture belongs to attempt 002. Attempt 003, if authorised, receives its own identity and its own capture"
+  },
+  "ATTEMPT_001": {
+    "record": {
+      "path": "gates/BO10/arm_a_attempt_001_20260917.json",
+      "sha256": "df83831673a923a4f8452c3fca9b59124694b677d53a3e81d531fc05c5525c4a"
+    },
+    "pre_capture": {
+      "path": "runs/bo10/intervention/arm_a/pre_capture.json",
+      "sha256": "884aa505bc288a8c69bc17aea5e6b9e07114432f5fa5292917828d6ba75d105a"
+    },
+    "classification": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE",
+    "PRESERVED_UNCHANGED": true,
+    "separate_attempt": true
+  },
+  "EPISODE_STARTED": false,
+  "SCIENTIFIC_COMMANDS_SENT": 0,
+  "ARM_A_SCIENTIFIC_RESULT": "NOT_OBSERVED",
+  "NOT_A_NAVIGATION_OUTCOME": "no episode ran and no scientific command was sent, so this attempt has no success, no failure, no SR, no OSR, no goal distance and no cross-track. Recording success=false would assert a completed trial that never began, and recording SR=0 would put a non-observation into a rate",
+  "excluded_from": [
+    "n",
+    "SR",
+    "OSR",
+    "goal distance",
+    "cross-track",
+    "treatment comparison"
+  ],
+  "SCIENTIFIC_ARM_A_N": 0,
+  "attempt_history": [
+    {
+      "attempt_id": "001",
+      "classification": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE"
+    },
+    {
+      "attempt_id": "002",
+      "classification": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE"
+    }
+  ],
+  "treatment_comparison_exists": false,
+  "PENDING_APPARATUS_DECISIONS": {
+    "ROBOT_DESCRIPTION_AUTHORITY": {
+      "status": "DECISION_PENDING",
+      "candidates_observed": [
+        "the navfm twin description",
+        "the upstream description it was derived from",
+        "vendor yahboomcar_description, acquired under an explicit provenance decision"
+      ],
+      "note": "recorded as observed candidates. This record expresses no preference among them"
+    },
+    "URDF_TO_USD_CONVERSION_STRATEGY": {
+      "status": "DECISION_PENDING"
+    },
+    "SCIENTIFIC_ASSET_STORAGE": {
+      "status": "DECISION_PENDING"
+    }
+  },
+  "UNRESOLVED_SOURCE_CANDIDATE_DIFFERENCES": {
+    "wheel_radius_m": {
+      "candidate_values": [
+        0.048,
+        0.04
+      ],
+      "physically_measured": false
+    },
+    "camera_apparatus": {
+      "candidate_configurations": [
+        "body-mounted, lower",
+        "elevated forward top-arm"
+      ],
+      "physically_measured": false
+    },
+    "status": "UNRESOLVED_CONTEXT",
+    "note": "neither candidate is declared authoritative here, and neither is called physically correct. These values are not physically measured"
+  },
+  "source_closure_observation": {
+    "external_mesh_references": 0,
+    "note": "observed for the candidate under inspection. Useful later; it does not resolve source authority"
+  },
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "attempt_003_started": false,
+  "attempt_003_requires": [
+    "the three apparatus decisions",
+    "a validated robot asset",
+    "a new authoritative freeze",
+    "explicit human authorisation"
+  ],
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_EXECUTION": "NOT_ESTABLISHED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EVIDENCE_HEAD_CONTENT_COHERENCE": {
+    "EVIDENCE_HEAD_CONTENT_COHERENCE": "PASS",
+    "repository_head": "4ba61f8999caa290a3fca5bf38e9033518c97da2",
+    "sources": [
+      {
+        "path": "src/navfm/isaac/robot.py",
+        "recorded_sha256": "7fb07f94f4dd817ba5fdec1caf893fcc20b7e60d6d573392e0d96867d402fb7f",
+        "sha256_at_head": "7fb07f94f4dd817ba5fdec1caf893fcc20b7e60d6d573392e0d96867d402fb7f",
+        "matches": true
+      },
+      {
+        "path": "src/navfm/isaac/collect.py",
+        "recorded_sha256": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+        "sha256_at_head": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+        "matches": true
+      },
+      {
+        "path": "src/navfm/arm_lifecycle.py",
+        "recorded_sha256": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29",
+        "sha256_at_head": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29",
+        "matches": true
+      }
+    ]
+  }
+}
