@@ -673,3 +673,234 @@ def freeze_manifest_v3(
         "rehearsal": {a: r["status"] for a, r in
                       back["executability"]["rehearsal_traces"].items()},
     }
+
+
+# --- EXECUTION_MANIFEST_V4 ---------------------------------------------------
+#
+# V3 measured levels 1-3 by rehearsing the candidate manifest, and every one of
+# those measurements went through the rehearsal adapter. It then declared the
+# real adapter by dotted path -- a string -- while nothing in the repository
+# constructed it and mode="REAL" was passed nowhere, so the canonical Arm-A
+# invocation it pinned could only refuse. V4 adds the rung that was missing:
+# the authorised entry point is observed building the real adapter and entering
+# the real lifecycle. V1, V2 and V3 are kept.
+
+MANIFEST_V4_VERSION = "EXECUTION_MANIFEST_V4"
+AUTHORITATIVE_CONTRACT_V4 = "V7"
+V7_REL = "gates/BO10/environment_identity_v7_20260917.json"
+
+
+def _real_mode_readiness(repo_root: Path) -> dict[str, Any]:
+    """Level 4.5, measured here rather than read out of an artefact.
+
+    The probe hands the entry point a manifest that does not parse, so the
+    lifecycle returns at MANIFEST_VALIDATED -- the stage before the one that
+    writes a capture labelled PRE_ARM_A -- and before it creates an output root.
+    Nothing is written and no simulator starts.
+    """
+    import importlib.util
+    import tempfile
+
+    from navfm.intervention_runner import RUNNER_ENTRY_POINT
+
+    spec = importlib.util.spec_from_file_location(
+        "arm_runner_probe", Path(repo_root) / RUNNER_ENTRY_POINT)
+    if spec is None or spec.loader is None:
+        return {"real_mode_entrypoint_reachability": False,
+                "real_adapter_instantiated": False,
+                "detail": f"{RUNNER_ENTRY_POINT} could not be loaded"}
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+
+    if not callable(getattr(runner, "run_real_arm", None)):
+        return {"real_mode_entrypoint_reachability": False,
+                "real_adapter_instantiated": False,
+                "detail": "the runner exposes no real entry point"}
+
+    built: list[str] = []
+
+    class _Probe:
+        def __init__(self) -> None:
+            built.append("constructed")
+
+    with tempfile.TemporaryDirectory(prefix="manifest_v4_probe_") as raw:
+        unreadable = Path(raw) / "unparseable.json"
+        unreadable.write_text("{ deliberately not json")
+        outcome, runtime = runner.run_real_arm(
+            unreadable, ARM_ORDER[0], repo_root, runtime_factory=_Probe)
+
+    refusal = outcome.refusal or {}
+    blob = json.dumps(outcome.as_dict(), default=str)
+    labels = [lab for lab in ("PRE_ARM_A", "POST_ARM_A", "PRE_ARM_B", "POST_ARM_B")
+              if lab in blob]
+    return {
+        "real_mode_entrypoint_reachability": (
+            outcome.mode == "REAL"
+            and refusal.get("stage") == "MANIFEST_VALIDATED"
+            and not outcome.lifecycle.get("stages_entered")
+            and not labels),
+        "real_adapter_instantiated": len(built) == 1 and isinstance(runtime, _Probe),
+        "mode_entered": outcome.mode,
+        "refused_at_stage": refusal.get("stage"),
+        "production_labels_present": labels,
+        "default_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+        "claim_boundary": (
+            "the entry point builds the real adapter and enters the real lifecycle. "
+            "It does not establish that the PRE capture succeeds, that Isaac "
+            "launches, that Hospital loads, or that the collector completes"),
+    }
+
+
+def build_manifest_v4(
+    repo_root: Path | str, *, head: str, frozen_at_utc: str, manifest_path: str,
+) -> dict[str, Any]:
+    """V3's declarations plus a measured real-mode entry point."""
+    from navfm.intervention_runner import RUNNER_ENTRY_POINT
+
+    root = Path(repo_root)
+    base = build_manifest_v3(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=manifest_path)
+    base["manifest_version"] = MANIFEST_V4_VERSION
+    base["supersedes"] = {
+        "versions": ["EXECUTION_MANIFEST_V1", "EXECUTION_MANIFEST_V2",
+                     "EXECUTION_MANIFEST_V3"],
+        "not_overwritten": True,
+        "v3_limitation": (
+            "measured levels 1-3 through the rehearsal adapter and declared the real "
+            "adapter as a dotted path that nothing constructed, so the canonical "
+            "Arm-A invocation it pinned could only refuse"),
+    }
+    base["authoritative_contract"] = {
+        "version": AUTHORITATIVE_CONTRACT_V4,
+        "path": V7_REL,
+        "sha256": sha256_file(root / V7_REL),
+        "no_automatic_fallback": (
+            "execution requires V7. Older contracts remain checkable against the "
+            "state they froze and are never substituted for V7"),
+    }
+    real = _real_mode_readiness(root)
+    base["executability"] = {**base["executability"], **{
+        k: v for k, v in real.items() if k in (
+            "real_mode_entrypoint_reachability", "real_adapter_instantiated")}}
+    base["real_mode"] = real
+    base["authorised_invocation"] = {
+        "arm_a": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                  "--arm ARM_A_CONTROL --authorise-real-execution"),
+        "arm_b": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                  "--arm ARM_B_TREATMENT --authorise-real-execution"),
+        "rehearsal_arm_a": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                            "--arm ARM_A_CONTROL --rehearse"),
+        "rehearsal_arm_b": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                            "--arm ARM_B_TREATMENT --rehearse"),
+        "validate_only_suffix": "--validate-only",
+        "real_execution_is_opt_in": (
+            "without --authorise-real-execution the runner refuses. No other flag "
+            "implies it, and supplying two modes at once is refused as ambiguous"),
+        "no_other_invocation_is_authorised": (
+            "scientific values come from this manifest and are refused on the command "
+            "line, so there is no ad-hoc invocation to construct later"),
+    }
+    return base
+
+
+def validate_manifest_v4(
+    manifest: Mapping[str, Any], repo_root: Path | str, *,
+    expected_head: str | None = None, require_executability: bool = True,
+) -> dict[str, Any]:
+    """V3's checks, plus the real-mode entry point."""
+    root = Path(repo_root)
+    base = validate_manifest_v3(manifest, root, expected_head=expected_head,
+                                require_executability=require_executability)
+    failures = [f for f in base["failures"]
+                if f["field"] not in {"manifest_version",
+                                      "authoritative_contract.version"}]
+
+    def fail(field: str, detail: str) -> None:
+        failures.append({"field": field, "detail": detail})
+
+    if manifest.get("manifest_version") != MANIFEST_V4_VERSION:
+        fail("manifest_version",
+             f"{manifest.get('manifest_version')!r} != {MANIFEST_V4_VERSION!r}")
+    contract = manifest.get("authoritative_contract", {})
+    if contract.get("version") != AUTHORITATIVE_CONTRACT_V4:
+        fail("authoritative_contract.version",
+             f"{contract.get('version')!r} != {AUTHORITATIVE_CONTRACT_V4!r}")
+    declared_contract = contract.get("sha256")
+    actual_contract = sha256_file(root / V7_REL)
+    if declared_contract != actual_contract:
+        fail("authoritative_contract.sha256",
+             f"manifest says {str(declared_contract)[:16]}..., file is "
+             f"{str(actual_contract)[:16]}...")
+
+    if require_executability:
+        readiness = manifest.get("executability", {})
+        for key in ("real_mode_entrypoint_reachability", "real_adapter_instantiated"):
+            if readiness.get(key) is not True:
+                fail(f"executability.{key}", f"{readiness.get(key)!r} is not True")
+        invocation = manifest.get("authorised_invocation", {})
+        for arm_key in ("arm_a", "arm_b"):
+            if "--authorise-real-execution" not in str(invocation.get(arm_key, "")):
+                fail(f"authorised_invocation.{arm_key}",
+                     "the pinned real invocation does not request real execution, so "
+                     "it would refuse")
+
+    return {**base, "MANIFEST_VALID": "PASS" if not failures else "FAIL",
+            "failures": failures, "manifest_version": MANIFEST_V4_VERSION}
+
+
+def freeze_manifest_v4(
+    path: Path | str, repo_root: Path | str, *, head: str, frozen_at_utc: str,
+) -> dict[str, Any]:
+    """Write V4 once. Refuses unless the real entry point is demonstrably there."""
+    target = Path(path)
+    root = Path(repo_root)
+    try:
+        relative = str(target.relative_to(root))
+    except ValueError:
+        relative = str(target)
+
+    candidate = build_manifest_v4(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=relative)
+    readiness = candidate["executability"]
+    unmet = [k for k, v in readiness.items() if isinstance(v, bool) and not v]
+    if unmet:
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the lifecycle is not demonstrably executable",
+                "unmet_executability_facts": unmet}
+
+    if target.is_file():
+        try:
+            prior = json.loads(target.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": f"the existing manifest does not parse: {exc!r}"[:200]}
+        candidate = build_manifest_v4(
+            root, head=head, manifest_path=relative,
+            frozen_at_utc=str(prior.get("frozen_at_utc", frozen_at_utc)))
+        if manifest_digest(candidate) != manifest_digest(prior):
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": ("a frozen V4 manifest already exists and the canonical "
+                               "payload differs. Freeze a versioned replacement rather "
+                               "than overwriting it")}
+        first = False
+    else:
+        first = True
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(candidate, indent=2) + "\n")
+    back = json.loads(target.read_text())
+    validation = validate_manifest_v4(back, root, expected_head=head)
+    if validation["MANIFEST_VALID"] != "PASS":
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the written manifest did not validate",
+                "validation": validation}
+    return {
+        "EXECUTION_MANIFEST": "FROZEN", "path": str(target),
+        "sha256": sha256_file(target), "manifest_digest": manifest_digest(back),
+        "bound_head": back["repository"]["head"],
+        "frozen_at_utc": back["frozen_at_utc"], "first_freeze": first,
+        "validation": validation,
+        "rehearsal": {a: r["status"] for a, r in
+                      back["executability"]["rehearsal_traces"].items()},
+        "real_mode": back["real_mode"],
+    }

@@ -549,11 +549,15 @@ def _validate_manifest(ctx: _Context) -> None:
         raise LifecycleRefused(
             Stage.MANIFEST_VALIDATED.value,
             f"no validator is registered for manifest version {version!r}")
+    from navfm.intervention_runner import _READINESS_ASSERTING_VERSIONS
+
     kwargs: dict[str, Any] = {}
-    if version == "EXECUTION_MANIFEST_V3":
+    if version in _READINESS_ASSERTING_VERSIONS:
         # This walk is what establishes the readiness facts. Requiring the
         # manifest to already assert them would make execution depend on its
         # own result, and no manifest could ever be rehearsed into validity.
+        # Membership is read from one set rather than compared against a literal,
+        # because the literal was already missed once when V3 arrived.
         kwargs["require_executability"] = False
     validation = _MANIFEST_VALIDATORS[version]()(ctx.manifest, ctx.repo_root, **kwargs)
     if validation["MANIFEST_VALID"] != "PASS":

@@ -187,6 +187,12 @@ CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
            + V5_ADDITIONAL_CRITICAL_FIELDS),
     "V6": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
            + V5_ADDITIONAL_CRITICAL_FIELDS + V6_ADDITIONAL_CRITICAL_FIELDS),
+    # V7 adds nothing either. What changed is the runner's own identity -- it
+    # gained the entry point that constructs the real adapter -- and
+    # arm_runner_sha256 has been pinned since V5. A version that invented a
+    # field to look stricter would check nothing more than the one already here.
+    "V7": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
+           + V5_ADDITIONAL_CRITICAL_FIELDS + V6_ADDITIONAL_CRITICAL_FIELDS),
 }
 
 

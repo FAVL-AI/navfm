@@ -67,15 +67,42 @@ def amendment() -> dict[str, Any]:
 
 # --- the chain ---------------------------------------------------------------
 
-def test_v6_is_authoritative() -> None:
-    assert AUTHORITATIVE_CONTRACT_VERSION == "V6"
-    assert set(CONTRACTS) == {"V2", "V3", "V4", "V5", "V6"}
+#: V6's own freeze. Its tree is the one V6 answers for, and the one whose runner
+#: had no real entry point -- which is why V7 exists.
+V6_FREEZE_COMMIT = "356ef56cee20e2d82e5275e8316d9d3158fbd665"
 
 
-def test_v6_accepts_the_tree_that_carries_the_execution_body() -> None:
+def test_v6_remains_reachable_after_being_superseded() -> None:
+    """Which version is authoritative is asserted by that version's own suite.
+    What this checks is that V6 still answers for itself."""
+    assert AUTHORITATIVE_CONTRACT_VERSION in CONTRACTS
+    assert {"V2", "V3", "V4", "V5", "V6"} <= set(CONTRACTS)
+    assert check_contract(REPO, "V6")["version"] == "V6"
+
+
+def test_v6_accepted_the_tree_at_its_own_freeze_commit() -> None:
+    """Each amendment answers for the state it froze, not for every later one."""
+    frozen = json.loads(V6.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V6"][
+        "frozen_contract_values"]
+    for field, rel in (
+            ("scientific_code.arm_runner_sha256",
+             "scripts/run_terminal_approach_intervention.py"),
+            ("scientific_code.arm_lifecycle_sha256", "src/navfm/arm_lifecycle.py")):
+        at_freeze = subprocess.run(
+            ["git", "-C", str(REPO), "show", f"{V6_FREEZE_COMMIT}:{rel}"],
+            capture_output=True, check=False)
+        assert at_freeze.returncode == 0, rel
+        assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest(), field
+
+
+def test_v6_now_refuses_the_real_mode_tree() -> None:
+    """Expected: the runner gained the entry point that builds the real adapter.
+
+    Permanent historical control. If this ever passes, V6 was rewritten.
+    """
     result = check_contract(REPO, "V6")
-    assert result["CONTRACT_SATISFIED"] == "PASS", result["drift"]
-    assert result["drift"] == []
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    assert "scientific_code.arm_runner_sha256" in [d["field"] for d in result["drift"]]
 
 
 @pytest.mark.parametrize("version", ["V2", "V3", "V4", "V5"])
@@ -229,11 +256,18 @@ def test_the_artefact_says_no_arm_has_run_in_its_own_semantics(
 
 # --- refusal controls --------------------------------------------------------
 
-def test_regeneration_on_an_unchanged_tree_is_idempotent() -> None:
+def test_v6_refuses_to_refreeze_on_a_tree_it_no_longer_describes() -> None:
+    """A superseded amendment must not quietly re-freeze itself onto a later
+    tree. It refuses, and -- the part that matters -- it writes nothing."""
     before = _sha()
     outcome = v6mod.freeze()
-    assert outcome["V6_AMENDMENT"] == "FROZEN"
+    assert outcome["V6_AMENDMENT"] == "REFUSED"
     assert _sha() == before
+
+
+def test_the_v6_artefact_is_byte_unchanged_by_any_of_this() -> None:
+    """The whole point of an append-only chain: V6's bytes never move."""
+    assert _sha() == V6_AMENDMENT_SHA256
 
 
 @pytest.mark.parametrize("attribute", ["V5_SHA256", "PREREG_SHA256"])
