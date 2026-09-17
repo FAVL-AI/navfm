@@ -1,0 +1,103 @@
+{
+  "check": "ARM_A_ATTEMPT_001",
+  "artifact_semantics": "EXECUTION_ATTEMPT_RECORD_NO_SCIENTIFIC_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T07:00:52.669752+00:00",
+  "repository_head": "73653c26178cff36d50904ccb73a56314bccb94c",
+  "intervention_id": "TERMINAL_APPROACH_INTERVENTION_V1",
+  "arm_id": "ARM_A_CONTROL",
+  "attempt_id": "001",
+  "CLASSIFICATION": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE",
+  "executed_at_head": "01916dfa3a2901177ae1bc07caffd0881139d798",
+  "executed_under_contract": "V7",
+  "executed_under_manifest": "EXECUTION_MANIFEST_V4",
+  "observed": {
+    "runner_entered_production_lifecycle": true,
+    "execution_mode": "REAL",
+    "pre_arm_a_created": true,
+    "pre_arm_a_validates": true,
+    "isaac_process_launched": true,
+    "isaac_runtime_available": true,
+    "collector_constructed": true,
+    "scene_request_path_entered": true,
+    "hospital_scene_loaded": false,
+    "episode_started": false,
+    "trajectory_produced": false,
+    "post_arm_a_created": false,
+    "arm_b_touched": false,
+    "stages_entered": [
+      "MANIFEST_VALIDATED",
+      "PRE_ENV_CAPTURED",
+      "RUNTIME_INITIALISING",
+      "COLLECTOR_READY",
+      "SCENE_READY"
+    ],
+    "refusal": {
+      "stage": "SCENE_READY",
+      "reason": "unhandled AssertionError: ",
+      "reason_was_empty": true,
+      "escaped_exception": true
+    },
+    "provenance_of_these_facts": "the PRE capture fields are measured from the artefact on disk; the stage trace and refusal are the structured result the run itself returned"
+  },
+  "ATTEMPT_001_PRE_CAPTURE": {
+    "path": "runs/bo10/intervention/arm_a/pre_capture.json",
+    "sha256": "884aa505bc288a8c69bc17aea5e6b9e07114432f5fa5292917828d6ba75d105a",
+    "label": "PRE_ARM_A",
+    "timestamp_utc": "2026-09-17T05:22:23.483861+00:00",
+    "capture_validation": "PASS",
+    "critical_digest": "40464d9fed338033732da4087f096f5021c8881939223e63593f8271e8469603",
+    "PRESERVED": true,
+    "never_reused": "this capture belongs to attempt 001. A repaired attempt receives a new identity and a new capture; recycling this one would erase the evidence that the failed attempt entered the lifecycle under a valid environment"
+  },
+  "EPISODE_STARTED": false,
+  "ARM_A_SCIENTIFIC_RESULT": "NOT_OBSERVED",
+  "NOT_A_NAVIGATION_OUTCOME": "no episode ran, so this attempt has no success, no failure, no goal distance and no cross-track. Recording success=false would assert a completed trial that never began",
+  "excluded_from": [
+    "n",
+    "SR",
+    "OSR",
+    "goal distance",
+    "cross-track",
+    "treatment comparison"
+  ],
+  "root_technical_failure": {
+    "collector_constructor_parameters": [
+      "self",
+      "out_dir",
+      "collect",
+      "sim",
+      "robot_config",
+      "randomization",
+      "scope",
+      "occupancy_backend",
+      "isaac_app"
+    ],
+    "collector_accepts_a_live_app": true,
+    "adapter_passes_the_app": true,
+    "open_scene_uses_a_bare_assert": false,
+    "open_scene_raises_structured": true,
+    "run_enforces_single_owner": true,
+    "old_dataflow": "IsaacRuntimeAdapter.initialise created and entered an IsaacApp. build_collector then called Collector(out_dir, collect_config, self._app.config, M3PRO) -- correct for the `sim: SimConfig` parameter, and not an application. Collector.run is the only place that assigned self._app, via `with IsaacApp(self.sim) as app`, and the adapter never calls run: an arm is one episode under a frozen route, not a collection loop. So load_scene reached Collector.open_scene with self._app still None",
+    "corrected_dataflow": "build_collector passes isaac_app=self._app, handing over the object it owns rather than describing it. open_scene refuses with a named category instead of a bare assert, and run refuses to create a second application when one was handed in",
+    "why_every_earlier_gate_passed": "every earlier readiness level was measured through the rehearsal adapter, whose build_collector returns a dictionary and asserts nothing. The seam between two individually correct components was never exercised"
+  },
+  "NEXT_ATTEMPT_ID": "002",
+  "reattempt_policy": {
+    "automatic_retry": false,
+    "admissible_only_after": [
+      "infrastructure defect repaired",
+      "repair independently tested",
+      "controller behaviour unchanged",
+      "new authoritative amendment frozen",
+      "new manifest frozen",
+      "new preflight current",
+      "explicit human authorisation obtained"
+    ],
+    "freezing_a_manifest_is_not_authorisation": true
+  },
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_EXECUTION": "ATTEMPT_001_INFRASTRUCTURE_FAILURE",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

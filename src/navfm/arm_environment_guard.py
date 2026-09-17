@@ -84,6 +84,8 @@ __all__ = [
     "V6_AMENDMENT_SHA256",
     "V7_AMENDMENT_REL",
     "V7_AMENDMENT_SHA256",
+    "V8_AMENDMENT_REL",
+    "V8_AMENDMENT_SHA256",
     "arm_environment_equivalence",
     "canonical_preflight",
     "capture_arm_environment",
@@ -116,6 +118,8 @@ V5_AMENDMENT_REL = "gates/BO10/environment_identity_v5_20260912.json"
 V5_AMENDMENT_SHA256 = "b4d53a7f5734c87bac5279173aba085513ecece822a058438aafa8ff659108bc"
 V6_AMENDMENT_REL = "gates/BO10/environment_identity_v6_20260912.json"
 V6_AMENDMENT_SHA256 = "b17d3c9372034efc4fdda0953fc726ef93673b8bab0cc99ed4736ae0331358fb"
+V8_AMENDMENT_REL = "gates/BO10/environment_identity_v8_20260917.json"
+V8_AMENDMENT_SHA256 = "f504414b6d8b07a154489f3709f6b9f69a175bdc060ba68182ca9c180ae95eec"
 V7_AMENDMENT_REL = "gates/BO10/environment_identity_v7_20260917.json"
 V7_AMENDMENT_SHA256 = "bd8abf5a5f0b3b97f13afc1e2d2f483e8507713f6a258733929f7117c1c1d79b"
 PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
@@ -123,7 +127,7 @@ PREFLIGHT_REL = "gates/BO10/intervention_execution_preflight_20260911.json"
 #: Which amendment authorises a future arm. Named, never inferred: a barrier
 #: that tried V3 and fell back to V2 would silently accept a tree that the
 #: authoritative contract rejects, which is the opposite of what a contract is.
-AUTHORITATIVE_CONTRACT_VERSION = "V7"
+AUTHORITATIVE_CONTRACT_VERSION = "V8"
 
 #: Every amendment stays checkable, and each answers for the state it froze.
 #: The invariants that matter are historical: V2 accepts its freeze state and
@@ -138,6 +142,7 @@ CONTRACTS: dict[str, tuple[str, str, str]] = {
     "V5": (V5_AMENDMENT_REL, V5_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V5"),
     "V6": (V6_AMENDMENT_REL, V6_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V6"),
     "V7": (V7_AMENDMENT_REL, V7_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V7"),
+    "V8": (V8_AMENDMENT_REL, V8_AMENDMENT_SHA256, "EXECUTION_ENVIRONMENT_IDENTITY_V8"),
 }
 
 NVIDIA_HOLD_LIST = "~/navfm-nvidia-580-held-20260911.txt"

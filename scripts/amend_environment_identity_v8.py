@@ -174,6 +174,11 @@ def measure_transitions(contract: dict[str, Any]) -> dict[str, Any]:
             "the adapter hands the collector the application it owns, and the "
             "attempt identity is read from the frozen manifest so a repaired "
             "attempt cannot overwrite attempt 001"),
+        "scientific_code.intervention_runner_sha256": (
+            "the manifest-version dispatch table gained EXECUTION_MANIFEST_V5, and "
+            "the set of versions whose validators assert readiness facts gained it "
+            "too. An unregistered version would be refused by name rather than "
+            "checked by an older validator"),
     }
     return {
         "measured_not_prescribed": True,
