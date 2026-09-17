@@ -22,6 +22,7 @@ generated after the final commit, binding the HEAD it actually describes.
 
 from __future__ import annotations
 
+import contextlib
 import datetime as _dt
 import json
 import subprocess
@@ -903,4 +904,327 @@ def freeze_manifest_v4(
         "rehearsal": {a: r["status"] for a, r in
                       back["executability"]["rehearsal_traces"].items()},
         "real_mode": back["real_mode"],
+    }
+
+
+# --- EXECUTION_MANIFEST_V5 ---------------------------------------------------
+#
+# V4 established that the authorised entry point constructs the real adapter and
+# enters mode=REAL, and Attempt 001 proved that was true: it entered the
+# lifecycle, created a valid PRE_ARM_A, launched Isaac and built the collector.
+# It then stopped at scene loading, because the adapter handed the collector
+# `self._app.config` where a live application was required. Every readiness fact
+# V4 measured was about configuration, and the configuration was correct.
+#
+# V5 adds the facts that were missing: the application crosses the boundary, the
+# boundary refuses by name rather than by assertion, and an attempt has an
+# identity so attempt 001 stays visible instead of being overwritten.
+
+MANIFEST_V5_VERSION = "EXECUTION_MANIFEST_V5"
+AUTHORITATIVE_CONTRACT_V5 = "V8"
+V8_REL = "gates/BO10/environment_identity_v8_20260917.json"
+SEAM_EVIDENCE_REL = "gates/BO10/adapter_collector_app_seam_20260917.json"
+ATTEMPT_001_REL = "gates/BO10/arm_a_attempt_001_20260917.json"
+
+#: The only attempt this manifest prepares. Freezing it authorises nothing.
+NEXT_ATTEMPT_ID = "002"
+
+
+def _app_seam_readiness(repo_root: Path) -> dict[str, Any]:
+    """Measured here, not read out of the seam artefact.
+
+    An artefact can be stale; the objects cannot. This constructs the collector
+    through the production adapter with a stub application at the external
+    boundary and checks identity, which is the thing configuration equality
+    could never have shown.
+    """
+    import tempfile
+
+    from navfm.arm_lifecycle import IsaacRuntimeAdapter
+    from navfm.isaac.app import SimConfig
+    from navfm.isaac.collect import CollectConfig
+
+    built: list[str] = []
+
+    class _Probe:
+        def __init__(self) -> None:
+            built.append("constructed")
+            self.config = SimConfig(hz=12.0, headless=True)
+            self.opened: list[str] = []
+
+        def open_stage(self, scene_usd: str) -> None:
+            self.opened.append(scene_usd)
+            raise _SeamProbeStop(scene_usd)
+
+    app = _Probe()
+    adapter = IsaacRuntimeAdapter()
+    adapter._app = app
+    scene = "omniverse://probe/scene.usd"
+    with tempfile.TemporaryDirectory(prefix="manifest_v5_seam_") as raw:
+        adapter.build_collector(
+            Path(raw) / "traj",
+            CollectConfig(scenes=[scene], episodes=1), "PATH_VERTEX")
+        bound = adapter._collector._app is app
+        config_kept = adapter._collector.sim == app.config
+        with contextlib.suppress(_SeamProbeStop):
+            adapter.load_scene(scene, "probe")
+    return {
+        "isaac_app_propagated": bound,
+        "isaac_app_single_owner": len(built) == 1,
+        "sim_config_preserved": config_kept,
+        "scene_load_reachable": app.opened == [scene],
+        "applications_constructed": len(built),
+        "open_stage_calls": len(app.opened),
+        "real_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+        "collector": "navfm.isaac.collect:Collector",
+        "missing_app_refusal_category": "ISAAC_APP_NOT_BOUND_TO_COLLECTOR",
+        "single_owner_refusal_category": "ISAAC_APP_SINGLE_OWNER_VIOLATION",
+        "claim_boundary": (
+            "the application propagates and scene loading is reachable. It does "
+            "not establish that the Hospital asset loads or that an episode runs"),
+    }
+
+
+class _SeamProbeStop(Exception):
+    """Reachability is the claim; the stage contents are not."""
+
+
+def _attempt_block(root: Path) -> dict[str, Any]:
+    attempt_one = root / ATTEMPT_001_REL
+    record = json.loads(attempt_one.read_text()) if attempt_one.is_file() else {}
+    return {
+        "intervention_id": "TERMINAL_APPROACH_INTERVENTION_V1",
+        "attempt_id": NEXT_ATTEMPT_ID,
+        "resolved_from": "this manifest; never a command-line override",
+        "prior_attempts": [{
+            "attempt_id": "001",
+            "classification": record.get("CLASSIFICATION"),
+            "record": {"path": ATTEMPT_001_REL, "sha256": sha256_file(attempt_one)},
+            "pre_capture": record.get("ATTEMPT_001_PRE_CAPTURE", {}).get("path"),
+            "episode_started": record.get("EPISODE_STARTED"),
+            "scientific_result": record.get("ARM_A_SCIENTIFIC_RESULT"),
+            "preserved_never_reused": True,
+        }],
+        "authorisation": (
+            "freezing this manifest prepares attempt 002 and authorises nothing. "
+            "A second attempt requires explicit human authorisation"),
+        "attempt_002_started": False,
+    }
+
+
+def build_manifest_v5(
+    repo_root: Path | str, *, head: str, frozen_at_utc: str, manifest_path: str,
+) -> dict[str, Any]:
+    """V4's declarations plus a measured runtime-object seam and attempt identity."""
+    from navfm.intervention_runner import RUNNER_ENTRY_POINT
+
+    root = Path(repo_root)
+    base = build_manifest_v4(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=manifest_path)
+    base["manifest_version"] = MANIFEST_V5_VERSION
+    base["supersedes"] = {
+        "versions": ["EXECUTION_MANIFEST_V1", "EXECUTION_MANIFEST_V2",
+                     "EXECUTION_MANIFEST_V3", "EXECUTION_MANIFEST_V4"],
+        "not_overwritten": True,
+        "v4_limitation": (
+            "established that the real adapter is constructed and mode=REAL is "
+            "entered, and measured every readiness fact about configuration. The "
+            "adapter handed the collector a SimConfig where a live IsaacApp was "
+            "required, and attempt 001 stopped at scene loading"),
+    }
+    base["authoritative_contract"] = {
+        "version": AUTHORITATIVE_CONTRACT_V5,
+        "path": V8_REL,
+        "sha256": sha256_file(root / V8_REL),
+        "no_automatic_fallback": (
+            "execution requires V8. Older contracts remain checkable against the "
+            "state they froze and are never substituted for V8"),
+    }
+    seam = _app_seam_readiness(root)
+    base["executability"] = {**base["executability"], **{
+        k: v for k, v in seam.items() if k in (
+            "isaac_app_propagated", "isaac_app_single_owner",
+            "sim_config_preserved", "scene_load_reachable")}}
+    base["app_seam"] = {
+        **seam,
+        "evidence": {"path": SEAM_EVIDENCE_REL,
+                     "sha256": sha256_file(root / SEAM_EVIDENCE_REL)},
+    }
+    base["attempt"] = _attempt_block(root)
+
+    # The V1 allow-list and PRODUCER_MAP are a closed pair -- producer_coverage
+    # requires each to account for the other -- so attempt paths are declared
+    # alongside it rather than substituted into it. Enumerated exactly; no glob,
+    # because a glob over arm_a/** would make attempt 001's capture writable.
+    suffix = f"arm_a_attempt_{NEXT_ATTEMPT_ID}"
+    base["attempt_outputs"] = {
+        "attempt_id": NEXT_ATTEMPT_ID,
+        "tracked": [
+            f"gates/BO10/intervention/{suffix}_result.json",
+            f"gates/BO10/intervention/{suffix}_terminal_trace.csv",
+        ],
+        "untracked_runtime": [
+            f"runs/bo10/intervention/{suffix}/pre_capture.json",
+            f"runs/bo10/intervention/{suffix}/post_capture.json",
+            f"runs/bo10/intervention/{suffix}/trajectory",
+            f"runs/bo10/intervention/{suffix}/status.json",
+        ],
+        "pre_capture_label": f"PRE_ARM_A_ATTEMPT_{NEXT_ATTEMPT_ID}",
+        "post_capture_label": f"POST_ARM_A_ATTEMPT_{NEXT_ATTEMPT_ID}",
+        "policy": (
+            "deny by default; every permitted path is enumerated and carries the "
+            "attempt it belongs to"),
+        "read_only_from_earlier_attempts": [
+            "runs/bo10/intervention/arm_a/pre_capture.json"],
+        "why_not_a_glob": (
+            "arm_a/** would make attempt 001's capture writable, and that capture "
+            "is the evidence that the failed attempt entered the lifecycle under a "
+            "valid environment"),
+    }
+
+    base["authorised_invocation"] = {
+        "arm_a": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                  "--arm ARM_A_CONTROL --authorise-real-execution"),
+        "arm_b": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                  "--arm ARM_B_TREATMENT --authorise-real-execution"),
+        "rehearsal_arm_a": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                            "--arm ARM_A_CONTROL --rehearse"),
+        "rehearsal_arm_b": (f"python {RUNNER_ENTRY_POINT} --manifest {manifest_path} "
+                            "--arm ARM_B_TREATMENT --rehearse"),
+        "validate_only_suffix": "--validate-only",
+        "attempt_identity_is_not_an_argument": (
+            f"attempt {NEXT_ATTEMPT_ID} comes from this manifest. There is no flag "
+            "for it, because an attempt number that can be typed can be retyped "
+            "after a result is seen"),
+        "no_other_invocation_is_authorised": (
+            "scientific values come from this manifest and are refused on the "
+            "command line, so there is no ad-hoc invocation to construct later"),
+    }
+    return base
+
+
+def validate_manifest_v5(
+    manifest: Mapping[str, Any], repo_root: Path | str, *,
+    expected_head: str | None = None, require_executability: bool = True,
+) -> dict[str, Any]:
+    """V4's checks, plus the runtime-object seam and attempt identity."""
+    root = Path(repo_root)
+    base = validate_manifest_v4(manifest, root, expected_head=expected_head,
+                               require_executability=require_executability)
+    failures = [f for f in base["failures"]
+                if f["field"] not in {"manifest_version",
+                                      "authoritative_contract.version",
+                                      "authoritative_contract.sha256"}]
+
+    def fail(field: str, detail: str) -> None:
+        failures.append({"field": field, "detail": detail})
+
+    if manifest.get("manifest_version") != MANIFEST_V5_VERSION:
+        fail("manifest_version",
+             f"{manifest.get('manifest_version')!r} != {MANIFEST_V5_VERSION!r}")
+    contract = manifest.get("authoritative_contract", {})
+    if contract.get("version") != AUTHORITATIVE_CONTRACT_V5:
+        fail("authoritative_contract.version",
+             f"{contract.get('version')!r} != {AUTHORITATIVE_CONTRACT_V5!r}")
+    if contract.get("sha256") != sha256_file(root / V8_REL):
+        fail("authoritative_contract.sha256", "the manifest does not bind V8's bytes")
+
+    seam = manifest.get("app_seam", {})
+    evidence = seam.get("evidence", {})
+    if evidence.get("sha256") != sha256_file(root / SEAM_EVIDENCE_REL):
+        fail("app_seam.evidence.sha256",
+             "the seam evidence is absent or no longer the artefact bound here")
+
+    attempt = manifest.get("attempt", {})
+    if attempt.get("attempt_id") != NEXT_ATTEMPT_ID:
+        fail("attempt.attempt_id", f"{attempt.get('attempt_id')!r} != {NEXT_ATTEMPT_ID!r}")
+    priors = attempt.get("prior_attempts") or []
+    if not any(p.get("attempt_id") == "001" for p in priors):
+        fail("attempt.prior_attempts",
+             "attempt 001 is not recorded, so attempt 002 would look like the first")
+    for prior in priors:
+        if prior.get("episode_started") is not False:
+            fail("attempt.prior_attempts", "a prior attempt claims an episode ran")
+
+    if require_executability:
+        readiness = manifest.get("executability", {})
+        for key in ("isaac_app_propagated", "isaac_app_single_owner",
+                    "sim_config_preserved", "scene_load_reachable"):
+            if readiness.get(key) is not True:
+                fail(f"executability.{key}", f"{readiness.get(key)!r} is not True")
+        outputs = manifest.get("attempt_outputs", {})
+        declared = list(outputs.get("tracked", [])) + list(
+            outputs.get("untracked_runtime", []))
+        if not declared:
+            fail("attempt_outputs", "attempt 002 declares no output paths")
+        for path in declared:
+            if "**" in str(path) or str(path).endswith("/"):
+                fail("attempt_outputs", f"{path} is a glob, not an enumerated path")
+            if f"attempt_{NEXT_ATTEMPT_ID}" not in str(path):
+                fail("attempt_outputs",
+                     f"{path} does not carry the attempt it belongs to")
+        if "runs/bo10/intervention/arm_a/pre_capture.json" in declared:
+            fail("attempt_outputs",
+                 "attempt 001's capture is writable under this manifest")
+
+    return {**base, "MANIFEST_VALID": "PASS" if not failures else "FAIL",
+            "failures": failures, "manifest_version": MANIFEST_V5_VERSION}
+
+
+def freeze_manifest_v5(
+    path: Path | str, repo_root: Path | str, *, head: str, frozen_at_utc: str,
+) -> dict[str, Any]:
+    """Write V5 once. Refuses unless the application demonstrably propagates."""
+    target = Path(path)
+    root = Path(repo_root)
+    try:
+        relative = str(target.relative_to(root))
+    except ValueError:
+        relative = str(target)
+
+    candidate = build_manifest_v5(
+        root, head=head, frozen_at_utc=frozen_at_utc, manifest_path=relative)
+    readiness = candidate["executability"]
+    unmet = [k for k, v in readiness.items() if isinstance(v, bool) and not v]
+    if unmet:
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the execution path is not demonstrably ready",
+                "unmet_executability_facts": unmet}
+
+    if target.is_file():
+        try:
+            prior = json.loads(target.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": f"the existing manifest does not parse: {exc!r}"[:200]}
+        candidate = build_manifest_v5(
+            root, head=head, manifest_path=relative,
+            frozen_at_utc=str(prior.get("frozen_at_utc", frozen_at_utc)))
+        if manifest_digest(candidate) != manifest_digest(prior):
+            return {"EXECUTION_MANIFEST": "REFUSED",
+                    "reason": ("a frozen V5 manifest already exists and the canonical "
+                               "payload differs. Freeze a versioned replacement rather "
+                               "than overwriting it")}
+        first = False
+    else:
+        first = True
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(candidate, indent=2) + "\n")
+    back = json.loads(target.read_text())
+    validation = validate_manifest_v5(back, root, expected_head=head)
+    if validation["MANIFEST_VALID"] != "PASS":
+        return {"EXECUTION_MANIFEST": "REFUSED",
+                "reason": "the written manifest did not validate",
+                "validation": validation}
+    return {
+        "EXECUTION_MANIFEST": "FROZEN", "path": str(target),
+        "sha256": sha256_file(target), "manifest_digest": manifest_digest(back),
+        "bound_head": back["repository"]["head"],
+        "frozen_at_utc": back["frozen_at_utc"], "first_freeze": first,
+        "validation": validation,
+        "rehearsal": {a: r["status"] for a, r in
+                      back["executability"]["rehearsal_traces"].items()},
+        "app_seam": back["app_seam"],
+        "attempt": back["attempt"],
     }

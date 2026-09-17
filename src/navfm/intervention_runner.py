@@ -408,6 +408,12 @@ def _v4_validator() -> Any:
     return validate_manifest_v4
 
 
+def _v5_validator() -> Any:
+    from navfm.execution_manifest_v2 import validate_manifest_v5
+
+    return validate_manifest_v5
+
+
 #: Every manifest version this runner will check, and the validator that knows
 #: its rules. A version absent from this table is refused by name. Falling back
 #: to the oldest validator is how a stricter manifest gets reported as invalid.
@@ -416,13 +422,14 @@ _MANIFEST_VALIDATORS: dict[str, Any] = {
     "EXECUTION_MANIFEST_V2": _v2_validator,
     "EXECUTION_MANIFEST_V3": _v3_validator,
     "EXECUTION_MANIFEST_V4": _v4_validator,
+    "EXECUTION_MANIFEST_V5": _v5_validator,
 }
 
 #: Versions whose validator checks readiness facts the lifecycle itself
 #: establishes. The lifecycle must not be required to assert them before it has
 #: run, or no manifest could ever be rehearsed into validity.
 _READINESS_ASSERTING_VERSIONS = frozenset({
-    "EXECUTION_MANIFEST_V3", "EXECUTION_MANIFEST_V4"})
+    "EXECUTION_MANIFEST_V3", "EXECUTION_MANIFEST_V4", "EXECUTION_MANIFEST_V5"})
 
 
 def validate_only(

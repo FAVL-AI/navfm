@@ -2,7 +2,7 @@
   "check": "EXECUTION_READINESS_GAP_V1",
   "artifact_semantics": "GOVERNANCE_RECORD_NO_ARM_HAS_RUN",
   "author": "Frank Asante Van Laarhoven",
-  "timestamp_utc": "2026-09-16T19:17:37.279512+00:00",
+  "timestamp_utc": "2026-09-17T06:26:37.780059+00:00",
   "classification": "EXECUTION_READINESS_GAP_V1",
   "what_happened": "the first Arm-A execution authorisation was refused at the pre-Isaac gates and never became an execution",
   "THIS_IS_NOT_AN_ARM_A_FAILURE": "Arm A never started. Recording this as a failed control arm would leave a reader believing the experiment was attempted and went badly",

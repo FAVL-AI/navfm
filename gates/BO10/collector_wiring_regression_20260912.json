@@ -2,8 +2,8 @@
   "check": "ARM_A_COLLECTOR_WIRING_REGRESSION",
   "artifact_semantics": "OFFLINE_REGRESSION_ONLY_NO_ARM_HAS_RUN",
   "author": "Frank Asante Van Laarhoven",
-  "timestamp_utc": "2026-09-16T19:17:37.279512+00:00",
-  "repository_head": "7105f74cba18c0ff4c4d0f810a84ae4087432d8a",
+  "timestamp_utc": "2026-09-17T06:26:37.780059+00:00",
+  "repository_head": "01916dfa3a2901177ae1bc07caffd0881139d798",
   "EXECUTION_STATUS": "NOT_RUN",
   "arms_executed": 0,
   "what_is_new_since_the_seam_proof": "the collector now resolves a declared selector and passes it into the tracker. That is new code on the path every arm takes, so Arm A's behaviour is re-established through the wired construction rather than inherited from the earlier seam proof",
@@ -103,7 +103,7 @@
   },
   "collector_identity": {
     "path": "src/navfm/isaac/collect.py",
-    "sha256": "99715ba8921456b32698ff6c5a2a0e9b69234cafdb929c460d7b2176b04ed165"
+    "sha256": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0"
   },
   "selector_module_identity": {
     "path": "src/navfm/target_selection.py",

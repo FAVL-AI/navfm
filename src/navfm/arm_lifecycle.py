@@ -397,10 +397,20 @@ class IsaacRuntimeAdapter:
         from navfm.isaac.robot import M3PRO
 
         self._config = collect_config
+        if self._app is None:
+            raise LifecycleRefused(
+                Stage.COLLECTOR_READY.value,
+                "the runtime was not initialised, so there is no application to "
+                "hand the collector")
+        # The app is handed over, not described. Passing self._app.config alone
+        # left the collector holding a correct SimConfig and no live application,
+        # and scene loading is the first stage that needs one -- which is where
+        # Attempt 1 stopped.
         self._collector = Collector(
-            out_dir, collect_config, self._app.config, M3PRO)
+            out_dir, collect_config, self._app.config, M3PRO, isaac_app=self._app)
         self.stages["COLLECTOR_CONSTRUCTED"] = True
         return {"collector": type(self._collector).__name__,
+                "isaac_app_bound": self._collector._app is self._app,
                 "out_dir": str(out_dir), "selector_identity": selector_identity}
 
     def validate_initial_state(
@@ -757,14 +767,6 @@ def execute_arm(
                           refusal={"stage": "<entry>", "reason": f"unknown mode {mode!r}"})
 
     suffix = "a" if arm.endswith("_A") or arm == "ARM_A_CONTROL" else "b"
-    if mode == "REAL":
-        label = f"@_ARM_{suffix.upper()}"
-        default_root = root / f"runs/bo10/intervention/arm_{suffix}"
-    else:
-        # Rehearsal never consumes a production label and never writes to a
-        # production path.
-        label = f"SELFTEST_{suffix.upper()}"
-        default_root = root / f"runs/bo10/intervention/rehearsal/arm_{suffix}"
 
     try:
         manifest = json.loads(Path(manifest_path).read_text())
@@ -772,6 +774,22 @@ def execute_arm(
         return ArmOutcome(arm, mode, "REFUSED", recorder.validate(),
                           refusal={"stage": Stage.MANIFEST_VALIDATED.value,
                                    "reason": f"manifest unreadable: {exc}"[:200]})
+
+    # The attempt identity comes from the frozen manifest, never from the command
+    # line: an attempt number that can be typed at run time can be retyped after a
+    # result is seen, and the whole point of numbering attempts is that an earlier
+    # one stays visible. Manifests that predate attempt identity carry none, and
+    # keep the original single-attempt paths.
+    attempt = str(manifest.get("attempt", {}).get("attempt_id", "") or "")
+    part = f"_attempt_{attempt}" if attempt else ""
+    if mode == "REAL":
+        label = f"@_ARM_{suffix.upper()}{part.upper()}"
+        default_root = root / f"runs/bo10/intervention/arm_{suffix}{part}"
+    else:
+        # Rehearsal never consumes a production label and never writes to a
+        # production path.
+        label = f"SELFTEST_{suffix.upper()}{part.upper()}"
+        default_root = root / f"runs/bo10/intervention/rehearsal/arm_{suffix}{part}"
 
     target_root = Path(output_root) if output_root is not None else default_root
     target_root.mkdir(parents=True, exist_ok=True)

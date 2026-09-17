@@ -61,15 +61,42 @@ def amendment() -> dict[str, Any]:
 
 # --- the chain ---------------------------------------------------------------
 
-def test_v7_is_authoritative() -> None:
-    assert AUTHORITATIVE_CONTRACT_VERSION == "V7"
-    assert set(CONTRACTS) == {"V2", "V3", "V4", "V5", "V6", "V7"}
+#: V7's own freeze. Its tree is the one V7 answers for -- the one whose real
+#: path was reachable and whose adapter handed the collector a SimConfig.
+V7_FREEZE_COMMIT = "01916dfa3a2901177ae1bc07caffd0881139d798"
 
 
-def test_v7_accepts_the_tree_whose_real_path_is_reachable() -> None:
+def test_v7_remains_reachable_after_being_superseded() -> None:
+    """Which version is authoritative is asserted by that version's own suite.
+    What this checks is that V7 still answers for itself."""
+    assert AUTHORITATIVE_CONTRACT_VERSION in CONTRACTS
+    assert {"V2", "V3", "V4", "V5", "V6", "V7"} <= set(CONTRACTS)
+    assert check_contract(REPO, "V7")["version"] == "V7"
+
+
+def test_v7_accepted_the_tree_at_its_own_freeze_commit() -> None:
+    """Each amendment answers for the state it froze, not for every later one."""
+    frozen = json.loads(V7.read_text())["EXECUTION_ENVIRONMENT_IDENTITY_V7"][
+        "frozen_contract_values"]
+    for field, rel in (
+            ("scientific_code.arm_lifecycle_sha256", "src/navfm/arm_lifecycle.py"),
+            ("scientific_code.collect_sha256", "src/navfm/isaac/collect.py")):
+        at_freeze = subprocess.run(
+            ["git", "-C", str(REPO), "show", f"{V7_FREEZE_COMMIT}:{rel}"],
+            capture_output=True, check=False)
+        assert at_freeze.returncode == 0, rel
+        assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest(), field
+
+
+def test_v7_now_refuses_the_repaired_seam_tree() -> None:
+    """Expected: the adapter now hands the collector the app it owns.
+
+    Permanent historical control. If this ever passes, V7 was rewritten.
+    """
     result = check_contract(REPO, "V7")
-    assert result["CONTRACT_SATISFIED"] == "PASS", result["drift"]
-    assert result["drift"] == []
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    drift = [d["field"] for d in result["drift"]]
+    assert "scientific_code.collect_sha256" in drift
 
 
 @pytest.mark.parametrize("version", ["V2", "V3", "V4", "V5", "V6"])
@@ -213,11 +240,18 @@ def test_no_arm_has_executed(amendment: dict[str, Any]) -> None:
 
 # --- refusal controls --------------------------------------------------------
 
-def test_regeneration_on_an_unchanged_tree_is_idempotent() -> None:
+def test_v7_refuses_to_refreeze_on_a_tree_it_no_longer_describes() -> None:
+    """A superseded amendment must not quietly re-freeze itself onto a later
+    tree. It refuses, and -- the part that matters -- it writes nothing."""
     before = _sha()
     outcome = v7mod.freeze()
-    assert outcome["V7_AMENDMENT"] == "FROZEN"
+    assert outcome["V7_AMENDMENT"] == "REFUSED"
     assert _sha() == before
+
+
+def test_the_v7_artefact_is_byte_unchanged_by_any_of_this() -> None:
+    """The whole point of an append-only chain: V7's bytes never move."""
+    assert _sha() == V7_AMENDMENT_SHA256
 
 
 @pytest.mark.parametrize("attribute", ["PREREG_SHA256", "CONTROL_SHA256"])

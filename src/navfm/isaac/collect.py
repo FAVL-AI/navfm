@@ -113,6 +113,27 @@ class OccupancyBackendError(RuntimeError):
     """An occupancy backend was requested that does not exist, or failed."""
 
 
+class RuntimeBoundaryError(RuntimeError):
+    """A live runtime object this collector needs was never bound to it.
+
+    Distinct from a configuration error. ``SimConfig`` is declarative and can be
+    perfectly valid while no application exists; ``IsaacApp`` is the live object,
+    and only one of those can open a stage. Attempt 1 of the terminal-approach
+    intervention failed exactly there: the adapter owned an app, the collector
+    held a correct SimConfig, and the bare ``assert`` that noticed carried no
+    message, so the lifecycle recorded ``unhandled AssertionError:`` with an
+    empty reason and an escaped exception.
+
+    Raised with a named category so the failure is diagnosable from the artefact
+    rather than from a stack trace.
+    """
+
+    def __init__(self, category: str, detail: str) -> None:
+        super().__init__(f"{category}: {detail}")
+        self.category = category
+        self.detail = detail
+
+
 @dataclasses.dataclass
 class CollectConfig:
     scenes: list[str] = dataclasses.field(default_factory=list)
@@ -177,7 +198,18 @@ class Collector:
         randomization: RandomizationConfig | None = None,
         scope: CollectionScope | None = None,
         occupancy_backend: str = OCCUPANCY_BACKEND_LEGACY,
+        isaac_app: IsaacApp | None = None,
     ) -> None:
+        """``isaac_app`` binds a live application this collector does not own.
+
+        ``run()`` creates and owns an app for the whole collection. A caller that
+        drives the stages directly -- the production arm adapter does, because an
+        arm is one episode under a frozen route rather than a collection loop --
+        owns the app instead and must hand over that same object. Passing only
+        ``sim`` leaves this collector with a valid configuration and no live
+        application, which is how Attempt 1 reached scene loading with nothing to
+        open a stage with.
+        """
         self.out_dir = Path(out_dir)
         if occupancy_backend not in OCCUPANCY_BACKENDS:
             raise OccupancyBackendError(
@@ -221,7 +253,13 @@ class Collector:
         self.rng = np.random.default_rng(collect.seed)
         self.results: list[EpisodeResult] = []
 
-        self._app: IsaacApp | None = None
+        #: Bound at construction when a caller owns the app, otherwise created
+        #: and owned by ``run()``. Exactly one of those is true per execution:
+        #: two live applications would mean two simulators, and an arm that
+        #: opened its stage in one while stepping the other would be measuring
+        #: neither.
+        self._app: IsaacApp | None = isaac_app
+        self._app_is_borrowed: bool = isaac_app is not None
         self._robot: SimRobot | None = None
         self._randomizer: SceneRandomizer | None = None
         self._grid: OccupancyGrid | None = None
@@ -252,7 +290,14 @@ class Collector:
         return (cx - half, cy - half), (cx + half, cy + half)
 
     def open_scene(self, scene_usd: str) -> None:
-        assert self._app is not None
+        if self._app is None:
+            raise RuntimeBoundaryError(
+                "ISAAC_APP_NOT_BOUND_TO_COLLECTOR",
+                "open_scene needs a live IsaacApp. This collector holds a valid "
+                "SimConfig and no application: either run() was bypassed, or a "
+                "caller that drives the stages directly passed sim configuration "
+                "where the live app was required. A configuration cannot open a "
+                "stage")
         self._app.open_stage(scene_usd)
         self._robot = SimRobot(self._app, self.robot_config)
         self._robot.spawn()
@@ -665,6 +710,13 @@ class Collector:
     # -- driver ----------------------------------------------------------
 
     def run(self, scenes: list[str], episodes: int) -> list[EpisodeResult]:
+        if self._app_is_borrowed:
+            raise RuntimeBoundaryError(
+                "ISAAC_APP_SINGLE_OWNER_VIOLATION",
+                "run() creates and owns an application, and this collector was "
+                "already given one. Proceeding would leave two live simulators "
+                "with the caller holding the other, so which one an episode "
+                "actually stepped would be unrecoverable from the evidence")
         self.out_dir.mkdir(parents=True, exist_ok=True)
         per_scene = max(1, episodes // max(1, len(scenes)))
         with IsaacApp(self.sim) as app:

@@ -193,6 +193,12 @@ CONTRACT_FIELDS_BY_VERSION: dict[str, tuple[str, ...]] = {
     # field to look stricter would check nothing more than the one already here.
     "V7": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
            + V5_ADDITIONAL_CRITICAL_FIELDS + V6_ADDITIONAL_CRITICAL_FIELDS),
+    # V8 adds nothing. The seam repair moved collect.py and arm_lifecycle.py,
+    # and both have been pinned since V2 and V6 respectively -- the contract
+    # already watched the files whose contents changed. Adding a field to mark
+    # the occasion would check nothing that these two do not already check.
+    "V8": (CONTRACT_CRITICAL_FIELDS + V3_ADDITIONAL_CRITICAL_FIELDS
+           + V5_ADDITIONAL_CRITICAL_FIELDS + V6_ADDITIONAL_CRITICAL_FIELDS),
 }
 
 

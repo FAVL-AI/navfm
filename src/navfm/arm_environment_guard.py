@@ -88,7 +88,9 @@ __all__ = [
     "canonical_preflight",
     "capture_arm_environment",
     "check_contract",
+    "is_production_label",
     "nvidia_hold_state",
+    "parse_attempt",
     "parse_label",
     "preflight_exception",
     "preflight_identity",
@@ -202,17 +204,51 @@ _MISMATCH_CLASSES: tuple[tuple[str, str], ...] = (
 )
 
 
+#: A capture may name which attempt produced it: ``PRE_ARM_A_ATTEMPT_002``. The
+#: base label stays a closed enumeration -- only the attempt number is open, and
+#: only in this exact shape -- because a label pattern loose enough to admit
+#: anything would stop distinguishing an A capture from a B capture, which is the
+#: single job the label has.
+_ATTEMPT_LABEL = re.compile(r"^(?P<base>[A-Z_]+?)_ATTEMPT_(?P<attempt>\d{3})$")
+
+
+def parse_attempt(label: str) -> str | None:
+    """The attempt a capture belongs to, or None for a single-attempt label.
+
+    Attempt 1 of the terminal-approach intervention wrote ``PRE_ARM_A`` before
+    attempts were numbered. That capture is evidence and is never rewritten, so
+    an unnumbered label keeps meaning attempt 001 rather than becoming invalid.
+    """
+    match = _ATTEMPT_LABEL.match(label)
+    return match.group("attempt") if match else None
+
+
+def is_production_label(label: str) -> bool:
+    """Whether this names a real arm capture, attempt suffix or not.
+
+    Compared against the base, because membership decides whether the capture is
+    held to the frozen HEAD. A suffixed label falling out of the set would have
+    skipped that check silently -- the capture would still say PRE_ARM_A and no
+    longer be checked against the commit it claims.
+    """
+    match = _ATTEMPT_LABEL.match(label)
+    return (match.group("base") if match else label) in PRODUCTION_LABELS
+
+
 def parse_label(label: str) -> tuple[str, str]:
     """``PRE_ARM_A`` -> ``("A", "PRE")``. One schema, so the label is the only
     thing that distinguishes an A capture from a B capture."""
-    if label in SELFTEST_LABELS:
-        return label.rsplit("_", 1)[1], "SELFTEST"
-    if label not in PRODUCTION_LABELS:
+    match = _ATTEMPT_LABEL.match(label)
+    base = match.group("base") if match else label
+    if base in SELFTEST_LABELS:
+        return base.rsplit("_", 1)[1], "SELFTEST"
+    if base not in PRODUCTION_LABELS:
         raise ValueError(
             f"unknown capture label {label!r}; production labels are "
-            f"{PRODUCTION_LABELS} and self-test labels are {SELFTEST_LABELS}"
+            f"{PRODUCTION_LABELS} and self-test labels are {SELFTEST_LABELS}, "
+            "each optionally suffixed _ATTEMPT_<nnn>"
         )
-    phase, _, arm = label.partition("_ARM_")
+    phase, _, arm = base.partition("_ARM_")
     return arm, phase
 
 
@@ -545,7 +581,7 @@ def capture_arm_environment(
         reasons.append(f"critical field(s) absent or null: {absent}")
     if env.get("isaac", {}).get("probe_error"):
         reasons.append(f"isaac probe failed: {env['isaac']['probe_error']}")
-    if label in PRODUCTION_LABELS and env["repository"]["head"] != frozen_head:
+    if is_production_label(label) and env["repository"]["head"] != frozen_head:
         reasons.append(
             f"HEAD {str(env['repository']['head'])[:12]} is not the frozen "
             f"{frozen_head[:12]}"
@@ -558,7 +594,8 @@ def capture_arm_environment(
         "label": label,
         "arm": arm,
         "phase": phase,
-        "is_production_label": label in PRODUCTION_LABELS,
+        "is_production_label": is_production_label(label),
+        "attempt": parse_attempt(label),
         "timestamp_utc": env["observational"]["captured_at_utc"],
         "boot_identity": {
             "boot_id": env["session"]["boot_id"],
