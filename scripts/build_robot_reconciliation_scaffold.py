@@ -142,8 +142,6 @@ def build_rows() -> list[dict[str, Any]]:
     chassis_up = next(
         (v["dimensions"] for k, v in upstream.items()
          if k.startswith("base_link") and v["primitive"] == "box"), None)
-    camera_up = next(
-        (v for k, v in upstream.items() if k.startswith("camera_link")), None)
     camera_change = changes.get("camera_mount") or {}
     contract = camera_change.get("camera_contract", {})
 
@@ -154,25 +152,36 @@ def build_rows() -> list[dict[str, Any]]:
                     "from its own twin manifest, which records the change and "
                     "marks it PROVISIONAL_SIMULATION_VALUE, physically_measured "
                     "false. Neither is a vendor value")),
-        _row("camera_parent_link", "which frame the sensor rides on",
-             upstream="base_link" if camera_up else None,
-             navfm=contract.get("mount"),
-             notes="the navfm candidate introduces a mast link absent upstream"),
-        _row("camera_z_m", "camera height above ground",
-             navfm=contract.get("mount_height_m"),
-             notes=("determines where floor, horizon and obstacles fall in frame. "
-                    "For image-goal navigation this is part of the sensing "
-                    "experiment, so it must be measured on the actual robot")),
-        _row("camera_x_forward_m", "camera forward offset",
-             navfm=contract.get("forward_offset_m")),
-        _row("camera_y_m", "camera lateral offset",
-             navfm=contract.get("lateral_offset_m")),
-        _row("camera_roll_rad", "camera orientation",
-             navfm=contract.get("roll_rad")),
-        _row("camera_pitch_rad", "camera orientation",
-             navfm=contract.get("pitch_rad")),
-        _row("camera_yaw_rad", "camera orientation",
-             navfm=contract.get("yaw_rad")),
+        _row("camera_mount_topology", "what the camera is rigidly attached to",
+             upstream="base_link (fixed joint)", navfm=contract.get("mount"),
+             notes=("WITHDRAWN ASSUMPTION. Both local candidates attach the camera "
+                    "rigidly to the chassis -- upstream by a fixed camera_joint "
+                    "from base_link, navfm by a static mast. The physical M3 Pro "
+                    "carries the depth camera on the 6-DOF manipulator, so neither "
+                    "local topology matches the robot and neither models the arm")),
+        _row("arm_mount_link_to_camera_extrinsic",
+             "the only genuinely fixed camera calibration",
+             notes=("measured from the arm link or bracket that physically carries "
+                    "the camera, never from the chassis. This is the transform that "
+                    "does not change when the manipulator moves")),
+        _row("rgb_optical_frame_identity",
+             "the frame of the RGB stream the model actually consumes",
+             upstream="camera_optical_link (fixed from camera_link)",
+             notes=("upstream already separates housing from optical frame. A "
+                    "correctly attached camera is not a calibrated optical frame, "
+                    "and GNM/ViNT/NoMaD consume the optical frame")),
+        _row("navigation_arm_joint_vector",
+             "the frozen six-joint pose that makes the camera pose reproducible",
+             notes=("preregistered, not chosen per episode. With the arm locked the "
+                    "manipulator is a controlled camera mast rather than a second "
+                    "uncontrolled experimental factor")),
+        _row("per_joint_tolerance",
+             "admission band on each joint before a production capture",
+             notes="declared before any episode, not fitted to an observed pose"),
+        _row("camera_housing_datum",
+             "named physical datum if the optical centre cannot be established",
+             notes=("a measurement against a named datum is convertible later; one "
+                    "against an assumed datum is not")),
         _row("chassis_extent_m", "collision footprint and underside clearance",
              upstream=chassis_up,
              notes=("upstream box extent as declared. The admitted asset's "
@@ -201,6 +210,41 @@ def main() -> int:
             "OFFICIAL_YAHBOOM_ROSMASTER_M3_PRO, once acquired with explicit "
             "provenance"),
         "PHYSICAL_CAMERA_EXTRINSIC": "MEASUREMENT_REQUIRED",
+        "CAMERA_APPARATUS_MODEL": {
+            "WITHDRAWN": "a fixed base_link -> camera extrinsic",
+            "why_withdrawn": (
+                "the depth camera on the physical M3 Pro is carried by the 6-DOF "
+                "manipulator. A chassis-to-camera transform is therefore not a "
+                "constant of the apparatus; it is a function of the arm pose"),
+            "CAMERA_MOUNT": "MANIPULATOR_MOUNTED",
+            "CAMERA_BASE_TRANSFORM": "configuration-dependent",
+            "decomposition": [
+                "base_link -> arm_base: from the authoritative description",
+                "arm kinematic chain: authoritative description plus joint states",
+                "arm mount link -> camera housing: physical measurement",
+                "housing -> RGB optical frame: calibration where available",
+            ],
+            "FIXED_CAMERA_CALIBRATION": "arm_mount_link -> camera_optical_frame",
+            "ARM_MOTION_DURING_NAVIGATION": "PROHIBITED",
+            "NAVIGATION_ARM_CONFIGURATION": "NOT_ESTABLISHED",
+            "arm_pose_verified_before_pre": False,
+            "future_episode_precondition": (
+                "ARM_NAVIGATION_POSE_ADMISSION: every joint within its predeclared "
+                "tolerance of the frozen navigation pose, checked BEFORE the "
+                "production PRE capture. An arm off-pose refuses the episode rather "
+                "than recording one under an unknown camera geometry"),
+            "local_descriptions_do_not_model_the_arm": True,
+            "local_topologies_observed": {
+                "upstream": "camera_joint is fixed, base_link -> camera_link",
+                "navfm_twin": "static top_arm_mount -> camera_link",
+            },
+            "consequence": (
+                "neither local candidate can supply the arm chain, which raises "
+                "what the vendor archive has to provide"),
+            "separate_later_experiment": (
+                "deliberately moving the camera during navigation is a new "
+                "intervention, not a variation folded into this baseline"),
+        },
         "authority_classes": list(AUTHORITY_CLASSES),
         "candidates": {
             "upstream": _candidate(UPSTREAM_REL, "UPSTREAM_REFERENCE"),

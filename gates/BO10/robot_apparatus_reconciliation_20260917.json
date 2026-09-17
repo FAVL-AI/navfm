@@ -2,11 +2,35 @@
   "check": "ROBOT_APPARATUS_RECONCILIATION",
   "artifact_semantics": "RECONCILIATION_SCAFFOLD_NO_APPARATUS_DECIDED",
   "author": "Frank Asante Van Laarhoven",
-  "timestamp_utc": "2026-09-17T20:58:33.698348+00:00",
-  "repository_head": "6087d4a80cb4b9bc613aeecc3c351e63e224602b",
+  "timestamp_utc": "2026-09-17T21:19:18.357436+00:00",
+  "repository_head": "23e240da5470fbcd5acc7d1737842ef2e59814fd",
   "ROBOT_DESCRIPTION_AUTHORITY": "PENDING_VENDOR_ACQUISITION",
   "AUTHORITATIVE_BASE": "OFFICIAL_YAHBOOM_ROSMASTER_M3_PRO, once acquired with explicit provenance",
   "PHYSICAL_CAMERA_EXTRINSIC": "MEASUREMENT_REQUIRED",
+  "CAMERA_APPARATUS_MODEL": {
+    "WITHDRAWN": "a fixed base_link -> camera extrinsic",
+    "why_withdrawn": "the depth camera on the physical M3 Pro is carried by the 6-DOF manipulator. A chassis-to-camera transform is therefore not a constant of the apparatus; it is a function of the arm pose",
+    "CAMERA_MOUNT": "MANIPULATOR_MOUNTED",
+    "CAMERA_BASE_TRANSFORM": "configuration-dependent",
+    "decomposition": [
+      "base_link -> arm_base: from the authoritative description",
+      "arm kinematic chain: authoritative description plus joint states",
+      "arm mount link -> camera housing: physical measurement",
+      "housing -> RGB optical frame: calibration where available"
+    ],
+    "FIXED_CAMERA_CALIBRATION": "arm_mount_link -> camera_optical_frame",
+    "ARM_MOTION_DURING_NAVIGATION": "PROHIBITED",
+    "NAVIGATION_ARM_CONFIGURATION": "NOT_ESTABLISHED",
+    "arm_pose_verified_before_pre": false,
+    "future_episode_precondition": "ARM_NAVIGATION_POSE_ADMISSION: every joint within its predeclared tolerance of the frozen navigation pose, checked BEFORE the production PRE capture. An arm off-pose refuses the episode rather than recording one under an unknown camera geometry",
+    "local_descriptions_do_not_model_the_arm": true,
+    "local_topologies_observed": {
+      "upstream": "camera_joint is fixed, base_link -> camera_link",
+      "navfm_twin": "static top_arm_mount -> camera_link"
+    },
+    "consequence": "neither local candidate can supply the arm chain, which raises what the vendor archive has to provide",
+    "separate_later_experiment": "deliberately moving the camera during navigation is a new intervention, not a variation folded into this baseline"
+  },
   "authority_classes": [
     "VENDOR_SPECIFICATION",
     "VENDOR_ROBOT_DESCRIPTION",
@@ -58,95 +82,82 @@
       "notes": "the two local candidates disagree. The navfm value is read from its own twin manifest, which records the change and marks it PROVISIONAL_SIMULATION_VALUE, physically_measured false. Neither is a vendor value"
     },
     {
-      "quantity": "camera_parent_link",
-      "semantic_role": "which frame the sensor rides on",
+      "quantity": "camera_mount_topology",
+      "semantic_role": "what the camera is rigidly attached to",
       "vendor_value": "PENDING",
       "vendor_provenance": "PENDING",
       "navfm_reference_value": "yahboom_top_arm",
-      "upstream_reference_value": "base_link",
+      "upstream_reference_value": "base_link (fixed joint)",
       "physical_measurement": "NOT_MEASURED",
       "adopted_experimental_value": "PENDING",
       "authority_class": "NOT_ESTABLISHED",
       "resolution_status": "UNRESOLVED",
-      "notes": "the navfm candidate introduces a mast link absent upstream"
+      "notes": "WITHDRAWN ASSUMPTION. Both local candidates attach the camera rigidly to the chassis -- upstream by a fixed camera_joint from base_link, navfm by a static mast. The physical M3 Pro carries the depth camera on the 6-DOF manipulator, so neither local topology matches the robot and neither models the arm"
     },
     {
-      "quantity": "camera_z_m",
-      "semantic_role": "camera height above ground",
+      "quantity": "arm_mount_link_to_camera_extrinsic",
+      "semantic_role": "the only genuinely fixed camera calibration",
       "vendor_value": "PENDING",
       "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.28,
+      "navfm_reference_value": "PENDING",
       "upstream_reference_value": "PENDING",
       "physical_measurement": "NOT_MEASURED",
       "adopted_experimental_value": "PENDING",
       "authority_class": "NOT_ESTABLISHED",
       "resolution_status": "UNRESOLVED",
-      "notes": "determines where floor, horizon and obstacles fall in frame. For image-goal navigation this is part of the sensing experiment, so it must be measured on the actual robot"
+      "notes": "measured from the arm link or bracket that physically carries the camera, never from the chassis. This is the transform that does not change when the manipulator moves"
     },
     {
-      "quantity": "camera_x_forward_m",
-      "semantic_role": "camera forward offset",
+      "quantity": "rgb_optical_frame_identity",
+      "semantic_role": "the frame of the RGB stream the model actually consumes",
       "vendor_value": "PENDING",
       "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.1,
+      "navfm_reference_value": "PENDING",
+      "upstream_reference_value": "camera_optical_link (fixed from camera_link)",
+      "physical_measurement": "NOT_MEASURED",
+      "adopted_experimental_value": "PENDING",
+      "authority_class": "NOT_ESTABLISHED",
+      "resolution_status": "UNRESOLVED",
+      "notes": "upstream already separates housing from optical frame. A correctly attached camera is not a calibrated optical frame, and GNM/ViNT/NoMaD consume the optical frame"
+    },
+    {
+      "quantity": "navigation_arm_joint_vector",
+      "semantic_role": "the frozen six-joint pose that makes the camera pose reproducible",
+      "vendor_value": "PENDING",
+      "vendor_provenance": "PENDING",
+      "navfm_reference_value": "PENDING",
       "upstream_reference_value": "PENDING",
       "physical_measurement": "NOT_MEASURED",
       "adopted_experimental_value": "PENDING",
       "authority_class": "NOT_ESTABLISHED",
       "resolution_status": "UNRESOLVED",
-      "notes": ""
+      "notes": "preregistered, not chosen per episode. With the arm locked the manipulator is a controlled camera mast rather than a second uncontrolled experimental factor"
     },
     {
-      "quantity": "camera_y_m",
-      "semantic_role": "camera lateral offset",
+      "quantity": "per_joint_tolerance",
+      "semantic_role": "admission band on each joint before a production capture",
       "vendor_value": "PENDING",
       "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.0,
+      "navfm_reference_value": "PENDING",
       "upstream_reference_value": "PENDING",
       "physical_measurement": "NOT_MEASURED",
       "adopted_experimental_value": "PENDING",
       "authority_class": "NOT_ESTABLISHED",
       "resolution_status": "UNRESOLVED",
-      "notes": ""
+      "notes": "declared before any episode, not fitted to an observed pose"
     },
     {
-      "quantity": "camera_roll_rad",
-      "semantic_role": "camera orientation",
+      "quantity": "camera_housing_datum",
+      "semantic_role": "named physical datum if the optical centre cannot be established",
       "vendor_value": "PENDING",
       "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.0,
+      "navfm_reference_value": "PENDING",
       "upstream_reference_value": "PENDING",
       "physical_measurement": "NOT_MEASURED",
       "adopted_experimental_value": "PENDING",
       "authority_class": "NOT_ESTABLISHED",
       "resolution_status": "UNRESOLVED",
-      "notes": ""
-    },
-    {
-      "quantity": "camera_pitch_rad",
-      "semantic_role": "camera orientation",
-      "vendor_value": "PENDING",
-      "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.0,
-      "upstream_reference_value": "PENDING",
-      "physical_measurement": "NOT_MEASURED",
-      "adopted_experimental_value": "PENDING",
-      "authority_class": "NOT_ESTABLISHED",
-      "resolution_status": "UNRESOLVED",
-      "notes": ""
-    },
-    {
-      "quantity": "camera_yaw_rad",
-      "semantic_role": "camera orientation",
-      "vendor_value": "PENDING",
-      "vendor_provenance": "PENDING",
-      "navfm_reference_value": 0.0,
-      "upstream_reference_value": "PENDING",
-      "physical_measurement": "NOT_MEASURED",
-      "adopted_experimental_value": "PENDING",
-      "authority_class": "NOT_ESTABLISHED",
-      "resolution_status": "UNRESOLVED",
-      "notes": ""
+      "notes": "a measurement against a named datum is convertible later; one against an assumed datum is not"
     },
     {
       "quantity": "chassis_extent_m",
@@ -179,8 +190,8 @@
       "notes": "descriptive only. The frozen planner footprint is not changed by this scaffold"
     }
   ],
-  "populated_cells": 12,
-  "pending_cells": 30,
+  "populated_cells": 7,
+  "pending_cells": 27,
   "vendor_acquisition": {
     "source_url": "PENDING",
     "acquisition_timestamp": "PENDING",
