@@ -28,7 +28,10 @@ import hashlib
 import math
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:  # pragma: no cover - import cycle avoidance only
+    from navfm.isaac.ros_package_resolver import RosPackageResolver
 
 __all__ = [
     "SUPPORTED_PRIMITIVES",
@@ -161,12 +164,22 @@ def _primitive(geometry: ET.Element, where: str) -> tuple[str, tuple[float, ...]
     raise UrdfImportRefused("SOURCE_MALFORMED", f"{where} has no geometry")
 
 
-def parse_source(path: Path | str) -> SourceModel:
+def parse_source(
+    path: Path | str, *, resolver: RosPackageResolver | None = None
+) -> SourceModel:
     """Read the description. This is the geometry oracle, and it never imports.
 
     Expected collider dimensions are taken from here and from nowhere else. A
     value recovered from a defective import -- by inverting a square, say --
     would make the validator agree with the importer rather than with the robot.
+
+    ``resolver`` supplies a ROS package-resolution contract. Without one,
+    ``package://`` references are refused exactly as before, so every result
+    recorded before the resolver existed still reproduces. With one, references
+    are resolved against the roots the caller declared and a reference that does
+    not resolve is still refused -- the resolver widens what can be checked, not
+    what is accepted. XML conformance is decided before resolution is attempted,
+    so no workspace can make malformed XML parse.
     """
     target = Path(path)
     if not target.is_file():
@@ -186,15 +199,25 @@ def parse_source(path: Path | str) -> SourceModel:
         raise UrdfImportRefused(
             "SOURCE_MALFORMED", f"root element is <{root.tag}>, expected <robot>")
 
-    unresolved = [
-        el.get("filename", "") for el in root.iter()
+    package_refs = [
+        str(el.get("filename", "")) for el in root.iter()
         if el.tag == "mesh" and str(el.get("filename", "")).startswith("package://")]
-    if unresolved:
+    if package_refs and resolver is None:
         raise UrdfImportRefused(
             "UNRESOLVED_DEPENDENCY",
-            f"{len(unresolved)} package:// reference(s) cannot be resolved locally; "
-            "a source whose geometry is fetched from outside the admitted closure "
-            "cannot be hashed as a whole")
+            f"{len(package_refs)} package:// reference(s) cannot be resolved without a "
+            "package-resolution contract; a source whose geometry is fetched from "
+            "outside the admitted closure cannot be hashed as a whole. Supply a "
+            "RosPackageResolver with explicit workspace roots")
+    if package_refs and resolver is not None:
+        failures = [r for r in resolver.resolve_all(package_refs) if not r.resolved]
+        if failures:
+            first = failures[0]
+            raise UrdfImportRefused(
+                "UNRESOLVED_DEPENDENCY",
+                f"{len(failures)} of {len(package_refs)} package:// reference(s) do not "
+                f"resolve under the declared roots; first: {first.uri} -> "
+                f"{first.status} ({first.reason})")
 
     links: list[str] = []
     collisions: list[CollisionElement] = []
@@ -254,16 +277,26 @@ def parse_source(path: Path | str) -> SourceModel:
     )
 
 
-def source_closure(path: Path | str) -> dict[str, Any]:
-    """Every file the description needs, hashed. Measured, never assumed."""
+def source_closure(
+    path: Path | str, *, resolver: RosPackageResolver | None = None
+) -> dict[str, Any]:
+    """Every file the description needs, hashed. Measured, never assumed.
+
+    Members carry a relative path as well as an absolute one, and the closure
+    digest is computed from roles and hashes alone. Host paths record where a
+    measurement happened; they are not part of the identity, because the same
+    vendor archive unpacked elsewhere is the same closure.
+    """
     target = Path(path)
     if not target.is_file():
         raise UrdfImportRefused("SOURCE_FILE_ABSENT", f"no source description at {target}")
 
     raw = target.read_bytes()
     root = ET.fromstring(raw)
-    members = [{"path": str(target), "role": "description",
-                "sha256": hashlib.sha256(raw).hexdigest(), "size": len(raw)}]
+    members: list[dict[str, Any]] = [
+        {"path": str(target), "relative": target.name, "role": "description",
+         "resolution_class": "ROOT",
+         "sha256": hashlib.sha256(raw).hexdigest(), "size": len(raw)}]
 
     referenced: list[str] = []
     for element in root.iter():
@@ -271,30 +304,47 @@ def source_closure(path: Path | str) -> dict[str, Any]:
         if filename:
             referenced.append(filename)
 
-    missing: list[str] = []
+    missing: list[tuple[str, str]] = []
     for filename in referenced:
-        resolved = (target.parent / filename).resolve()
-        if resolved.is_file():
-            data = resolved.read_bytes()
-            members.append({"path": str(resolved), "role": "referenced_asset",
-                            "sha256": hashlib.sha256(data).hexdigest(),
-                            "size": len(data)})
+        if filename.startswith("package://"):
+            if resolver is None:
+                missing.append((filename, "NO_RESOLVER"))
+                continue
+            outcome = resolver.resolve(filename)
+            if not outcome.resolved or outcome.resolved_path is None:
+                missing.append((filename, outcome.status))
+                continue
+            found = Path(outcome.resolved_path)
+            relative = f"{outcome.package}/{outcome.requested_resource}"
+            resolution_class = outcome.resolution_class
         else:
-            missing.append(filename)
+            found = (target.parent / filename).resolve()
+            if not found.is_file():
+                missing.append((filename, "PATH_RELATIVE_ABSENT"))
+                continue
+            relative = filename
+            resolution_class = "PATH_RELATIVE"
+        data = found.read_bytes()
+        members.append({"path": str(found), "relative": relative,
+                        "role": "referenced_asset", "resolution_class": resolution_class,
+                        "sha256": hashlib.sha256(data).hexdigest(), "size": len(data)})
 
     if missing:
         raise UrdfImportRefused(
             "UNRESOLVED_DEPENDENCY",
-            f"{len(missing)} referenced asset(s) do not resolve locally: {missing[:3]}")
+            f"{len(missing)} referenced asset(s) do not resolve: {missing[:3]}")
 
-    digest = hashlib.sha256(
-        "\n".join(f"{m['role']}:{m['sha256']}" for m in members).encode()).hexdigest()
+    canonical = sorted(f"{m['role']}:{m['relative']}:{m['sha256']}" for m in members)
+    digest = hashlib.sha256("\n".join(canonical).encode()).hexdigest()
     return {
         "member_count": len(members),
         "members": members,
         "closure_digest": digest,
         "external_reference_count": len(referenced),
-        "method": "resolved and hashed from the description, not assumed",
+        "digest_inputs": canonical,
+        "digest_excludes_host_paths": True,
+        "method": ("role, package-relative path and hash of every member, sorted, "
+                   "so the same archive unpacked anywhere digests the same"),
     }
 
 
