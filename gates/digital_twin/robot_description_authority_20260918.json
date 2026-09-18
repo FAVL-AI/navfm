@@ -1,0 +1,755 @@
+{
+  "check": "ROBOT_DESCRIPTION_AUTHORITY",
+  "artifact_semantics": "APPARATUS_SOURCE_AUTHORITY_DECIDED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-18T08:00:28.457598+00:00",
+  "repository_head": "59ec7e45c41ace71708c9b701d798cb68333b52f",
+  "worktree_clean_at_measurement": true,
+  "other_dirty_entries": [],
+  "prior_evidence_not_rewritten": [
+    {
+      "path": "gates/digital_twin/vendor_source_closure_20260918.json",
+      "sha256": "199701bd5cbe082f4c7169e6b4bb66621fd6a3e5df03b2428e9631ae6cecfd7d"
+    },
+    {
+      "path": "gates/digital_twin/production_description_chain_20260918.json",
+      "sha256": "e3b8e09b2aa39ebca3c165ebcbe567b9c9f074bc20b86a56223f6abd3add515a"
+    },
+    {
+      "path": "gates/digital_twin/workspace_package_resolution_20260918.json",
+      "sha256": "e88d2b941bf2fbd7f2d690dac700f6778afcc249b89eb12a6fb122644b4a6b75"
+    },
+    {
+      "path": "gates/digital_twin/production_description_inventory_20260918.json",
+      "sha256": "baa0a4e97a9330b9f85ea4603b4d2e40bdfab7c0db2198be539d03ebe2c26f9d"
+    }
+  ],
+  "DEFINITION": {
+    "AUTHORITATIVE_WHOLE_ROBOT_DESCRIPTION": "the vendor-supplied robot-description source that the production M3 Pro software actually uses to publish robot_description for the physical whole-robot configuration",
+    "decided_by": "the production execution and reference chain",
+    "explicitly_not_decided_by": [
+      "filename",
+      "completeness",
+      "which file parses most cleanly",
+      "which model is easiest to import",
+      "mesh quality",
+      "which model best fits our intended simulator",
+      "recency"
+    ],
+    "why": "every one of those is a way to end up simulating a robot the vendor does not ship",
+    "frozen_before_candidates_were_scored": true
+  },
+  "DECISION_RULES": [
+    "A. exactly one candidate reached by the production bringup chain and passed to robot_state_publisher takes WHOLE_ROBOT_RUNTIME_AUTHORITY",
+    "B. a candidate reached only through manipulator tooling takes MANIPULATOR_PLANNING_AUTHORITY when it defines planning semantics of its own, otherwise SUPPORTING_COMPONENT_SOURCE",
+    "C. two candidates loaded as competing roots in the same production configuration make the decision AMBIGUOUS and it stops",
+    "D. no candidate is preferred for being newer, more complete, cleaner or easier to simulate; none of those is an input to this function"
+  ],
+  "CANDIDATES": [
+    {
+      "identity": "M3Pro/urdf/m3pro.urdf",
+      "sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+      "robot_name": "m3pro",
+      "reached_by_production_bringup": true,
+      "reaches_robot_state_publisher": true,
+      "reached_by_manipulator_tooling": false,
+      "shares_configuration_with_production": true,
+      "planning_semantics": [],
+      "workspace": "M3Pro_ws-0.0.1",
+      "package": "M3Pro",
+      "relative_path": "src/M3Pro/urdf/m3pro.urdf",
+      "link_count": 18,
+      "joint_count": 17,
+      "referenced_by_production_bringup": {
+        "entry_point": "src/m3pro_bringup/launch/car_base.launch.py",
+        "evidence": "model= assignment from package M3Pro, then xacro, then robot_state_publisher parameters",
+        "line_evidence_in": "gates/digital_twin/production_description_chain_20260918.json"
+      },
+      "referenced_by_moveit": false
+    },
+    {
+      "identity": "yahboom_M3Pro_description/urdf/M3Pro.urdf",
+      "sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6",
+      "robot_name": "M3Pro",
+      "reached_by_production_bringup": false,
+      "reaches_robot_state_publisher": true,
+      "reached_by_manipulator_tooling": true,
+      "shares_configuration_with_production": false,
+      "planning_semantics": [
+        "arm_group",
+        "grip_group",
+        "end effector gripper on arm5",
+        "KDL kinematics solver",
+        "joint limits",
+        "named states up/down/init/open/close"
+      ],
+      "workspace": "yahboomcar_ws",
+      "package": "yahboom_M3Pro_description",
+      "relative_path": "src/yahboom_M3Pro_description/urdf/M3Pro.urdf",
+      "link_count": 20,
+      "joint_count": 19,
+      "referenced_by_production_bringup": false,
+      "referenced_by_moveit": {
+        "entry_point": "src/M3Pro_config/launch/demo.launch.py",
+        "mechanism": "MoveItConfigsBuilder('M3Pro', package_name='M3Pro_config')",
+        "first_party_declaration": "src/M3Pro_config/.setup_assistant",
+        "declared_urdf_package": "yahboom_M3Pro_description",
+        "declared_urdf_relative_path": "urdf/M3Pro.urdf",
+        "declaration_matches_the_resolved_file": true,
+        "xacro": "src/M3Pro_config/config/M3Pro.urdf.xacro",
+        "srdf": "src/M3Pro_config/config/M3Pro.srdf",
+        "setup_assistant_sha256": "cd082a2b9364ca8cfb3c245dfeaf3728256a484053e2eebda9be0cf31e56a146"
+      }
+    }
+  ],
+  "CONFIGURATION_SEPARATION": {
+    "bringup_references_moveit_sources": false,
+    "files_found": [],
+    "finding": "no file under m3pro_bringup references M3Pro_config or yahboom_M3Pro_description, so the two descriptions are never loaded as competing roots in one configuration",
+    "consequence": "rule C does not apply",
+    "bringup_mentions_robot_state_publisher": true,
+    "moveit_publishes_independently": "MoveIt's generated rsp launch publishes robot_description within the MoveIt configuration. That is a separate configuration, not a second root inside the production one"
+  },
+  "SOURCE_COMPARISON": {
+    "joint_rows": [
+      {
+        "joint": "Camera_Joint",
+        "classification": "PRESENT_ONLY_IN_MOVEIT_DESCRIPTION",
+        "moveit": {
+          "type": "revolute",
+          "parent": "base_link",
+          "child": "Camera",
+          "xyz": "0.0909154688773379 0.000198272120369507 0.0934842113675051",
+          "rpy": "1.5707963267949 0 0",
+          "axis": "0 0 -1",
+          "lower": "0",
+          "upper": "0",
+          "effort": "0",
+          "velocity": "0"
+        }
+      },
+      {
+        "joint": "DCW2_Joint",
+        "classification": "NAMING_DIFFERENCE",
+        "differing_fields": {
+          "child": {
+            "runtime": "camera_link",
+            "moveit": "DCW2"
+          }
+        }
+      },
+      {
+        "joint": "Gripping_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "arm1_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "rpy": {
+            "runtime": "0 0 1.5708",
+            "moveit": "6.3751E-05 0 0.028395"
+          },
+          "axis": {
+            "runtime": "0 0 -1",
+            "moveit": "0 0 1"
+          },
+          "lower": {
+            "runtime": "0",
+            "moveit": "-1.5708"
+          },
+          "upper": {
+            "runtime": "3.1416",
+            "moveit": "1.5708"
+          }
+        }
+      },
+      {
+        "joint": "arm2_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "rpy": {
+            "runtime": "0 1.5708 0",
+            "moveit": "-6.3725E-05 0 -0.028422"
+          },
+          "lower": {
+            "runtime": "-0.2618",
+            "moveit": "-1.5708"
+          },
+          "upper": {
+            "runtime": "3.1416",
+            "moveit": "1.5708"
+          }
+        }
+      },
+      {
+        "joint": "arm3_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "rpy": {
+            "runtime": "0 1.5708 0",
+            "moveit": "6.3702E-05 0 0.027102"
+          },
+          "axis": {
+            "runtime": "0 -1 0",
+            "moveit": "-0.027098 -0.99963 0"
+          },
+          "lower": {
+            "runtime": "-0.2618",
+            "moveit": "-1.5708"
+          },
+          "upper": {
+            "runtime": "3.7525",
+            "moveit": "1.5708"
+          }
+        }
+      },
+      {
+        "joint": "arm4_Joiint",
+        "classification": "PRESENT_ONLY_IN_MOVEIT_DESCRIPTION",
+        "moveit": {
+          "type": "revolute",
+          "parent": "arm3",
+          "child": "arm4",
+          "xyz": "0 0 0.08285",
+          "rpy": "0 0 -0.027075",
+          "axis": "-2.6392E-05 -1 0",
+          "lower": "-1.5708",
+          "upper": "1.5708",
+          "effort": "100",
+          "velocity": "1"
+        }
+      },
+      {
+        "joint": "arm4_Joint",
+        "classification": "PRESENT_ONLY_IN_RUNTIME_DESCRIPTION",
+        "runtime": {
+          "type": "revolute",
+          "parent": "arm3",
+          "child": "arm4",
+          "xyz": "0 0 0.08285",
+          "rpy": "0 1.5708 0",
+          "axis": "0 -1 0",
+          "lower": "-0.2618",
+          "upper": "3.4907",
+          "effort": "100",
+          "velocity": "1"
+        }
+      },
+      {
+        "joint": "arm5_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "rpy": {
+            "runtime": "0 0 -1.5708",
+            "moveit": "0 0 0"
+          },
+          "lower": {
+            "runtime": "0",
+            "moveit": "-1.5708"
+          },
+          "upper": {
+            "runtime": "3.1416",
+            "moveit": "1.5708"
+          }
+        }
+      },
+      {
+        "joint": "arm_base_Joint",
+        "classification": "PRESENT_ONLY_IN_MOVEIT_DESCRIPTION",
+        "moveit": {
+          "type": "fixed",
+          "parent": "base_link",
+          "child": "arm_base_Link",
+          "xyz": "0.033617 -1.0031E-05 0.0",
+          "rpy": "6.3751E-05 0 0",
+          "axis": "0 0 0",
+          "lower": null,
+          "upper": null,
+          "effort": null,
+          "velocity": null
+        }
+      },
+      {
+        "joint": "llink1_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "llink2_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "llink3_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "lwheel1_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "type": {
+            "runtime": "fixed",
+            "moveit": "revolute"
+          },
+          "lower": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "upper": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "effort": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "velocity": {
+            "runtime": null,
+            "moveit": "0"
+          }
+        }
+      },
+      {
+        "joint": "lwheel2_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "type": {
+            "runtime": "fixed",
+            "moveit": "revolute"
+          },
+          "lower": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "upper": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "effort": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "velocity": {
+            "runtime": null,
+            "moveit": "0"
+          }
+        }
+      },
+      {
+        "joint": "rlink1_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "axis": {
+            "runtime": "0 0 1",
+            "moveit": "0 0 -1"
+          },
+          "lower": {
+            "runtime": "0",
+            "moveit": "-0.95"
+          },
+          "upper": {
+            "runtime": "3.14159",
+            "moveit": "0"
+          }
+        }
+      },
+      {
+        "joint": "rlink2_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "rlink3_Joint",
+        "classification": "IDENTICAL"
+      },
+      {
+        "joint": "rwheel1_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "type": {
+            "runtime": "fixed",
+            "moveit": "revolute"
+          },
+          "lower": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "upper": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "effort": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "velocity": {
+            "runtime": null,
+            "moveit": "0"
+          }
+        }
+      },
+      {
+        "joint": "rwheel2_Joint",
+        "classification": "NUMERICALLY_DIFFERENT",
+        "differing_fields": {
+          "type": {
+            "runtime": "fixed",
+            "moveit": "revolute"
+          },
+          "lower": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "upper": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "effort": {
+            "runtime": null,
+            "moveit": "0"
+          },
+          "velocity": {
+            "runtime": null,
+            "moveit": "0"
+          }
+        }
+      }
+    ],
+    "tally": {
+      "IDENTICAL": 6,
+      "NAMING_DIFFERENCE": 1,
+      "NUMERICALLY_DIFFERENT": 9,
+      "PRESENT_ONLY_IN_MOVEIT_DESCRIPTION": 3,
+      "PRESENT_ONLY_IN_RUNTIME_DESCRIPTION": 1
+    },
+    "links_only_in_runtime": [
+      "camera_link"
+    ],
+    "links_only_in_moveit": [
+      "Camera",
+      "DCW2",
+      "arm_base_Link"
+    ],
+    "shared_links": [
+      "Gripping",
+      "arm1",
+      "arm2",
+      "arm3",
+      "arm4",
+      "arm5",
+      "base_link",
+      "llink1",
+      "llink2",
+      "llink3",
+      "lwheel1",
+      "lwheel2",
+      "rlink1",
+      "rlink2",
+      "rlink3",
+      "rwheel1",
+      "rwheel2"
+    ],
+    "NOT_RECONCILED": "differences are named, not merged. A merged model would be a third robot that neither the vendor nor the hardware has"
+  },
+  "MATERIAL_DIFFERENCES": {
+    "ARM_JOINT_LIMITS": {
+      "runtime": {
+        "arm1_Joint": [
+          "0",
+          "3.1416"
+        ],
+        "arm2_Joint": [
+          "-0.2618",
+          "3.1416"
+        ],
+        "arm3_Joint": [
+          "-0.2618",
+          "3.7525"
+        ],
+        "arm4_Joint": [
+          "-0.2618",
+          "3.4907"
+        ],
+        "arm5_Joint": [
+          "0",
+          "3.1416"
+        ]
+      },
+      "moveit": {
+        "arm1_Joint": [
+          "-1.5708",
+          "1.5708"
+        ],
+        "arm2_Joint": [
+          "-1.5708",
+          "1.5708"
+        ],
+        "arm3_Joint": [
+          "-1.5708",
+          "1.5708"
+        ],
+        "arm4_Joiint": [
+          "-1.5708",
+          "1.5708"
+        ],
+        "arm5_Joint": [
+          "-1.5708",
+          "1.5708"
+        ]
+      },
+      "distinct_limit_pairs_runtime": 4,
+      "distinct_limit_pairs_moveit": 1,
+      "moveit_limits_are_uniform": true,
+      "reading": "the rival gives every revolute arm joint the same symmetric range while the production root gives each a different asymmetric one. A single repeated value across every joint is what a default looks like, and a per-joint asymmetric one is what a considered value looks like. This is an INFERENCE about which is a placeholder, not a measurement of the arm",
+      "CONSEQUENCE": "the rival's joint limits must not be transplanted onto the production root. Neither set has been compared against the physical arm"
+    },
+    "JOINT_NAME_MISMATCH": {
+      "only_in_moveit": [
+        "Camera_Joint",
+        "arm4_Joiint",
+        "arm_base_Joint"
+      ],
+      "only_in_runtime": [
+        "arm4_Joint"
+      ],
+      "CONSEQUENCE": "the rival names the fourth arm joint arm4_Joiint and the production root names it arm4_Joint, so the MoveIt planning group cannot bind to the production description as it stands. The rival's planning authority covers structure -- groups, end effector, solver choice -- and does not carry over to the production root without a rename that is itself an apparatus change",
+      "NOT_REPAIRED": true
+    },
+    "WHEEL_ACTUATION": {
+      "joints_whose_type_differs": [
+        "lwheel1_Joint",
+        "lwheel2_Joint",
+        "rwheel1_Joint",
+        "rwheel2_Joint"
+      ],
+      "runtime_type": "fixed",
+      "moveit_type": "revolute with lower, upper, effort and velocity all 0",
+      "reading": "neither source models a turning wheel. One says so by typing the joint fixed and the other by giving a revolute joint a zero range, so a twin built from either has a base that does not roll in its own kinematics",
+      "CONSEQUENCE": "recorded as a VENDOR_MODEL_LIMITATION of both sources"
+    },
+    "AXIS_SIGN": {
+      "joints": [
+        "arm1_Joint",
+        "arm3_Joint",
+        "rlink1_Joint"
+      ],
+      "reading": "axis directions differ in sign or direction on these joints, so a positive command means opposite motions in the two models"
+    },
+    "ORIGIN_PRECISION_PATTERN": {
+      "reading": "the production root carries rounded origins such as 0 0 1.5708 where the rival carries raw exported ones such as 6.3751E-05 0 0.028395. That is consistent with the production file having been tidied after export and the rival being closer to the CAD output. INFERENCE, and it does not tell us which is nearer the physical robot"
+    },
+    "SUMMARY": "the two sources are not minor variants of one model. They differ in arm joint limits, axis directions, a joint name, wheel joint type and camera link naming, and they agree exactly on the camera mount transform and the wheel origins"
+  },
+  "COMPLETENESS": {
+    "runtime": {
+      "chassis": "REPRESENTED",
+      "mecanum_wheels": "4 link(s)",
+      "wheels_are_actuated": "0/4 have a turning joint",
+      "arm_dof": "5 actuated arm joint(s)",
+      "camera_mechanical_mount": "1 camera link(s): ['camera_link']",
+      "rgb_depth_optical_frames": "NOT_REPRESENTED_IN_SOURCE",
+      "tof_representation": "NOT_REPRESENTED_IN_SOURCE",
+      "base_link": "REPRESENTED",
+      "odom_frames": "NOT_REPRESENTED_IN_SOURCE"
+    },
+    "moveit": {
+      "chassis": "REPRESENTED",
+      "mecanum_wheels": "4 link(s)",
+      "wheels_are_actuated": "4/4 have a turning joint",
+      "arm_dof": "5 actuated arm joint(s)",
+      "camera_mechanical_mount": "2 camera link(s): ['DCW2', 'Camera']",
+      "rgb_depth_optical_frames": "NOT_REPRESENTED_IN_SOURCE",
+      "tof_representation": "NOT_REPRESENTED_IN_SOURCE",
+      "base_link": "REPRESENTED",
+      "odom_frames": "NOT_REPRESENTED_IN_SOURCE"
+    },
+    "NOT_AN_INPUT": "recorded for the reader. Authority is not completeness, and this section is not consulted by the classifier"
+  },
+  "CAMERA_AUTHORITY": {
+    "CAMERA_TO_ARM_TOPOLOGY_AUTHORITY": "PRODUCTION_RUNTIME_DESCRIPTION",
+    "runtime_joint": {
+      "name": "DCW2_Joint",
+      "type": "fixed",
+      "parent": "arm4",
+      "child": "camera_link",
+      "xyz": "-0.0483883323542816 0.00245180097510241 0.0671900000306381",
+      "rpy": "1.84287098025439 -1.57079631189374 -1.81447538896515",
+      "axis": "0 0 0",
+      "lower": null,
+      "upper": null,
+      "effort": null,
+      "velocity": null
+    },
+    "moveit_joint": {
+      "name": "DCW2_Joint",
+      "type": "fixed",
+      "parent": "arm4",
+      "child": "DCW2",
+      "xyz": "-0.0483883323542816 0.00245180097510241 0.0671900000306381",
+      "rpy": "1.84287098025439 -1.57079631189374 -1.81447538896515",
+      "axis": "0 0 0",
+      "lower": null,
+      "upper": null,
+      "effort": null,
+      "velocity": null
+    },
+    "both_sources_agree_on_parentage_and_transform": true,
+    "corroboration": "the rival source encodes the same fixed joint, the same parent arm4 and the same transform, so the arm mounting is corroborated rather than contested. Only the child link name differs",
+    "CAMERA_EXTRINSIC": "VENDOR_SOFTWARE_VALUE",
+    "PHYSICAL_CAMERA_EXTRINSIC": "NOT_MEASURED",
+    "SECOND_CAMERA_IN_RIVAL": {
+      "joint": "Camera_Joint",
+      "detail": {
+        "type": "revolute",
+        "parent": "base_link",
+        "child": "Camera",
+        "xyz": "0.0909154688773379 0.000198272120369507 0.0934842113675051",
+        "rpy": "1.5707963267949 0 0",
+        "axis": "0 0 -1",
+        "lower": "0",
+        "upper": "0",
+        "effort": "0",
+        "velocity": "0"
+      },
+      "reading": "the MoveIt source additionally carries a revolute Camera joint on base_link that the production root does not have. It does not contradict the arm mounting; it is a second entity, and which physical part it corresponds to is not established here",
+      "status": "UNRECONCILED_DIFFERENCE"
+    }
+  },
+  "BROKEN_REFERENCE_IMPACT": {
+    "runtime_root": {
+      "affected": false,
+      "detail": "m3pro.urdf resolves 18 of 18 references. The arM3Pro.STL defect is in the M3Pro_robot1 and M3Pro_robot2 sibling variants, which the production chain does not load",
+      "blocks_authority": false
+    },
+    "sibling_variants": {
+      "affected": true,
+      "files": [
+        "src/M3Pro/urdf/M3Pro_robot1.urdf",
+        "src/M3Pro/urdf/M3Pro_robot2.urdf"
+      ],
+      "blocks_authority": false,
+      "detail": "a broken sibling does not invalidate a root that does not depend on it"
+    },
+    "moveit_source": {
+      "affected": true,
+      "detail": "references package dofbot_M3Pro_descripton, which is declared nowhere; 19 of 20 references resolve",
+      "blocks_authority": false,
+      "note": "it is not being selected as the whole-robot root anyway, and this defect is not the reason"
+    },
+    "NOT_REPAIRED": true
+  },
+  "SEPARATED_VERDICTS": {
+    "SOURCE_AUTHORITY": "WHOLE_ROBOT_RUNTIME_AUTHORITY",
+    "SOURCE_CONFORMANCE": "XML_VALID",
+    "RESOURCE_CLOSURE": "COMPLETE (18/18)",
+    "MODEL_COMPLETENESS": "PARTIAL - see COMPLETENESS",
+    "why_separate": "a source can be authoritative and defective at the same time. Authority is a fact about the vendor's software, not a certificate of quality"
+  },
+  "NEGATIVE_CONTROLS": {
+    "suite": "tests/test_description_authority.py",
+    "exit_code": 0,
+    "VERDICT": "PASS",
+    "last_line": "................                                                         [100%]",
+    "mutations": {
+      "ROBOT_STATE_PUBLISHER_EDGE_REMOVED": "authority withdrawn",
+      "BRINGUP_EDGE_REMOVED": "authority withdrawn",
+      "BRINGUP_POINTED_AT_THE_RIVAL": "authority moves to the rival",
+      "TWO_COMPETING_ROOTS_ONE_CONFIGURATION": "AMBIGUOUS, decision stops",
+      "TWO_PRODUCTION_ROOTS_SEPARATE_CONFIGURATIONS": "AMBIGUOUS, stops",
+      "TUTORIAL_SUBSTITUTED_FOR_THE_ROOT": "gains no authority",
+      "RICHER_RIVAL_OFFERED": "still loses to the production chain",
+      "COMPLETENESS_AS_AN_INPUT": "the Candidate type has no field for it"
+    }
+  },
+  "AUTHORITY_VERDICT": {
+    "VERDICT": "DECIDED",
+    "AUTHORITATIVE_ROBOT_DESCRIPTION": "M3Pro/urdf/m3pro.urdf",
+    "AUTHORITATIVE_SOURCE_SHA256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+    "AUTHORITY_SCOPE": "WHOLE_ROBOT_RUNTIME_AUTHORITY",
+    "STOP": false,
+    "rules_applied": [
+      "A. exactly one candidate reached by the production bringup chain and passed to robot_state_publisher takes WHOLE_ROBOT_RUNTIME_AUTHORITY",
+      "B. a candidate reached only through manipulator tooling takes MANIPULATOR_PLANNING_AUTHORITY when it defines planning semantics of its own, otherwise SUPPORTING_COMPONENT_SOURCE",
+      "C. two candidates loaded as competing roots in the same production configuration make the decision AMBIGUOUS and it stops",
+      "D. no candidate is preferred for being newer, more complete, cleaner or easier to simulate; none of those is an input to this function"
+    ],
+    "inputs_deliberately_excluded": [
+      "link or joint counts",
+      "model completeness",
+      "parse cleanliness",
+      "mesh quality",
+      "import convenience",
+      "file recency"
+    ],
+    "reasoning": [
+      "M3Pro/urdf/m3pro.urdf is the only candidate the production bringup chain reaches and hands to robot_state_publisher; rule A applies",
+      "yahboom_M3Pro_description/urdf/M3Pro.urdf is loaded only by manipulator tooling and carries planning semantics (arm_group, grip_group, end effector gripper on arm5, KDL kinematics solver, joint limits, named states up/down/init/open/close); rule B applies"
+    ],
+    "roles": {
+      "M3Pro/urdf/m3pro.urdf": "WHOLE_ROBOT_RUNTIME_AUTHORITY",
+      "yahboom_M3Pro_description/urdf/M3Pro.urdf": "MANIPULATOR_PLANNING_AUTHORITY"
+    },
+    "NOT_ESTABLISHED_BY_THIS_DECISION": [
+      "permission to redistribute the source",
+      "agreement between the source and the physical robot",
+      "how colliders should be derived from it",
+      "that the source is free of defects"
+    ]
+  },
+  "SELECTED_SOURCE_IDENTITY": {
+    "package": "M3Pro",
+    "package_xml_sha256": "6675b5e7936bcbb541b3f14c8eaa6fb44068ac54a60f79b46d1f278f5833e983",
+    "relative_path": "src/M3Pro/urdf/m3pro.urdf",
+    "source_sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+    "byte_size": 24836,
+    "workspace_closure_digest": "dc685816504061aac3de19eb2ca28ed4360b8e0313809ff328972a22a3b423c0",
+    "embedded_git": false,
+    "bringup_entry_point": "src/m3pro_bringup/launch/car_base.launch.py",
+    "bringup_sha256": "e0c4c2e82f79b6021579022f72da7c2f3e414be5388b164a2d7878a27efbbd0a",
+    "resource_closure": "18/18 resolved",
+    "reproducible_from": "archive closure digest plus package-relative path plus file hash, never a host path"
+  },
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "M3Pro/urdf/m3pro.urdf",
+  "AUTHORITY_SCOPE": "WHOLE_ROBOT_RUNTIME_AUTHORITY",
+  "MOVEIT_DESCRIPTION_ROLE": "MANIPULATOR_PLANNING_AUTHORITY",
+  "MOVEIT_AUTHORITY_REACH": {
+    "covers": [
+      "planning group membership",
+      "end effector declaration",
+      "kinematics solver choice",
+      "named states",
+      "SRDF collision semantics"
+    ],
+    "does_not_cover": [
+      "joint limits, which differ from the production root and look like a uniform default in the rival",
+      "joint naming, which does not match the production root",
+      "whole-robot structure"
+    ],
+    "why": "scoping the rival is not the same as importing it. Its planning structure is usable; its numbers are a separate question and were not adopted"
+  },
+  "SELECTED_SOURCE_LIMITATIONS": [
+    "collision geometry is mesh-only; no primitive dimensions exist in it",
+    "wheel joints are fixed, so the source does not model wheel rotation",
+    "RGB, depth and optical camera frames are not represented",
+    "the two ranging sensors are not represented as links",
+    "no licence in the archive covers it",
+    "every numeric value in it is a vendor software value"
+  ],
+  "AUTHORITY_IS_NOT_PHYSICAL_CALIBRATION": "selecting this source establishes nothing about the actual wheel radius, chassis dimensions, camera extrinsic, TOF mounting, joint zero offsets or as-built tolerances. All remain subject to physical reconciliation",
+  "AUTHORITY_IS_NOT_REDISTRIBUTION_PERMISSION": "REDISTRIBUTION stays NOT_AUTHORISED_PENDING_CLARIFICATION. Saying this is the source the production software uses is not a licence to publish it or anything derived from it",
+  "AUTHORITY_IS_NOT_A_COLLIDER_STRATEGY": "how collision geometry is built from this source is Decision B and is untouched",
+  "ORBBEC_RUNTIME_DRIVER": "NOT_PRESENT_IN_ACQUIRED_CLOSURE",
+  "TOF_DEVICE_DRIVERS": "NOT_IDENTIFIED_IN_ACQUIRED_CLOSURE",
+  "driver_absence_note": "these affect sensor-runtime reproducibility, not structural source authority, and do not block this decision",
+  "CAD_ROLE": "CAD_GEOMETRY_REFERENCE_CANDIDATE",
+  "cad_note": "ROSMASTER-M3Pro.x_t is not the robot_description authority, was not converted, and does not override the ROS production graph. Its product association remains unestablished",
+  "REDISTRIBUTION": "NOT_AUTHORISED_PENDING_CLARIFICATION",
+  "DECISION_B": "UNRESOLVED_AND_NOT_TOUCHED",
+  "PRODUCTION_DESCRIPTION_IDENTIFIED": true,
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "DIGITAL_TWIN_REQUALIFICATION": "NOT_STARTED",
+  "MUTO_PRODUCT_ROLE": "TUTORIAL_CONTENT",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0
+}
