@@ -1,0 +1,2407 @@
+{
+  "check": "COLLISION_GEOMETRY_STRATEGY",
+  "artifact_semantics": "DECISION_B_SOURCE_AND_STRATEGY_ADJUDICATED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-18T09:20:16.342097+00:00",
+  "repository_head": "522586680584c1805876ca41786ba8ed59947c36",
+  "worktree_clean_at_measurement": true,
+  "other_dirty_entries": [],
+  "measurement_interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "hull_backend": {
+    "AVAILABLE": true,
+    "backend": "scipy.spatial.ConvexHull (Qhull)",
+    "version": "1.15.3"
+  },
+  "DECISION_B_QUESTION": "given that the authoritative production URDF provides mesh collision geometry rather than primitives, what geometry source and deterministic transformation can create PhysX-admissible collision shapes without inventing robot dimensions?",
+  "NOT_REDEFINED_AS": "what boxes look approximately right",
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "M3Pro/urdf/m3pro.urdf",
+  "authoritative_sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+  "authoritative_sha_matches_decision": true,
+  "EVIDENCE_CLASSES": {
+    "A_VENDOR_SPECIFIED_DIMENSION": "stated by Yahboom in the acquired source or docs",
+    "B_VENDOR_MESH_DERIVED_DIMENSION": "measured from the authoritative vendor mesh",
+    "C_CAD_DERIVED_DIMENSION": "measured from the Parasolid file once product association is proven",
+    "D_PHYSICAL_MEASURED_DIMENSION": "measured from the actual robot",
+    "RULE": "B and C are never labelled A. This tranche can produce B only"
+  },
+  "COLLISION_INVENTORY": [
+    {
+      "link": "base_link",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/base_link.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/base_link.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "82897ec12100b78d8f33800edd7be19f86de3ffbc3574ed446f1d2bf04079f4a",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 172622,
+      "unique_vertex_count": 86952,
+      "raw_bounds_min": [
+        -0.15267528593540192,
+        -0.11156431585550308,
+        0.023922834545373917
+      ],
+      "raw_bounds_max": [
+        0.12374485284090042,
+        0.10999999940395355,
+        0.19635748863220215
+      ],
+      "raw_extents": [
+        0.27642013877630234,
+        0.22156431525945663,
+        0.17243465408682823
+      ],
+      "centroid": [
+        -0.029464568306760187,
+        0.0025751243430997914,
+        0.13692531474036942
+      ],
+      "signed_volume": 0.0008713967533379883,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.15267528593540192,
+          -0.11156431585550308,
+          0.023922834545373917
+        ],
+        "bounds_max": [
+          0.12374485284090042,
+          0.10999999940395355,
+          0.19635748863220215
+        ],
+        "extents": [
+          0.27642013877630234,
+          0.22156431525945663,
+          0.17243465408682823
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 86952,
+        "hull_vertex_count": 309,
+        "hull_facet_count": 614,
+        "hull_volume": 0.006633058854772154,
+        "hull_area": 0.19411909946690875,
+        "hull_bounds_min": [
+          -0.15267528593540192,
+          -0.11156431585550308,
+          0.023922834545373917
+        ],
+        "hull_bounds_max": [
+          0.12374485284090042,
+          0.10999999940395355,
+          0.19635748863220215
+        ],
+        "hull_extents": [
+          0.27642013877630234,
+          0.22156431525945663,
+          0.17243465408682823
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "arm1",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/arm1.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/arm1.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "d12f701abb74171df8ed3179b3885d10c6af2863f29d13e52bcce2d0d8933643",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 143194,
+      "unique_vertex_count": 71587,
+      "raw_bounds_min": [
+        -0.027467582374811172,
+        -0.027499057352542877,
+        -0.0066999997943639755
+      ],
+      "raw_bounds_max": [
+        0.027499057352542877,
+        0.027485927566885948,
+        0.04349999874830246
+      ],
+      "raw_extents": [
+        0.05496663972735405,
+        0.054984984919428825,
+        0.050199998542666435
+      ],
+      "centroid": [
+        2.857025200631133e-05,
+        0.00046457769304587636,
+        0.013950603032785296
+      ],
+      "signed_volume": 1.8353642320779995e-05,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.027467582374811172,
+          -0.027499057352542877,
+          -0.0066999997943639755
+        ],
+        "bounds_max": [
+          0.027499057352542877,
+          0.027485927566885948,
+          0.04349999874830246
+        ],
+        "extents": [
+          0.05496663972735405,
+          0.054984984919428825,
+          0.050199998542666435
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 71587,
+        "hull_vertex_count": 560,
+        "hull_facet_count": 1116,
+        "hull_volume": 8.685039046096443e-05,
+        "hull_area": 0.010660316712699658,
+        "hull_bounds_min": [
+          -0.027467582374811172,
+          -0.027499057352542877,
+          -0.0066999997943639755
+        ],
+        "hull_bounds_max": [
+          0.027499057352542877,
+          0.027485927566885948,
+          0.04349999874830246
+        ],
+        "hull_extents": [
+          0.05496663972735405,
+          0.054984984919428825,
+          0.050199998542666435
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 4.732052033215904,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "arm2",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/arm2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/arm2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "6ec3d8c7b02106560f61035e03a034637b988d153319d87bb50994e96728271e",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 84424,
+      "unique_vertex_count": 42172,
+      "raw_bounds_min": [
+        -0.015446952544152737,
+        -0.023805785924196243,
+        -0.014220787212252617
+      ],
+      "raw_bounds_max": [
+        0.013608047738671303,
+        0.023795299232006073,
+        0.0927787572145462
+      ],
+      "raw_extents": [
+        0.02905500028282404,
+        0.047601085156202316,
+        0.10699954442679882
+      ],
+      "centroid": [
+        0.0020303513300035697,
+        0.000613016082566381,
+        0.06596549069252192
+      ],
+      "signed_volume": 3.9709233328151615e-05,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.015446952544152737,
+          -0.023805785924196243,
+          -0.014220787212252617
+        ],
+        "bounds_max": [
+          0.013608047738671303,
+          0.023795299232006073,
+          0.0927787572145462
+        ],
+        "extents": [
+          0.02905500028282404,
+          0.047601085156202316,
+          0.10699954442679882
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 42172,
+        "hull_vertex_count": 619,
+        "hull_facet_count": 1234,
+        "hull_volume": 0.00010989959074357232,
+        "hull_area": 0.014751408810152548,
+        "hull_bounds_min": [
+          -0.015446952544152737,
+          -0.023805785924196243,
+          -0.014220787212252617
+        ],
+        "hull_bounds_max": [
+          0.013608047738671303,
+          0.023795299232006073,
+          0.0927787572145462
+        ],
+        "hull_extents": [
+          0.02905500028282404,
+          0.047601085156202316,
+          0.10699954442679882
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 2.7676079725684275,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "arm3",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/arm3.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/arm3.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "74e309203df8ed80e57962a5ccc871909163cb07c1b1f6db0628233684360a98",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 84424,
+      "unique_vertex_count": 42174,
+      "raw_bounds_min": [
+        -0.015775946900248528,
+        -0.024080650880932808,
+        -0.014790000393986702
+      ],
+      "raw_bounds_max": [
+        0.013935007154941559,
+        0.023963959887623787,
+        0.09220986068248749
+      ],
+      "raw_extents": [
+        0.029710954055190086,
+        0.048044610768556595,
+        0.10699986107647419
+      ],
+      "centroid": [
+        0.0020419523296162567,
+        0.000562549084328054,
+        0.06539761519929886
+      ],
+      "signed_volume": 3.970923640041804e-05,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.015775946900248528,
+          -0.024080650880932808,
+          -0.014790000393986702
+        ],
+        "bounds_max": [
+          0.013935007154941559,
+          0.023963959887623787,
+          0.09220986068248749
+        ],
+        "extents": [
+          0.029710954055190086,
+          0.048044610768556595,
+          0.10699986107647419
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 42174,
+        "hull_vertex_count": 615,
+        "hull_facet_count": 1226,
+        "hull_volume": 0.00010990937759149053,
+        "hull_area": 0.014751481247498095,
+        "hull_bounds_min": [
+          -0.015775946900248528,
+          -0.024080650880932808,
+          -0.014790000393986702
+        ],
+        "hull_bounds_max": [
+          0.013935007154941559,
+          0.023963959887623787,
+          0.09220986068248749
+        ],
+        "hull_extents": [
+          0.029710954055190086,
+          0.048044610768556595,
+          0.10699986107647419
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 2.7678542211991126,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "arm4",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/arm4.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/arm4.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "8f74b107bdaba930ea482c95e6685d5cf5dccb3923a1e6d8b9280b7986811cda",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 32530,
+      "unique_vertex_count": 16207,
+      "raw_bounds_min": [
+        -0.015447348356246948,
+        -0.01707412302494049,
+        -0.015360000543296337
+      ],
+      "raw_bounds_max": [
+        0.03455336391925812,
+        0.018150022253394127,
+        0.07628999650478363
+      ],
+      "raw_extents": [
+        0.050000712275505066,
+        0.03522414527833462,
+        0.09164999704807997
+      ],
+      "centroid": [
+        0.0018805823593729294,
+        -0.0003441319506855848,
+        0.03576703111398438
+      ],
+      "signed_volume": 6.69707505434754e-05,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.015447348356246948,
+          -0.01707412302494049,
+          -0.015360000543296337
+        ],
+        "bounds_max": [
+          0.03455336391925812,
+          0.018150022253394127,
+          0.07628999650478363
+        ],
+        "extents": [
+          0.050000712275505066,
+          0.03522414527833462,
+          0.09164999704807997
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 16207,
+        "hull_vertex_count": 181,
+        "hull_facet_count": 358,
+        "hull_volume": 0.00011705504760743641,
+        "hull_area": 0.01456285699273686,
+        "hull_bounds_min": [
+          -0.015447348356246948,
+          -0.01707412302494049,
+          -0.015360000543296337
+        ],
+        "hull_bounds_max": [
+          0.03455336391925812,
+          0.018150022253394127,
+          0.07628999650478363
+        ],
+        "hull_extents": [
+          0.050000712275505066,
+          0.03522414527833462,
+          0.09164999704807997
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 1.7478533039800381,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "arm5",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/arm5.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/arm5.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "1a52a732e4664ac3b703968416446b76d67067a78632b520d33858a80a26a281",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 75016,
+      "unique_vertex_count": 37529,
+      "raw_bounds_min": [
+        -0.010500145144760609,
+        -0.02987535484135151,
+        -0.0015250002034008503
+      ],
+      "raw_bounds_max": [
+        0.04235045984387398,
+        0.02461359277367592,
+        0.039274998009204865
+      ],
+      "raw_extents": [
+        0.052850604988634586,
+        0.05448894761502743,
+        0.040799998212605715
+      ],
+      "centroid": [
+        0.004450623505425969,
+        -0.0017287379215772782,
+        0.01903507882693514
+      ],
+      "signed_volume": 3.477965623508716e-05,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.010500145144760609,
+          -0.02987535484135151,
+          -0.0015250002034008503
+        ],
+        "bounds_max": [
+          0.04235045984387398,
+          0.02461359277367592,
+          0.039274998009204865
+        ],
+        "extents": [
+          0.052850604988634586,
+          0.05448894761502743,
+          0.040799998212605715
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 37529,
+        "hull_vertex_count": 385,
+        "hull_facet_count": 766,
+        "hull_volume": 7.015664662191576e-05,
+        "hull_area": 0.00956606325210152,
+        "hull_bounds_min": [
+          -0.010500145144760609,
+          -0.02987535484135151,
+          -0.0015250002034008503
+        ],
+        "hull_bounds_max": [
+          0.04235045984387398,
+          0.02461359277367592,
+          0.039274998009204865
+        ],
+        "hull_extents": [
+          0.052850604988634586,
+          0.05448894761502743,
+          0.040799998212605715
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "rlink1",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/rlink1.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/rlink1.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "9e3bb9c0d08d3d177e01a532d275f108f514eb4be13e857c0a596c61c32891a6",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 25702,
+      "unique_vertex_count": 12843,
+      "raw_bounds_min": [
+        -0.013641729950904846,
+        -0.010935991071164608,
+        -0.011000004597008228
+      ],
+      "raw_bounds_max": [
+        0.03394295647740364,
+        0.013641731813549995,
+        0.0030000037513673306
+      ],
+      "raw_extents": [
+        0.04758468642830849,
+        0.024577722884714603,
+        0.014000008348375559
+      ],
+      "centroid": [
+        0.009972030293554023,
+        0.00011941754989142669,
+        -0.0019092175435279745
+      ],
+      "signed_volume": 1.966329785925194e-06,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.013641729950904846,
+          -0.010935991071164608,
+          -0.011000004597008228
+        ],
+        "bounds_max": [
+          0.03394295647740364,
+          0.013641731813549995,
+          0.0030000037513673306
+        ],
+        "extents": [
+          0.04758468642830849,
+          0.024577722884714603,
+          0.014000008348375559
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 12843,
+        "hull_vertex_count": 565,
+        "hull_facet_count": 1126,
+        "hull_volume": 6.097074568406708e-06,
+        "hull_area": 0.0022746407983688013,
+        "hull_bounds_min": [
+          -0.013641729950904846,
+          -0.010935991071164608,
+          -0.011000004597008228
+        ],
+        "hull_bounds_max": [
+          0.03394295647740364,
+          0.013641731813549995,
+          0.0030000037513673306
+        ],
+        "hull_extents": [
+          0.04758468642830849,
+          0.024577722884714603,
+          0.014000008348375559
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 3.1007385495805444,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "rlink2",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/rlink2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/rlink2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "ff22b15d51ff0d96cddcaa74b6056c9e5f88e1abe6886023a2a90ca80ec3230d",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 1024,
+      "unique_vertex_count": 378,
+      "raw_bounds_min": [
+        -0.003981100395321846,
+        -0.0039880601689219475,
+        -0.00800000037997961
+      ],
+      "raw_bounds_max": [
+        0.05078418552875519,
+        0.012470092624425888,
+        -0.001999999862164259
+      ],
+      "raw_extents": [
+        0.054765285924077034,
+        0.016458152793347836,
+        0.0060000005178153515
+      ],
+      "centroid": [
+        0.030580972701235016,
+        0.008489412598919444,
+        -0.005000000004656613
+      ],
+      "signed_volume": 2.3120818596274263e-06,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.003981100395321846,
+          -0.0039880601689219475,
+          -0.00800000037997961
+        ],
+        "bounds_max": [
+          0.05078418552875519,
+          0.012470092624425888,
+          -0.001999999862164259
+        ],
+        "extents": [
+          0.054765285924077034,
+          0.016458152793347836,
+          0.0060000005178153515
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 378,
+        "hull_vertex_count": 46,
+        "hull_facet_count": 88,
+        "hull_volume": 3.255608111052066e-06,
+        "hull_area": 0.0018166029942672003,
+        "hull_bounds_min": [
+          -0.003981100395321846,
+          -0.0039880601689219475,
+          -0.00800000037997961
+        ],
+        "hull_bounds_max": [
+          0.05078418552875519,
+          0.012470092624425888,
+          -0.001999999862164259
+        ],
+        "hull_extents": [
+          0.054765285924077034,
+          0.016458152793347836,
+          0.0060000005178153515
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "rlink3",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/rlink3.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/rlink3.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "bcf76ccbadf426c3e7ec6135f0fd09c0669b54735e7de91bbee92276b5404b25",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 17768,
+      "unique_vertex_count": 8884,
+      "raw_bounds_min": [
+        -0.002961301477625966,
+        -0.003071121871471405,
+        -0.0130000039935112
+      ],
+      "raw_bounds_max": [
+        0.03296130150556564,
+        0.0030710757710039616,
+        0.0030000037513673306
+      ],
+      "raw_extents": [
+        0.03592260298319161,
+        0.006142197642475367,
+        0.01600000774487853
+      ],
+      "centroid": [
+        0.01478202691532042,
+        6.010004290191082e-06,
+        -0.004661961509113265
+      ],
+      "signed_volume": 8.745678125989732e-07,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.002961301477625966,
+          -0.003071121871471405,
+          -0.0130000039935112
+        ],
+        "bounds_max": [
+          0.03296130150556564,
+          0.0030710757710039616,
+          0.0030000037513673306
+        ],
+        "extents": [
+          0.03592260298319161,
+          0.006142197642475367,
+          0.01600000774487853
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 8884,
+        "hull_vertex_count": 1054,
+        "hull_facet_count": 2104,
+        "hull_volume": 3.2455731450611323e-06,
+        "hull_area": 0.001564051519156505,
+        "hull_bounds_min": [
+          -0.002961301477625966,
+          -0.003071121871471405,
+          -0.0130000039935112
+        ],
+        "hull_bounds_max": [
+          0.03296130150556564,
+          0.0030710757710039616,
+          0.0030000037513673306
+        ],
+        "hull_extents": [
+          0.03592260298319161,
+          0.006142197642475367,
+          0.01600000774487853
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 3.711059449370985,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "llink1",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/llink1.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/llink1.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "0acf2b0ea73e9eb63e3ef9fec5637f0a151dae108ac3eed58ffd98f0062a6c9d",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 20360,
+      "unique_vertex_count": 10182,
+      "raw_bounds_min": [
+        -0.013743177056312561,
+        -0.013743177056312561,
+        -0.010999999940395355
+      ],
+      "raw_bounds_max": [
+        0.03394296020269394,
+        0.010895159095525742,
+        0.008500000461935997
+      ],
+      "raw_extents": [
+        0.0476861372590065,
+        0.024638336151838303,
+        0.019500000402331352
+      ],
+      "centroid": [
+        0.012550208974851521,
+        -0.0001273703152702174,
+        -0.001356891583693645
+      ],
+      "signed_volume": 1.6827966943241744e-06,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.013743177056312561,
+          -0.013743177056312561,
+          -0.010999999940395355
+        ],
+        "bounds_max": [
+          0.03394296020269394,
+          0.010895159095525742,
+          0.008500000461935997
+        ],
+        "extents": [
+          0.0476861372590065,
+          0.024638336151838303,
+          0.019500000402331352
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 10182,
+        "hull_vertex_count": 591,
+        "hull_facet_count": 1178,
+        "hull_volume": 7.773341453815612e-06,
+        "hull_area": 0.0024137032837614914,
+        "hull_bounds_min": [
+          -0.013743177056312561,
+          -0.013743177056312561,
+          -0.010999999940395355
+        ],
+        "hull_bounds_max": [
+          0.03394296020269394,
+          0.010895159095525742,
+          0.008500000461935997
+        ],
+        "hull_extents": [
+          0.0476861372590065,
+          0.024638336151838303,
+          0.019500000402331352
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 4.619299217804473,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "llink2",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/llink2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/llink2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "e356dfad82f1468a6c80e20fe127df4b7b40c395398cf5cb85a1522d9691b31c",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 1024,
+      "unique_vertex_count": 378,
+      "raw_bounds_min": [
+        -0.003976834937930107,
+        -0.012148191221058369,
+        -0.008249999955296516
+      ],
+      "raw_bounds_max": [
+        0.05089600011706352,
+        0.003991062752902508,
+        -0.0022499999031424522
+      ],
+      "raw_extents": [
+        0.05487283505499363,
+        0.016139253973960876,
+        0.006000000052154064
+      ],
+      "centroid": [
+        0.030667810195060003,
+        -0.008170155249956679,
+        -0.005249999929219484
+      ],
+      "signed_volume": 2.312081634682441e-06,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.003976834937930107,
+          -0.012148191221058369,
+          -0.008249999955296516
+        ],
+        "bounds_max": [
+          0.05089600011706352,
+          0.003991062752902508,
+          -0.0022499999031424522
+        ],
+        "extents": [
+          0.05487283505499363,
+          0.016139253973960876,
+          0.006000000052154064
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 378,
+        "hull_vertex_count": 46,
+        "hull_facet_count": 88,
+        "hull_volume": 3.2556077805562195e-06,
+        "hull_area": 0.001816602908674787,
+        "hull_bounds_min": [
+          -0.003976834937930107,
+          -0.012148191221058369,
+          -0.008249999955296516
+        ],
+        "hull_bounds_max": [
+          0.05089600011706352,
+          0.003991062752902508,
+          -0.0022499999031424522
+        ],
+        "hull_extents": [
+          0.05487283505499363,
+          0.016139253973960876,
+          0.006000000052154064
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "llink3",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/llink3.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/llink3.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "81f1c9f5ab75d86362d7e227fda6018c87488db713bd9621f6eb761bbec3109d",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 17768,
+      "unique_vertex_count": 8884,
+      "raw_bounds_min": [
+        -0.002961302874609828,
+        -0.0030764404218643904,
+        -0.013000000268220901
+      ],
+      "raw_bounds_max": [
+        0.03296130150556564,
+        0.0030764404218643904,
+        0.003000000026077032
+      ],
+      "raw_extents": [
+        0.03592260438017547,
+        0.006152880843728781,
+        0.016000000294297934
+      ],
+      "centroid": [
+        0.014766973026957127,
+        -7.1159006581015436e-06,
+        -0.004661961462748418
+      ],
+      "signed_volume": 8.745677785421468e-07,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.002961302874609828,
+          -0.0030764404218643904,
+          -0.013000000268220901
+        ],
+        "bounds_max": [
+          0.03296130150556564,
+          0.0030764404218643904,
+          0.003000000026077032
+        ],
+        "extents": [
+          0.03592260438017547,
+          0.006152880843728781,
+          0.016000000294297934
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 8884,
+        "hull_vertex_count": 1032,
+        "hull_facet_count": 2060,
+        "hull_volume": 3.2479169321143853e-06,
+        "hull_area": 0.001564104452383331,
+        "hull_bounds_min": [
+          -0.002961302874609828,
+          -0.0030764404218643904,
+          -0.013000000268220901
+        ],
+        "hull_bounds_max": [
+          0.03296130150556564,
+          0.0030764404218643904,
+          0.003000000026077032
+        ],
+        "hull_extents": [
+          0.03592260438017547,
+          0.006152880843728781,
+          0.016000000294297934
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 3.713739531461441,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "Gripping",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/Gripping.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/Gripping.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "e35ed860419dad49687084f9c8493f43c81cfece5b421d7e63944d27d22d63f7",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 1024,
+      "unique_vertex_count": 492,
+      "raw_bounds_min": [
+        -0.08876030147075653,
+        -0.030364850535988808,
+        -0.0031250000465661287
+      ],
+      "raw_bounds_max": [
+        -0.04296030476689339,
+        0.024135148152709007,
+        -0.0001250000059371814
+      ],
+      "raw_extents": [
+        0.045799996703863144,
+        0.054499998688697815,
+        0.0030000000406289473
+      ],
+      "centroid": [
+        -0.06453657611321735,
+        -0.0008466116441555963,
+        -0.0016328125282901358
+      ],
+      "signed_volume": 4.621715831931638e-06,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.08876030147075653,
+          -0.030364850535988808,
+          -0.0031250000465661287
+        ],
+        "bounds_max": [
+          -0.04296030476689339,
+          0.024135148152709007,
+          -0.0001250000059371814
+        ],
+        "extents": [
+          0.045799996703863144,
+          0.054499998688697815,
+          0.0030000000406289473
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 492,
+        "hull_vertex_count": 50,
+        "hull_facet_count": 96,
+        "hull_volume": 5.846305492433335e-06,
+        "hull_area": 0.004384286128643506,
+        "hull_bounds_min": [
+          -0.08876030147075653,
+          -0.030364850535988808,
+          -0.0031250000465661287
+        ],
+        "hull_bounds_max": [
+          -0.04296030476689339,
+          0.024135148152709007,
+          -0.0001250000059371814
+        ],
+        "hull_extents": [
+          0.045799996703863144,
+          0.054499998688697815,
+          0.0030000000406289473
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 1.2649642914090375,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "camera_link",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/DCW2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/DCW2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "085efb1ffed33d9440071886bf1c2ce769facda5e45fd7e1ab24d4d55298d1a1",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 9884,
+      "unique_vertex_count": 4930,
+      "raw_bounds_min": [
+        -0.030550001189112663,
+        -0.047182295471429825,
+        -0.03503530099987984
+      ],
+      "raw_bounds_max": [
+        0.012550000101327896,
+        0.04228655621409416,
+        0.013432839885354042
+      ],
+      "raw_extents": [
+        0.04310000129044056,
+        0.08946885168552399,
+        0.04846814088523388
+      ],
+      "centroid": [
+        -0.008161513321079264,
+        -0.004655516316341173,
+        -0.01757385052100209
+      ],
+      "signed_volume": 4.986103979717346e-05,
+      "closed_surface": true,
+      "transformed": {
+        "bounds_min": [
+          -0.030550001189112663,
+          -0.047182295471429825,
+          -0.03503530099987984
+        ],
+        "bounds_max": [
+          0.012550000101327896,
+          0.04228655621409416,
+          0.013432839885354042
+        ],
+        "extents": [
+          0.04310000129044056,
+          0.08946885168552399,
+          0.04846814088523388
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 4930,
+        "hull_vertex_count": 417,
+        "hull_facet_count": 830,
+        "hull_volume": 9.35469210853743e-05,
+        "hull_area": 0.012170576092657563,
+        "hull_bounds_min": [
+          -0.030550001189112663,
+          -0.047182295471429825,
+          -0.03503530099987984
+        ],
+        "hull_bounds_max": [
+          0.012550000101327896,
+          0.04228655621409416,
+          0.013432839885354042
+        ],
+        "hull_extents": [
+          0.04310000129044056,
+          0.08946885168552399,
+          0.04846814088523388
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      },
+      "hull_volume_ratio": 1.8761526327149984,
+      "hull_bounds_match_source": true
+    },
+    {
+      "link": "lwheel1",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/lwheel1.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/lwheel1.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "e629352d69aaef698c948505f046fb241b1d9a7e734f0417a06dfe2d383eacfd",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 40712,
+      "unique_vertex_count": 20648,
+      "raw_bounds_min": [
+        -0.04000738635659218,
+        -0.04004833102226257,
+        -0.008449997752904892
+      ],
+      "raw_bounds_max": [
+        0.039871696382761,
+        0.039984505623579025,
+        0.030249999836087227
+      ],
+      "raw_extents": [
+        0.07987908273935318,
+        0.0800328366458416,
+        0.03869999758899212
+      ],
+      "centroid": [
+        -3.671878569511282e-05,
+        3.302607092096832e-05,
+        0.010669160438267968
+      ],
+      "signed_volume": 9.618959508849049e-05,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.04000738635659218,
+          -0.04004833102226257,
+          -0.008449997752904892
+        ],
+        "bounds_max": [
+          0.039871696382761,
+          0.039984505623579025,
+          0.030249999836087227
+        ],
+        "extents": [
+          0.07987908273935318,
+          0.0800328366458416,
+          0.03869999758899212
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 20648,
+        "hull_vertex_count": 788,
+        "hull_facet_count": 1572,
+        "hull_volume": 0.00017561986885177009,
+        "hull_area": 0.017107522824156958,
+        "hull_bounds_min": [
+          -0.04000738635659218,
+          -0.04004833102226257,
+          -0.008449997752904892
+        ],
+        "hull_bounds_max": [
+          0.039871696382761,
+          0.039984505623579025,
+          0.030249999836087227
+        ],
+        "hull_extents": [
+          0.07987908273935318,
+          0.0800328366458416,
+          0.03869999758899212
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "lwheel2",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/lwheel2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/lwheel2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "f07f85985d6c189b71d839a0d44bf3e893eacfd76dccc4f954b63d247a78ae1b",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 40788,
+      "unique_vertex_count": 20723,
+      "raw_bounds_min": [
+        -0.039989572018384933,
+        -0.039996396750211716,
+        -0.008449999615550041
+      ],
+      "raw_bounds_max": [
+        0.039829857647418976,
+        0.04007243737578392,
+        0.030249999836087227
+      ],
+      "raw_extents": [
+        0.07981942966580391,
+        0.08006883412599564,
+        0.03869999945163727
+      ],
+      "centroid": [
+        4.204056724286449e-05,
+        -1.2281227989619408e-05,
+        0.010676094809584636
+      ],
+      "signed_volume": 9.617665439376993e-05,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.039989572018384933,
+          -0.039996396750211716,
+          -0.008449999615550041
+        ],
+        "bounds_max": [
+          0.039829857647418976,
+          0.04007243737578392,
+          0.030249999836087227
+        ],
+        "extents": [
+          0.07981942966580391,
+          0.08006883412599564,
+          0.03869999945163727
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 20723,
+        "hull_vertex_count": 806,
+        "hull_facet_count": 1608,
+        "hull_volume": 0.00017561593347142327,
+        "hull_area": 0.01710705346130304,
+        "hull_bounds_min": [
+          -0.039989572018384933,
+          -0.039996396750211716,
+          -0.008449999615550041
+        ],
+        "hull_bounds_max": [
+          0.039829857647418976,
+          0.04007243737578392,
+          0.030249999836087227
+        ],
+        "hull_extents": [
+          0.07981942966580391,
+          0.08006883412599564,
+          0.03869999945163727
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "rwheel1",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/rwheel1.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/rwheel1.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "7218e9bea1d0862cacd44b0a8a72e207085d367a022843bfd4e6be23f6786fff",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 40788,
+      "unique_vertex_count": 20740,
+      "raw_bounds_min": [
+        -0.03985416144132614,
+        -0.04004700109362602,
+        -0.008449999615550041
+      ],
+      "raw_bounds_max": [
+        0.040014129132032394,
+        0.03992430865764618,
+        0.030249999836087227
+      ],
+      "raw_extents": [
+        0.07986829057335854,
+        0.0799713097512722,
+        0.03869999945163727
+      ],
+      "centroid": [
+        7.423693662337216e-06,
+        -4.316395395653304e-05,
+        0.010676094809584636
+      ],
+      "signed_volume": 9.617665458758205e-05,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.03985416144132614,
+          -0.04004700109362602,
+          -0.008449999615550041
+        ],
+        "bounds_max": [
+          0.040014129132032394,
+          0.03992430865764618,
+          0.030249999836087227
+        ],
+        "extents": [
+          0.07986829057335854,
+          0.0799713097512722,
+          0.03869999945163727
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 20740,
+        "hull_vertex_count": 806,
+        "hull_facet_count": 1608,
+        "hull_volume": 0.00017561593427536742,
+        "hull_area": 0.017107053475036764,
+        "hull_bounds_min": [
+          -0.03985416144132614,
+          -0.04004700109362602,
+          -0.008449999615550041
+        ],
+        "hull_bounds_max": [
+          0.040014129132032394,
+          0.03992430865764618,
+          0.030249999836087227
+        ],
+        "hull_extents": [
+          0.07986829057335854,
+          0.0799713097512722,
+          0.03869999945163727
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    },
+    {
+      "link": "rwheel2",
+      "geometry_kind": "MESH",
+      "mesh_uri": "package://M3Pro/meshes/rwheel2.STL",
+      "resolution_status": "RESOLVED",
+      "resource_relative": "M3Pro/meshes/rwheel2.STL",
+      "source_package": "M3Pro",
+      "collision_origin_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "collision_origin_rpy": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale_declared": false,
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "MEASURED": true,
+      "mesh_sha256": "f8daf44a79b1b3d5bdec95ef3885e8151f3a39f21f93c2bf2e8fcbf09d57c323",
+      "mesh_format": "STL_BINARY",
+      "unit_metadata": "ABSENT",
+      "triangle_count": 40712,
+      "unique_vertex_count": 20642,
+      "raw_bounds_min": [
+        -0.04001348838210106,
+        -0.040011532604694366,
+        -0.008449997752904892
+      ],
+      "raw_bounds_max": [
+        0.03989671915769577,
+        0.039934154599905014,
+        0.030249999836087227
+      ],
+      "raw_extents": [
+        0.07991020753979683,
+        0.07994568720459938,
+        0.03869999758899212
+      ],
+      "centroid": [
+        -5.0068579175252526e-05,
+        -4.1782176876569e-06,
+        0.010669160438267968
+      ],
+      "signed_volume": 9.618959469036773e-05,
+      "closed_surface": false,
+      "transformed": {
+        "bounds_min": [
+          -0.04001348838210106,
+          -0.040011532604694366,
+          -0.008449997752904892
+        ],
+        "bounds_max": [
+          0.03989671915769577,
+          0.039934154599905014,
+          0.030249999836087227
+        ],
+        "extents": [
+          0.07991020753979683,
+          0.07994568720459938,
+          0.03869999758899212
+        ],
+        "method": "the mesh's eight corners are transformed, not its box"
+      },
+      "evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+      "convex_hull": {
+        "MEASURED": true,
+        "backend": "scipy.spatial.ConvexHull (Qhull)",
+        "qhull_options": "Qt",
+        "input_unique_vertices": 20642,
+        "hull_vertex_count": 788,
+        "hull_facet_count": 1572,
+        "hull_volume": 0.00017561986983035693,
+        "hull_area": 0.017107522859690808,
+        "hull_bounds_min": [
+          -0.04001348838210106,
+          -0.040011532604694366,
+          -0.008449997752904892
+        ],
+        "hull_bounds_max": [
+          0.03989671915769577,
+          0.039934154599905014,
+          0.030249999836087227
+        ],
+        "hull_extents": [
+          0.07991020753979683,
+          0.07994568720459938,
+          0.03869999758899212
+        ],
+        "evidence_class": "VENDOR_MESH_DERIVED_VALUE"
+      }
+    }
+  ],
+  "collision_element_count": 18,
+  "mesh_collision_count": 18,
+  "all_resolved": true,
+  "all_identity_origin": true,
+  "any_scale_declared": false,
+  "UNIT_FINDING": {
+    "MESH_UNIT_METADATA": "ABSENT",
+    "detail": "binary STL carries no unit declaration; the format has no field for one",
+    "effective_unit": "METRES",
+    "basis": [
+      "URDF lengths are metres by specification, and no scale attribute is declared on any of these meshes, so the mesh numbers enter the model as metres unchanged",
+      "the largest extent across all collision meshes is 0.2764, which is a plausible robot dimension in metres and implausible in millimetres or centimetres",
+      "the largest wheel extent is 0.0801"
+    ],
+    "NOT_ASSUMED": "the unit is derived from the URDF contract and magnitude consistency, not from a convention about STL files",
+    "evidence_class": "DERIVED"
+  },
+  "SINGLE_HULL_ADEQUACY_RULE": {
+    "FROZEN_BEFORE_EVALUATION": true,
+    "rule": [
+      "a single convex hull is adequate for a link when its hull bounds equal the source bounds to within 1e-6 m on every axis, and its hull volume does not exceed the source volume by more than the preregistered inflation limit",
+      "a link failing the volume limit is a candidate for decomposition, not an automatic failure: the decision is recorded per link"
+    ],
+    "PREREGISTERED_INFLATION_LIMIT": 1.25,
+    "limit_units": "hull volume divided by closed-source volume",
+    "preregistered_before_measurement": true,
+    "why_preregistered": "a threshold chosen after seeing the numbers is a description of the numbers, not a test of them",
+    "clearance_caveat": "volume ratio is a summary. A hull that bridges a concave gap can be within the limit and still close a gap the robot needs, so any link whose geometry is clearance-critical is reviewed on its own terms rather than on the ratio alone",
+    "articulation_rule": "hulls are per collision element and never merged across links, so a whole-robot hull is excluded by construction"
+  },
+  "WATERTIGHTNESS": {
+    "closed_surface_links": [
+      "Gripping",
+      "arm1",
+      "arm2",
+      "arm3",
+      "arm4",
+      "camera_link",
+      "llink1",
+      "llink3",
+      "rlink1",
+      "rlink3"
+    ],
+    "open_surface_links": [
+      "arm5",
+      "base_link",
+      "llink2",
+      "lwheel1",
+      "lwheel2",
+      "rlink2",
+      "rwheel1",
+      "rwheel2"
+    ],
+    "finding": "several vendor collision meshes are not closed surfaces, and they include base_link and all four wheels. An enclosed volume is undefined for an open surface, so any volumetric adequacy test is unassessable for exactly the parts that decide the navigation footprint",
+    "consequence": "this limits what any volume-based method can claim about those links, independently of which strategy is chosen"
+  },
+  "ADEQUACY_RULE_SELF_CRITIQUE": {
+    "finding": "the bounds half of the frozen adequacy rule cannot discriminate. A convex hull's extreme points are the source's extreme points, so hull bounds always equal source bounds and that comparison can never fail",
+    "consequence": "the volume ratio is doing all the work. The bounds comparison is retained as a corruption check on the hull computation, not as an adequacy criterion",
+    "measured_bounds_always_matched": true
+  },
+  "HULL_ADEQUACY": {
+    "hulls_measured": 18,
+    "adequate_within_preregistered_limit": [],
+    "exceeding_limit": [
+      {
+        "link": "arm1",
+        "ratio": 4.7321
+      },
+      {
+        "link": "arm2",
+        "ratio": 2.7676
+      },
+      {
+        "link": "arm3",
+        "ratio": 2.7679
+      },
+      {
+        "link": "arm4",
+        "ratio": 1.7479
+      },
+      {
+        "link": "rlink1",
+        "ratio": 3.1007
+      },
+      {
+        "link": "rlink3",
+        "ratio": 3.7111
+      },
+      {
+        "link": "llink1",
+        "ratio": 4.6193
+      },
+      {
+        "link": "llink3",
+        "ratio": 3.7137
+      },
+      {
+        "link": "Gripping",
+        "ratio": 1.265
+      },
+      {
+        "link": "camera_link",
+        "ratio": 1.8762
+      }
+    ],
+    "not_assessable": [
+      "base_link",
+      "arm5",
+      "rlink2",
+      "llink2",
+      "lwheel1",
+      "lwheel2",
+      "rwheel1",
+      "rwheel2"
+    ],
+    "not_assessable_reason": "volume ratio needs a closed source surface"
+  },
+  "OPTION_ANALYSIS": [
+    {
+      "option": "A",
+      "name": "source triangle mesh used directly",
+      "source_basis": "authoritative vendor collision meshes",
+      "deterministic": true,
+      "physx_admissible": "ONLY_FOR_STATIC_GEOMETRY",
+      "physx_note": "PhysX triangle meshes do not collide with each other and are not valid for dynamic or articulated bodies. Every link here belongs to an articulation, so this fails on the actual engine rule rather than on preference",
+      "preserves_link_ownership": true,
+      "invents_dimensions": false,
+      "cost": "highest; base_link alone is 172k triangles",
+      "verdict": "NOT_ADMISSIBLE_FOR_ARTICULATED_LINKS"
+    },
+    {
+      "option": "B",
+      "name": "single convex hull per collision mesh",
+      "source_basis": "authoritative vendor collision meshes",
+      "deterministic": true,
+      "deterministic_basis": "Qhull is deterministic for a fixed input and fixed options; the input is pinned by mesh hash",
+      "physx_admissible": true,
+      "preserves_link_ownership": true,
+      "invents_dimensions": false,
+      "conservatism": "never smaller than the source, so containment holds by construction",
+      "cost": "low",
+      "verdict": "ADMISSIBLE"
+    },
+    {
+      "option": "C",
+      "name": "convex decomposition per collision mesh",
+      "source_basis": "authoritative vendor collision meshes",
+      "deterministic": "ONLY_IF_PINNED",
+      "deterministic_basis": "depends on the decomposer, its version, its parameters and its seed. Admissible only with all of those frozen and a reproduced digest",
+      "physx_admissible": true,
+      "preserves_link_ownership": true,
+      "invents_dimensions": false,
+      "conservatism": "tighter than a hull where the part is concave",
+      "cost": "higher, and adds a dependency this repository does not have",
+      "verdict": "ADMISSIBLE_ONLY_WHERE_A_HULL_IS_INADEQUATE"
+    },
+    {
+      "option": "D",
+      "name": "independently specified primitives",
+      "source_basis": "a vendor dimension table, CAD, or physical measurement",
+      "deterministic": true,
+      "physx_admissible": true,
+      "preserves_link_ownership": true,
+      "invents_dimensions": "NO_IF_A_SOURCE_EXISTS",
+      "verdict": "NOT_AVAILABLE",
+      "why": "no vendor dimension evidence exists in the acquired closure, CAD association is not established and conversion is not authorised, and nothing has been physically measured. Fitting a primitive to a mesh and calling it a specification would launder a mesh-derived value into a stated one"
+    }
+  ],
+  "WHEEL_FINDINGS": {
+    "links": [
+      "lwheel1",
+      "lwheel2",
+      "rwheel1",
+      "rwheel2"
+    ],
+    "measured": [
+      {
+        "link": "lwheel1",
+        "extents": [
+          0.07987908273935318,
+          0.0800328366458416,
+          0.03869999758899212
+        ],
+        "triangles": 40712,
+        "hull_ratio": null
+      },
+      {
+        "link": "lwheel2",
+        "extents": [
+          0.07981942966580391,
+          0.08006883412599564,
+          0.03869999945163727
+        ],
+        "triangles": 40788,
+        "hull_ratio": null
+      },
+      {
+        "link": "rwheel1",
+        "extents": [
+          0.07986829057335854,
+          0.0799713097512722,
+          0.03869999945163727
+        ],
+        "triangles": 40788,
+        "hull_ratio": null
+      },
+      {
+        "link": "rwheel2",
+        "extents": [
+          0.07991020753979683,
+          0.07994568720459938,
+          0.03869999758899212
+        ],
+        "triangles": 40712,
+        "hull_ratio": null
+      }
+    ],
+    "joint_type_in_source": "fixed",
+    "roller_geometry": "NOT_ASSESSED",
+    "wheel_radius_evidence_class": "VENDOR_MESH_DERIVED_VALUE",
+    "FUNCTIONAL_NAVIGATION_COLLIDER": "a hull of the wheel mesh gives the base a correct footprint for kinematic navigation",
+    "CALIBRATED_MECANUM_CONTACT_MODEL": "FUTURE_WORK",
+    "boundary": "a hull of a Mecanum wheel is a smooth solid. It cannot reproduce roller contact, and the source joints are fixed, so no version of this models Mecanum dynamics. Collision geometry loading is not contact fidelity"
+  },
+  "ARM_FINDINGS": {
+    "links": [
+      "arm1",
+      "arm2",
+      "arm3",
+      "arm4",
+      "arm5",
+      "rlink1",
+      "rlink2",
+      "rlink3",
+      "llink1",
+      "llink2",
+      "llink3",
+      "Gripping"
+    ],
+    "measured": [
+      {
+        "link": "arm1",
+        "extents": [
+          0.05496663972735405,
+          0.054984984919428825,
+          0.050199998542666435
+        ],
+        "hull_ratio": 4.732052033215904
+      },
+      {
+        "link": "arm2",
+        "extents": [
+          0.02905500028282404,
+          0.047601085156202316,
+          0.10699954442679882
+        ],
+        "hull_ratio": 2.7676079725684275
+      },
+      {
+        "link": "arm3",
+        "extents": [
+          0.029710954055190086,
+          0.048044610768556595,
+          0.10699986107647419
+        ],
+        "hull_ratio": 2.7678542211991126
+      },
+      {
+        "link": "arm4",
+        "extents": [
+          0.050000712275505066,
+          0.03522414527833462,
+          0.09164999704807997
+        ],
+        "hull_ratio": 1.7478533039800381
+      },
+      {
+        "link": "arm5",
+        "extents": [
+          0.052850604988634586,
+          0.05448894761502743,
+          0.040799998212605715
+        ],
+        "hull_ratio": null
+      },
+      {
+        "link": "rlink1",
+        "extents": [
+          0.04758468642830849,
+          0.024577722884714603,
+          0.014000008348375559
+        ],
+        "hull_ratio": 3.1007385495805444
+      },
+      {
+        "link": "rlink2",
+        "extents": [
+          0.054765285924077034,
+          0.016458152793347836,
+          0.0060000005178153515
+        ],
+        "hull_ratio": null
+      },
+      {
+        "link": "rlink3",
+        "extents": [
+          0.03592260298319161,
+          0.006142197642475367,
+          0.01600000774487853
+        ],
+        "hull_ratio": 3.711059449370985
+      },
+      {
+        "link": "llink1",
+        "extents": [
+          0.0476861372590065,
+          0.024638336151838303,
+          0.019500000402331352
+        ],
+        "hull_ratio": 4.619299217804473
+      },
+      {
+        "link": "llink2",
+        "extents": [
+          0.05487283505499363,
+          0.016139253973960876,
+          0.006000000052154064
+        ],
+        "hull_ratio": null
+      },
+      {
+        "link": "llink3",
+        "extents": [
+          0.03592260438017547,
+          0.006152880843728781,
+          0.016000000294297934
+        ],
+        "hull_ratio": 3.713739531461441
+      },
+      {
+        "link": "Gripping",
+        "extents": [
+          0.045799996703863144,
+          0.054499998688697815,
+          0.0030000000406289473
+        ],
+        "hull_ratio": 1.2649642914090375
+      }
+    ],
+    "per_link_ownership_required": true,
+    "whole_robot_hull": "FORBIDDEN",
+    "rules": [
+      "each collider stays attached to the link that owns it",
+      "local transforms are preserved",
+      "no collider spans a joint",
+      "no two articulated links are merged",
+      "self-collision must not be created by construction"
+    ]
+  },
+  "VENDOR_DIMENSION_EVIDENCE": {
+    "search_scope": [
+      "both Orin production workspaces",
+      "all YAML and Python configuration",
+      "all README and Markdown in the archive"
+    ],
+    "dimensions_found": [],
+    "VENDOR_SPECIFIED_DIMENSIONS": "NONE_IN_ACQUIRED_CLOSURE",
+    "consequence": "there is no stated dimension in the archive to build a primitive from. Any primitive this project produced would be measured from the meshes and then presented as a shape, which is a mesh-derived value wearing a specification's clothes",
+    "note": "figures such as an 80 mm wheel diameter appear in Yahboom's public product pages, which are not part of the acquired closure and are not cited as evidence here. Asking for a dimension table is already in the held support query",
+    "evidence_class_if_found_later": "VENDOR_SPECIFIED_DIMENSION"
+  },
+  "CAD_ASSOCIATION": {
+    "path": "/home/favl/Downloads/ROSMASTER-M3Pro.x_t",
+    "HOST_LOCAL": true,
+    "byte_size": 189763420,
+    "format": "Parasolid transmit (x_t)",
+    "kernel_version": "Parasolid Version 32, build 255",
+    "exported_on": "Windows_NT",
+    "internal_product_name_occurrences": 2,
+    "evidence_for": [
+      "the filename names the product",
+      "the file body contains the string ROSMASTER-M3Pro 2 time(s), which survives a rename and is therefore independent of the filename",
+      "it was distributed by Yahboom in the same drop as the M3 Pro code",
+      "the authoritative URDF was written by the SolidWorks URDF exporter, and Parasolid is a SolidWorks-native interchange format, so a common CAD origin is consistent"
+    ],
+    "evidence_missing": [
+      "no geometric correspondence has been computed; that needs a Parasolid kernel and conversion is not authorised in this tranche",
+      "no evidence that it is the same configuration as the URDF -- same arm variant, same camera, same options"
+    ],
+    "CAD_PRODUCT_ASSOCIATION": "SUPPORTED",
+    "CAD_CONFIGURATION_ASSOCIATION": "UNPROVEN",
+    "why_split": "the internal name is real independent evidence that this is the M3 Pro product. It says nothing about which configuration, and a 189 MB full assembly and an 18-link simplified description need not correspond part for part",
+    "USED_FOR_DECISION_B": false,
+    "not_used_because": "the selected strategy needs no CAD dimension, so the question does not arise. Raising configuration association to SUPPORTED would need a read-only geometric comparison that is not authorised here",
+    "CONVERTED": false,
+    "read_only_operations": [
+      "first 400 bytes of the header",
+      "a string count"
+    ]
+  },
+  "PHYSICAL_MEASUREMENT_GAPS": {
+    "wheel_diameter": "NOT_MEASURED",
+    "chassis_length_width_height": "NOT_MEASURED",
+    "wheel_centre_positions": "NOT_MEASURED",
+    "arm_base_mounting_transform": "NOT_MEASURED",
+    "navigation_arm_pose": "NOT_MEASURED",
+    "camera_mounting_datum": "NOT_MEASURED",
+    "blocks_this_decision": false,
+    "why_not": "this decision is about which source and which transformation are defensible. Whether the source matches the robot is a different question, and answering it requires the robot"
+  },
+  "EXTENT_VALIDATION_CONTRACT": {
+    "per_collider_required": [
+      "source local bounds",
+      "generated local bounds",
+      "transformed bounds",
+      "centre offset",
+      "orientation",
+      "containment relation",
+      "source mesh hash"
+    ],
+    "aggregate_checks_are_insufficient": true,
+    "containment": "a generated collider must never be smaller than its source where conservative containment is required"
+  },
+  "NEGATIVE_CONTROLS": {
+    "suite": "tests/test_mesh_geometry.py",
+    "exit_code": 0,
+    "VERDICT": "PASS",
+    "last_line": ".......................                                                  [100%]",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "stderr_tail": [],
+    "refusal_categories": [
+      "DIMENSION_MISMATCH",
+      "UNIT_SCALE_MISMATCH",
+      "ORIENTATION_MISMATCH",
+      "SOURCE_IDENTITY_MISMATCH",
+      "MISSING_COLLIDER",
+      "DUPLICATE_COLLIDER_OWNERSHIP",
+      "UNEXPECTED_COLLIDER",
+      "CONTAINMENT_VIOLATION",
+      "NON_FINITE_GEOMETRY"
+    ],
+    "controls": {
+      "F_TWIN_1_SQUARED_EXTENTS": "every extent squared, as measured historically, is refused DIMENSION_MISMATCH",
+      "POSITIVE_CONTROL": "a correct collider set is admitted, so the check can pass as well as fail",
+      "UNIT_SCALE": "x1000, /1000, x100 and /100 are refused and named as unit errors rather than geometry errors",
+      "AXIS_PERMUTATION": "the same extents on different axes are refused as ORIENTATION_MISMATCH, not as a size error",
+      "CONTAINMENT": "a collider smaller than its source is refused",
+      "WRONG_MESH_SIMILAR_SIZE": "a near-identical mesh from another link is refused on source identity, not size",
+      "DROPPED_COLLIDER": "a missing link collider is refused",
+      "DUPLICATE_WITH_DROP": "equal total count with one link duplicated and one dropped is refused",
+      "UNEXPECTED_COLLIDER": "a collider for a link with no source collision geometry is refused",
+      "SWAPPED_SET_EQUAL_AGGREGATES": "two links exchanging colliders keeps every aggregate identical and is still refused",
+      "HULL_BACKEND_ABSENCE": "reported rather than skipped"
+    },
+    "counting_is_never_sufficient": "F-TWIN-1 passed a check that counted colliders. Three controls here hold the count constant and still require refusal"
+  },
+  "STRATEGY_TABLE": [
+    {
+      "strategy": "raw source triangle meshes",
+      "source": "vendor meshes",
+      "deterministic": true,
+      "physx": "static only",
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "REJECTED_ON_PHYSX_RULE"
+    },
+    {
+      "strategy": "convex hull",
+      "source": "vendor meshes",
+      "deterministic": true,
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "SELECTED"
+    },
+    {
+      "strategy": "convex decomposition",
+      "source": "vendor meshes",
+      "deterministic": "only if fully pinned",
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "CONDITIONAL_FALLBACK"
+    },
+    {
+      "strategy": "source-specified primitives",
+      "source": "none exists",
+      "deterministic": true,
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "UNAVAILABLE_NO_SOURCE"
+    },
+    {
+      "strategy": "mesh-fitted primitives",
+      "source": "vendor meshes",
+      "deterministic": true,
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": "PRESENTS_MESH_DERIVED_AS_SPECIFIED",
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "REJECTED_LAUNDERS_EVIDENCE_CLASS"
+    },
+    {
+      "strategy": "CAD-derived primitives",
+      "source": "Parasolid",
+      "deterministic": true,
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": "not yet",
+      "decision": "BLOCKED_ASSOCIATION_UNPROVEN"
+    },
+    {
+      "strategy": "physical-measurement primitives",
+      "source": "the robot",
+      "deterministic": true,
+      "physx": true,
+      "link_ownership": true,
+      "invents_dimensions": false,
+      "mecanum_fidelity": "no",
+      "validatable": true,
+      "decision": "FUTURE_AS_BUILT_VALIDATION"
+    }
+  ],
+  "DECOMPOSITION_BACKEND": {
+    "AVAILABLE": false,
+    "api": {
+      "trimesh": "4.5.1",
+      "exposes_convex_decomposition": true
+    },
+    "backends": {
+      "coacd": "ABSENT",
+      "pyvhacd": "ABSENT",
+      "testVHACD": "ABSENT",
+      "vhacd": "ABSENT",
+      "VHACD": "ABSENT"
+    },
+    "finding": "trimesh exposes convex_decomposition and every backend it delegates to is absent, so the call exists and the computation cannot be performed",
+    "consequence": "determinism cannot be demonstrated for a computation that cannot be run, and an undemonstrated determinism claim is not a basis for admitting a strategy"
+  },
+  "SOURCE_REQUIREMENTS": {
+    "an_admitted_geometry_source_exists": true,
+    "it_is_the_geometry_the_vendor_specified": true,
+    "no_alternative_source_is_available": true,
+    "introduces_no_unsupported_dimensions": true,
+    "can_be_validated_independently": true
+  },
+  "DERIVATION_REQUIREMENTS": {
+    "single_hull_meets_the_preregistered_adequacy_rule_somewhere": false,
+    "fallback_decomposition_can_be_produced": false,
+    "fallback_determinism_demonstrated": false,
+    "preserves_per_link_ownership_and_transforms": true,
+    "compatible_with_intended_physx_use": true,
+    "validator_can_refuse_a_wrong_result": true
+  },
+  "COLLISION_GEOMETRY_SOURCE": "AUTHORITATIVE_VENDOR_COLLISION_MESHES",
+  "COLLISION_GEOMETRY_SOURCE_STATUS": "DECIDED",
+  "COLLIDER_DERIVATION_STRATEGY": "UNDECIDED",
+  "COLLIDER_DERIVATION_STATUS": "BLOCKED",
+  "DERIVATION_BLOCKERS": [
+    "a single convex hull exceeds the preregistered inflation limit on every link where the limit can be assessed, so the primary strategy does not apply anywhere it can be tested",
+    "the fallback needs a convex decomposition and no backend exists in either available environment, so its determinism cannot be demonstrated"
+  ],
+  "THRESHOLD_NOT_MOVED": "the 1.25 inflation limit was preregistered before any mesh was measured and is not revised here. Raising it until hulls passed would turn the test into a description of the result",
+  "FALLBACK_STRATEGY": "controlled convex decomposition, per link, only where a single hull exceeds the preregistered inflation limit or closes a clearance-critical gap, and only with decomposer, version, parameters and seed frozen and a reproduced digest",
+  "PRIMITIVE_FITTING": "NOT_USED_WITHOUT_INDEPENDENT_DIMENSION_SOURCE",
+  "PRIMITIVE_RECONSTRUCTION": "NOT_SUPPORTED_BY_SOURCE",
+  "DECISION_B": "BLOCKED",
+  "CAD_ROLE": "INDEPENDENT_GEOMETRY_CORROBORATION_PENDING_ASSOCIATION",
+  "PHYSICAL_MEASUREMENT_ROLE": "AS_BUILT_VALIDATION",
+  "FUNCTIONAL_VS_CALIBRATED": {
+    "mesh_derived_hulls_may_support": "DT_LEVEL_1_FUNCTIONAL",
+    "they_do_not_establish": "DT_LEVEL_2_CALIBRATED",
+    "why": "a hull is faithful to the vendor's mesh. Whether the vendor's mesh is faithful to the robot is unmeasured, and a twin that reproduces a model exactly still reproduces whatever the model gets wrong"
+  },
+  "LICENCE_BOUNDARY": {
+    "REDISTRIBUTION": "NOT_AUTHORISED_PENDING_CLARIFICATION",
+    "committed_here": [
+      "hashes",
+      "measurements",
+      "transformation rules",
+      "validation results"
+    ],
+    "not_committed_here": [
+      "vendor meshes",
+      "vendor URDF",
+      "CAD",
+      "generated hulls",
+      "USD"
+    ]
+  },
+  "CLAIM_BOUNDARY": "this decides a source and a transformation rule. No collider was generated, no asset was built, and nothing was compared against the physical robot",
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "DIGITAL_TWIN_REQUALIFICATION": "NOT_STARTED",
+  "PHYSICAL_CAMERA_EXTRINSIC": "NOT_MEASURED",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0
+}
