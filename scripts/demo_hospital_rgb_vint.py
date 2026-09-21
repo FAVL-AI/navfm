@@ -35,13 +35,31 @@ import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "third_party" / "visualnav-transformer" / "train"))
 
-HOSPITAL_USD = Path(
-    "/home/favl/robotics/FleetSafe-VLA/assets/mirror/hospital_v1/hospital.usd")
+#: The hospital BO-10 actually collected against, resolved from its evidence
+#: rather than guessed. The local mirror was tried first and renders every
+#: material as a flat error colour: its 70 .mdl files import OmniUe4Base,
+#: OmniUe4Function and OmniUe4Translucent, and none of those base modules is
+#: present in the mirror. Repairing that is a separate question; this points at
+#: the asset the science already uses.
+HOSPITAL_USD = (
+    "https://omniverse-content-production.s3-us-west-2.amazonaws.com"
+    "/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd")
+HOSPITAL_SCENE_ID = "hospital_bo10"
+HOSPITAL_EVIDENCE = "gates/BO10/bo10_production_collection_20260910.json"
+
+#: The admitted BO-10 route, taken whole rather than shortened. A ten-second
+#: demo will not traverse 12.8 m, and that is fine: this observes the pipeline,
+#: it does not test arrival. Inventing a nearer goal to make the clip end well
+#: would be choosing the result.
+BO10_ROUTE_ID = "hospital_repaired_map_route_050"
+BO10_START = (-39.90271172754076, 23.12059657138799, -1.3986055122719583)
+BO10_GOAL_XY = (-28.7009700284671, 16.971295079647238)
 ROBOT_USD = REPO / "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd"
 CKPT = REPO / "checkpoints/vint.pth"
 
@@ -61,8 +79,10 @@ def main() -> int:
     ap.add_argument("--out", default=str(Path.home() / "navfm-demo"))
     ap.add_argument("--steps", type=int, default=40,
                     help="40 steps at 4 Hz is about ten seconds of motion")
-    ap.add_argument("--start", type=float, nargs=3, default=[0.0, 0.0, 0.0])
-    ap.add_argument("--goal", type=float, nargs=3, default=[2.0, 0.0, 0.0])
+    ap.add_argument("--start", type=float, nargs=3, default=list(BO10_START),
+                    help="defaults to the admitted BO-10 start pose")
+    ap.add_argument("--goal", type=float, nargs=2, default=list(BO10_GOAL_XY),
+                    help="defaults to the admitted BO-10 goal position")
     args = ap.parse_args()
 
     out = Path(args.out) / datetime.now(UTC).strftime("demo_%Y%m%dT%H%M%SZ")
@@ -116,17 +136,67 @@ def main() -> int:
     )
     from navfm.models.loader import extract_state_dict, load_checkpoint
 
-    stage_utils.open_stage(str(HOSPITAL_USD))
+    # The hospital is referenced into a new stage rather than opened as one.
+    # Opening the remote layer directly returns before it has resolved, and the
+    # robot articulation is then created against a stage that has no physics in
+    # it yet -- "did not match any articulations". This is the order the BO-10
+    # collector uses, and it is the one scene-compatibility change this retest
+    # required.
+    stage_utils.create_new_stage()
+    sim_bootstrap = SimulationContext(physics_dt=1.0 / 60.0,
+                                      rendering_dt=1.0 / 60.0,
+                                      stage_units_in_meters=1.0)
+    stage_utils.add_reference_to_stage(HOSPITAL_USD, "/World/Scene")
+    sim_bootstrap.initialize_physics()
+    sim_bootstrap.play()
+    for _ in range(10):
+        sim_bootstrap.step(render=False)
     stage_utils.add_reference_to_stage(str(ROBOT_USD), "/World/YahboomM3Pro")
-    record["scene_usd"] = str(HOSPITAL_USD)
-    record["scene_usd_sha256"] = sha256_file(HOSPITAL_USD)
+    for _ in range(10):
+        sim_bootstrap.step(render=False)
+
+    # A new stage carries no lights, so RTX renders every surface black however
+    # complete the geometry is. Opening a layer directly brings its own lighting
+    # and referencing it does not, which is why the mirror run looked lit and
+    # this one did not. Same construction the existing pilot uses.
+    import omni.kit.commands
+
+    omni.kit.commands.execute(
+        "CreatePrim", prim_type="DomeLight", prim_path="/World/demo_dome",
+        attributes={"inputs:intensity": 1200.0},
+    )
+    omni.kit.commands.execute(
+        "CreatePrim", prim_type="DistantLight", prim_path="/World/demo_sun",
+        attributes={"inputs:intensity": 3000.0},
+    )
+    for _ in range(10):
+        sim_bootstrap.step(render=False)
+    record["scene_usd"] = HOSPITAL_USD
+    record["scene_id"] = HOSPITAL_SCENE_ID
+    record["scene_resolved_from"] = HOSPITAL_EVIDENCE
+    record["scene_manually_downloaded"] = False
+    record["scene_load_method"] = (
+        "referenced into a new stage at /World/Scene, as the BO-10 collector "
+        "does. Opening the remote layer directly returns before it resolves and "
+        "the articulation is then created against an empty stage")
+    record["compatibility_changes"] = [
+        "the hospital is referenced into a new stage rather than opened as one, "
+        "because opening the remote layer returns before it resolves and the "
+        "articulation is then created against an empty stage",
+        "a DomeLight and a DistantLight are added, because a new stage carries "
+        "no lights and RTX renders complete geometry black without them. "
+        "Opening a layer brings its own lighting; referencing it does not",
+    ]
+    record["unchanged_from_first_demo"] = [
+        "ViNT checkpoint", "context length", "model preprocessing",
+        "waypoint selection", "controller gains", "velocity limits",
+        "inference cadence", "demo duration", "camera model",
+        "robot engineering asset", "headless RaytracedLighting",
+    ]
     record["robot_usd"] = str(ROBOT_USD.relative_to(REPO))
     record["robot_usd_sha256"] = sha256_file(ROBOT_USD)
 
-    sim = SimulationContext(physics_dt=1.0 / 60.0, rendering_dt=1.0 / 60.0,
-                            stage_units_in_meters=1.0)
-    sim.initialize_physics()
-
+    sim = sim_bootstrap
     robot = Articulation("/World/YahboomM3Pro")
     robot.initialize()
     dof_names = list(robot.dof_names or [])
@@ -217,7 +287,19 @@ def main() -> int:
         return resize_and_aspect_crop(PILImage.fromarray(array), (width, height))
 
     sx, sy, syaw = args.start
-    gx, gy, gyaw = args.goal
+    gx, gy = args.goal
+    # The admitted route records no goal yaw, so the goal camera looks along the
+    # start-to-goal bearing. Stated rather than tuned: it is a derived value.
+    gyaw = float(np.arctan2(gy - sy, gx - sx))
+    record["route_id"] = BO10_ROUTE_ID
+    record["goal_yaw_derivation"] = (
+        "the admitted route records no goal yaw; the goal camera faces along the "
+        "start-to-goal bearing")
+    record["start_goal_separation_m"] = round(
+        float(np.hypot(gx - sx, gy - sy)), 3)
+    record["previous_demo_poses_not_transferable"] = (
+        "the mirror demo used (0,0,0) to (2,0,0), which are not meaningful "
+        "coordinates in this hospital and could sit inside geometry")
 
     # Goal sealed before the robot moves. A final frame relabelled as the goal is
     # the defect the ImageNav work exists to prevent, and it is invisible after.
@@ -235,6 +317,89 @@ def main() -> int:
 
     teleport(sx, sy, syaw)
     step(10)
+
+    # RENDER GATE. The previous attempt drove for ten seconds on imagery where
+    # every material had failed to compile, which was only obvious afterwards
+    # from the frames. The criteria are stated numerically so the gate can fail,
+    # and nothing moves until it passes.
+    def gate_metrics(frame: np.ndarray) -> dict[str, Any]:
+        sample = np.asarray(frame, dtype=np.float64)
+        means = sample.reshape(-1, 3).mean(axis=0)
+        red_dominant = bool(means[0] > 1.8 * max(means[1], means[2]))
+        detail = float(sample.mean(axis=2).std())
+        luminance = float(sample.mean())
+        return {
+            "channel_means_rgb": [round(float(v), 2) for v in means],
+            "max_channel_ratio": round(
+                float(means.max() / max(means.min(), 1e-6)), 3),
+            "red_error_material_dominant": red_dominant,
+            "spatial_detail_std": round(detail, 3),
+            "mean_luminance": round(luminance, 3),
+            "frame_non_empty": bool(sample.max() > 5.0),
+            "bright_enough": bool(luminance > 20.0),
+            "passes": bool(sample.max() > 5.0 and detail > 8.0
+                           and luminance > 20.0 and not red_dominant),
+        }
+
+    # The remote hospital streams in over many frames. Rather than guess a
+    # warm-up length, render until the gate criteria are met or the budget runs
+    # out, and record how many frames it actually took -- a scene that needs
+    # 400 frames to become legible is itself worth knowing.
+    warmup_budget = 1200
+    rendered = 0
+    metrics = gate_metrics(grab())
+    trend: list[dict[str, Any]] = []
+    while rendered < warmup_budget and not metrics["passes"]:
+        step(20)
+        rendered += 20
+        metrics = gate_metrics(grab())
+        trend.append({"frames": rendered,
+                      "detail": metrics["spatial_detail_std"],
+                      "means": metrics["channel_means_rgb"]})
+    probe_frames = [grab()]
+    render_ok = bool(metrics["passes"])
+
+    record["RENDER_GATE"] = {
+        **metrics,
+        "warmup_frames_rendered": rendered,
+        "warmup_budget": warmup_budget,
+        "warmup_trend": trend[-6:],
+        "criteria": {
+            "non_empty": "max pixel value above 5",
+            "has_detail": "greyscale standard deviation above 8, so the view is "
+                          "structured rather than a flat fill",
+            "not_red_dominant": "mean red below 1.8x the larger of green and "
+                                "blue, which is what a failed material looks like",
+            "bright_enough": "mean luminance above 20 of 255. A scene a viewer "
+                             "cannot see without post-processing is not a "
+                             "presentable demonstration whatever its structure",
+        },
+        "criterion_added_after_a_miss": (
+            "the brightness criterion was added after an earlier version of this "
+            "gate admitted a frame averaging 1.7 of 255. The gate checked "
+            "structure and colour and never asked whether the picture was "
+            "visible. It is recorded here because the addition makes the gate "
+            "stricter against a result that had already passed, not more "
+            "permissive"),
+        "RENDER_VALIDITY": "PASS" if render_ok else "FAIL",
+    }
+    PILImage.fromarray(probe_frames[-1]).save(out / "render_gate_probe.jpg",
+                                              quality=95)
+
+    if not render_ok:
+        record["ROLLOUT_COMPLETED"] = False
+        record["earliest_failure_stage"] = "RENDER_GATE"
+        record["robot_moved_after_gate_failure"] = False
+        record["INFERENCE_EXECUTED"] = False
+        record["ROBOT_VISIBLY_MOVED"] = False
+        record["finished_at"] = datetime.now(UTC).isoformat()
+        record["output_dir"] = str(out)
+        (out / "ENGINEERING_DEMO_ONLY.json").write_text(json.dumps(record, indent=2))
+        print("RENDER_VALIDITY = FAIL; the robot was not moved")
+        print(json.dumps(record["RENDER_GATE"], indent=2))
+        app.close()
+        return 1
+
     history = [grab()] * (config["context_size"] + 1)
 
     trace: list[dict[str, object]] = []
@@ -250,6 +415,8 @@ def main() -> int:
             history = [*history, frame][-(config["context_size"] + 1):]
             x, y, yaw = base_pose()
             poses.append((x, y))
+            # Diagnostic only. This never reaches the policy; ViNT sees RGB.
+            geometric = float(np.hypot(gx - x, gy - y))
 
             observation = torch.cat([prep(f) for f in history],
                                     dim=0).unsqueeze(0).to(device)
@@ -272,17 +439,38 @@ def main() -> int:
             draw.rectangle([0, 0, 480, 28], fill=(140, 20, 20))
             draw.text((6, 9), BANNER, fill=(255, 255, 255))
             draw.text((324, 12), "GOAL RGB", fill=(200, 200, 200))
-            draw.text((6, 274), f"ViNT dist {float(distance[0, 0]):6.2f}  "
-                                f"wp[m] {metres[0]:+.3f},{metres[1]:+.3f}",
+            draw.text((324, 156), "Model: ViNT", fill=(210, 210, 210))
+            draw.text((324, 170), "In: RGB history + RGB goal",
+                      fill=(190, 190, 190))
+            draw.text((324, 184), "Out: nominal waypoints", fill=(190, 190, 190))
+            draw.text((324, 202), "Safety layer:  inactive", fill=(200, 150, 150))
+            draw.text((324, 216), "Stopping layer: inactive", fill=(200, 150, 150))
+            draw.text((324, 234), "Scientific n = 0", fill=(255, 200, 120))
+            # Predicted waypoints, drawn as a small plan view so the overlay
+            # shows the output rather than only naming it. Robot at the origin,
+            # x forward, scaled to fit; no metric claim is attached.
+            cx, cy, scale = 400, 276, 90.0
+            draw.line([cx - 30, cy, cx + 30, cy], fill=(70, 70, 70))
+            draw.line([cx, cy - 16, cx, cy + 16], fill=(70, 70, 70))
+            for k in range(waypoints.shape[0]):
+                px = cx + float(waypoints[k][1]) * -scale
+                py = cy - float(waypoints[k][0]) * scale
+                colour = ((120, 220, 255) if k == EXECUTED_WAYPOINT_INDEX
+                          else (90, 130, 150))
+                draw.ellipse([px - 2, py - 2, px + 2, py + 2], fill=colour)
+            draw.text((6, 274), f"ViNT temporal dist {float(distance[0, 0]):6.2f}"
+                                f"   wp[m] {metres[0]:+.3f},{metres[1]:+.3f}",
                       fill=(220, 220, 220))
-            draw.text((6, 286), f"twist {vx:+.2f},{vy:+.2f},{w:+.2f}  "
-                                f"step {t + 1}/{args.steps}  SAFETY: inactive",
+            draw.text((6, 286), f"twist {vx:+.2f},{vy:+.2f},{w:+.2f}   "
+                                f"step {t + 1}/{args.steps}   "
+                                f"diag dist {geometric:5.2f} m",
                       fill=(180, 180, 180))
             panel.save(out / "frames" / f"{t:04d}.jpg", quality=92)
 
             trace.append({
                 "step": t, "pose": [x, y, yaw],
                 "vint_temporal_distance": float(distance[0, 0]),
+                "simulator_diagnostic_distance_m": geometric,
                 "waypoint_normalised": normalised.tolist(),
                 "waypoint_metres": metres.tolist(),
                 "twist": [vx, vy, w],
@@ -308,13 +496,63 @@ def main() -> int:
         record["net_displacement_m"] = round(displacement, 4)
         record["path_length_m"] = round(path, 4)
         record["ROBOT_VISIBLY_MOVED"] = bool(path > 0.01)
-        record["temporal_distance_first"] = trace[0]["vint_temporal_distance"]
-        record["temporal_distance_last"] = trace[-1]["vint_temporal_distance"]
+        temporal = [float(e["vint_temporal_distance"]) for e in trace]  # type: ignore[arg-type]
+        geometric_series = [
+            float(e["simulator_diagnostic_distance_m"]) for e in trace]  # type: ignore[arg-type]
+        record["MODEL_TEMPORAL_DISTANCE"] = {
+            "initial": round(temporal[0], 3), "minimum": round(min(temporal), 3),
+            "maximum": round(max(temporal), 3), "final": round(temporal[-1], 3),
+            "units": "ViNT temporal distance, not metres",
+        }
+        record["SIMULATOR_DIAGNOSTIC_DISTANCE"] = {
+            "initial": round(geometric_series[0], 3),
+            "minimum": round(min(geometric_series), 3),
+            "final": round(geometric_series[-1], 3),
+            "units": "metres",
+            "NOT_FED_TO_POLICY": True,
+            "note": ("recorded for engineering diagnosis. Neither series is "
+                     "evidence of navigation success"),
+        }
     else:
         record["INFERENCE_EXECUTED"] = False
         record["ROBOT_VISIBLY_MOVED"] = False
 
-    record["frames_written"] = len(list((out / "frames").glob("*.jpg")))
+    frame_files = sorted((out / "frames").glob("*.jpg"))
+    if frame_files:
+        captures = {
+            "start_frame": frame_files[0],
+            "mid_frame": frame_files[len(frame_files) // 2],
+            "final_frame": frame_files[-1],
+        }
+        for name, source in captures.items():
+            target = out / f"{name}.jpg"
+            target.write_bytes(source.read_bytes())
+            record[name] = target.name
+        images = [PILImage.open(f) for f in frame_files]
+        gif = out / "demo.gif"
+        images[0].save(gif, save_all=True, append_images=images[1:],
+                       duration=250, loop=0)
+        record["gif"] = gif.name
+
+    # Descriptive only. There is no admitted collision instrumentation here, so
+    # the vocabulary is deliberately observational and carries no rate, no
+    # success and no safety claim.
+    if trace:
+        final_view = np.asarray(
+            PILImage.open(frame_files[-1]).crop((0, 30, 320, 270)),
+            dtype=np.float64)
+        spread = float(final_view.mean(axis=2).std())
+        record["ENGINEERING_OBSERVATION"] = (
+            "NEAR_WALL" if spread < 18.0 else "OPEN_CORRIDOR")
+        record["observation_basis"] = (
+            f"spatial variation of the final frame ({spread:.1f}); a flat view "
+            "means the camera is close to a surface. Descriptive only -- this is "
+            "not a collision measurement, a rate, or a safety claim")
+        record["observation_vocabulary"] = [
+            "OPEN_CORRIDOR", "NEAR_WALL", "VISIBLE_CONTACT_OR_INTERSECTION",
+            "INDETERMINATE"]
+
+    record["frames_written"] = len(frame_files)
     record["output_dir"] = str(out)
     record["OUTSIDE_REPOSITORY"] = not str(out).startswith(str(REPO))
     record["finished_at"] = datetime.now(UTC).isoformat()
