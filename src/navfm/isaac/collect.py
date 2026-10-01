@@ -240,6 +240,7 @@ class Collector:
         #: the driver's swept-collision invariant, instead of writing articulation
         #: root velocities. F-DRIVE-1: root velocities do not move this robot.
         self.kinematic_driver: Any = None
+        self.record_transitions = False
         #: What this collection is for, and whether it may enter the E2
         #: population. Stamped into every episode's metadata and into the
         #: manifest, so a trajectory carries its own scope rather than relying on
@@ -603,7 +604,15 @@ class Collector:
         if metadata_goal is not None:
             metadata["goal_image_provenance"] = metadata_goal
 
-        writer = TrajectoryWriter(self.out_dir / name, metadata=metadata)
+        writer_class = TrajectoryWriter
+        if self.record_transitions:
+            from ..collection.recording import RecordingTrajectoryWriter
+            writer_class = RecordingTrajectoryWriter
+            metadata.update(run_class="ENGINEERING_COLLECTION_VALIDATION",
+                            scientific_arm_a_n=0, e2_eligible=False,
+                            motion_model=("KINEMATIC_SE2" if self.kinematic_driver else
+                                          "ARTICULATION_ROOT_VELOCITY"))
+        writer = writer_class(self.out_dir / name, metadata=metadata)
         writer.open()
         stalled = 0
         last_pos = np.asarray(start, dtype=np.float64)
@@ -612,6 +621,10 @@ class Collector:
         try:
             for _ in range(self.collect.max_steps):
                 pos, cur_yaw = self._robot.pose()
+                before = None
+                if self.record_transitions:
+                    before = {"time_before": float(self._app.sim_time()),
+                              "pose_before": [float(pos[0]), float(pos[1]), float(cur_yaw)]}
                 vx, vy, wz, done = tracker.step(pos, cur_yaw)
                 if done:
                     reason = "reached_goal"
@@ -624,6 +637,7 @@ class Collector:
                         and not _seal._has_first_motion):
                     _seal.note_first_motion()
                     _seal._has_first_motion = True
+                accepted_command = self.robot_config.limits.clamp(vx, vy, wz)
                 if self.kinematic_driver is not None:
                     step_res = self.kinematic_driver.step(
                         (float(pos[0]), float(pos[1]), float(cur_yaw)), (vx, vy, wz))
@@ -634,6 +648,7 @@ class Collector:
                         reason = f"collision_guard: {step_res.reason}"
                         self._drive_rejection = step_res.to_dict()
                         break
+                    accepted_command = step_res.commanded
                     self._robot.teleport((step_res.pose[0], step_res.pose[1]),
                                          step_res.pose[2])
                 else:
@@ -642,7 +657,19 @@ class Collector:
 
                 pos, cur_yaw = self._robot.pose()
                 rgb = apply_sensor_noise(self._robot.rgb(), self.randomization, self.rng)
-                writer.append(rgb, pos, cur_yaw, sim_time=sim_t)
+                if before is not None:
+                    i = writer.n_frames
+                    transition = dict(before, frame_index=i, pre_image_index=i-1 if i else None,
+                                      time_after=float(sim_t),
+                                      pose_after=[float(pos[0]), float(pos[1]), float(cur_yaw)],
+                                      command_requested=[float(vx), float(vy), float(wz)],
+                                      command_accepted=[float(v) for v in accepted_command],
+                                      command_api_returned=True, simulation_step_returned=True,
+                                      motion_model=metadata["motion_model"],
+                                      physical_velocity_measured=False)
+                    writer.append(rgb, pos, cur_yaw, transition=transition)
+                else:
+                    writer.append(rgb, pos, cur_yaw, sim_time=sim_t)
 
                 moved = float(np.linalg.norm(pos - last_pos))
                 commanded = math.hypot(vx, vy) > 0.02 or abs(wz) > 0.05
@@ -660,6 +687,8 @@ class Collector:
             self.results.append(result)
             return result
 
+        if self.record_transitions:
+            writer.metadata["termination_reason"] = reason
         result.n_frames = writer.n_frames
         if reason == "stalled":
             writer.abort()

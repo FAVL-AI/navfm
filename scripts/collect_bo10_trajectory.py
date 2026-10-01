@@ -44,10 +44,31 @@ def main() -> int:
     ap.add_argument("--region-declaration", default=None)
     ap.add_argument("--scope-declaration",
                     default="gates/BO10/bo10_e2_scope_declaration_20260907.json")
+    ap.add_argument("--engineering-step-cap", type=int, default=None,
+                    help="opt-in engineering recording with command sidecars; never scientific admission")
     args = ap.parse_args()
+    if args.engineering_step_cap is not None:
+        if not 12 <= args.engineering_step_cap <= 240:
+            ap.error("engineering step cap must be 12..240")
+        if Path(args.out_dir).resolve().is_relative_to(REPO):
+            ap.error("engineering output must be outside the repository")
+        if Path(args.out_dir).exists() or Path(args.evidence).exists():
+            ap.error("engineering output/evidence must be new")
+    def milestone(label: str) -> None:
+        if args.engineering_step_cap is not None:
+            import os
+            path = Path(args.evidence).with_suffix(".milestones")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a") as fh:
+                fh.write(datetime.now(timezone.utc).isoformat() + " " + label + "\n")
+                fh.flush()
+                os.fsync(fh.fileno())
+            print(label, flush=True)
+    milestone("BEFORE_APP")
 
     from isaacsim.simulation_app import SimulationApp
     app = SimulationApp({"headless": True})
+    milestone("AFTER_APP")
 
     import dataclasses
 
@@ -80,6 +101,8 @@ def main() -> int:
         "occupancy_backend": args.occupancy_backend,
     }
 
+    sim = None
+    robot = None
     try:
         scope = authorise_g2_acknowledgement(REPO / args.scope_declaration)
         rec["scope"] = scope.to_manifest_fields()
@@ -113,11 +136,17 @@ def main() -> int:
 
         cfg = CollectConfig(scenes=[args.scene], seed=admission["search"]["seed"],
                             scene_name=args.scene_id)
+        if args.engineering_step_cap is not None:
+            cfg.max_steps = args.engineering_step_cap
+            rec["run_class"] = "ENGINEERING_COLLECTION_VALIDATION"
+            rec["SCIENTIFIC_ARM_A_N"] = 0
+            rec["engineering_step_cap"] = args.engineering_step_cap
         robot_cfg = dataclasses.replace(M3PRO, usd_path=args.robot)
         sim_cfg = SimConfig(headless=True, seed=cfg.seed)
         collector = Collector(args.out_dir, cfg, sim_cfg, robot_cfg,
                               RandomizationConfig(enabled=False), scope=scope,
                               occupancy_backend=args.occupancy_backend)
+        collector.record_transitions = args.engineering_step_cap is not None
         # run_episode drives the app through IsaacApp's contract -- step()
         # returns simulation time and blocks until the renderer has finished the
         # frame, so a pose or image read afterwards refers to the same instant.
@@ -141,13 +170,17 @@ def main() -> int:
                 return float(self._ctx.current_time)
 
 
+        milestone("BEFORE_STAGE")
         stage_utils.create_new_stage()
         sim = SimulationContext(stage_units_in_meters=1.0, physics_dt=1.0 / sim_cfg.hz,
                                 rendering_dt=1.0 / sim_cfg.hz)
         collector._app = _AppShim(sim, app)
         stage_utils.add_reference_to_stage(args.scene, "/World/Scene")
+        milestone("BEFORE_PHYSICS_INITIALISATION")
         sim.initialize_physics()
+        milestone("BEFORE_PLAY")
         sim.play()
+        milestone("AFTER_PLAY")
         for _ in range(5):
             sim.step(render=False)
         enable_extension("isaacsim.asset.gen.omap")
@@ -175,10 +208,14 @@ def main() -> int:
         # Robot spawned only after the map exists.
         from navfm.isaac.robot import SimRobot
         robot = SimRobot(app, robot_cfg)
+        milestone("BEFORE_ROBOT_SPAWN")
         robot.spawn()
+        milestone("AFTER_ROBOT_SPAWN")
         for _ in range(5):
             sim.step(render=False)
+        milestone("BEFORE_CAMERA_ATTACH")
         robot.attach_camera()
+        milestone("AFTER_CAMERA_ATTACH")
         for _ in range(3):
             sim.step(render=True)
         collector._robot = robot
@@ -314,7 +351,9 @@ def main() -> int:
             "probe_spacing_m": sweep_res.probe_spacing_m,
         }
 
+        milestone("BEFORE_EPISODE")
         result = collector.run_episode(int(args.episode_index), args.scene_id)
+        milestone("AFTER_EPISODE")
         rec["kinematic_drive"]["steps_applied"] = collector.kinematic_driver.applied
         rec["kinematic_drive"]["steps_rejected"] = collector.kinematic_driver.rejections
         rec["kinematic_drive"]["guard_queries"] = guard.queries
@@ -387,9 +426,21 @@ def main() -> int:
         rec["traceback"] = traceback.format_exc()[-3000:]
         rec["BO10_COLLECTION"] = "INCONCLUSIVE"
     finally:
+        if args.engineering_step_cap is not None:
+            rec["scientific_admission"] = "NOT_REQUESTED_NOT_ESTABLISHED"
+            rec["ENGINEERING_RECORDING"] = ("SAVED_REQUIRES_READBACK" if
+                rec.get("episode", {}).get("accepted") else "FAILED")
+            rec["BO10_COLLECTION"] = "ENGINEERING_ONLY_NOT_ADMITTED"
+            with contextlib.suppress(Exception):
+                if robot is not None:
+                    robot.set_body_velocity(0.0, 0.0, 0.0)
+            with contextlib.suppress(Exception):
+                if sim is not None:
+                    sim.stop()
         digest = emit_evidence(args.evidence, rec, required_keys=(
             "check", "artifact_semantics", "BO10_COLLECTION"))
         print(f"wrote {args.evidence} sha256={digest}", flush=True)
+        milestone("BEFORE_CLOSE")
         with contextlib.suppress(Exception):
             app.close()
     return 0
