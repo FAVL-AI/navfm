@@ -25,6 +25,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -72,6 +73,40 @@ def _identity_line(result: subprocess.CompletedProcess[str]) -> str:
     return ""
 
 
+def _declaration_copy(tmp_path: Path) -> Path:
+    """A writable copy of the committed declaration, owned by the test.
+
+    The source is only read, so the frozen artefact's content and mtime are
+    both left alone.
+    """
+    source = REPO / "gates" / "G0" / "evaluation_declaration.json"
+    target = tmp_path / "evaluation_declaration.json"
+    target.write_text(source.read_text())
+    return target
+
+
+def _identity_check(declaration: Path, monkeypatch: pytest.MonkeyPatch) -> Any:
+    """Run the freeze audit against ``declaration`` and return its identity check.
+
+    The audit script is loaded as a module and its ``DECLARATION`` constant is
+    redirected, rather than run as a subprocess against the real repository
+    file. ``audit()`` writes nothing -- the only write in that script is
+    ``main()``'s optional ``--json-out``, which is not reached here.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "protocol_freeze_audit", REPO / "scripts" / "protocol_freeze_audit.py"
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "DECLARATION", declaration)
+    checks = module.audit("HEAD", REPO / "runs" / "__audit_negative_probe__", None)
+    for check in checks:
+        if check.name == "environment_identity_recorded":
+            return check
+    raise AssertionError("the audit emitted no environment_identity_recorded check")
+
+
 class TestIdentityCheckCanFail:
     """Four perturbations, each forcing a non-zero exit."""
 
@@ -114,36 +149,55 @@ class TestIdentityCheckCanFail:
         assert "FAIL" in _identity_line(result)
         assert "not the one the protocol froze" in result.stdout
 
-    def test_perturbed_expected_identity_fails(self, tmp_path: Path) -> None:
+    def test_perturbed_expected_identity_fails(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Perturb the *declared* side: a declaration naming a different
-        instrument must not be certified against this one."""
-        declaration = REPO / "gates" / "G0" / "evaluation_declaration.json"
-        original = declaration.read_text()
-        try:
-            data = json.loads(original)
-            data["environment"]["identity"] = "0" * 64
-            declaration.write_text(json.dumps(data, indent=2) + "\n")
-            result = _run_audit(_base_env())
-            assert result.returncode != 0
-            assert "FAIL" in _identity_line(result)
-            assert "expected 0000" in result.stdout
-        finally:
-            declaration.write_text(original)
+        instrument must not be certified against this one.
 
-    def test_absent_expected_identity_fails_rather_than_passing(self) -> None:
+        The perturbation happens in a test-owned copy. The committed
+        ``gates/G0/evaluation_declaration.json`` is read but never written --
+        mutate-then-restore leaves a modified mtime on frozen scientific
+        evidence even when the bytes come back identical, so the audit's
+        ``DECLARATION`` constant is redirected instead.
+        """
+        declaration = _declaration_copy(tmp_path)
+        data = json.loads(declaration.read_text())
+        data["environment"]["identity"] = "0" * 64
+        declaration.write_text(json.dumps(data, indent=2) + "\n")
+        check = _identity_check(declaration, monkeypatch)
+        assert check.passed is False
+        assert "expected 0000" in check.detail
+
+    def test_absent_expected_identity_fails_rather_than_passing(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """The dangerous default: nothing to compare against must be a FAIL,
         not a silent pass. This is the exact shape of the original defect."""
-        declaration = REPO / "gates" / "G0" / "evaluation_declaration.json"
-        original = declaration.read_text()
-        try:
-            data = json.loads(original)
-            del data["environment"]
-            declaration.write_text(json.dumps(data, indent=2) + "\n")
-            result = _run_audit(_base_env())
-            assert result.returncode != 0
-            assert "no preregistered identity" in result.stdout
-        finally:
-            declaration.write_text(original)
+        declaration = _declaration_copy(tmp_path)
+        data = json.loads(declaration.read_text())
+        del data["environment"]
+        declaration.write_text(json.dumps(data, indent=2) + "\n")
+        check = _identity_check(declaration, monkeypatch)
+        assert check.passed is False
+        assert "no preregistered identity" in check.detail
+
+    def test_unperturbed_copy_trips_neither_detector(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Positive control for the two negatives above.
+
+        Against an untouched copy neither detector may fire, so neither of the
+        assertions above can be satisfied by an unrelated audit failure. This
+        deliberately does not assert ``check.passed``: the frozen identity
+        belongs to the environment the gate was frozen against, so an identity
+        *mismatch* here is expected and is a different finding from a zeroed or
+        missing identity.
+        """
+        declaration = _declaration_copy(tmp_path)
+        check = _identity_check(declaration, monkeypatch)
+        assert "no preregistered identity" not in check.detail
+        assert "expected 0000" not in check.detail
 
 
 class TestPatchIdentityCheckCanFail:
