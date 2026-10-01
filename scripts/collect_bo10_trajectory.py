@@ -49,6 +49,66 @@ def _outside_repo_violation(label: str, supplied: str) -> str | None:
     return None
 
 
+#: Files whose content influences an engineering run, pinned by R1. A recorded
+#: HEAD is not enough when the checkout is dirty, which is how the audited run's
+#: executed source became unrecoverable.
+INFLUENCING_FILES = (
+    "scripts/collect_bo10_trajectory.py",
+    "src/navfm/isaac/collect.py",
+    "src/navfm/isaac/app.py",
+    "src/navfm/isaac/robot.py",
+    "src/navfm/collection/recording.py",
+    "src/navfm/collection/attestation.py",
+    "src/navfm/collection/attestation_gate.py",
+    "src/navfm/writer.py",
+)
+
+
+def attest_and_record(rec: dict[str, Any], handles: Any, run_id: str,
+                      metadata: dict[str, Any], provenance: Any,
+                      failure_record_path: Path | None = None) -> Any:
+    """Observe the runtime, judge it, and record the decision. The R1-R8 seam.
+
+    Isaac-free by construction: every runtime object arrives through ``handles``,
+    so this is exercised with test doubles offline and with the collector's own
+    objects live. The provenance is passed in, never inferred, so a test-double
+    pass can never be presented as a live read-back.
+
+    If any mandatory requirement is unsatisfied the run is marked ineligible for
+    scientific collection and a structured failure record is written outside the
+    repository.
+    """
+    from navfm.collection.attestation import collect_all, requested_values
+    from navfm.collection.attestation_gate import decide
+
+    observations = collect_all(handles, run_id=run_id, provenance=provenance)
+    decision = decide(observations, requested_values(metadata), run_id=run_id)
+    rec["attestation"] = decision.to_dict()
+    rec["attestation"]["run_id"] = run_id
+    rec["attestation"]["observations"] = [o.to_dict() for o in observations]
+    if decision.scientific_collection_permitted:
+        rec["SCIENTIFIC_COLLECTION_ELIGIBILITY"] = "ATTESTATION_SATISFIED_NOT_AN_ADMISSION"
+    else:
+        rec["SCIENTIFIC_COLLECTION_ELIGIBILITY"] = "BLOCKED_BY_UNSATISFIED_ATTESTATION"
+        rec["attestation_block_reason"] = {
+            "unsatisfied": decision.unsatisfied,
+            "per_requirement": decision.per_requirement,
+            "note": ("accounting for all eight requirements is not passing them; an "
+                     "unresolved mandatory requirement blocks scientific collection"),
+        }
+        if failure_record_path is not None:
+            import os
+            failure_record_path.parent.mkdir(parents=True, exist_ok=True)
+            with failure_record_path.open("w") as fh:
+                json.dump({"check": "ATTESTATION_BLOCKED", "run_id": run_id,
+                           "unsatisfied": decision.unsatisfied,
+                           "per_requirement": decision.per_requirement,
+                           "decision": decision.to_dict()}, fh, indent=2)
+                fh.flush()
+                os.fsync(fh.fileno())
+    return decision
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--scene", required=True)
@@ -248,6 +308,34 @@ def main() -> int:
         milestone("BEFORE_CAMERA_ATTACH")
         robot.attach_camera()
         milestone("AFTER_CAMERA_ATTACH")
+        if args.engineering_step_cap is not None:
+            # R1-R8 precondition attestation, against the collector's OWN objects.
+            # R5 and R7 need per-step wiring and stay unresolved in a precondition
+            # pass, which correctly leaves scientific collection blocked.
+            import carb as _carb
+            from isaacsim.core.utils import render_product as _rp
+
+            from navfm.collection.attestation import Provenance, RuntimeHandles
+
+            attest_and_record(
+                rec,
+                RuntimeHandles(
+                    repo=REPO,
+                    influencing_files=[REPO / f for f in INFLUENCING_FILES],
+                    camera=getattr(robot, "_camera", None),
+                    articulation=getattr(robot, "_articulation", None),
+                    settings=_carb.settings.get_settings(),
+                    render_product_camera_target_reader=_rp.get_camera_prim_path,
+                    render_product_resolution_reader=_rp.get_resolution,
+                    metadata={},
+                ),
+                run_id=f"{args.scene_id}_run_{int(args.episode_index):05d}",
+                metadata={},
+                provenance=Provenance.LIVE_RUNTIME,
+                failure_record_path=(milestone_path.with_suffix(".attestation_blocked.json")
+                                     if milestone_path is not None else None),
+            )
+            milestone("AFTER_ATTESTATION")
         for _ in range(3):
             sim.step(render=True)
         collector._robot = robot
