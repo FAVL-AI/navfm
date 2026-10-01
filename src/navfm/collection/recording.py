@@ -11,26 +11,110 @@ from ..writer import TrajectoryWriter
 
 SCHEMA = "navfm_transition_recording_v1"
 
+#: Vector fields that must each carry exactly three components.
+_VECTORS = ("pose_before", "pose_after", "command_requested", "command_accepted")
+
+#: Tolerance for "this record starts where the previous one ended".
+_TIME_JOIN_TOLERANCE = 1e-8
+
+
+class TransitionRecordError(ValueError):
+    """A transition record violated an invariant.
+
+    A ``ValueError`` subclass so existing callers -- including the collector's
+    ``except Exception`` episode guard and the tests that assert ``ValueError`` --
+    keep working unchanged, while carrying enough detail to say which record
+    failed and how.
+    """
+
+    def __init__(
+        self,
+        reason: str,
+        *,
+        stage: str,
+        frame_index: int | None = None,
+        expected: object = None,
+        observed: object = None,
+    ) -> None:
+        self.reason = reason
+        self.stage = stage
+        self.frame_index = frame_index
+        self.expected = expected
+        self.observed = observed
+        detail = f"{stage}: {reason}"
+        if frame_index is not None:
+            detail += f" at frame_index {frame_index}"
+        if expected is not None or observed is not None:
+            detail += f" (expected {expected!r}, observed {observed!r})"
+        super().__init__(detail)
+
+
+def validate_transition(
+    record: dict[str, Any],
+    frame_index: int,
+    previous_time_after: float | None,
+    *,
+    stage: str = "incremental",
+) -> None:
+    """Per-record invariants, every one checkable the moment a candidate arrives.
+
+    Called from ``RecordingTrajectoryWriter.append`` BEFORE the candidate becomes
+    recorded state, so a continuity defect is refused at the offending step
+    instead of being discovered after a whole run has been spent. The same
+    function is reapplied by :func:`validate_records` at close, so incremental
+    and final validation cannot drift apart: there is one definition of these
+    invariants.
+    """
+    if record.get("frame_index") != frame_index:
+        raise TransitionRecordError(
+            "transition image index mismatch", stage=stage, frame_index=frame_index,
+            expected=frame_index, observed=record.get("frame_index"))
+    expected_pre = frame_index - 1 if frame_index else None
+    if record.get("pre_image_index") != expected_pre:
+        raise TransitionRecordError(
+            "transition image index mismatch", stage=stage, frame_index=frame_index,
+            expected=expected_pre, observed=record.get("pre_image_index"))
+    start, end = record["time_before"], record["time_after"]
+    values = [start, end, *record["pose_before"], *record["pose_after"],
+              *record["command_requested"], *record["command_accepted"]]
+    if not all(math.isfinite(float(x)) for x in values):
+        raise TransitionRecordError(
+            "nonfinite transition", stage=stage, frame_index=frame_index)
+    if end <= start:
+        raise TransitionRecordError(
+            "non-increasing simulation time", stage=stage, frame_index=frame_index,
+            expected=f"time_after > {start!r}", observed=end)
+    if (previous_time_after is not None
+            and abs(start - previous_time_after) > _TIME_JOIN_TOLERANCE):
+        raise TransitionRecordError(
+            "discontinuous simulation time", stage=stage, frame_index=frame_index,
+            expected=previous_time_after, observed=start)
+    for key in _VECTORS:
+        if len(record[key]) != 3:
+            raise TransitionRecordError(
+                "transition vector shape", stage=stage, frame_index=frame_index,
+                expected=3, observed=len(record[key]))
+
 
 def validate_records(records: list[dict[str, Any]], n_frames: int) -> None:
-    """Refuse missing, nonfinite, misindexed or temporally discontinuous records."""
-    if len(records) != n_frames or not records:
-        raise ValueError("transition/frame count mismatch or empty recording")
+    """Whole-recording validation at close. Defence in depth, not a replacement.
+
+    Two invariants here are genuinely finalisation-only and cannot be known from
+    a single candidate: that the recording is non-empty, and that the number of
+    transitions equals the number of written frames. Everything else is the
+    per-record set, reapplied so the final state is validated as a whole even if
+    a record reached the buffer by some path that bypassed ``append``.
+    """
+    if not records:
+        raise TransitionRecordError("empty recording", stage="final")
+    if len(records) != n_frames:
+        raise TransitionRecordError(
+            "transition/frame count mismatch", stage="final",
+            expected=n_frames, observed=len(records))
     previous = None
     for i, rec in enumerate(records):
-        if rec["frame_index"] != i or rec["pre_image_index"] != (i - 1 if i else None):
-            raise ValueError("transition image index mismatch")
-        start, end = rec["time_before"], rec["time_after"]
-        values = [start, end, *rec["pose_before"], *rec["pose_after"],
-                  *rec["command_requested"], *rec["command_accepted"]]
-        if not all(math.isfinite(float(x)) for x in values):
-            raise ValueError("nonfinite transition")
-        if end <= start or (previous is not None and abs(start - previous) > 1e-8):
-            raise ValueError("non-increasing or discontinuous simulation time")
-        for key in ("pose_before", "pose_after", "command_requested", "command_accepted"):
-            if len(rec[key]) != 3:
-                raise ValueError("transition vector shape")
-        previous = end
+        validate_transition(rec, i, previous, stage="final")
+        previous = rec["time_after"]
 
 
 class RecordingTrajectoryWriter(TrajectoryWriter):
@@ -45,6 +129,21 @@ class RecordingTrajectoryWriter(TrajectoryWriter):
         if self.path.exists():
             raise FileExistsError(self.path)
         super().open()
+
+    def append(self, image: Any, position_xy: Any, yaw: float, **extras: Any) -> int:
+        """Validate a candidate transition before it can become recorded state.
+
+        The check runs before ``super().append()``, which is what writes the JPEG
+        and extends the position/yaw/extras buffers. So a refused candidate
+        leaves the writer exactly as it was: nothing persisted, nothing counted,
+        and the previously accepted records still valid.
+        """
+        transition = extras.get("transition")
+        if transition is not None:
+            recorded = self._extras.get("transition", [])
+            previous = recorded[-1]["time_after"] if recorded else None
+            validate_transition(transition, self.n_frames, previous)
+        return super().append(image, position_xy, yaw, **extras)
 
     def close(self) -> Path:
         if self._closed:

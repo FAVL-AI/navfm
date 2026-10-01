@@ -31,6 +31,15 @@ supervisor records source hashes, exit/crash evidence and readback. SAVED is not
 validation success, training admission or goal completion. Image interpretability,
 transition/pose alignment and official loader samples must be checked after capture.
 
+Transition validation runs in two layers. Each candidate is checked before it
+becomes recorded state, so a misindexed, nonfinite, non-increasing or
+discontinuous transition is refused at the offending step rather than after a
+whole run has been spent; a refused candidate leaves the writer unchanged. The
+whole recording is then validated again at close, which is where the two
+finalisation-only invariants live: that the recording is non-empty, and that the
+transition count equals the written frame count. Both layers call one shared
+per-record validator, so they cannot drift apart.
+
 The fixed short cap is an engineering validation limit, not a change to BO-10's
 long-horizon adequacy thresholds. Any failed gate stays failed. No scientific
 sample counts are incremented. Camera metadata remains nominal unless runtime
