@@ -18,7 +18,14 @@ labels the official loaders derive from observed pose deltas. In kinematic mode,
 acceptance means the swept guard admitted a candidate pose and teleport returned;
 it does not mean wheel dynamics executed the twist.
 
-The new output root must not exist and must be outside the repository. Recording
+The new output root must not exist and must be outside the repository. So must
+`--evidence` and the `.milestones` file derived from it: all three are checked by
+resolved filesystem ancestry, not by string prefix, so a `..` construction or a
+symlinked parent that lands back inside the tree is refused too, while a sibling
+directory merely sharing a name prefix is admitted. The check runs before any
+directory, evidence file or milestone file is created, so a rejected run leaves
+nothing behind. It applies to engineering mode only -- the scientific collector
+legitimately writes its evidence inside `gates/`. Recording
 termination, motion mode, scope and configuration accompany the images. A separate
 supervisor records source hashes, exit/crash evidence and readback. SAVED is not
 validation success, training admission or goal completion. Image interpretability,

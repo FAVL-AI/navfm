@@ -29,6 +29,26 @@ sys.path.insert(0, str(REPO / "src"))
 from navfm.evidence import emit_evidence  # noqa: E402
 
 
+def _outside_repo_violation(label: str, supplied: str) -> str | None:
+    """Return a rejection reason if an engineering path resolves inside the repo.
+
+    Resolved-ancestry semantics, never a string prefix: ``/repo-x`` is not inside
+    ``/repo``, which ``str.startswith`` would wrongly claim. ``Path.resolve()``
+    normalises ``..`` and follows symlinks through the components that already
+    exist, so a traversal or a symlinked parent that lands back inside the
+    working tree is still refused. ``is_relative_to`` treats the repository root
+    itself as inside, which is intended.
+    """
+    resolved = Path(supplied).expanduser().resolve()
+    if resolved.is_relative_to(REPO):
+        return (
+            f"{label} must be outside the repository working tree; "
+            f"supplied {supplied!r} resolves to {resolved}, "
+            f"which is inside the repository root {REPO}"
+        )
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--scene", required=True)
@@ -47,19 +67,31 @@ def main() -> int:
     ap.add_argument("--engineering-step-cap", type=int, default=None,
                     help="opt-in engineering recording with command sidecars; never scientific admission")
     args = ap.parse_args()
+    milestone_path: Path | None = None
     if args.engineering_step_cap is not None:
         if not 12 <= args.engineering_step_cap <= 240:
             ap.error("engineering step cap must be 12..240")
-        if Path(args.out_dir).resolve().is_relative_to(REPO):
-            ap.error("engineering output must be outside the repository")
+        # Every engineering path is confined, not only --out-dir: the milestone
+        # file is derived from --evidence, so validating the primary JSON alone
+        # would still let a derived path be created inside the repository. All
+        # of this runs before any mkdir, evidence write or milestone write, so a
+        # rejected run touches nothing.
+        milestone_path = Path(args.evidence).expanduser().with_suffix(".milestones")
+        for label, supplied in (("engineering --out-dir", args.out_dir),
+                                ("engineering --evidence", args.evidence),
+                                ("engineering milestone file", str(milestone_path))):
+            reason = _outside_repo_violation(label, supplied)
+            if reason is not None:
+                ap.error(reason)
         if Path(args.out_dir).exists() or Path(args.evidence).exists():
             ap.error("engineering output/evidence must be new")
+        if milestone_path.exists():
+            ap.error(f"engineering milestone file must be new: {milestone_path}")
     def milestone(label: str) -> None:
-        if args.engineering_step_cap is not None:
+        if milestone_path is not None:
             import os
-            path = Path(args.evidence).with_suffix(".milestones")
-            path.parent.mkdir(parents=True, exist_ok=True)
-            with path.open("a") as fh:
+            milestone_path.parent.mkdir(parents=True, exist_ok=True)
+            with milestone_path.open("a") as fh:
                 fh.write(datetime.now(timezone.utc).isoformat() + " " + label + "\n")
                 fh.flush()
                 os.fsync(fh.fileno())
