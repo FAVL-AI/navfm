@@ -1,0 +1,62 @@
+{
+  "status": "OFFLINE_ENGINEERING_PAIRS_EXECUTED_LIVE_CONTROLLER_UNQUALIFIED",
+  "scope": "ENGINEERING_FEASIBILITY_ONLY",
+  "pretrained_checkpoint": "/home/favl/projects/navfm/checkpoints/vint.pth",
+  "pretrained_sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+  "adapted_checkpoint": "/home/favl/navfm-training-evidence/option1-vint-20261007-04/smoke_weights.pth",
+  "adapted_sha256": "d0f412e66ebe312d115503a46ed170193e92b91486a7f1eda5031dbafe57f01d",
+  "offline_population": "admitted dev/test fixed pair manifests and sampled negative flags",
+  "simulation_pairs": [
+    {
+      "route": "junction_route_0",
+      "seed": 0,
+      "order": [
+        "pretrained",
+        "adapted"
+      ]
+    },
+    {
+      "route": "junction_route_1",
+      "seed": 1,
+      "order": [
+        "adapted",
+        "pretrained"
+      ]
+    },
+    {
+      "route": "s_bend_route_0",
+      "seed": 2,
+      "order": [
+        "pretrained",
+        "adapted"
+      ]
+    }
+  ],
+  "matching": [
+    "identical image goal, RGB history cadence, preprocessing, camera readbacks",
+    "identical qualified controller, action normalization unit and velocity limits",
+    "identical starts, obstacles, lighting, timeout and observer",
+    "frozen checkpoint digests and paired episode seeds"
+  ],
+  "metrics": {
+    "waypoint_error": "masked valid action pairs; mean Euclidean waypoint distance in metres",
+    "navigation_arrival": "collision-free entry within0.5m of goal; report separately from terminal success",
+    "correct_stopping": "policy terminal action within0.5m; baseline native stopping unavailable",
+    "premature_stopping": "policy terminal action outside0.5m; report stop and episode denominators",
+    "collisions": "all attempted episodes; deliberate-contact and noncontact detector controls required",
+    "full_loop_latency": "RGB available through preprocessing, inference, controller and motor-command submission; synchronized CUDA; acquisition timestamp tracked separately"
+  },
+  "real_robot_runs": "NOT_AUTHORIZED_OR_EXECUTED_IN_THIS_MILESTONE",
+  "real_test_data": "UNTOUCHED",
+  "retain": [
+    "timeouts",
+    "crashes",
+    "operator stops",
+    "collisions",
+    "missing observations"
+  ],
+  "improvement_claim": false,
+  "dataset_admission": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/admission.json",
+  "action_normalization_m": 0.049994826316833496,
+  "training_report": "/home/favl/navfm-training-evidence/option1-vint-20261007-04/training_report.json"
+}
