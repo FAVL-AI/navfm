@@ -140,3 +140,8 @@ are in `OPTION1_TRAINING.md`. The proposed200 training demonstrations are a cove
 target, not a justified sufficient dataset size; scale must be revised using real
 learning curves and matched navigation failures. New confirmatory and real test
 routes remain separate from this engineering corpus.
+
+The subsequent articulated-control,31training-trajectory expansion, three-seed6/25
+learning curves, matched live checkpoint failures and deployment software checks are
+reported in [sim-to-real results](SIM_TO_REAL_RESULTS.md). Original artifacts remain
+unchanged; new evidence is separate.

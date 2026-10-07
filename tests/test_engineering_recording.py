@@ -78,3 +78,13 @@ def test_sidecar_recording_is_consumed_by_pinned_official_loader(tmp_path, model
     item = ds[0]
     assert len(item) == 7
     assert torch.isfinite(item[2]).all()
+
+
+def test_live_policy_metadata_preserved(tmp_path):
+    out = tmp_path / "live"
+    inputs = ["six chronological RGB observations", "goal RGB"]
+    writer = RecordingTrajectoryWriter(out, metadata={"policy_inputs": inputs})
+    writer.open()
+    writer.append(np.zeros((24,32,3),np.uint8),[0,0],0,transition=record(0))
+    writer.close()
+    assert json.loads((out/"metadata.json").read_text())["policy_inputs"] == inputs

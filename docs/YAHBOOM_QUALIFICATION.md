@@ -28,3 +28,87 @@ Start real evaluation only after camera/controller/termination qualification,
 with bounded commands and an operator-controlled stop. Retain collisions,
 timeouts, interventions, acquisition failures and missing observations. Do not
 interpret simulation waypoint error or a six-step training smoke as transfer.
+
+## Deployment software and supervised commands
+
+`src/navfm/deployment/yahboom.py` receives RGB, an acquisition timestamp and goal
+RGB. It supplies six 4 Hz observations to ViNT and sends bounded differential
+Twist commands to an injected sink. No pose, velocity, collision report, map or
+action history is a model input. A 0.2 s acquisition-age limit, nonmonotonic/future
+stamp rejection and 0.375 s history-gap limit issue zero commands. The ROS wrapper
+adds a 50 ms watchdog timer. These software limits need measured camera/clock
+qualification; they are not a formal stopping guarantee. CPU stalls, network loss,
+and process failure still require an independently qualified hardware watchdog.
+
+The software-only saved-image check executed with the adapted checkpoint:
+
+```bash
+NAVFM_UPSTREAM=/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream \
+.venv/bin/python scripts/check_yahboom_adapter.py \
+  --checkpoint /home/favl/navfm-training-evidence/option1-vint-20261007-04/smoke_weights.pth \
+  --images /home/favl/navfm-runtime-evidence/option1-20261007-05/junction_run_0000/trajectory \
+  --goal /home/favl/navfm-runtime-evidence/option1-20261007-05/junction_run_0000/goal.png \
+  --out /home/favl/navfm-runtime-evidence/yahboom-software-next
+```
+
+It strictly loaded the checkpoint, checked 20 replay frames, exact official
+preprocessing tensor equality, finite bounded predictions and stale-frame
+rejection/zero submission. Its sink was a local list. No ROS transport opened.
+The initial missing `max_v` constructor argument failed before model execution;
+that attempt and the repaired PASS are retained separately.
+
+Copy `configs/deployment/yahboom_measured_profile.template.json` outside Git and
+fill observed calibration/mount/mode/clock/mapping values. Unknown fields remain
+null. Record repeated calibration estimates, held-out reprojection residuals,
+exposure settings, raw color encoding, monotonic acquisition stamps, camera queue
+age, command/response timestamps, wheel signs/order/radius, steady linear/angular
+tracking, stopping travel, residual motion and hardware watchdog response. Calibrate
+using development routes; preserve untouched real test routes. The current pipeline
+uses raw distorted images with official aspect cropping; it does not silently
+undistort camera frames. Match this prospectively or introduce and validate the
+same transformation in training and deployment.
+
+On the robot, an operator must first verify the command topic, clear the test area,
+check the emergency stop and external watchdog, and arrange independent tracking.
+**The following are manual supervised commands, not executed in this milestone.**
+Replace the topic with the observed hardware interface; SI forward/left conventions
+must be measured, not inferred from the topic name.
+
+```bash
+# Dry run opens no ROS transport.
+python scripts/yahboom_supervised_pulse.py --topic /cmd_vel \
+  --v 0.05 --w 0 --seconds 2 --out /tmp/yahboom-forward-dry
+# Operator executes after checking the independent stop/watchdog.
+python scripts/yahboom_supervised_pulse.py --topic /cmd_vel \
+  --v 0.05 --w 0 --seconds 2 --execute-supervised --out /tmp/yahboom-forward-01
+python scripts/yahboom_supervised_pulse.py --topic /cmd_vel \
+  --v 0 --w 0.2 --seconds 2 --execute-supervised --out /tmp/yahboom-left-01
+python scripts/yahboom_supervised_pulse.py --topic /cmd_vel \
+  --v 0 --w -0.2 --seconds 2 --execute-supervised --out /tmp/yahboom-right-01
+python scripts/yahboom_supervised_pulse.py --topic /cmd_vel \
+  --v 0.05 --w 0.2 --seconds 2 --execute-supervised --out /tmp/yahboom-combined-01
+```
+
+Each pulse sends explicit zeros on normal completion/failure while its process is
+alive. A logged submission is not measured motion; populate the pending external
+measurements before qualification. Never count a manually interrupted or missing
+trace as PASS. Initially use the simulator absolute tolerances only as an engineering
+reference: 0.05 m/s linear and 0.15 rad/s angular tracking error, 0.05 m stopping
+travel, residual speed <0.01 m/s and yaw rate <0.03 rad/s after settling. Those are
+wide relative to small hardware pulses: predeclare tighter hardware tolerances
+using tracking uncertainty and available clearance before calling hardware qualified.
+
+After measured camera/controller and independent watchdog qualification, the operator
+may start the RGB wrapper in the ROS environment:
+
+```bash
+NAVFM_UPSTREAM=/path/to/pinned/training/snapshot python scripts/run_yahboom_rgb.py \
+  --checkpoint /path/to/verified/weights.pth --goal /path/to/real-development-goal.png \
+  --calibration /path/to/measured-profile.json --camera-topic /observed/rgb/topic \
+  --command-topic /observed/qualified/twist/topic --execute-supervised
+```
+
+This command was not run. ROS subscriptions, QoS compatibility, command-topic wiring
+and hardware response remain untested; compilation and the RGB adapter replay do not
+qualify them. The experimental RGB stopping rule also remains uncalibrated. Do not
+use the real test set to choose its thresholds.

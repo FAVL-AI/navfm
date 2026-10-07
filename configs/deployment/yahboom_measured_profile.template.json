@@ -1,0 +1,17 @@
+{
+  "status": "MEASUREMENTS_REQUIRED",
+  "fx": null,
+  "fy": null,
+  "cx": null,
+  "cy": null,
+  "distortion": null,
+  "mount_xyz": null,
+  "mount_rpy": null,
+  "width": null,
+  "height": null,
+  "camera_timestamp_clock": null,
+  "command_mapping": null,
+  "watchdog_verified": false,
+  "controller_qualified": false,
+  "real_test_data": "UNTOUCHED"
+}

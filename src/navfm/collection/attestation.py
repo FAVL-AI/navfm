@@ -615,6 +615,7 @@ class RuntimeHandles:
     frame: Any = None
     metadata: dict[str, Any] = dataclasses.field(default_factory=dict)
     frame_statistic_definition: str = "luma_601"
+    intent_only_fields: tuple[str, ...] = INTENT_ONLY_FIELDS
 
 
 def collect_all(handles: RuntimeHandles, *, run_id: str,
@@ -640,7 +641,7 @@ def collect_all(handles: RuntimeHandles, *, run_id: str,
     out += read_spawn_pose(handles.articulation, provenance=provenance)
     out.append(frame_statistic(handles.frame, handles.frame_statistic_definition,
                                provenance=provenance))
-    out.append(annotate_intent_fields(handles.metadata))
+    out.append(annotate_intent_fields(handles.metadata, handles.intent_only_fields))
     return [dataclasses.replace(o, run_id=run_id) for o in out]
 
 

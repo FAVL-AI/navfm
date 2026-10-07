@@ -11,13 +11,28 @@ from navfm.control import BaseLimits, PDConfig, reference_pd_twist
 
 
 class RGBBaseline:
-    def __init__(self, checkpoint: Path):
+    def __init__(
+        self,
+        checkpoint: Path,
+        *,
+        action_scale_m: float = 0.2 / 4,
+        stop_enabled: bool = False,
+        max_v: float = 0.2,
+    ):
         import torch
         from torchvision import transforms
 
         from navfm import upstream
         from navfm.models.loader import extract_state_dict, load_checkpoint, sha256
 
+        self.action_scale_m = action_scale_m
+        self.stop_enabled = stop_enabled
+        self.stop_count = 0
+        self.stopped = False
+        upstream.ensure_upstream()
+        from vint_train.data.data_utils import resize_and_aspect_crop
+
+        self.resize_and_aspect_crop = resize_and_aspect_crop
         self.torch = torch
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.config = upstream.model_config("vint")
@@ -34,9 +49,9 @@ class RGBBaseline:
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             ]
         )
-        self.limits = BaseLimits(max_v=0.2, max_w=0.4)
+        self.limits = BaseLimits(max_v=max_v, max_w=0.4)
         self.manifest = {
-            "model": "released ViNT",
+            "model": "ViNT checkpoint",
             "checkpoint": str(checkpoint),
             "sha256": self.digest,
             "strict_load": True,
@@ -45,23 +60,30 @@ class RGBBaseline:
             "config": self.config,
             "policy_inputs": ["six chronological RGB observations", "goal RGB"],
             "nonvisual_policy_inputs": [],
-            "action_scale_m": 0.2 / 4,
+            "action_scale_m": self.action_scale_m,
             "waypoint_index": 2,
             "controller": "reference_pd_twist; differential",
-            "max_v": 0.2,
+            "max_v": max_v,
             "max_w": 0.4,
             "control_hz": 4,
-            "preprocessing": "PIL resize to upstream image_size, tensor, ImageNet mean/std",
+            "preprocessing": "official 4:3 center crop, PIL resize, ImageNet mean/std",
             "initial_history": "repeat first observation until six real control frames exist",
-            "stop_rule": "none; baseline model has no terminating action; timeout is evaluator termination",
+            "stop_rule": "three consecutive predicted temporal distances <=1 and selected waypoint <=0.15m; latched"
+            if stop_enabled
+            else "none",
         }
 
     def tensor(self, images):
         from PIL import Image
 
         values = [
-            self.transform(Image.fromarray(image).resize(tuple(self.config["image_size"])))
+            self.resize_and_aspect_crop(Image.fromarray(image), tuple(self.config["image_size"]))
             for image in images
+        ]
+        values = [
+            (value - value.new_tensor([0.485, 0.456, 0.406])[:, None, None])
+            / value.new_tensor([0.229, 0.224, 0.225])[:, None, None]
+            for value in values
         ]
         return self.torch.cat(values, dim=0).unsqueeze(0).to(self.device)
 
@@ -77,13 +99,19 @@ class RGBBaseline:
         prediction = float(distance.detach().cpu().reshape(-1)[0])
         if not np.isfinite(waypoint).all() or not np.isfinite(prediction):
             raise ValueError("nonfinite baseline prediction")
-        v, w = reference_pd_twist(waypoint * (0.2 / 4), self.limits, PDConfig(dt=0.25))
+        v, w = reference_pd_twist(waypoint * self.action_scale_m, self.limits, PDConfig(dt=0.25))
+        if self.stop_enabled:
+            close = prediction <= 1.0 and np.linalg.norm(waypoint[:2] * self.action_scale_m) <= 0.15
+            self.stop_count = self.stop_count + 1 if close else 0
+            self.stopped = self.stopped or self.stop_count >= 3
+            if self.stopped:
+                v, w = 0.0, 0.0
         if self.device == "cuda":
             torch.cuda.synchronize()
         return {
             "command": [v, 0.0, w],
             "predicted_distance": prediction,
             "waypoint_normalized": waypoint.tolist(),
-            "policy_stop": False,
+            "policy_stop": self.stopped,
             "latency_ms": (time.perf_counter() - start) * 1000,
         }

@@ -24,12 +24,16 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--collection", type=Path, action="append", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--expected-trajectories", type=int, default=10)
+    p.add_argument("--spacing", type=float, help="freeze previously registered TRAIN unit")
     args = p.parse_args()
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO):
         p.error("output must be new and external")
     candidates = []
     for collection_root in args.collection:
+        if (collection_root / "PROVENANCE_INVALID.json").exists():
+            p.error("collection explicitly marked provenance-invalid")
         collection = json.loads((collection_root / "collection.json").read_text())
         if collection["status"] != "COMPLETED":
             p.error("every collection must finish before admission")
@@ -205,7 +209,11 @@ def main():
         )
         + "\n"
     )
-    spacing = float(np.median([x for x in training_steps if x > 0.001]))
+    spacing = (
+        args.spacing
+        if args.spacing is not None
+        else float(np.median([x for x in training_steps if x > 0.001]))
+    )
     cfgfile = snapshot / "train/vint_train/data/data_config.yaml"
     cfg = yaml.safe_load(cfgfile.read_text())
     cfg[name] = {"metric_waypoint_spacing": spacing}
@@ -305,7 +313,7 @@ def main():
             "pair_sha256": frozen.sha256,
         }
     report.update(
-        status="PASS" if len(routes) == 10 else "PARTIAL",
+        status="PASS" if len(routes) == args.expected_trajectories else "PARTIAL",
         admitted=len(routes),
         rejected=report["attempted"] - len(routes),
         admission_rate=len(routes) / report["attempted"],
@@ -341,7 +349,7 @@ def main():
             indent=2,
         )
     )
-    return 0 if len(routes) == 10 else 1
+    return 0 if len(routes) == args.expected_trajectories else 1
 
 
 if __name__ == "__main__":

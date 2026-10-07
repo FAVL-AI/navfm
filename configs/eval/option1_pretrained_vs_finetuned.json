@@ -1,5 +1,5 @@
 {
-  "status": "OFFLINE_ENGINEERING_PAIRS_EXECUTED_LIVE_CONTROLLER_UNQUALIFIED",
+  "status": "THREE_MATCHED_ENGINEERING_PAIRS_COMPLETED_ALL_TIMEOUT",
   "scope": "ENGINEERING_FEASIBILITY_ONLY",
   "pretrained_checkpoint": "/home/favl/projects/navfm/checkpoints/vint.pth",
   "pretrained_sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
@@ -44,7 +44,8 @@
     "correct_stopping": "policy terminal action within0.5m; baseline native stopping unavailable",
     "premature_stopping": "policy terminal action outside0.5m; report stop and episode denominators",
     "collisions": "all attempted episodes; deliberate-contact and noncontact detector controls required",
-    "full_loop_latency": "RGB available through preprocessing, inference, controller and motor-command submission; synchronized CUDA; acquisition timestamp tracked separately"
+    "full_loop_latency": "observed completed RGB-frame ready through residence/bookkeeping, history/preprocessing/inference/controller to first target submission; earlier exposure/acquisition and physical response unavailable",
+    "path_efficiency": "success-weighted shortest Euclidean distance to0.5m goal region /max(actual path length, shortest distance); primitive unobstructed prescribed routes only; zero on failure"
   },
   "real_robot_runs": "NOT_AUTHORIZED_OR_EXECUTED_IN_THIS_MILESTONE",
   "real_test_data": "UNTOUCHED",
@@ -58,5 +59,49 @@
   "improvement_claim": false,
   "dataset_admission": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/admission.json",
   "action_normalization_m": 0.049994826316833496,
-  "training_report": "/home/favl/navfm-training-evidence/option1-vint-20261007-04/training_report.json"
+  "training_report": "/home/favl/navfm-training-evidence/option1-vint-20261007-04/training_report.json",
+  "controller": {
+    "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261007-06/qualification.json",
+    "max_v": 0.1,
+    "max_w": 0.4,
+    "geometry": "analytic sphere-wheel proxy, existing articulation/visual asset",
+    "drive_type": "acceleration",
+    "damping": 1000,
+    "yaw_gain_pure": 1.5,
+    "yaw_gain_mixed": 0.8,
+    "physics_hz": 120,
+    "rgb_hz": 12,
+    "policy_hz": 4
+  },
+  "matching_tolerances": {
+    "start_xy_m": 0.001,
+    "start_yaw_rad": 0.005,
+    "goal_rgb_sha256": "exact",
+    "camera_settings": "exact",
+    "route_and_fixture": "exact"
+  },
+  "stop_rule": {
+    "predicted_temporal_distance_max": 1,
+    "selected_waypoint_distance_m_max": 0.15,
+    "consecutive_policy_frames": 3,
+    "latched": true,
+    "status": "experimental uncalibrated rule identical for both; no GT input"
+  },
+  "timeout_sim_s": 20,
+  "live_report": "/home/favl/navfm-runtime-evidence/option1-live-matched-20261007-02.json",
+  "completed_pairs": 3,
+  "completed_episodes": 6,
+  "executed_order": [
+    "pretrained:s_bend0",
+    "pretrained:branch0",
+    "pretrained:branch1",
+    "adapted:s_bend0",
+    "adapted:branch0",
+    "adapted:branch1"
+  ],
+  "order_limitation": "Batched by checkpoint; planned alternation not executed. Backgroundload and ordering confounded; no performance superiority claim.",
+  "instrumentation": "final v4:frame-ready-to-command plus policy sidecar and source guard repairs",
+  "completed_comparative_episodes_all_attempts": 14,
+  "failed_comparative_episodes": 4,
+  "unique_episode_conditions": 3
 }

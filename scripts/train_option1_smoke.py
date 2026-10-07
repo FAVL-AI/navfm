@@ -23,12 +23,17 @@ def main():
         "--config", type=Path, default=REPO / "configs/train/option1_vint_smoke.yaml"
     )
     parser.add_argument("--steps", type=int, default=6)
+    parser.add_argument("--seed", type=int)
+    parser.add_argument(
+        "--train-names", type=Path, help="fixed nested training subset; dev/test unchanged"
+    )
+    parser.add_argument("--development-only", action="store_true")
     args = parser.parse_args()
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO) or args.steps < 1:
         parser.error("new external output and positive step count required")
     admission = json.loads((args.dataset / "admission.json").read_text())
-    if admission["admitted"] != 10:
+    if admission["admitted"] < 10:
         parser.error("ten admitted trajectories required")
     os.environ["NAVFM_UPSTREAM"] = admission["upstream_snapshot"]
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
@@ -55,6 +60,8 @@ def main():
     from navfm.train.run import save_weights, train_one_epoch
 
     cfg = FinetuneConfig.from_yaml(args.config)
+    if args.seed is not None:
+        cfg = dataclasses.replace(cfg, seed=args.seed)
     set_seed(cfg.seed, deterministic=cfg.deterministic)
     if sha256(cfg.checkpoint) != EXPECTED_CHECKPOINT:
         raise ValueError("intended pretrained checkpoint digest mismatch")
@@ -69,7 +76,9 @@ def main():
     out.mkdir(parents=True)
     result = {
         "status": "RUNNING",
-        "scope": "TRAINING_ENGINEERING_SMOKE_ONLY",
+        "scope": "TRAINING_ENGINEERING_CURVE"
+        if args.train_names
+        else "TRAINING_ENGINEERING_SMOKE_ONLY",
         "steps_requested": args.steps,
         "admission_digest": sha256(args.dataset / "admission.json"),
         "baseline_sha256": EXPECTED_CHECKPOINT,
@@ -102,10 +111,21 @@ def main():
         model.to(device)
 
         def dataset(split):
+            split_folder = args.dataset / "splits/option1_m3pro" / split
+            if split == "train" and args.train_names:
+                names = args.train_names.read_text().splitlines()
+                available = (split_folder / "traj_names.txt").read_text().splitlines()
+                if len(names) != len(set(names)) or not set(names) <= set(available):
+                    raise ValueError("invalid training subset")
+                split_folder = out / "training_subset"
+                split_folder.mkdir()
+                (split_folder / "traj_names.txt").write_text("\n".join(names) + "\n")
+                result["training_trajectory_count"] = len(names)
+                result["training_subset_sha256"] = sha256(args.train_names)
             return upstream.build_dataset(
                 dataset_name="option1_m3pro",
                 data_folder=data,
-                split_folder=args.dataset / "splits/option1_m3pro" / split,
+                split_folder=split_folder,
                 cfg=modelcfg,
             )
 
@@ -173,7 +193,7 @@ def main():
             device=device,
             model_config=modelcfg,
             pretrained_dev=evaluate_fixed(model, "dev", dev),
-            pretrained_test=evaluate_fixed(model, "test", test),
+            pretrained_test=None if args.development_only else evaluate_fixed(model, "test", test),
         )
         save()
         result["freeze"] = apply_freeze(model, cfg.freeze)
@@ -284,7 +304,9 @@ def main():
             strict_checkpoint_reload=True,
             reload_prediction_equality=True,
             finetuned_dev=evaluate_fixed(reloaded, "dev", dev),
-            finetuned_test=evaluate_fixed(reloaded, "test", test),
+            finetuned_test=None
+            if args.development_only
+            else evaluate_fixed(reloaded, "test", test),
             navigation_evaluation="NOT_RUN",
             improvement_claim=False,
         )

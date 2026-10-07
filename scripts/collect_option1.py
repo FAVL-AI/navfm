@@ -10,6 +10,7 @@ import json
 import math
 import sys
 import time
+from itertools import pairwise
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -30,18 +31,64 @@ def main():
     parser.add_argument("--robot", required=True)
     parser.add_argument("--max-steps", type=int, default=240)
     parser.add_argument("--limit", type=int, default=10)
+    parser.add_argument(
+        "--route-spec", type=Path, help="prospective external or tracked route/layout specification"
+    )
     parser.add_argument("--route-id", action="append", help="recollect a named route; may repeat")
     parser.add_argument(
         "--actuation", choices=["wheel", "body_velocity", "pose_step"], default="pose_step"
     )
+    parser.add_argument(
+        "--checkpoint", type=Path, help="live RGB policy; never use teacher pose in policy"
+    )
+    parser.add_argument("--qualification", type=Path)
+    parser.add_argument(
+        "--checkpoint-sha256", help="required registered checkpoint identity for live policy"
+    )
+    parser.add_argument("--goal-root", type=Path, help="fixed raw goals indexed by route id")
     args = parser.parse_args()
+    policy = None
+    if args.checkpoint:
+        if args.actuation != "wheel" or not args.qualification or not args.goal_root:
+            parser.error(
+                "live policy requires wheel actuation, qualified manifest and fixed RGB goals"
+            )
+        qualification = json.loads(args.qualification.read_text())
+        if (
+            not args.checkpoint_sha256
+            or hashlib.sha256(args.checkpoint.read_bytes()).hexdigest() != args.checkpoint_sha256
+        ):
+            parser.error("registered checkpoint digest required and must match")
+        if (
+            qualification.get("robot_sha256")
+            != hashlib.sha256(Path(args.robot).read_bytes()).hexdigest()
+        ):
+            parser.error("robot asset differs from qualification")
+        if (
+            not all(
+                qualification.get(k)
+                for k in ["analytic_colliders", "sphere_wheels", "acceleration_drive"]
+            )
+            or qualification.get("yaw_gain") != 1.5
+            or qualification.get("mixed_yaw_gain") != 0.8
+        ):
+            parser.error("qualification does not describe this controller")
+        if qualification["status"] != "PASS":
+            parser.error("articulated qualification did not pass")
+        from navfm.collection.rgb_baseline import RGBBaseline
+
+        policy = RGBBaseline(
+            args.checkpoint, action_scale_m=0.049994826316833496, stop_enabled=True, max_v=0.1
+        )
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO):
         parser.error("output must be new and external")
     out.mkdir(parents=True)
     from navfm.collection.demonstrations import DemonstrationTeacher, route_specs
 
-    routes = route_specs()[: args.limit]
+    routes = (json.loads(args.route_spec.read_text()) if args.route_spec else route_specs())[
+        : args.limit
+    ]
     if args.route_id:
         known = {r["id"] for r in routes}
         if set(args.route_id) - known:
@@ -78,12 +125,13 @@ def main():
             validate_capture,
             verify_saved_recording,
         )
+        from navfm.collection.source_stability import verify_source_stability
         from navfm.isaac.app import SimConfig
         from navfm.isaac.robot import M3PRO, SimRobot
 
         stage.create_new_stage()
         usd = omni.usd.get_context().get_stage()
-        fixtures = []
+        fixtures = {}
 
         def cube(name, xyz, size, color, collision=True):
             prim = UsdGeom.Cube.Define(usd, name)
@@ -97,30 +145,30 @@ def main():
 
         # All geometry is created before initializing physics. Scenes are spatially
         # separated; no live schema edits or tensor-view invalidation is needed.
-        for scene in range(5):
+        for scene in sorted({r["scene_index"] for r in routes}):
             origin = scene * 20.0
-            half = 2.0 + scene * 0.1
+            half = next(r["wall_half_width"] for r in routes if r["scene_index"] == scene)
             root = f"/World/Fixture/Scene{scene}"
             cube(
                 root + "/Floor",
                 (2.0, origin, -0.05),
                 (8.0, 8.0, 0.1),
-                (0.35 + 0.04 * scene, 0.4, 0.45),
+                (0.35 + 0.04 * (scene % 5), 0.4, 0.45),
             )
             cube(
                 root + "/WallLeft",
                 (2.0, origin + half, 1.4),
                 (6.0, 0.2, 2.8),
-                (0.65, 0.7 - 0.05 * scene, 0.75),
+                (0.65, 0.7 - 0.05 * (scene % 5), 0.75),
             )
             cube(
                 root + "/WallRight",
                 (2.0, origin - half, 1.4),
                 (6.0, 0.2, 2.8),
-                (0.65, 0.7, 0.75 - 0.04 * scene),
+                (0.65, 0.7, 0.75 - 0.04 * (scene % 5)),
             )
             cube(root + "/EndWall", (5.0, origin, 1.4), (0.2, 2 * half, 2.8), (0.6, 0.65, 0.7))
-            obstacle = (3.5, origin + 1.45, 0.4)
+            obstacle = (3.5 + 0.1 * (scene % 5), origin + 1.45, 0.4)
             cube(root + "/Obstacle", obstacle, (0.45, 0.4, 0.8), (0.1, 0.3, 0.7))
             # Prospective scene landmarks prevent plain-wall image-goal ambiguity.
             # These are rendered USD geometry, never overlays on captured images.
@@ -144,14 +192,25 @@ def main():
                             (0.22, 0.26, 0.30),
                             False,
                         )
-            fixtures.append(
-                {
-                    "scene_index": scene,
-                    "origin_y": origin,
-                    "wall_half_width": half,
-                    "obstacle_xyz": obstacle,
-                }
-            )
+            fixtures[scene] = {
+                "scene_index": scene,
+                "origin_y": origin,
+                "wall_half_width": half,
+                "obstacle_xyz": obstacle,
+            }
+        if args.route_spec:
+            # Distinct partition geometry is prospective and shared within each layout only.
+            for scene in sorted(fixtures):
+                origin = scene * 20.0
+                for side in (-1, 1):
+                    cube(
+                        f"/World/Fixture/Scene{scene}/DoorPartition{side + 1}",
+                        (1.75 + 0.12 * (scene % 5), origin + side * 1.45, 0.7),
+                        (0.16, 0.65 + 0.08 * (scene % 5), 1.4),
+                        (0.35, 0.45, 0.25),
+                    )
+                fixtures[scene]["door_partition_x"] = 1.75 + 0.12 * (scene % 5)
+                fixtures[scene]["door_partition_width"] = 0.65 + 0.08 * (scene % 5)
         sun = UsdLux.DistantLight.Define(usd, "/World/Fixture/Sun")
         sun.CreateIntensityAttr(1500.0)
         UsdGeom.XformCommonAPI(sun).SetRotate(Gf.Vec3f(-45.0, 30.0, 0.0))
@@ -166,7 +225,7 @@ def main():
             },
         }
         save_summary()
-        cfg = SimConfig(resolution=(320, 240), rt_subframes=1)
+        cfg = SimConfig(resolution=(320, 240), rt_subframes=1, physics_substeps=10 if policy else 1)
         robot_cfg = dataclasses.replace(
             M3PRO,
             usd_path=args.robot,
@@ -174,9 +233,25 @@ def main():
                 M3PRO.camera, resolution=(320, 240), height=0.55, x_offset=0.2, pitch_deg=0.0
             ),
         )
-        sim = SimulationContext(stage_units_in_meters=1.0, physics_dt=cfg.dt, rendering_dt=cfg.dt)
+        sim = SimulationContext(
+            stage_units_in_meters=1.0, physics_dt=cfg.dt / cfg.physics_substeps, rendering_dt=cfg.dt
+        )
         robot = SimRobot(app, robot_cfg)
         stage.add_reference_to_stage(args.robot, robot.prim_path)
+        if policy:
+            for link in ["base_link", "fl_wheel", "fr_wheel", "rl_wheel", "rr_wheel"]:
+                root = robot.prim_path + "/" + link
+                usd.OverridePrim(root + "/collisions").SetActive(False)
+                if link == "base_link":
+                    shape = UsdGeom.Cube.Define(usd, root + "/QualifiedCollision")
+                    shape.CreateSizeAttr(1.0)
+                    x = UsdGeom.XformCommonAPI(shape)
+                    x.SetScale(Gf.Vec3f(0.29, 0.235, 0.08))
+                    x.SetTranslate(Gf.Vec3d(0, 0, 0.04))
+                else:
+                    shape = UsdGeom.Sphere.Define(usd, root + "/QualifiedCollision")
+                    shape.CreateRadiusAttr(0.04)
+                UsdPhysics.CollisionAPI.Apply(shape.GetPrim())
         drives = []
         for prim in usd.Traverse():
             if str(prim.GetPath()).startswith(robot.prim_path):
@@ -189,7 +264,9 @@ def main():
                         "damping": drive.GetDampingAttr().Get(),
                     }
                     drive.GetStiffnessAttr().Set(0.0)
-                    damping = 10.0 if args.actuation == "wheel" else 0.0
+                    damping = 1000.0 if policy else 10.0 if args.actuation == "wheel" else 0.0
+                    if policy:
+                        drive.GetTypeAttr().Set("acceleration")
                     drive.GetDampingAttr().Set(damping)
                     drives.append(
                         {
@@ -221,13 +298,21 @@ def main():
         settings.set("/app/runLoops/main/rateLimitEnabled", True)
         settings.set("/app/runLoops/main/rateLimitFrequency", 12.0)
         settings.set("/omni/replicator/RTSubframes", 1)
-        sim.set_simulation_dt(physics_dt=cfg.dt, rendering_dt=cfg.dt)
+        sim.set_simulation_dt(physics_dt=cfg.dt / cfg.physics_substeps, rendering_dt=cfg.dt)
         rep.orchestrator.set_capture_on_play(False)
 
         def step():
             sim.play()
             rep.orchestrator.step(rt_subframes=1, delta_time=cfg.dt, pause_timeline=True)
             rep.orchestrator.step(rt_subframes=1, delta_time=0.0, pause_timeline=True)
+            # Bounded re-render at unchanged physics time; never relabel an old frame.
+            for _ in range(3):
+                frame_time = cam.get_current_frame().get("rendering_time")
+                if frame_time is not None and math.isclose(
+                    float(frame_time), float(sim.current_time), abs_tol=1e-8
+                ):
+                    break
+                rep.orchestrator.step(rt_subframes=1, delta_time=0.0, pause_timeline=True)
 
         names = list(robot._articulation.dof_names)
         indices = {
@@ -253,6 +338,8 @@ def main():
                 robot.set_body_velocity(*command)
                 return
             v, vy, w = command
+            if policy:
+                w *= 1.5 if abs(v) < 1e-6 else 0.8
             k = 0.0775 + 0.085
             r = 0.04
             speeds = [
@@ -284,6 +371,7 @@ def main():
             contact_event
         )
         usd.GetRootLayer().Export(str(out / "fixture.usda"))
+        source_expected = None
         for route in routes:
             episode = out / route["id"]
             episode.mkdir()
@@ -295,12 +383,18 @@ def main():
                 "simulator_version": importlib.metadata.version("isaacsim"),
                 "prospective_wheel_drives": drives,
                 "wheel_mapping": indices,
-                "teacher_privileged_inputs": [
+                "teacher_privileged_inputs": []
+                if policy
+                else [
                     "simulation xy",
                     "simulation yaw",
                     "scripted waypoints",
                 ],
-                "deployed_policy_inputs": None,
+                "deployed_policy_inputs": policy.manifest["policy_inputs"] if policy else None,
+                "policy": policy.manifest if policy else None,
+                "qualification_sha256": hashlib.sha256(args.qualification.read_bytes()).hexdigest()
+                if policy
+                else None,
                 "teacher_actuation": args.actuation,
             }
 
@@ -346,8 +440,12 @@ def main():
                 sources = {Path(__file__).resolve()}
                 for name, module in list(sys.modules.items()):
                     file = getattr(module, "__file__", None)
-                    if file and name.startswith("navfm"):
+                    if file and name.startswith(("navfm", "vint_train")):
                         sources.add(Path(file).resolve())
+                if source_expected is None:
+                    source_expected = {
+                        str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources
+                    }
                 handles = RuntimeHandles(
                     repo=REPO,
                     influencing_files=sorted(sources),
@@ -358,12 +456,57 @@ def main():
                     render_product_resolution_reader=render_product.get_resolution,
                     metadata=requested,
                     goal_capture_sim_time=goal_time,
+                    intent_only_fields=(
+                        "sim.seed",
+                        "collect.episodes",
+                        "collect.max_stationary_fraction",
+                    ),
                 )
                 teacher = DemonstrationTeacher(points, route["speed"])
-                writer = RecordingTrajectoryWriter(episode / "trajectory", metadata=requested)
+                if policy:
+                    policy.stop_count = 0
+                    policy.stopped = False
+                    goal = np.asarray(
+                        Image.open(args.goal_root / route["id"] / "goal.png").convert("RGB")
+                    )
+                    Image.fromarray(goal).save(episode / "goal.png")
+                    goal_source_path = args.goal_root / route["id"] / "runtime_manifest.json"
+                    goal_source = json.loads(goal_source_path.read_text())
+                    manifest["fixed_goal_source_manifest_sha256"] = hashlib.sha256(
+                        goal_source_path.read_bytes()
+                    ).hexdigest()
+                    manifest["fixed_goal_source_capture_sim_time"] = next(
+                        (
+                            o["value"]
+                            for o in goal_source.get("observations", [])
+                            if o["name"] == "goal_capture_sim_time"
+                        ),
+                        None,
+                    )
+                    manifest["fixed_goal_time_epoch"] = args.goal_root.name
+                    manifest["goal_time_definition"] = (
+                        "R3 is unused local capture; policy goal has separate source collection clock and observed original capture time, possibly unknown"
+                    )
+                    manifest["fixed_goal_sha256"] = hashlib.sha256(
+                        (episode / "goal.png").read_bytes()
+                    ).hexdigest()
+                    history = [robot.rgb().copy() for _ in range(6)]
+                inference = []
+                stop_frame = None
+                command = [0.0, 0.0, 0.0]
+                writer = RecordingTrajectoryWriter(
+                    episode / "trajectory",
+                    metadata={
+                        **requested,
+                        "policy_inputs": policy.manifest["policy_inputs"]
+                        if policy
+                        else "NOT_APPLICABLE_DEMONSTRATOR",
+                    },
+                )
                 writer.open()
                 captures = []
                 contacts.clear()
+                frame_available_wall = time.perf_counter()
                 previous = float(cam.get_current_frame()["rendering_time"])
                 reached = False
                 for i in range(args.max_steps):
@@ -371,12 +514,35 @@ def main():
                     before = float(sim.current_time)
                     xy, yaw = robot.pose()
                     pose_before = [*xy.tolist(), yaw]
-                    command, reached = teacher.step(xy, yaw)
+                    if policy:
+                        if i % 3 == 0:
+                            perception_start = time.perf_counter()
+                            history = [*history, robot.rgb().copy()][-6:]
+                            prediction = policy.step(history, goal)
+                            command = prediction["command"]
+                            drive(command)
+                            prediction["perception_to_command_ms"] = (
+                                time.perf_counter() - perception_start
+                            ) * 1000
+                            prediction["observed_frame_available_to_command_ms"] = (
+                                time.perf_counter() - frame_available_wall
+                            ) * 1000
+                            prediction["frame"] = i
+                            prediction["sensor_time"] = float(
+                                cam.get_current_frame()["rendering_time"]
+                            )
+                            inference.append(prediction)
+                            if prediction["policy_stop"] and stop_frame is None:
+                                stop_frame = i
+                        reached = stop_frame is not None and i - stop_frame >= 24
+                    else:
+                        command, reached = teacher.step(xy, yaw)
                     drive(command)
                     step()
                     after = float(sim.current_time)
                     sensor = float(cam.get_current_frame()["rendering_time"])
                     rgb = robot.rgb()
+                    frame_available_wall = time.perf_counter()
                     xy, yaw = robot.pose()
                     pose = [*xy.tolist(), yaw]
                     validate_capture(
@@ -398,6 +564,10 @@ def main():
                         ),
                         run_id=route["id"],
                     )
+                    observed_sources = next(
+                        o.value for o in observations if o.name == "influencing_file_digests"
+                    )
+                    source_expected = verify_source_stability(source_expected, observed_sources)
                     decision = decide(observations, requested_values(requested), run_id=route["id"])
                     require_scientific_preflight(decision)
                     writer.append(
@@ -436,7 +606,13 @@ def main():
                     frames=len(captures),
                     captures=captures,
                     contacts=contacts.copy(),
-                    termination="teacher_goal" if reached else "timeout",
+                    termination=("policy_stop" if reached else "timeout")
+                    if policy
+                    else "teacher_goal"
+                    if reached
+                    else "timeout",
+                    inference=inference,
+                    policy_stop_frame=stop_frame,
                     preflight=decision.to_dict(),
                     observations=[o.to_dict() for o in observations],
                     contact_subscription_active=subscription is not None,
@@ -446,6 +622,34 @@ def main():
                         if p.is_file()
                     },
                 )
+                if policy:
+                    path_length = sum(
+                        math.dist(a["pose"][:2], b["pose"][:2]) for a, b in pairwise(captures)
+                    )
+                    final_distance = captures[-1]["distance_to_goal_m"]
+                    stopped_distance = (
+                        captures[stop_frame]["distance_to_goal_m"]
+                        if stop_frame is not None
+                        else None
+                    )
+                    success = stop_frame is not None and final_distance <= 0.5 and not contacts
+                    manifest["metrics"] = {
+                        "success": int(success),
+                        "correct_stopping": int(stop_frame is not None and stopped_distance <= 0.5),
+                        "premature_stopping": int(
+                            stop_frame is not None and stopped_distance > 0.5
+                        ),
+                        "collision_episode": int(bool(contacts)),
+                        "path_length_m": path_length,
+                        "path_efficiency": float(np.linalg.norm(points[-1] - points[0]))
+                        / max(path_length, 1e-9)
+                        if success
+                        else 0.0,
+                        "final_goal_distance_m": final_distance,
+                        "perception_to_command_p95_ms": float(
+                            np.percentile([r["perception_to_command_ms"] for r in inference], 95)
+                        ),
+                    }
                 # Preserve exact executable source for future digest verification.
                 archive = episode / "source_snapshot"
                 archive.mkdir()

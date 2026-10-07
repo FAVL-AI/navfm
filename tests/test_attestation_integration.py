@@ -213,3 +213,12 @@ def test_default_path_does_not_import_or_call_attestation() -> None:
                       and isinstance(n.value, ast.Call)]
     assert not any(isinstance(c.value.func, ast.Name) and c.value.func.id == "attest_and_record"
                    for c in toplevel_calls)
+
+
+def test_consumed_fields_are_not_marked_intent_only(tmp_path):
+    from dataclasses import replace
+    mod = _collector()
+    handles = replace(_handles(mod, tmp_path), intent_only_fields=("sim.seed",))
+    observations = att.collect_all(handles, run_id="prospective", provenance=TD)
+    annotation = next(o.value for o in observations if o.name == "intent_field_annotation")
+    assert "sim.physics_substeps" not in annotation["declared_intent_only"]

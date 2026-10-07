@@ -19,12 +19,12 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify(root):
+def verify(root, expected_trajectories=10):
     report = json.loads((root / "admission.json").read_text())
-    if report["status"] != "PASS" or report["admitted"] != 10:
-        raise ValueError("ten admitted trajectories and admission PASS required")
-    if sum(bool(row["admitted"]) for row in report["trajectories"]) != 10:
-        raise ValueError("admitted trajectory rows do not match ten-trajectory summary")
+    if report["status"] != "PASS" or report["admitted"] != expected_trajectories:
+        raise ValueError("declared admitted trajectory count and admission PASS required")
+    if sum(bool(row["admitted"]) for row in report["trajectories"]) != expected_trajectories:
+        raise ValueError("admitted trajectory rows do not match declared summary")
     data = root / "data/option1_m3pro"
     for name, expected in report["dataset_file_sha256"].items():
         if sha(data / name) != expected:
@@ -54,7 +54,7 @@ def verify(root):
         frames += len(indices)
     return {
         "status": "PASS",
-        "trajectories": 10,
+        "trajectories": expected_trajectories,
         "processed_frames": frames,
         "position_yaw_images_timestamps_exactly_mapped": True,
     }
@@ -63,7 +63,9 @@ def verify(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, required=True)
-    print(json.dumps(verify(parser.parse_args().dataset), indent=2))
+    parser.add_argument("--expected-trajectories", type=int, default=10)
+    args = parser.parse_args()
+    print(json.dumps(verify(args.dataset, args.expected_trajectories), indent=2))
 
 
 if __name__ == "__main__":

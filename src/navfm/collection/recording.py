@@ -156,8 +156,8 @@ class RecordingTrajectoryWriter(TrajectoryWriter):
             raise RuntimeError("writer not opened")
         metadata = dict(self.metadata)
         metadata.update(recording_schema=SCHEMA, n_frames=self.n_frames,
-                        policy_inputs="NOT_APPLICABLE_DEMONSTRATOR",
                         labels="observed position/yaw; commands are provenance, not waypoint labels")
+        metadata.setdefault("policy_inputs", "NOT_APPLICABLE_DEMONSTRATOR")
         for name, value in (("metadata.json", metadata), ("transitions.json", {
             "schema": SCHEMA,
             "alignment": "command[i] follows pose_before at time_before and precedes image i / pose_after at time_after; image i-1 is the preceding saved observation; first command has no preceding saved RGB",

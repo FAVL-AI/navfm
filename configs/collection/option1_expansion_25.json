@@ -1,0 +1,647 @@
+[
+  {
+    "id": "layout5_behavior0",
+    "scene": "partition_layout_5",
+    "split": "train",
+    "route_id": "expansion_layout5_behavior0",
+    "scene_index": 5,
+    "seed": 100,
+    "waypoints": [
+      [
+        1,
+        -0.08
+      ],
+      [
+        2.9,
+        -0.08
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 1.9
+  },
+  {
+    "id": "layout5_behavior1",
+    "scene": "partition_layout_5",
+    "split": "train",
+    "route_id": "expansion_layout5_behavior1",
+    "scene_index": 5,
+    "seed": 101,
+    "waypoints": [
+      [
+        1,
+        -0.08
+      ],
+      [
+        1.8,
+        -0.08
+      ],
+      [
+        2.65,
+        0.47000000000000003
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 1.9
+  },
+  {
+    "id": "layout5_behavior2",
+    "scene": "partition_layout_5",
+    "split": "train",
+    "route_id": "expansion_layout5_behavior2",
+    "scene_index": 5,
+    "seed": 102,
+    "waypoints": [
+      [
+        1,
+        -0.08
+      ],
+      [
+        1.8,
+        -0.08
+      ],
+      [
+        2.65,
+        -0.63
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 1.9
+  },
+  {
+    "id": "layout5_behavior3",
+    "scene": "partition_layout_5",
+    "split": "train",
+    "route_id": "expansion_layout5_behavior3",
+    "scene_index": 5,
+    "seed": 103,
+    "waypoints": [
+      [
+        1,
+        -0.08
+      ],
+      [
+        1.6,
+        0.21999999999999997
+      ],
+      [
+        2.25,
+        -0.38
+      ],
+      [
+        2.9,
+        -0.08
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.46364760900080604,
+    "wall_half_width": 1.9
+  },
+  {
+    "id": "layout5_behavior4",
+    "scene": "partition_layout_5",
+    "split": "train",
+    "route_id": "expansion_layout5_behavior4",
+    "scene_index": 5,
+    "seed": 104,
+    "waypoints": [
+      [
+        1,
+        -0.08
+      ],
+      [
+        1.55,
+        -0.43
+      ],
+      [
+        2.1,
+        0.26999999999999996
+      ],
+      [
+        2.8,
+        0.12000000000000001
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": -0.5667292175235062,
+    "wall_half_width": 1.9
+  },
+  {
+    "id": "layout6_behavior0",
+    "scene": "partition_layout_6",
+    "split": "train",
+    "route_id": "expansion_layout6_behavior0",
+    "scene_index": 6,
+    "seed": 105,
+    "waypoints": [
+      [
+        1,
+        -0.04
+      ],
+      [
+        2.9,
+        -0.04
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.04
+  },
+  {
+    "id": "layout6_behavior1",
+    "scene": "partition_layout_6",
+    "split": "train",
+    "route_id": "expansion_layout6_behavior1",
+    "scene_index": 6,
+    "seed": 106,
+    "waypoints": [
+      [
+        1,
+        -0.04
+      ],
+      [
+        1.8,
+        -0.04
+      ],
+      [
+        2.65,
+        0.51
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.04
+  },
+  {
+    "id": "layout6_behavior2",
+    "scene": "partition_layout_6",
+    "split": "train",
+    "route_id": "expansion_layout6_behavior2",
+    "scene_index": 6,
+    "seed": 107,
+    "waypoints": [
+      [
+        1,
+        -0.04
+      ],
+      [
+        1.8,
+        -0.04
+      ],
+      [
+        2.65,
+        -0.5900000000000001
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.04
+  },
+  {
+    "id": "layout6_behavior3",
+    "scene": "partition_layout_6",
+    "split": "train",
+    "route_id": "expansion_layout6_behavior3",
+    "scene_index": 6,
+    "seed": 108,
+    "waypoints": [
+      [
+        1,
+        -0.04
+      ],
+      [
+        1.6,
+        0.26
+      ],
+      [
+        2.25,
+        -0.33999999999999997
+      ],
+      [
+        2.9,
+        -0.04
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.46364760900080604,
+    "wall_half_width": 2.04
+  },
+  {
+    "id": "layout6_behavior4",
+    "scene": "partition_layout_6",
+    "split": "train",
+    "route_id": "expansion_layout6_behavior4",
+    "scene_index": 6,
+    "seed": 109,
+    "waypoints": [
+      [
+        1,
+        -0.04
+      ],
+      [
+        1.55,
+        -0.38999999999999996
+      ],
+      [
+        2.1,
+        0.31
+      ],
+      [
+        2.8,
+        0.16
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": -0.5667292175235062,
+    "wall_half_width": 2.04
+  },
+  {
+    "id": "layout7_behavior0",
+    "scene": "partition_layout_7",
+    "split": "train",
+    "route_id": "expansion_layout7_behavior0",
+    "scene_index": 7,
+    "seed": 110,
+    "waypoints": [
+      [
+        1,
+        0.0
+      ],
+      [
+        2.9,
+        0.0
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.1799999999999997
+  },
+  {
+    "id": "layout7_behavior1",
+    "scene": "partition_layout_7",
+    "split": "train",
+    "route_id": "expansion_layout7_behavior1",
+    "scene_index": 7,
+    "seed": 111,
+    "waypoints": [
+      [
+        1,
+        0.0
+      ],
+      [
+        1.8,
+        0.0
+      ],
+      [
+        2.65,
+        0.55
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.1799999999999997
+  },
+  {
+    "id": "layout7_behavior2",
+    "scene": "partition_layout_7",
+    "split": "train",
+    "route_id": "expansion_layout7_behavior2",
+    "scene_index": 7,
+    "seed": 112,
+    "waypoints": [
+      [
+        1,
+        0.0
+      ],
+      [
+        1.8,
+        0.0
+      ],
+      [
+        2.65,
+        -0.55
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.1799999999999997
+  },
+  {
+    "id": "layout7_behavior3",
+    "scene": "partition_layout_7",
+    "split": "train",
+    "route_id": "expansion_layout7_behavior3",
+    "scene_index": 7,
+    "seed": 113,
+    "waypoints": [
+      [
+        1,
+        0.0
+      ],
+      [
+        1.6,
+        0.3
+      ],
+      [
+        2.25,
+        -0.3
+      ],
+      [
+        2.9,
+        0.0
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.46364760900080604,
+    "wall_half_width": 2.1799999999999997
+  },
+  {
+    "id": "layout7_behavior4",
+    "scene": "partition_layout_7",
+    "split": "train",
+    "route_id": "expansion_layout7_behavior4",
+    "scene_index": 7,
+    "seed": 114,
+    "waypoints": [
+      [
+        1,
+        0.0
+      ],
+      [
+        1.55,
+        -0.35
+      ],
+      [
+        2.1,
+        0.35
+      ],
+      [
+        2.8,
+        0.2
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": -0.5667292175235062,
+    "wall_half_width": 2.1799999999999997
+  },
+  {
+    "id": "layout8_behavior0",
+    "scene": "partition_layout_8",
+    "split": "train",
+    "route_id": "expansion_layout8_behavior0",
+    "scene_index": 8,
+    "seed": 115,
+    "waypoints": [
+      [
+        1,
+        0.04
+      ],
+      [
+        2.9,
+        0.04
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.32
+  },
+  {
+    "id": "layout8_behavior1",
+    "scene": "partition_layout_8",
+    "split": "train",
+    "route_id": "expansion_layout8_behavior1",
+    "scene_index": 8,
+    "seed": 116,
+    "waypoints": [
+      [
+        1,
+        0.04
+      ],
+      [
+        1.8,
+        0.04
+      ],
+      [
+        2.65,
+        0.5900000000000001
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.32
+  },
+  {
+    "id": "layout8_behavior2",
+    "scene": "partition_layout_8",
+    "split": "train",
+    "route_id": "expansion_layout8_behavior2",
+    "scene_index": 8,
+    "seed": 117,
+    "waypoints": [
+      [
+        1,
+        0.04
+      ],
+      [
+        1.8,
+        0.04
+      ],
+      [
+        2.65,
+        -0.51
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.32
+  },
+  {
+    "id": "layout8_behavior3",
+    "scene": "partition_layout_8",
+    "split": "train",
+    "route_id": "expansion_layout8_behavior3",
+    "scene_index": 8,
+    "seed": 118,
+    "waypoints": [
+      [
+        1,
+        0.04
+      ],
+      [
+        1.6,
+        0.33999999999999997
+      ],
+      [
+        2.25,
+        -0.26
+      ],
+      [
+        2.9,
+        0.04
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.46364760900080604,
+    "wall_half_width": 2.32
+  },
+  {
+    "id": "layout8_behavior4",
+    "scene": "partition_layout_8",
+    "split": "train",
+    "route_id": "expansion_layout8_behavior4",
+    "scene_index": 8,
+    "seed": 119,
+    "waypoints": [
+      [
+        1,
+        0.04
+      ],
+      [
+        1.55,
+        -0.31
+      ],
+      [
+        2.1,
+        0.38999999999999996
+      ],
+      [
+        2.8,
+        0.24000000000000002
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": -0.5667292175235062,
+    "wall_half_width": 2.32
+  },
+  {
+    "id": "layout9_behavior0",
+    "scene": "partition_layout_9",
+    "split": "train",
+    "route_id": "expansion_layout9_behavior0",
+    "scene_index": 9,
+    "seed": 120,
+    "waypoints": [
+      [
+        1,
+        0.08
+      ],
+      [
+        2.9,
+        0.08
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.46
+  },
+  {
+    "id": "layout9_behavior1",
+    "scene": "partition_layout_9",
+    "split": "train",
+    "route_id": "expansion_layout9_behavior1",
+    "scene_index": 9,
+    "seed": 121,
+    "waypoints": [
+      [
+        1,
+        0.08
+      ],
+      [
+        1.8,
+        0.08
+      ],
+      [
+        2.65,
+        0.63
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.46
+  },
+  {
+    "id": "layout9_behavior2",
+    "scene": "partition_layout_9",
+    "split": "train",
+    "route_id": "expansion_layout9_behavior2",
+    "scene_index": 9,
+    "seed": 122,
+    "waypoints": [
+      [
+        1,
+        0.08
+      ],
+      [
+        1.8,
+        0.08
+      ],
+      [
+        2.65,
+        -0.47000000000000003
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.0,
+    "wall_half_width": 2.46
+  },
+  {
+    "id": "layout9_behavior3",
+    "scene": "partition_layout_9",
+    "split": "train",
+    "route_id": "expansion_layout9_behavior3",
+    "scene_index": 9,
+    "seed": 123,
+    "waypoints": [
+      [
+        1,
+        0.08
+      ],
+      [
+        1.6,
+        0.38
+      ],
+      [
+        2.25,
+        -0.21999999999999997
+      ],
+      [
+        2.9,
+        0.08
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": 0.46364760900080604,
+    "wall_half_width": 2.46
+  },
+  {
+    "id": "layout9_behavior4",
+    "scene": "partition_layout_9",
+    "split": "train",
+    "route_id": "expansion_layout9_behavior4",
+    "scene_index": 9,
+    "seed": 124,
+    "waypoints": [
+      [
+        1,
+        0.08
+      ],
+      [
+        1.55,
+        -0.26999999999999996
+      ],
+      [
+        2.1,
+        0.43
+      ],
+      [
+        2.8,
+        0.28
+      ]
+    ],
+    "speed": 0.2,
+    "start_yaw": -0.5667292175235062,
+    "wall_half_width": 2.46
+  }
+]
