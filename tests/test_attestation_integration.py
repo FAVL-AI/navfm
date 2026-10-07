@@ -56,7 +56,7 @@ class _Art:
 class _Settings:
     def __init__(self, sub=4, dlss=2): self._v = {
         "/rtx/post/dlss/execMode": dlss, "/omni/replicator/RTSubframes": sub,
-        "/renderer/active": "RaytracedLighting",
+        "/rtx/rendermode": "RaytracedLighting",
         "/app/renderer/resolution/width": 640, "/app/renderer/resolution/height": 480}
     def get(self, k): return self._v.get(k)
 

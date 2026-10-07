@@ -311,6 +311,13 @@ def read_render_product(camera: Any, camera_target_reader: Any = None,
             out.append(_fail("R3", name, Status.FAILED_NOT_INITIALISED, getter, str(path),
                              point, provenance, "reader returned None"))
             continue
+        # The installed 5.1 utility returns a pxr.Sdf.Path for the camera
+        # target. It cannot be deep-copied/pickled by dataclasses.asdict;
+        # preserve its actual path text at the API boundary.
+        if name == "render_product_camera_target":
+            value = str(value)
+        elif name == "render_product_resolution":
+            value = [int(v) for v in value]
         out.append(Observation("R3", name, Status.OBSERVED,
                                list(value) if isinstance(value, tuple) else value,
                                getter, str(path), point, provenance))
@@ -325,7 +332,8 @@ def read_render_product(camera: Any, camera_target_reader: Any = None,
 SETTING_KEYS: tuple[tuple[str, str], ...] = (
     ("dlss_exec_mode", "/rtx/post/dlss/execMode"),
     ("rt_subframes", "/omni/replicator/RTSubframes"),
-    ("active_renderer", "/renderer/active"),
+    # SimulationApp 5.1 _configure_renderer authors this effective RTX mode.
+    ("active_renderer", "/rtx/rendermode"),
     ("launch_width", "/app/renderer/resolution/width"),
     ("launch_height", "/app/renderer/resolution/height"),
 )

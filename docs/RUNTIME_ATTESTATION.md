@@ -77,9 +77,31 @@ truthful outcome rather than a convenient one.
 
 ## What is not yet verified
 
-Every result so far comes from test doubles. R2, R3, R4, R5 and R6 read real Isaac
-objects and have had no live read-back, so their status is
-`ENGINEERING_PATH_INTEGRATION_TESTED`, not `LIVE_RUNTIME_READBACK_VERIFIED`. The
+The original BO-10 runner integration has only been exercised with test doubles;
+its status remains `ENGINEERING_PATH_INTEGRATION_TESTED`. The separate live
+probe below does not verify that runner's wiring. The
 smallest no-motion run that would settle them is one `--engineering-step-cap`
-invocation that stops after `AFTER_ATTESTATION`; that needs separate
-authorisation and is not performed by anything in this repository.
+invocation that stops after `AFTER_ATTESTATION`; that original-runner experiment
+has not been performed.
+
+## Prospective stationary runtime qualification, 2026-10-07
+
+The separate `scripts/hospital_runtime_smoke.py` probe now uses real 5.1 camera,
+render-product, articulation and settings objects. The successful 12-frame
+instrumentation run resolved all R1-R8 requirements and verified saved images,
+poses and transitions. This does not verify the original BO-10 runner's live
+integration or admit a scientific navigation route. The deployed RGB-only
+method is not involved; simulator pose is instrumentation/evaluation only.
+
+Live execution exposed two defects the doubles had missed: render-product
+camera targets are non-pickleable `pxr.Sdf.Path` values, and the effective 5.1
+RTX rendering-mode key is `/rtx/rendermode`, rather than `/renderer/active`.
+The readers now preserve the returned path as text and read the installed
+launcher's actual mode key. Tests challenge both boundaries.
+
+Four-subframe capture left sensor timestamps within the physics interval. The
+passing prospective probe explicitly requests one subframe and captures at a
+paused completed physics instant; failed attempts retain their own settings.
+DLSS is applied after initialization and independently read back during capture.
+No timestamp tolerance was enlarged to admit a stale frame. The image remains
+visibly dark, which blocks semantic qualification despite instrumentation PASS.

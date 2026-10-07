@@ -259,7 +259,7 @@ class FakeSettings:
 def _settings(dlss=2, subframes=4, renderer="RaytracedLighting", w=640, h=480):
     return FakeSettings({"/rtx/post/dlss/execMode": dlss,
                          "/omni/replicator/RTSubframes": subframes,
-                         "/renderer/active": renderer,
+                         "/rtx/rendermode": renderer,
                          "/app/renderer/resolution/width": w,
                          "/app/renderer/resolution/height": h})
 
