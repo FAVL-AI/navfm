@@ -1,0 +1,32 @@
+{
+  "status": "BLOCKED_LAYER_SPEC",
+  "scope": "ENGINEERING_FEASIBILITY_ONLY",
+  "runner": "scripts/run_rgb_feasibility.py",
+  "checkpoint": "/home/favl/projects/navfm/checkpoints/vint.pth",
+  "checkpoint_sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "start_xy_yaw": [1, 0, 0],
+  "goal_xy_yaw": [3, 0, 0],
+  "steps": 180,
+  "physics_hz": 12,
+  "control_hz": 4,
+  "goal_radius_m": 0.5,
+  "safety_clearance_m": 0.3,
+  "layer_entry_point": null,
+  "layer_checkpoint_sha256": null,
+  "pairs": [
+    {"seed": 0, "arm_order": ["baseline", "layer"]},
+    {"seed": 1, "arm_order": ["layer", "baseline"]},
+    {"seed": 2, "arm_order": ["baseline", "layer"]}
+  ],
+  "required_admission": [
+    "documented ViNT-compatible RGB-only layer and validated stopping authority",
+    "disabled-layer command replay equality",
+    "strict recording PASS without relaxed tolerances",
+    "collision detector contact and noncontact controls",
+    "same prospective fixture, light/camera/drive readbacks and checkpoint in both arms"
+  ],
+  "retention": "retain startup failures, timeouts, contacts, interventions and missing observations",
+  "confirmatory_test_inclusion": false
+}
