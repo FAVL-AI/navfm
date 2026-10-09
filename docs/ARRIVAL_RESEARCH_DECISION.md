@@ -995,3 +995,261 @@ compared the view with the requested goal. The result is a missing validation
 between requested destination and supplied chain, not a recognition failure.
 The cross-scene swap also makes the mismatch visually trivial; a same-scene
 mismatch is needed for a meaningful verification test (below).
+
+## Component comparison v1: reconciliation, results and component decisions (2026-10-09/10)
+
+Development evidence on four routes, two scenes, one checkpoint and one seed.
+Counts only; no significance claims. Held-out layouts stay sealed, illumination
+stays paused, and nothing here concerns the real robot. This write-up passed a
+red-team review (ACCEPT-WITH-CORRECTIONS; corrections applied:
+`gates/redteam/trigger6-component-results-2026-10-10.md`).
+
+### Reconciliation of red-team review 3 with the freeze and the collection
+
+- **Timeline:**
+  - The freeze review (independent subagent, verdict DO-NOT-FREEZE as written, F1-F10)
+    returned at 20:51:35.
+  - Its fixes and the freeze were committed in `21654ca` at 20:53:58.
+  - Every collection's `frozen_routes.json` was written after that commit.
+  - A memory note timestamped 20:59 records the same review; that time is when the note was
+    written, not a later review.
+  - The findings and resolutions are in `gates/redteam/trigger4-component-comparison-2026-10-09.md`.
+- **Source identity:**
+  - Each episode records sha256 digests of every source file it ran.
+  - All 44 attempts match the blobs at `21654ca` on all 26 repo files; all 44 match the
+    pre-fix commit `8321e9c` on only 24, so the check separates the two.
+  - The 8 non-repo influencing files (upstream model code) are identical across all 44.
+  - No episode ran pre-fix code, so none is reclassified as diagnostic.
+- **F1/F2 regression tests:** they fail against the pre-fix `topomap.py` and pass at
+  `21654ca` (run from an exported copy, so the live tree was not touched during collection).
+- **32 to 44 attempts:**
+  - The proposed config (`8321e9c`) had 4 variants x 2 conditions x 4 routes = 32.
+  - F10 added one wrong-chain swap per variant (4) and F9 two s_bend true-chain repeats per
+    variant (8): 4 x (4+4+1+2) = 44.
+  - This was in the frozen config before launch.
+- **Ground truth is evaluation-only:** pose enters only the audit, the calibration and this
+  analysis. The policy and localisation take camera images only.
+- **Separate requested-goal check:**
+  - It uses the separately supplied goal image (`goal_root`, not the chain).
+  - It reuses the navigation model's distance head in the same forward pass, so it is not an
+    independent verifier.
+  - On true chains the final node and the requested goal are the same image (see the
+    mechanism below for what the check still does there).
+- **Calibration** used the same routes, goals and chains as this comparison (different
+  episodes) and pose-labelled frames. These fresh episodes test development repeatability, not
+  generalisation.
+- **Analysis definitions:**
+  - "Oscillation", "look-alike proposal" and "chain-end declaration" are not in the frozen
+    protocol.
+  - They were written during collection, before scored outcomes were read; one termination
+    label had been seen.
+  - They are post-freeze analysis definitions, not pre-registered ones.
+
+### Integrity: 44/44 attempts accounted for
+
+`scripts/analyse_component_comparison.py` reads the frozen config from `21654ca`. For every
+planned attempt it checks:
+- completion status;
+- variant, comparison-config sha and checkpoint sha;
+- chain root and chain.json sha for the condition;
+- bounded and verification parameters, radius, close threshold and budget (600);
+- qualification sha and source digests at `21654ca`;
+- that the non-repo influencing files are identical across attempts;
+- inference completeness (one decision every 6 frames from frame 0, through the budget for
+  timeouts);
+- that the collection was launched after the freeze commit;
+- audit presence and goal identity across three representations.
+
+Results:
+- 44 planned, 44 PASS, no exclusions, no integrity failures.
+- `--negative-control` checks every attempt against the next variant's expectations and a
+  wrong chain hash. It fails on all 44 (chain hash 44, bounded 44, verification 22; 22 is
+  exactly the pairs whose verification differs).
+- The completeness and launch-time checks were shown to fail on a dropped decision, a
+  truncated timeout and a later freeze time.
+- The audit (`scripts/audit_closed_loop_episodes.py`, measures `arrival_measures_v1`, scorer
+  at `21654ca`, unmodified) scored all 44. After the annotation-only typing fix `7d2e383`,
+  re-scoring reproduces every row exactly.
+
+Evidence (external):
+- `component-comparison-measures-v1-20261009-01.json` (audit)
+- `component-comparison-analysis-20261010-02.json` (integrity and traces). It supersedes
+  `-20261009-01`, which has identical outcome fields but fewer checks.
+- `component-comparison-offline-verifiers-20261010-02.json`. It supersedes `-20261009-01`,
+  which pooled post-stop frames.
+- collections `cmp-{A_baseline,B_bounded,C_verify,D_both}-{true,trunc,swap,rep}-20261009-01`.
+
+### Outcomes over all attempts
+
+Abbreviations:
+- CS = correct stop; WS = wrong stop; TO = timeout.
+- visit = goal-region visit (navigation success without a goal-blind row).
+- contact = contact before task end.
+- osc = pending followed by the chain's reached flag falling back.
+- lost = lost decisions.
+- dep = attempts with route departure.
+- cur-off / foll-off = decisions whose current / followed node is more than one node from
+  the pose-true node (the pre-registered primary localisation measure; n/a on the swap,
+  whose chain is from another scene).
+
+| Condition (n per variant) | Variant | CS | WS | TO | visit | contact | osc | lost | dep | cur-off | foll-off |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| true chain (4) | A baseline | 3 | 0 | 1 | 3 | 1 | 0 | 0 | 1 | 76 | 76 |
+| | B bounded | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 18 | 26 |
+| | C check | 3 | 0 | 1 | 3 | 1 | 1 | 0 | 1 | 72 | 72 |
+| | D both | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 14 | 20 |
+| truncated chain (4) | A | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 12 | 12 |
+| | B | 0 | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 17 | 20 |
+| | C | 0 | 0 | 4 | 3 | 3 | 35 | 0 | 4 | 182 | 182 |
+| | D | 0 | 0 | 4 | 3 | 3 | 4 | 282 | 4 | 11 | 140 |
+| wrong-chain swap (1) | A | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 1 | n/a | n/a |
+| | B | 0 | 0 | 1 | 0 | 1 | 0 | 98 | 1 | n/a | n/a |
+| | C | 0 | 0 | 1 | 0 | 1 | 4 | 0 | 1 | n/a | n/a |
+| | D | 0 | 0 | 1 | 0 | 1 | 0 | 98 | 1 | n/a | n/a |
+| s_bend repeats (2) | A | 1 | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 13 | 13 |
+| | B | 2 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 3 | 9 |
+| | C | 1 | 0 | 1 | 1 | 1 | 0 | 0 | 1 | 60 | 60 |
+| | D | 2 | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 3 | 7 |
+
+Per route:
+- **True chains:**
+  - The only true-chain failure under A and C is `s_bend_run_0000` (timeout with contact in
+    both).
+  - The other three routes are correct stops in every variant.
+  - Excluding that route, B is not better localised than A: current-node errors 16 vs 16,
+    followed-node errors 23 vs 16.
+  - On truncated chains B has more errors than A (17/20 vs 12/12).
+- **Wrong stops:**
+  - Truncated chains: A at 0.61, 0.87, 1.21, 1.28 m; B at 0.81, 0.94, 1.20, 1.28 m.
+  - Swap: A at 0.86 m.
+  - Including A's repeat (0.62 m), A wrong-stopped 6 times.
+- **Chain-end declarations** (rising edges of the chain's reached flag; answer rule C): 37 by
+  C on truncated chains and 4 on the swap, every one rejected.
+- No attempt had contact after a stop.
+
+### Mechanism traces
+
+**Bounded progression and the lost state (B, D):**
+- **The s_bend look-alike** (true node 5, argmin node 10 at distance 5.1-5.6, followed)
+  occurred in 2/2 A and 2/2 C attempts on `s_bend_run_0000`, at decision 22.
+  - In all 8 B/D s_bend true-chain attempts no decision has an argmin three or more nodes
+    from the pose-true node, so this is not a definition artefact.
+  - **Whether bounded progression corrects the look-alike jump is NOT TESTED.**
+- **What B and D did:**
+  - On true and truncated chains, all 66 interventions (57 withheld, 9 capped) were backward
+    proposals.
+  - The 2 swap interventions (decision 1) were forward two-node proposals, withheld.
+- **On `s_bend_run_0000`:**
+  - A's upstream rule steps back one node at decision 14 (closest 4 to 3, argmin distance
+    4.1 > 3; pose-true node 4, so the step was wrong). It follows node 3, and the turn command
+    flips from -0.30 to +0.39 rad/s.
+  - B withholds that step, follows node 5 and keeps turning.
+  - B's path separates from A's (0.92 m at frame 240, against 0.02-0.04 m between A, its
+    repeat and C) and never presents node 10.
+  - The same first intervention occurs at decision 14 in all four B/D attempts on this route
+    (decision 13 on `s_bend_run_0001`).
+- **Causal status:**
+  - That withholding the decision-14 step is why B and D avoided the failure is an INFERENCE,
+    effectively from one trajectory per arm: B and D are 0.006 m apart at frame 240, B and its
+    repeat 0.021 m.
+  - On `s_bend_run_0001`, A's corresponding backward step was correct (pose-true node 3), B's
+    withholding was wrong, and both stopped correctly.
+- **Localisation accuracy:**
+  - Of the 57 withheld backward proposals, the pose-true node favoured the proposal in 36 and
+    the held node in 21 (capped: 6 and 3).
+  - Withholding backward moves is therefore a progress bias, not a localisation-accuracy
+    improvement.
+- **Lost state:**
+  - It was entered in 6 of 10 off-chain B/D attempts: all 4 D-truncated and both swaps.
+  - B on truncated chains never entered it and wrong-stopped instead.
+  - It never recovered: 478 lost decisions; the smallest lost-state distance was 4.2,
+    against an exit threshold of 2.215.
+  - All 6 timed out; 5 had contact.
+  - In all 4 D-truncated attempts, lost was entered (decisions 26-37) after 5-13 pending
+    decisions in which verification steered toward the requested goal past the chain end. The
+    failure is the interaction of verification steering and the lost state (pre-registered
+    failure mode 2), not the lost state alone.
+
+**Separate requested-goal check (C, D):**
+- **On true chains:**
+  - The chain declares arrival either when the goal node is the argmin (at any distance) or
+    when node goal-1 is within the close threshold. In both cases the check then scores the
+    goal image itself against 7.745.
+  - On correct stops it accepted on two consecutive decisions, so its delay (1 decision,
+    0.5 s, on all 10 C/D stops) came from the persistence rule.
+  - It also rejected false declarations on a true chain: C on `s_bend_run_0000`, decisions
+    85-86, reached at 1.88 m from the goal with requested-goal distance 8.92 and 12.25.
+  - Every correct stop was retained (C 3/4 as A; D 4/4 as B).
+  - Stop distances differed from the unchecked variant (C vs A, D vs B) by -0.086 to +0.070
+    m. This mixes the delay with run-to-run variation.
+- **On truncated chains and the swap:**
+  - Every chain-end declaration away from the requested goal was rejected, so wrong stops fell
+    from 5 (A) to 0 (C).
+  - No rejected attempt produced a correct stop. All 5 timed out and 4 had contact; 3 of the
+    4 truncated attempts entered the goal region (minimum 0.16-0.26 m) without stopping.
+- **Why C did not stop in the region:** two observations, causal links INFERENCE.
+  1. *Frame-level false rejection.*
+     - On `s_bend_run_0000`, decisions 33-42 lie 0.19-0.51 m from the goal with the chain
+       flag true, and the check rejected all of them (requested-goal distance 12.9-18.3).
+     - Its in-region accept fraction was 0.
+  2. *Alternation between the chain flag and the check.*
+     - On the junction routes the chain flag alternated decision by decision.
+     - Every in-region frame below threshold came on a chain-false decision and was discarded:
+       4 on `junction_run_0000` (4.68, 6.13, 6.49, 7.65) and 7 on `junction_run_0001`
+       (6.3-7.5).
+     - Chain-true decisions there had requested-goal distance of 8.0 or more.
+     - A plausible single mechanism is a period-2 cycle: a pending decision steers to the
+       requested goal, the next falls back and steers along the chain.
+  - Heading inside the region was 27-69 degrees off the goal image's view on these attempts
+    (pose yaw minus goal-capture yaw, median per attempt).
+    - On C's true-chain attempts and repeats it was 1-21 degrees, with accept fractions
+      0.46-0.77.
+    - One true-chain repeat (21 degrees, 0.46) still stopped correctly.
+    - Heading is associated with the requested-goal distance on true chains, but the
+      association is weak on truncated ones, so it is not offered as the cause.
+- **D on truncated chains:** the lost state preempted verification (above). D made 3/4
+  region visits and no stop.
+- **Pre-registered failure mode 4** (whether a requested goal 0.75-0.96 m beyond the chain end
+  is in the checkpoint's usable range):
+  - Partly informed: C reached the region in 3/4 truncated attempts by steering to the
+    requested goal.
+  - Acceptance there was rare or absent, so usable range for *stopping* remains UNKNOWN.
+
+**Offline verifiers on the fresh frames.** Decisions before the latched stop only; the stop
+and later frames are selected by the check under test and are reported separately in the
+output. Frozen thresholds; 2,537 decision frames from all 44 attempts. Frames are correlated
+within episodes, and trajectories differ by variant.
+
+| Verifier | Accept near (<= 0.5 m, 321 frames) | Accept far (> 0.75 m, 1,917) | Accept 0.75-1.0 m (358) |
+|---|---|---|---|
+| learned requested-goal distance (7.745) | 0.31 | 0.004 | 0.022 |
+| pixel NCC control (0.893) | 0.09 | 0.013 | 0.053 |
+
+Low false accept held on fresh development frames for the learned check. Its pre-stop
+near-goal acceptance (0.31) is below the calibration figure (0.40) and contributes to the
+failures above. The pixel control accepts far fewer near frames and more band frames.
+
+**Repeats and determinism:**
+- Runs are not bit-deterministic: start poses differ by about 1.5-4.5e-5 m, and the source of
+  the variation is UNKNOWN.
+- A and its repeat stay within 0.02 m to frame 240 and follow the same look-alike at decision
+  22, yet end differently (timeout with contact vs wrong stop at 0.62 m).
+- B and D repeats reproduce the same first intervention and the same outcomes.
+- The repeats are reproducibility checks, not independent evidence.
+
+### Component decisions (development only)
+
+| Component | Decision | Basis |
+|---|---|---|
+| Bounded progression (jump persistence and cap) | **RETAIN for further development testing; re-describe as a backward-step filter** | B/D's avoidance of the one true-chain failure is *associated with* withholding a one-node backward step (INFERENCE, effectively one trajectory per arm). The look-alike correction it was designed for is NOT TESTED. Elsewhere it does not improve localisation (more node errors than A off that route). |
+| Lost state (patience 3, global argmin, exit 2.215) | **REVISE** | Entered in 6/10 off-chain B/D attempts, never recovered (minimum 4.2 vs exit 2.215), 5 of 6 ended in contact. In D it was triggered by verification steering past the chain end. |
+| Separate requested-goal check (threshold 7.745, persistence 2) | **REVISE; retention conditional on the revision** | Rejected every off-goal declaration (including two on a true chain) and kept every true-chain correct stop. On mismatched chains it turned 5 wrong stops into 5 timeouts, 4 with contact, through frame-level false rejection near the goal and alternation with the chain flag. A wrong stop replaced by a contact is not a safety improvement. |
+| Pixel NCC control | **Offline comparison only** | Pre-stop near acceptance 0.09 vs 0.31 for the learned check, with higher band false accept. |
+
+A revision is a new protocol version (v2) with its own calibration on separate development
+recordings, red-team and freeze. These results may motivate the revision but are not reused as
+its evaluation.
+
+Not established by this comparison: that bounded progression prevents look-alike jumps;
+any held-out performance; illumination robustness; sim-to-real transfer; novelty or
+state-of-the-art standing.
