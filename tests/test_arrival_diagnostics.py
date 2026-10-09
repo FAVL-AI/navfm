@@ -174,6 +174,6 @@ def test_audit_timeline_orders_contact_and_excludes_post_contact_tracking(tmp_pa
 
 def test_audit_settle_after_stop(tmp_path):
     r = audit.audit(closed_loop_episode(tmp_path, turn_fraction=1.0, stop_frame=30))
-    assert r["settle"]["settled"] and r["events"]["arrival_declared_frame"] == 30
-    # Stops 3 m from the start of a 3 m route only after 30 frames at 0.1 m/s: a wrong stop.
-    assert r["outcome"]["wrong_stop"] and not r["outcome"]["completion"]
+    assert r["measures"]["settle"] == "SETTLED" and r["events"]["arrival_declared_frame"] == 30
+    # Stops far from the end of a 3 m route after 30 frames at 0.1 m/s: a wrong stop.
+    assert r["measures"]["wrong_stop"] and not r["measures"]["completion"]

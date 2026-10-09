@@ -1,0 +1,58 @@
+{
+  "name": "arrival_measures_v1",
+  "status": "PROPOSED (revision 2 after red-team DO-NOT-FREEZE); not frozen until a further independent review; no method comparison may use it before then",
+  "drafted": "2026-10-09",
+  "authoritative_implementation": "src/navfm/collection/episode_measures.py (episode_measures, turn_tracking, admitted_rate); scripts/audit_closed_loop_episodes.py calls it; collector `metrics` blocks are NOT authoritative",
+  "unit": "episode = one policy run of one route; development reports counts and paired per-route tables only (no intervals); held-out reports route counts with scene-cluster summaries because the two routes of a scene share it",
+  "constants": {
+    "arrival_radius_m": 0.5,
+    "settle_window_s": 1.0,
+    "settle_motion_m": 0.01,
+    "route_departure_m": 0.5,
+    "turn_command_min_rad_s": 0.1,
+    "min_turn_commands": 20
+  },
+  "conventions": {
+    "scoring_goal": "the goal image's capture position (prior-traversal final frame, from goal_source.json and its source manifest); distance to the route endpoint is reported alongside",
+    "stop": "the latched policy decision frame (policy_stop_frame); the collector keeps simulating 24 frames after it unless max_steps ends the episode first",
+    "contact_frame": "first capture frame with simulation_time >= first contact report time (searchsorted, left)",
+    "counted_contacts": "any contact report pairing a robot prim with a /World/Fixture prim other than */Floor (collector contact filter; threshold 0)",
+    "timeout": "no stop decision within max_steps (recorded per run; 600 frames at 12 Hz for development closed-loop runs)",
+    "yaw_rate_setpoint": "the yaw rate the base controller is asked to realise: the policy output before any open-loop wheel gain; with --yaw-feedback no gain is applied; without it the wheel map multiplies by 0.8 when moving and 1.5 when turning in place, and that actuator signal is reported separately when relevant"
+  },
+  "measures": {
+    "admitted_trajectory_rate": {
+      "definition": "admitted / planned, where planned = frozen routes x planned runs (ledger or launch script); never_run, failed, refused and rejected-after-recording are itemised",
+      "note": "admit_option1.py refuses non-COMPLETED collections, so its own 'attempted' count is not the denominator"
+    },
+    "controller_tracking": {
+      "qualification": "per session, a fixed free-space command replay and turn sweep (qualify_articulated_control.py): realised-on-setpoint slope in [0.8, 1.2], sign agreement >= 0.9, per-case |error| <= max(0.03, 0.25|w|)",
+      "in_episode_diagnostic": "slope over held setpoints with |w| >= 0.1 rad/s before first contact or stop; fewer than 20 such commands is INSUFFICIENT; diagnostic only, never a qualification"
+    },
+    "navigation_success": {
+      "definition": "the robot enters the goal region (scoring-goal distance <= arrival radius) at a frame before the first counted contact; time spent in the region is reported",
+      "caveat": "counts pass-throughs; must be reported with the goal-blind and goal-swap control rows whenever those exist"
+    },
+    "correct_stop": {
+      "definition": "stop decision at scoring-goal distance <= radius AND settle == SETTLED (motion < 0.01 m over the final 1 s, which must lie after the stop) AND final scoring-goal distance <= radius",
+      "settle_states": "NO_STOP, SETTLED, MOVING, UNMEASURABLE (less than 1 s of frames after the stop); UNMEASURABLE is never correct",
+      "wrong_stop": "any stop decision that is not a correct stop"
+    },
+    "collision_episode": {
+      "primary": "a counted contact at or before the task end (stop frame, or the last frame if no stop)",
+      "secondary": "contact after the stop, reported separately",
+      "exposure": "elapsed time to task end, total simulated time and path length are reported because non-stopping runs are exposed longer"
+    },
+    "completion": {
+      "definition": "correct stop and no collision before task end; reported beside navigation success and correct stop, never in place of them"
+    },
+    "also_reported": [
+      "timeout",
+      "route departure frame and maximum lateral deviation",
+      "minimum and final distance to scoring goal and to route endpoint",
+      "stop rule identifier",
+      "frames recorded"
+    ]
+  },
+  "reporting": "explicit denominators per arm including episodes that failed or were refused; paired per-route tables between arms; no significance claims; development: counts only"
+}

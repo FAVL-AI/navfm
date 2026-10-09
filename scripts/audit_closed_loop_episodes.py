@@ -5,10 +5,9 @@ realised over the interval it was held (simulator pose, evaluation only), before
 the first contact. The timeline orders goal-region entry, arrival declaration,
 post-stop settling, route departure, contact and termination.
 
-Thresholds are declared here, before reading results: goal region 0.5 m
-(arrival radius), route departure 0.5 m from the route polyline, settled when
-the base moves <0.01 m over the last 1 s after a stop, tracking judged only on
-held turn commands with |w| >= 0.1 rad/s.
+Every outcome measure comes from navfm.collection.episode_measures, the single
+definition (configs/eval/arrival_measures_v1.json); this script adds timelines
+and tracking diagnostics around it.
 """
 
 from __future__ import annotations
@@ -21,11 +20,17 @@ from pathlib import Path
 
 import numpy as np
 
-GOAL_RADIUS_M = 0.5
-DEPARTURE_M = 0.5
-SETTLE_WINDOW_S = 1.0
-SETTLE_M = 0.01
-TURN_MIN_RAD_S = 0.1
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+from navfm.collection.episode_measures import (  # noqa: E402
+    ARRIVAL_RADIUS_M,
+    DEPARTURE_M,
+    SETTLE_MOTION_M,
+    SETTLE_WINDOW_S,
+    TURN_MIN_RAD_S,
+    episode_measures,
+    turn_tracking,
+)
 
 
 def point_to_polyline(p, line):
@@ -110,7 +115,7 @@ def summarise_tracking(rows, max_v, max_w):
     return out
 
 
-def audit(episode: Path) -> dict:
+def audit(episode: Path, goal_image_xy=None) -> dict:
     m = json.loads((episode / "runtime_manifest.json").read_text())
     line = np.asarray(m["route"]["waypoints"], float)
     line[:, 1] += m["route"]["scene_index"] * 20.0
@@ -132,26 +137,12 @@ def audit(episode: Path) -> dict:
     stop = m.get("policy_stop_frame")
     policy = m.get("policy") or {}
     max_v, max_w = policy.get("max_v", 0.1), policy.get("max_w", 0.4)
-    settle = None
-    if stop is not None:
-        after = times >= times[stop]
-        tail = (times >= times[-1] - SETTLE_WINDOW_S) & after
-        moved_after = float(np.max(np.linalg.norm(xy[after] - xy[stop], axis=1)))
-        tail_motion = (
-            float(np.max(np.linalg.norm(xy[tail] - xy[tail][0], axis=1))) if tail.any() else None
-        )
-        settle = {
-            "displacement_after_stop_m": moved_after,
-            "final_window_motion_m": tail_motion,
-            "settled": tail_motion is not None and tail_motion < SETTLE_M,
-            "stop_goal_distance_m": float(goal_d[stop]),
-            "final_goal_distance_m": float(goal_d[-1]),
-        }
+    measures = episode_measures(m, line, goal_image_xy)
     events = {
-        "goal_region_entry_frame": first(goal_d <= GOAL_RADIUS_M),
+        "goal_region_entry_frame": measures["goal_region_entry_frame"],
         "arrival_declared_frame": stop,
-        "route_departure_frame": first(lateral > DEPARTURE_M),
-        "first_contact_frame": contact_frame,
+        "route_departure_frame": measures["route_departure_frame"],
+        "first_contact_frame": measures["first_contact_frame"],
         "termination_frame": len(caps) - 1,
     }
     ordered = sorted(
@@ -162,19 +153,10 @@ def audit(episode: Path) -> dict:
     inference = m["inference"]
     track = tracking(times, xy, yaw, inference, stop, contact_frame)
     track_lag = tracking(times, xy, yaw, inference, stop, contact_frame, lag=1)
-    stop_distance = float(goal_d[stop]) if stop is not None else None
-    outcome = {
-        "arrival": bool((goal_d <= GOAL_RADIUS_M).any()),
-        "correct_stop": stop_distance is not None and stop_distance <= GOAL_RADIUS_M,
-        "wrong_stop": stop_distance is not None and stop_distance > GOAL_RADIUS_M,
-        "collision": contact_frame is not None,
-        "timeout": stop is None,
-    }
-    outcome["completion"] = outcome["correct_stop"] and not outcome["collision"]
     return {
         "route": m["route"]["id"],
         "termination": m["termination"],
-        "outcome": outcome,
+        "measures": measures,
         "events": events,
         "event_times_s": {
             k: (None if v is None else round(float(times[v] - times[0]), 2))
@@ -187,18 +169,30 @@ def audit(episode: Path) -> dict:
         "closest_frame": closest,
         "lateral_at_closest_m": float(lateral[closest]),
         "max_lateral_m": float(lateral.max()),
-        "settle": settle,
         "tracking": summarise_tracking(track, max_v, max_w),
+        "tracking_diagnostic": turn_tracking(
+            [r["w_cmd"] for r in track], [r["w_real"] for r in track]
+        ),
         "tracking_lag1": summarise_tracking(track_lag, max_v, max_w),
         "control_hz": policy.get("control_hz"),
         "max_v": max_v,
     }
 
 
+def goal_xy(goal_root, route_id):
+    """Capture position of the goal image (prior-traversal final frame), if declared."""
+    if goal_root is None:
+        return None
+    frame = json.loads((goal_root / "goal_source.json").read_text())["goals"][route_id]["frame"]
+    source = json.loads((goal_root / route_id / "runtime_manifest.json").read_text())
+    return source["captures"][frame]["pose"][:2]
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--collection", type=Path, action="append", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--goal-root", type=Path, help="score distance to the goal image's capture pose")
     p.add_argument(
         "--score-heldout",
         type=Path,
@@ -208,7 +202,6 @@ def main():
     a = p.parse_args()
     if a.out.exists():
         p.error("output must be new")
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
     from navfm.collection.scene_layouts import require_scoring_allowed
 
     for root in a.collection:
@@ -226,16 +219,18 @@ def main():
             if e["status"] != "PASS":
                 rows.append({"collection": root.name, "route": e["id"], "status": e["status"]})
                 continue
-            rows.append({"collection": root.name, **audit(root / e["id"])})
+            rows.append(
+                {"collection": root.name, **audit(root / e["id"], goal_xy(a.goal_root, e["id"]))}
+            )
     a.out.write_text(
         json.dumps(
             {
                 "scope": "ENGINEERING_DIAGNOSIS",
                 "thresholds": {
-                    "goal_radius_m": GOAL_RADIUS_M,
+                    "goal_radius_m": ARRIVAL_RADIUS_M,
                     "route_departure_m": DEPARTURE_M,
                     "settle_window_s": SETTLE_WINDOW_S,
-                    "settle_m": SETTLE_M,
+                    "settle_m": SETTLE_MOTION_M,
                     "turn_min_rad_s": TURN_MIN_RAD_S,
                 },
                 "rows": rows,
