@@ -104,6 +104,7 @@ def main():
         a.checkpoint, action_scale_m=0.05, stop_enabled=False, max_v=0.1, control_period_s=0.5
     )
     learned_near, learned_far, pix_near, pix_far, sources = [], [], [], [], []
+    far_dist = []
     for root in a.verify_collection:
         for e in json.loads((root / "collection.json").read_text())["episodes"]:
             ep = root / e["id"]
@@ -129,10 +130,23 @@ def main():
                 pix = ncc(hist[-1], goal)
                 (learned_near if dist <= NEAR_M else learned_far).append(learned)
                 (pix_near if dist <= NEAR_M else pix_far).append(pix)
+                if dist > NEAR_M:
+                    far_dist.append(dist)
     t_learned, tar_l, far_l = threshold_low_accept(learned_near, learned_far)
     t_pix, tar_p, far_p = threshold_high_accept(pix_near, pix_far)
+    fd, lf, pf = np.asarray(far_dist), np.asarray(learned_far), np.asarray(pix_far)
+    bands = {}
+    for lo, hi in [(0.75, 1.0), (1.0, 1.5), (1.5, 99.0)]:
+        sel = (fd > lo) & (fd <= hi)
+        bands[f"{lo}-{hi}"] = {
+            "frames": int(sel.sum()),
+            "learned_false_accept": float(np.mean(lf[sel] <= t_learned)) if sel.any() else None,
+            "pixel_false_accept": float(np.mean(pf[sel] >= t_pix)) if sel.any() else None,
+        }
     result = {
         "scope": "DEVELOPMENT_CALIBRATION",
+        "goal_root": str(a.goal_root.resolve()),
+        "chain_root": str(a.chain_root.resolve()),
         "checkpoint_sha256": hashlib.sha256(a.checkpoint.read_bytes()).hexdigest(),
         "lost": {
             "collections": [str(c) for c in a.lost_collection],
@@ -152,6 +166,7 @@ def main():
             "far_frames": len(learned_far),
             "learned": {"threshold": t_learned, "true_accept": tar_l, "false_accept": far_l},
             "pixel_ncc": {"threshold": t_pix, "true_accept": tar_p, "false_accept": far_p},
+            "false_accept_by_band_m": bands,
         },
         "rules": __doc__,
     }

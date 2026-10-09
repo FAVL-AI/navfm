@@ -170,7 +170,7 @@ def audit(episode: Path, goal_image_xy=None) -> dict:
         "lateral_at_closest_endpoint_m": float(lateral[closest]),
         "base_controller": m.get("base_controller"),
         "component_variant": m.get("component_variant"),
-        "components": component_trace(m["inference"], times, None),
+        "components": component_trace(m["inference"], times, m),
         "max_lateral_m": float(lateral.max()),
         "tracking": summarise_tracking(track, max_v, max_w),
         "tracking_diagnostic": turn_tracking(
@@ -239,11 +239,38 @@ def goal_xy(goal_root, episode: Path):
     return source["captures"][declared["frame"]]["pose"][:2], identity
 
 
-def component_trace(inference, times, frames_index) -> dict:
-    """Localisation jumps, lost decisions and verification delay (diagnostics)."""
+def node_poses(manifest) -> np.ndarray | None:
+    """Teacher-traversal positions of the episode's chain nodes (evaluation only)."""
+    tm = manifest.get("topomap")
+    if not tm:
+        return None
+    chain = json.loads((Path(tm["root"]) / "chain.json").read_text())["routes"][
+        manifest["route"]["id"]
+    ]
+    teach = json.loads((Path(chain["traversal"]) / "runtime_manifest.json").read_text())
+    return np.array([teach["captures"][n["frame"]]["pose"][:2] for n in chain["nodes"]])
+
+
+def component_trace(inference, times, manifest) -> dict:
+    """Localisation errors against the pose-true node, lost decisions, verification delay.
+
+    Primary localisation measure: decisions whose current or followed node is
+    more than one node from the chain node nearest the robot's true position.
+    The pose-true node is evaluation-only. Jump counts are reported too, but a
+    bounded variant lowers them partly by construction.
+    """
     chain = [r.get("chain") for r in inference]
     if not any(chain):
         return None
+    poses = node_poses(manifest)
+    caps = manifest["captures"]
+    wrong_closest = wrong_followed = 0
+    for r, c in zip(inference, chain, strict=True):
+        true = int(
+            np.argmin(np.linalg.norm(poses - np.array(caps[r["frame"]]["pose"][:2]), axis=1))
+        )
+        wrong_closest += int(abs(c["closest_node"] - true) > 1)
+        wrong_followed += int(abs(c["followed_node"] - true) > 1)
     prev, jumps, lost, events = 0, 0, 0, {}
     first_reached = stop = None
     for k, (r, c) in enumerate(zip(inference, chain, strict=True)):
@@ -260,13 +287,16 @@ def component_trace(inference, times, frames_index) -> dict:
     if first_reached is not None and stop is not None:
         a, b = inference[first_reached]["frame"], inference[stop]["frame"]
         delay = {"decisions": stop - first_reached, "seconds": float(times[b] - times[a])}
+    verifying = any(r.get("verification") is not None for r in inference)
     return {
         "decisions": len(inference),
+        "decisions_closest_off_true_node": wrong_closest,
+        "decisions_followed_off_true_node": wrong_followed,
         "localisation_jumps": jumps,
         "lost_decisions": lost,
         "events": events,
         "chain_reached_first_decision": first_reached,
-        "verification_delay": delay,
+        "verification_delay": delay if verifying else "NOT_APPLICABLE",
         "verification_rejected_decisions": sum(
             1 for r in inference if r.get("verification") == "pending"
         ),

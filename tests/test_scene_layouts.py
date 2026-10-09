@@ -306,3 +306,62 @@ def test_scoring_scripts_refuse_sealed_routes(tmp_path):
             timeout=60,
         )
         assert proc.returncode == 2 and "sealed held-out routes refused" in proc.stderr
+
+
+def test_collector_refuses_invocation_differing_from_frozen_comparison(tmp_path):
+    chain = tmp_path / "chain"
+    chain.mkdir()
+    (chain / "chain.json").write_text("{}")
+    import hashlib
+
+    config = tmp_path / "comparison.json"
+    config.write_text(
+        json.dumps(
+            {
+                "checkpoint": {"sha256": "a" * 64},
+                "variants": {
+                    "A_baseline": {
+                        "bounded": None,
+                        "verify_threshold": None,
+                        "verify_persistence": 2,
+                    }
+                },
+                "conditions": {
+                    "true_chain": {
+                        "root": str(chain),
+                        "chain_json_sha256": hashlib.sha256(b"{}").hexdigest(),
+                    }
+                },
+                "runtime": {
+                    "radius": 4,
+                    "close_threshold": 3.0,
+                    "max_v": 0.1,
+                    "decision_hz": 2.0,
+                    "budget_frames": 600,
+                    "goal_root": str(tmp_path / "goals"),
+                    "qualification": str(tmp_path / "q.json"),
+                },
+            }
+        )
+    )
+    common = [
+        "--variant",
+        "A_baseline",
+        "--comparison-config",
+        config,
+        "--topomap-root",
+        chain,
+        "--goal-root",
+        tmp_path / "goals",
+        "--qualification",
+        tmp_path / "q.json",
+        "--checkpoint-sha256",
+        "a" * 64,
+        "--policy-period-frames",
+        "6",
+        "--yaw-feedback",
+    ]
+    proc = run_collector(tmp_path / "x", *common, "--max-steps", "240")
+    assert proc.returncode == 2 and "budget_frames" in proc.stderr
+    proc = run_collector(tmp_path / "y", *common[:-1], "--max-steps", "600")
+    assert proc.returncode == 2 and "yaw_feedback" in proc.stderr

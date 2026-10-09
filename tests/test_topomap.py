@@ -109,3 +109,28 @@ def test_bounded_config_validation():
         BoundedConfig(lost_exit=13.0, lost_enter=12.0)
     with pytest.raises(ValueError):
         BoundedConfig(max_jump=0)
+
+
+def test_accepted_bounded_jump_follows_the_capped_node_not_the_alias():
+    # Red-team F1: the s_bend alias (node 10 at 5.3 vs node 5) confirmed twice
+    # must move to node 7 and steer to node 8, never to node 10.
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(closest=5)
+    for _ in range(2):
+        start, end = s.window(cfg4)
+        follow = s.update(far_except(end - start + 1, 10 - start, best=5.3), cfg4)
+    assert s.history[-1]["event"] == "bounded_jump" and s.closest_node == 7
+    assert s.history[-1]["followed_node"] == 8 and start + follow == 8
+
+
+def test_lost_recovery_requires_consecutive_matches():
+    # Red-team F2: a failing decision between two matches must reset persistence.
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(goal_node=14, closest=5)
+    for _ in range(3):
+        start, end = s.window(cfg4)
+        s.update([20.0] * (end - start + 1), cfg4)
+    s.update(far_except(15, 9, best=2.0, rest=15.0), cfg4)
+    s.update([9.0] * 15, cfg4)
+    s.update(far_except(15, 9, best=2.0, rest=15.0), cfg4)
+    assert s.lost

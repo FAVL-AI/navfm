@@ -130,6 +130,8 @@ class BoundedTopomapState(TopomapState):
         event = "track"
         if self.lost:
             follow = idx
+            if d[idx] > b.lost_exit:
+                self._pending = []  # persistence means consecutive matches
             if d[idx] <= b.lost_exit and self._persistent(argmin_node):
                 self.lost, self._far, self._pending = False, 0, []
                 self.closest_node = min(argmin_node, self.goal_node)
@@ -157,6 +159,8 @@ class BoundedTopomapState(TopomapState):
                 elif self._persistent(proposed):
                     self.closest_node += int(np.clip(step, -b.max_jump, b.max_jump))
                     self._pending = []
+                    # Steer along the chain from the capped node, never to the raw argmin.
+                    follow = int(np.clip(self.closest_node + 1, start, end)) - start
                     event = "bounded_jump"
                 else:
                     # Unconfirmed jump: hold the node, follow the next node on the chain.

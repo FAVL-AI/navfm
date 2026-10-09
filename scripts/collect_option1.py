@@ -112,6 +112,37 @@ def main():
         args.variant and not args.topomap_root
     ):
         parser.error("--variant needs --comparison-config and --topomap-root")
+    if args.variant:
+        # Every runtime field of the frozen comparison must match this invocation.
+        comparison = json.loads(args.comparison_config.read_text())
+        if args.variant not in comparison["variants"]:
+            parser.error(f"unknown variant {args.variant!r}")
+        rt = comparison["runtime"]
+        roots = {
+            str(Path(c["root"]).resolve()): c["chain_json_sha256"]
+            for c in comparison["conditions"].values()
+        }
+        chain_root = str(args.topomap_root.resolve())
+        checks = {
+            "radius": args.topomap_radius == rt["radius"],
+            "close_threshold": args.topomap_close_threshold == rt["close_threshold"],
+            "max_v": args.policy_max_v == rt["max_v"],
+            "decision_hz": abs(12.0 / args.policy_period_frames - rt["decision_hz"]) < 1e-9,
+            "budget_frames": args.max_steps == rt["budget_frames"],
+            "checkpoint_sha256": args.checkpoint_sha256 == comparison["checkpoint"]["sha256"],
+            "goal_root": args.goal_root is not None
+            and args.goal_root.resolve() == Path(rt["goal_root"]).resolve(),
+            "qualification": args.qualification is not None
+            and args.qualification.resolve() == Path(rt["qualification"]).resolve(),
+            "yaw_feedback": bool(args.yaw_feedback),
+            "condition_root": chain_root in roots,
+            "chain_json_sha256": chain_root in roots
+            and hashlib.sha256((args.topomap_root / "chain.json").read_bytes()).hexdigest()
+            == roots[chain_root],
+        }
+        mismatches = sorted(k for k, ok in checks.items() if not ok)
+        if mismatches:
+            parser.error(f"invocation differs from the frozen comparison: {mismatches}")
     if args.unseal_heldout:
         # A sealed collection follows the frozen protocol exactly: every route,
         # the declared budget and speed, no perturbation, the sealed bytes only.
