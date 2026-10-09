@@ -871,3 +871,104 @@ for commands >= 0.15 rad/s the deficit is <= 28%; below that it is up to 61%.
 Closed-loop changes cannot be attributed to training until this is either
 removed (faster small-signal settling, requalified with a per-hold criterion) or
 held identical across compared arms, as it was in the retest.
+
+## Route-of-reference-images deployment: matched development comparison (2026-10-09)
+
+Settings frozen in `configs/eval/topomap_deployment_v1.json` before any episode
+(chains every 12 frames of the prior traversal, radius 4, close threshold 3,
+upstream node logic ported in `topomap.py`, six documented departures).
+First launch `arrival-{tm,wc}-*-20261009-01` failed in all four arms before any
+episode (constructor defect, fixed in `e94e235`); retained, no output produced.
+Valid runs `arrival-{tm,wc}-{released,ft-seed0}-20261009-02` from source `e94e235`.
+
+Verification of all 16 manifests: PASS status; checkpoint sha256 as frozen;
+chain.json sha256 as frozen per arm; control flag and final-node-is-goal as
+expected; radius 4 / threshold 3; qualification sha256; 600-step budget
+recorded; feedback updates on every physics step; frames complete; every
+decision logs window distances and node choice; fixture signatures identical to
+earlier runs; goal identity verified per episode by the audit. No exclusions.
+Scored with frozen measures at clean HEAD (`topomap-measures-v1-20261009-02.json`).
+
+| Arm (n = 4 routes) | Correct stop | Wrong stop | Goal-region visit | Contact before task end | Timeout |
+| --- | --- | --- | --- | --- | --- |
+| Chain, released | 2/4 | 1/4 | 2/4 | 1/4 | 1/4 |
+| Chain, fine-tuned | 3/4 | 0/4 | 3/4 | 1/4 | 1/4 |
+| Wrong chain, released | 0/4 | 2/4 | 0/4 | 2/4 | 2/4 |
+| Wrong chain, fine-tuned | 0/4 | 4/4 | 0/4 | 0/4 | 0/4 |
+
+The collector never ends an episode on contact: an episode ends at its stop
+(plus the 24-frame tail) or at the budget, so "contact" means contact occurred
+before the task end, never "collision terminated the episode". Every contact
+occurred in a timeout episode.
+
+| Route | Chain, released | Chain, fine-tuned | Wrong chain, released | Wrong chain, fine-tuned |
+| --- | --- | --- | --- | --- |
+| s_bend_0 | timeout, contact; min 1.270 m | timeout, contact; min 0.596 m | wrong stop 1.115 m | wrong stop 0.857 m |
+| s_bend_1 | wrong stop 0.843 m | correct stop 0.313 m | wrong stop 1.101 m | wrong stop 0.847 m |
+| junction_0 | correct stop 0.094 m | correct stop 0.085 m | timeout, contact; min 0.814 m | wrong stop 0.998 m |
+| junction_1 | correct stop 0.324 m | correct stop 0.150 m | timeout, contact; min 1.344 m | wrong stop 1.041 m |
+
+Development evidence only (4 routes, 2 scenes, one seed, no significance).
+With the single far goal the same checkpoints had 0/4 correct stops each
+(retest `-yawfb-...-02`); the chain deployment gives 2/4 and 3/4.
+
+**Wrong-chain control.** No wrong-chain episode visited the goal region (0/8,
+against 5/8 with the true chains), so visits depend on the supplied route. The
+wrong chains did not merely fail: the fine-tuned checkpoint progressed through
+an incompatible chain and declared arrival in 4/4 episodes, 0.85-1.04 m from
+the true goal; the released checkpoint did so in 2/4 and timed out with contact
+in 2/4. The upstream stop rule (`closest_node == goal_node`) certifies chain
+progress, not arrival at the goal shown: nothing verifies the final match.
+
+### Localisation jumps (`topomap-jumps-20261009-02.json`)
+
+Every decision where the selected node moved by more than one or backwards
+was recorded with the previous and selected node, window, predicted distances,
+followed node and command. The node nearest the robot's true pose (from the
+traversal's node poses) is evaluation-only and never entered a decision.
+
+| Episode | Jumps | Within one node of true nearest |
+| --- | --- | --- |
+| released s_bend_0 | 28 | 12 |
+| released s_bend_1 | 8 | 1 |
+| released junction_0 | 12 | 8 |
+| released junction_1 | 14 | 9 |
+| fine-tuned s_bend_0 | 26 | 3 |
+| fine-tuned s_bend_1 | 5 | 5 |
+| fine-tuned junction_0 | 0 | - |
+| fine-tuned junction_1 | 6 | 6 |
+
+Three distinct mechanisms (INFERENCE from the recorded distances):
+
+1. **Non-discriminative distances (released).** Window distances are nearly flat
+   (e.g. s_bend_0 at 10 s: 11.5-13.9 across ten nodes; argmin node 9, true 4), and
+   near the start compressed below the threshold (1.1-3.0 for nodes 0-3), so the
+   released head advances or jumps arbitrarily. Model discrimination, not logic.
+2. **Bend aliasing (fine-tuned s_bend_0).** At 11 s node 5 (first bend) and node
+   10 (second bend) scored 5.6 and 5.3; the point-symmetric S-bend makes the two
+   bends look alike. The policy selected node 10 while at node 5, followed its
+   waypoint and left the route. Visual ambiguity.
+3. **Lost-state oscillation (progression logic).** From 26 s on fine-tuned
+   s_bend_0 all distances were 15-22 (lost); the re-centred window alternated
+   between [0, 7] and [1, 10], flipping the argmin between nodes 2 and 5 and the
+   command between -0.34 and +0.2 rad/s for about 20 s. The upstream logic has
+   no lost state.
+
+Commands at jumps follow the selected node (|w| up to the 0.4 cap); the
+controller executed what localisation chose, so these failures are not
+controller failures. The known small-command tracking limitation still applies
+to both arms.
+
+### Next decision
+
+- Correct stopping with the chain is a deployment repair on development routes,
+  not yet reliable navigation; the fine-tuned checkpoint's 3/4 versus 2/4 is one
+  seed on four routes.
+- The wrong-chain result shows the arrival declaration is unverified: it fires
+  at the end of whatever chain is followed. A final-goal verification step is
+  the research question of this project and now has a measured failure to
+  address (6/8 wrong terminal declarations).
+- s_bend localisation: aliasing between symmetric bends and a missing lost state
+  are the identified causes; a monotonic-progress or temporal-consistency
+  constraint (upstream has none) and a lost-state rule are candidate repairs to
+  test on development routes before any calibration or new data.
