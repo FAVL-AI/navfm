@@ -840,13 +840,14 @@ def main():
                     frames=len(captures),
                     captures=captures,
                     contacts=contacts.copy(),
-                    termination=("policy_stop" if reached else "timeout")
+                    termination=("policy_stop" if stop_frame is not None else "timeout")
                     if policy
                     else "teacher_goal"
                     if reached
                     else "timeout",
                     inference=inference,
                     policy_stop_frame=stop_frame,
+                    max_steps=args.max_steps,
                     preflight=decision.to_dict(),
                     observations=[o.to_dict() for o in observations],
                     contact_subscription_active=subscription is not None,

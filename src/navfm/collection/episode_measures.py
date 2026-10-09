@@ -71,9 +71,13 @@ def episode_measures(
     )
     entry = _first(d_goal <= ARRIVAL_RADIUS_M)
     navigation_success = entry is not None and (contact is None or entry < contact)
-    in_region_s = float(np.sum(d_goal <= ARRIVAL_RADIUS_M) * np.median(np.diff(times)))
+    # Region time counts frames up to the task end and before any contact.
+    horizon = min(task_end, contact - 1 if contact is not None else task_end)
+    in_region_s = float(
+        np.sum(d_goal[: horizon + 1] <= ARRIVAL_RADIUS_M) * np.median(np.diff(times))
+    )
     settle = "NO_STOP"
-    stop_distance = final_distance = None
+    stop_distance = final_distance = displacement_after_stop = None
     if stop is not None:
         stop_distance = float(d_goal[stop])
         final_distance = float(d_goal[-1])
@@ -83,6 +87,7 @@ def episode_measures(
             tail = times >= times[-1] - SETTLE_WINDOW_S
             motion = float(np.max(np.linalg.norm(xy[tail] - xy[tail][0], axis=1)))
             settle = "SETTLED" if motion < SETTLE_MOTION_M else "MOVING"
+        displacement_after_stop = float(np.max(np.linalg.norm(xy[stop:] - xy[stop], axis=1)))
     correct_stop = (
         stop is not None
         and stop_distance <= ARRIVAL_RADIUS_M
@@ -103,6 +108,7 @@ def episode_measures(
         "stop_frame": stop,
         "stop_goal_distance_m": stop_distance,
         "settle": settle,
+        "displacement_after_stop_m": displacement_after_stop,
         "correct_stop": bool(correct_stop),
         "wrong_stop": bool(wrong_stop),
         "timeout": stop is None,
@@ -116,7 +122,8 @@ def episode_measures(
         "exposure_s": float(times[-1] - times[0]),
         "path_length_m": float(np.linalg.norm(np.diff(xy, axis=0), axis=1).sum()),
         "stop_rule": (manifest.get("policy") or {}).get("stop_rule"),
-        "max_steps_observed": len(caps),
+        "frames_recorded": len(caps),
+        "max_steps_budget": manifest.get("max_steps"),
     }
 
 
@@ -134,22 +141,37 @@ def turn_tracking(setpoints: Sequence[float], realised: Sequence[float]) -> dict
         return {"status": "INSUFFICIENT", "turn_commands": int(use.sum())}
     slope = float(w[use] @ r[use] / (w[use] @ w[use]))
     return {
-        "status": "QUALIFIED" if 0.8 <= slope <= 1.2 else "OUTSIDE",
+        # A diagnostic band, never a qualification (that is the free-space replay).
+        "status": "WITHIN_BAND" if 0.8 <= slope <= 1.2 else "OUTSIDE_BAND",
         "turn_commands": int(use.sum()),
         "slope": slope,
     }
 
 
-def admitted_rate(planned: int, admitted: int, never_run: int, failed: int, refused: int) -> dict:
-    """Admitted trajectories over planned episodes; every non-admission is itemised."""
-    if planned <= 0 or admitted + never_run + failed + refused > planned:
-        raise ValueError("inconsistent admission counts")
-    return {
-        "planned": planned,
-        "admitted": admitted,
-        "rate": admitted / planned,
-        "never_run": never_run,
-        "failed": failed,
-        "refused": refused,
-        "rejected_after_recording": planned - admitted - never_run - failed - refused,
-    }
+def admitted_rate(frozen_routes, collection: Mapping, admission: Mapping | None) -> dict:
+    """Admitted trajectories over planned episodes, counted from artefacts.
+
+    planned = the collection's frozen routes (one run each); every planned route
+    is classified exactly once: never_run, failed, refused, rejected or admitted.
+    """
+    episodes = {e["id"]: e for e in collection.get("episodes", [])}
+    verdicts = {}
+    if admission is not None:
+        verdicts = {t["id"]: bool(t["admitted"]) for t in admission["trajectories"]}
+    counts = {"never_run": 0, "failed": 0, "refused": 0, "rejected": 0, "admitted": 0}
+    for route in frozen_routes:
+        e = episodes.get(route["id"])
+        if e is None:
+            counts["never_run"] += 1
+        elif str(e["status"]).startswith("REFUSED"):
+            counts["refused"] += 1
+        elif e["status"] != "PASS":
+            counts["failed"] += 1
+        elif verdicts.get(route["id"]):
+            counts["admitted"] += 1
+        else:
+            counts["rejected"] += 1
+    planned = len(frozen_routes)
+    if planned == 0:
+        raise ValueError("no planned routes")
+    return {"planned": planned, **counts, "rate": counts["admitted"] / planned}

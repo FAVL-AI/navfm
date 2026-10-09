@@ -177,3 +177,83 @@ def test_audit_settle_after_stop(tmp_path):
     assert r["measures"]["settle"] == "SETTLED" and r["events"]["arrival_declared_frame"] == 30
     # Stops far from the end of a 3 m route after 30 frames at 0.1 m/s: a wrong stop.
     assert r["measures"]["wrong_stop"] and not r["measures"]["completion"]
+
+
+def goal_fixture(tmp_path):
+    """Goal root holding JPEG source bytes; episode holding the PNG of decoded pixels."""
+    import hashlib
+
+    from PIL import Image
+
+    rng = np.random.default_rng(0)
+    pixels = (rng.random((24, 32, 3)) * 255).astype(np.uint8)
+    teacher = tmp_path / "teacher" / "r" / "trajectory"
+    teacher.mkdir(parents=True)
+    Image.fromarray(pixels).save(teacher / "9.jpg", format="JPEG", quality=90)
+    source_bytes = (teacher / "9.jpg").read_bytes()
+    source_sha = hashlib.sha256(source_bytes).hexdigest()
+    root = tmp_path / "goals"
+    (root / "r").mkdir(parents=True)
+    (root / "r" / "goal.png").write_bytes(source_bytes)
+    declared = {"source": str(teacher / "9.jpg"), "frame": 0, "source_sha256": source_sha}
+    (root / "goal_source.json").write_text(json.dumps({"goals": {"r": declared}}))
+    ep = tmp_path / "ep"
+    ep.mkdir()
+    consumed = np.asarray(Image.open(root / "r" / "goal.png").convert("RGB"))
+    Image.fromarray(consumed).save(ep / "goal.png")
+    m = {
+        "route": {"id": "r"},
+        "policy": {"stop_rule": "x"},
+        "goal_source_frame": declared,
+        "fixed_goal_sha256": hashlib.sha256((ep / "goal.png").read_bytes()).hexdigest(),
+    }
+    return root, ep, m
+
+
+def test_goal_identity_accepts_jpeg_source_and_png_episode_copy(tmp_path):
+    root, ep, m = goal_fixture(tmp_path)
+    identity = audit.goal_identity(root, ep, m)
+    assert identity["source_encoded_sha256"] != identity["episode_png_sha256"]
+    assert identity["consumed_pixels_shape"] == [24, 32, 3]
+
+
+def test_goal_identity_rejects_genuinely_changed_goals(tmp_path):
+    import hashlib
+
+    from PIL import Image
+
+    root, ep, m = goal_fixture(tmp_path)
+    # Changed consumed pixels, with the recorded hash updated to match: still refused.
+    px = np.asarray(Image.open(ep / "goal.png")).copy()
+    px[0, 0] ^= 1
+    Image.fromarray(px).save(ep / "goal.png")
+    changed = {**m, "fixed_goal_sha256": hashlib.sha256((ep / "goal.png").read_bytes()).hexdigest()}
+    with pytest.raises(ValueError, match="pixels differ"):
+        audit.goal_identity(root, ep, changed)
+    # Episode file no longer matching its recorded hash.
+    with pytest.raises(ValueError, match="recorded hash"):
+        audit.goal_identity(root, ep, m)
+    # Goal-root bytes no longer the declared source frame.
+    root2, ep2, m2 = goal_fixture(tmp_path / "b")
+    (root2 / "r" / "goal.png").write_bytes((root2 / "r" / "goal.png").read_bytes() + b"x")
+    with pytest.raises(ValueError, match="declared source frame"):
+        audit.goal_identity(root2, ep2, m2)
+
+
+def test_audit_refuses_policy_episode_without_matching_goal_root(tmp_path):
+    (tmp_path / "ep").mkdir()
+    ep = closed_loop_episode(tmp_path / "ep", turn_fraction=1.0)
+    m = json.loads((ep / "runtime_manifest.json").read_text())
+    m["goal_source_frame"] = {"source": "/teacher/r/trajectory/9.jpg", "frame": 9}
+    m["policy"] = {"stop_rule": "x"}
+    m["fixed_goal_sha256"] = "0" * 64
+    (ep / "runtime_manifest.json").write_text(json.dumps(m))
+    with pytest.raises(ValueError, match="needs --goal-root"):
+        audit.goal_xy(None, ep)
+    root = tmp_path / "goals"
+    (root / "r").mkdir(parents=True)
+    (root / "goal_source.json").write_text(
+        json.dumps({"goals": {"r": {"source": "/other/9.jpg", "frame": 0}}})
+    )
+    with pytest.raises(ValueError, match="does not match"):
+        audit.goal_xy(root, ep)

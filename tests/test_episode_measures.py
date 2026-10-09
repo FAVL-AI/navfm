@@ -64,14 +64,55 @@ def test_navigation_success_requires_entry_before_contact():
     assert not late["navigation_success"]
 
 
-def test_turn_tracking_reports_insufficient_and_judges_slope():
+def test_turn_tracking_reports_insufficient_and_a_band_not_a_qualification():
     assert em.turn_tracking([0.05] * 100, [0.05] * 100)["status"] == "INSUFFICIENT"
-    assert em.turn_tracking([0.2] * 25, [0.19] * 25)["status"] == "QUALIFIED"
-    assert em.turn_tracking([0.2] * 25, [0.05] * 25)["status"] == "OUTSIDE"
+    assert em.turn_tracking([0.2] * 25, [0.19] * 25)["status"] == "WITHIN_BAND"
+    assert em.turn_tracking([0.2] * 25, [0.05] * 25)["status"] == "OUTSIDE_BAND"
 
 
-def test_admitted_rate_itemises_and_rejects_inconsistent_counts():
-    r = em.admitted_rate(planned=10, admitted=6, never_run=1, failed=1, refused=1)
-    assert r["rate"] == 0.6 and r["rejected_after_recording"] == 1
+def test_contact_at_stop_frame_counts_before_task_end():
+    xs, stop = drive_then_hold(2.8, 24)
+    m = em.episode_measures(manifest(xs, stop=stop, contacts=[(stop - 0.5) / 12]), LINE, None)
+    assert m["collision_before_task_end"] and not m["contact_after_stop"]
+    assert m["correct_stop"] and not m["completion"]
+
+
+def test_entry_and_contact_in_same_frame_is_not_navigation_success():
+    xs = [0.05 * i for i in range(70)]
+    entry = next(i for i, x in enumerate(xs) if x >= 2.5)
+    m = em.episode_measures(manifest(xs, contacts=[(entry - 0.5) / 12]), LINE, None)
+    assert m["goal_region_entry_frame"] == entry and not m["navigation_success"]
+    assert m["time_in_goal_region_s"] == 0.0
+
+
+def test_fallback_scoring_goal_is_labelled_and_budget_recorded():
+    xs, stop = drive_then_hold(2.8, 24)
+    man = {**manifest(xs, stop=stop), "max_steps": 600}
+    m = em.episode_measures(man, LINE, None)
+    assert m["scoring_goal"] == "route_endpoint" and m["max_steps_budget"] == 600
+    assert m["frames_recorded"] == len(xs)
+
+
+def test_admitted_rate_counts_every_planned_route_from_artefacts():
+    routes = [{"id": r} for r in ("a", "b", "c", "d", "e")]
+    collection = {
+        "episodes": [
+            {"id": "a", "status": "PASS"},
+            {"id": "b", "status": "PASS"},
+            {"id": "c", "status": "FAILED"},
+            {"id": "d", "status": "REFUSED_FIXTURE_IDENTITY"},
+        ]
+    }
+    admission = {"trajectories": [{"id": "a", "admitted": True}, {"id": "b", "admitted": False}]}
+    r = em.admitted_rate(routes, collection, admission)
+    assert r == {
+        "planned": 5,
+        "never_run": 1,
+        "failed": 1,
+        "refused": 1,
+        "rejected": 1,
+        "admitted": 1,
+        "rate": 0.2,
+    }
     with pytest.raises(ValueError):
-        em.admitted_rate(planned=4, admitted=3, never_run=1, failed=1, refused=0)
+        em.admitted_rate([], collection, admission)

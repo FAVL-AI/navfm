@@ -729,3 +729,63 @@ pattern):
 
 Held-out remains sealed; no held-out run is justified while development
 routes fail.
+
+### Bend diagnosis (offline, no simulator; `bend-probe-*-20261009-01.json`)
+
+Question: at the s_bend bends, does the model predict the turn on the teacher's
+own frames (on-route, training speed and spacing), or only fail after closed-loop
+drift? Method: each checkpoint sees six teacher frames 0.05 m apart and the
+prior-traversal goal; the predicted waypoint-2 bearing is compared with the true
+bearing to the teacher's own pose three steps (9 frames) ahead, excluding frames
+where that lookahead runs past the route end. True bearings span -15..+15 deg.
+
+| Route | Released corr / MAE | Fine-tuned corr / MAE |
+| --- | --- | --- |
+| s_bend_run_0000 | 0.11 / 11.7 deg | 0.40 / 4.7 deg |
+| s_bend_run_0001 | -0.07 / 10.1 deg | 0.28 / 7.4 deg |
+| junction_run_0001 (control) | 0.25 / 9.3 deg | 0.53 / 2.7 deg |
+
+Closed-loop on s_bend_run_0000 the fine-tuned policy reached the first vertex
+on route (x 1.61, y +0.37, yaw 13 deg vs teacher 30 -> -49 deg) and then
+predicted bearings of -1..+1 deg for the next 8 s, holding yaw near 10 deg and
+leaving the route.
+
+INFERENCE (two s_bend routes, one seed): the bend failure starts before any
+closed-loop drift: even on teacher states the model's turn prediction at the
+s_bend is weak (correlation 0.28-0.40 fine-tuned, none released), weaker than
+on the junction control. Recovery data alone would address drift after a
+missed turn, not the missed turn itself. Supported next intervention: training
+data with more bend and double-turn approaches on training layouts, collected
+together with perturbed-start recovery demonstrations, evaluated against an
+equal-budget baseline, with this probe as the development check.
+
+### Goal-image identity (resolved, no evidence changed)
+
+The audit's goal check refused all eight retest episodes. Cause: three
+representations of one goal, hashed differently by design. The declared source
+is a teacher trajectory JPEG; the goal root stores those exact bytes under the
+name `goal.png`; the collector decodes them to RGB uint8 pixels (the model's
+input) and writes a PNG re-encoding of those pixels into the episode, whose hash
+is `fixed_goal_sha256`. The audit had compared the root's JPEG hash with the
+episode PNG hash. The check now verifies each representation against its own
+record (source bytes == declared `source_sha256` == episode `goal_source_frame`;
+episode PNG == `fixed_goal_sha256`; decoded source pixels == consumed pixels)
+and records all three hashes plus the consumed-pixel hash. All eight episodes
+pass: identical 240x320x3 uint8 pixels. No manifest was modified; regression
+tests cover the valid JPEG/PNG pair and three genuinely changed-goal cases.
+
+### Retest under frozen measures (`closedloop-yawfb-measures-v1-20261009-02.json`)
+
+No exclusions. These runs predate per-run budget recording; their budget was
+600 frames (launch script). Navigation success is reported as **goal-region
+visit** because no goal-blind control row exists yet.
+
+| Measure (n = 4 per arm) | Released | Fine-tuned seed 0 |
+| --- | --- | --- |
+| Goal-region visit (before contact) | 1/4 (1.3 s inside) | 2/4 (9.4 s and 9.1 s inside) |
+| Correct stop | 0/4 | 0/4 |
+| Wrong stop | 0/4 | 0/4 |
+| Collision before task end | 4/4 | 4/4 |
+| Timeout | 4/4 | 4/4 |
+| In-episode tracking (diagnostic) | OUTSIDE_BAND, slope 0.69-0.77 | INSUFFICIENT (< 20 turn commands) |
+| Admitted trajectory rate | not applicable (policy runs) | not applicable |

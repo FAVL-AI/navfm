@@ -165,9 +165,10 @@ def audit(episode: Path, goal_image_xy=None) -> dict:
         "event_order": [k for k, _ in ordered],
         "first_event": ordered[0][0] if ordered else None,
         "contact_with": contact_with,
-        "closest_goal_m": float(goal_d[closest]),
-        "closest_frame": closest,
-        "lateral_at_closest_m": float(lateral[closest]),
+        "closest_endpoint_m": float(goal_d[closest]),
+        "closest_endpoint_frame": closest,
+        "lateral_at_closest_endpoint_m": float(lateral[closest]),
+        "base_controller": m.get("base_controller"),
         "max_lateral_m": float(lateral.max()),
         "tracking": summarise_tracking(track, max_v, max_w),
         "tracking_diagnostic": turn_tracking(
@@ -179,13 +180,84 @@ def audit(episode: Path, goal_image_xy=None) -> dict:
     }
 
 
-def goal_xy(goal_root, route_id):
-    """Capture position of the goal image (prior-traversal final frame), if declared."""
+def goal_identity(goal_root: Path, episode: Path, m: dict) -> dict:
+    """Verify the goal the episode consumed is the declared source frame.
+
+    Three representations exist and each is checked against its own record:
+    the declared source frame (encoded JPEG bytes, sha256 in goal_source.json
+    and the episode's goal_source_frame), the goal-root copy (must be the same
+    bytes), and the episode's goal.png (a PNG of the decoded RGB uint8 pixels the
+    model consumed; sha256 recorded as fixed_goal_sha256). The source and the
+    episode copy must decode to identical pixels.
+    """
+    import hashlib
+
+    from PIL import Image
+
+    route_id = m["route"]["id"]
+    if not (goal_root / "goal_source.json").exists():
+        raise ValueError(f"{goal_root}: goal root declares no goal_source.json")
+    declared = json.loads((goal_root / "goal_source.json").read_text())["goals"][route_id]
+    recorded = m.get("goal_source_frame") or {}
+    if recorded.get("source") != declared["source"] or recorded.get("frame") != declared["frame"]:
+        raise ValueError(f"{episode}: goal root does not match the episode's goal source")
+    root_bytes = (goal_root / route_id / "goal.png").read_bytes()
+    source_sha = hashlib.sha256(root_bytes).hexdigest()
+    if not source_sha == declared["source_sha256"] == recorded.get("source_sha256"):
+        raise ValueError(f"{episode}: goal-root bytes differ from the declared source frame")
+    episode_bytes = (episode / "goal.png").read_bytes()
+    episode_sha = hashlib.sha256(episode_bytes).hexdigest()
+    if episode_sha != m.get("fixed_goal_sha256"):
+        raise ValueError(f"{episode}: episode goal file differs from its recorded hash")
+    source_px = np.asarray(Image.open(goal_root / route_id / "goal.png").convert("RGB"))
+    consumed_px = np.asarray(Image.open(episode / "goal.png").convert("RGB"))
+    if source_px.shape != consumed_px.shape or not np.array_equal(source_px, consumed_px):
+        raise ValueError(f"{episode}: consumed goal pixels differ from the declared source")
+    return {
+        "source_frame": declared["source"],
+        "source_encoded_sha256": source_sha,
+        "episode_png_sha256": episode_sha,
+        "consumed_pixels_sha256": hashlib.sha256(consumed_px.tobytes()).hexdigest(),
+        "consumed_pixels_shape": list(consumed_px.shape),
+        "consumed_pixels_dtype": str(consumed_px.dtype),
+        "verified": "source bytes == declared; episode file == recorded; decoded pixels equal",
+    }
+
+
+def goal_xy(goal_root, episode: Path):
+    """Capture position and verified identity of the goal the episode used."""
+    m = json.loads((episode / "runtime_manifest.json").read_text())
+    if not m.get("policy"):
+        return None, None
     if goal_root is None:
-        return None
-    frame = json.loads((goal_root / "goal_source.json").read_text())["goals"][route_id]["frame"]
-    source = json.loads((goal_root / route_id / "runtime_manifest.json").read_text())
-    return source["captures"][frame]["pose"][:2]
+        raise ValueError(f"{episode}: policy episode needs --goal-root to score its goal")
+    identity = goal_identity(goal_root, episode, m)
+    declared = json.loads((goal_root / "goal_source.json").read_text())["goals"][m["route"]["id"]]
+    source = json.loads((goal_root / m["route"]["id"] / "runtime_manifest.json").read_text())
+    return source["captures"][declared["frame"]]["pose"][:2], identity
+
+
+def scorer_provenance() -> dict:
+    import hashlib
+    import subprocess
+
+    files = [
+        "scripts/audit_closed_loop_episodes.py",
+        "src/navfm/collection/episode_measures.py",
+        "configs/eval/arrival_measures_v1.json",
+    ]
+    head = subprocess.run(
+        ["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "-C", str(REPO), "status", "--porcelain", *files], capture_output=True, text=True
+    ).stdout.strip()
+    return {
+        "measures_version": json.loads((REPO / files[2]).read_text())["name"],
+        "git_head": head,
+        "scorer_files_modified_since_head": bool(dirty),
+        "sha256": {f: hashlib.sha256((REPO / f).read_bytes()).hexdigest() for f in files},
+    }
 
 
 def main():
@@ -219,13 +291,19 @@ def main():
             if e["status"] != "PASS":
                 rows.append({"collection": root.name, "route": e["id"], "status": e["status"]})
                 continue
+            xy_goal, identity = goal_xy(a.goal_root, root / e["id"])
             rows.append(
-                {"collection": root.name, **audit(root / e["id"], goal_xy(a.goal_root, e["id"]))}
+                {
+                    "collection": root.name,
+                    **audit(root / e["id"], xy_goal),
+                    "goal_identity": identity,
+                }
             )
     a.out.write_text(
         json.dumps(
             {
                 "scope": "ENGINEERING_DIAGNOSIS",
+                "scorer": scorer_provenance(),
                 "thresholds": {
                     "goal_radius_m": ARRIVAL_RADIUS_M,
                     "route_departure_m": DEPARTURE_M,
