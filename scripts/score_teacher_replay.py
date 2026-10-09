@@ -140,8 +140,21 @@ def main():
         true = np.asarray([c["distance_to_goal_m"] for c in captures], float)
         goal_dir = a.goal_override_root / rid if a.goal_override_root else path
         own = np.asarray(Image.open(goal_dir / "goal.png").convert("RGB"))
-        other = next(x for x in episodes[k + 1 :] + episodes[:k] if x[1] != rid)
-        wrong = np.asarray(Image.open(other[2] / "goal.png").convert("RGB"))
+        # Negatives come from a different scene: same-scene route variants end
+        # 0.25 m apart, so their goals are not wrong places.
+        other = next(
+            (
+                x
+                for x in episodes[k + 1 :] + episodes[:k]
+                if x[3]["route"]["scene_index"] != m["route"]["scene_index"]
+            ),
+            None,
+        )
+        if other is None:
+            raise ValueError(f"no cross-scene negative available for {rid}")
+        # The negative control uses the same goal type as the positive.
+        wrong_dir = a.goal_override_root / other[1] if a.goal_override_root else other[2]
+        wrong = np.asarray(Image.open(wrong_dir / "goal.png").convert("RGB"))
         loaded.append((coll, rid, m, frames, true, own, wrong, other))
     report = {
         "scope": "ENGINEERING_DIAGNOSIS_OPEN_LOOP_TEACHER_REPLAY",
@@ -162,6 +175,7 @@ def main():
             floor = policy.step([own] * 6, own)
             result["goal_as_current_pred"] = floor["predicted_distance"]
             result["wrong_goal_source"] = other[1]
+            result["wrong_goal_scene_index"] = other[3]["route"]["scene_index"]
             rows.append(result)
             print(json.dumps({"checkpoint": policy.digest[:12], **result}))
         report["checkpoints"].append(

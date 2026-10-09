@@ -579,6 +579,24 @@ def main():
                     manifest["fixed_goal_sha256"] = hashlib.sha256(
                         (episode / "goal.png").read_bytes()
                     ).hexdigest()
+                    definition_path = args.goal_root / "goal_source.json"
+                    if definition_path.exists():
+                        # Goal is a frame of a prior traversal, not the root's photograph.
+                        definition = json.loads(definition_path.read_text())
+                        source = definition["goals"][route["id"]]
+                        source_bytes = Path(source["source"]).read_bytes()
+                        goal_bytes = (args.goal_root / route["id"] / "goal.png").read_bytes()
+                        if (
+                            hashlib.sha256(source_bytes).hexdigest() != source["source_sha256"]
+                            or source_bytes != goal_bytes
+                        ):
+                            raise ValueError("goal does not match its declared source frame")
+                        manifest["goal_definition"] = definition["definition"]
+                        manifest["goal_source_frame"] = source
+                        manifest["fixed_goal_source_capture_sim_time"] = source["capture_sim_time"]
+                        manifest["goal_time_definition"] = (
+                            "capture time of the declared prior-traversal source frame"
+                        )
                     history = [robot.rgb().copy() for _ in range(6)]
                 inference = []
                 stop_frame = None
