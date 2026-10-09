@@ -666,3 +666,66 @@ held-out from 3 to 6 groups, before any held-out data exists.
   not built yet.
 - Status: FROZEN SPECIFICATION, NOT COLLECTED, NOT SCORED. Previously inspected
   dev and retired-test routes remain diagnostic/development data.
+
+### Controller-repaired retest (valid, pinned source `d2f071b`)
+
+`arrival-closedloop-yawfb-{released,ft-seed0}-20261009-02`: same routes, goals
+(prior-traversal final frames), 2 Hz, `upstream_t3`, 50 s, 0.1 m/s as milestone
+6, plus the 120 Hz yaw-rate loop (qualification `articulated-control-20261009-10`).
+Verification of all 8 manifests: status PASS, checkpoint sha256 as declared,
+qualification sha256 matches, 600/600 frames recorded and on disk with
+`traj_data.pkl`, 6000/6000 feedback updates, contact subscription active,
+fixture signatures identical across arms and to milestone 6. No problems.
+
+| Arm / route | Entered region (s) | Min / final goal m (t) | Declared | Settled | Departure (s) | Contact (s, prim) | Timeout | Pred. at closest / min | Yaw slope |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| released s_bend_0 | no | 1.109 (13.0) / 2.316 | no | n/a | 12.3 | 37.3 WallLeft | yes | 10.76 / 6.46 | 0.75 |
+| released s_bend_1 | no | 1.088 (13.9) / 2.086 | no | n/a | 12.3 | 35.8 WallLeft | yes | 12.53 / 6.81 | 0.66 |
+| released junction_0 | 22.3 | 0.476 (24.4) / 2.136 | no | n/a | 11.1 | 41.8 Obstacle | yes | 6.41 / 4.98 | 0.73 |
+| released junction_1 | no | 0.501 (21.2) / 2.013 | no | n/a | 8.7 | 42.2 WallLeft | yes | 5.18 / 3.89 | 0.74 |
+| ft s_bend_0 | no | 0.651 (19.6) / 1.299 | no | n/a | 12.8 | 29.4 Obstacle | yes | 10.85 / 6.49 | 0.71 |
+| ft s_bend_1 | no | 0.577 (19.8) / 1.198 | no | n/a | 13.2 | 29.5 Obstacle | yes | 13.73 / 8.18 | 0.61 |
+| ft junction_0 | 16.4 | 0.117 (21.0) / 1.198 | no | n/a | 25.9 | 32.1 Obstacle | yes | 4.79 / 3.56 | 0.64 |
+| ft junction_1 | 16.0 | 0.156 (20.7) / 1.388 | no | n/a | 25.3 | 32.0 Obstacle | yes | 12.94 / 5.97 | 0.75 |
+
+Elapsed 49.9 s in every episode (timeout). Counts (n = 4 per arm):
+
+| Endpoint | Released | Fine-tuned seed 0 |
+| --- | --- | --- |
+| Entered goal region | 1/4 | 2/4 |
+| Declared arrival (any) | 0/4 | 0/4 |
+| Correct stop | 0/4 | 0/4 |
+| Collision episode | 4/4 | 4/4 |
+| Timeout | 4/4 | 4/4 |
+| Route departure before any goal entry | 4/4 | 2/4 (s_bend) |
+
+Paired differences against milestone 6 (open-loop wheel map), one seed, no
+significance claimed: closest approach improved on 2/4 released routes
+(junction_0 1.157 -> 0.476, s_bend unchanged ~1.1, junction_1 0.322 -> 0.501
+worse) and on 2/4 fine-tuned routes (s_bend 0.898 -> 0.651, 0.716 -> 0.577);
+fine-tuned junction_0 went from a wrong stop at 0.527 m to passing 0.117 m with
+no stop; junction_1 0.087 -> 0.156 m, again no stop.
+
+In-episode tracking rose from 0.16-0.34 to 0.61-0.75 (regression slope) but did
+not reach the 0.8 free-space criterion; in-episode commands are small (median
+|w| 0.03-0.09 rad/s), where the loop has not settled within a 0.5 s hold. The
+controller is improved, not fully qualified for this command distribution.
+
+**Decision.** Controller repair did not resolve the failures. Two distinct
+failures remain, each localised by its own evidence (INFERENCE, n = 2 per
+pattern):
+
+1. **Bend following (s_bend, both checkpoints, 4/4):** departure at 12.3-13.2 s at
+   the first bend from an on-route start, with turning realised at 0.61-0.75 of
+   command. The released model's s_bend predictions are uncorrelated with true
+   distance (Spearman -0.16, -0.07). This is a navigation failure that begins on
+   route, so off-route recovery diagnosis is necessary but not sufficient: the
+   bend itself must be diagnosed (commanded vs teacher curvature at the bend).
+2. **Arrival recognition (fine-tuned junction, 2/2):** the robot entered the goal
+   region and passed 0.117 m and 0.156 m from the goal with heading within
+   2.7-7.8 degrees of the goal frame, yet the prediction stayed at 4.79 and 12.94
+   (rule threshold 3), so it drove on and collided. On teacher frames the same
+   checkpoint fired at 0.13-0.26 m.
+
+Held-out remains sealed; no held-out run is justified while development
+routes fail.
