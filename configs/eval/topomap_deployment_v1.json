@@ -1,0 +1,58 @@
+{
+  "name": "topomap_deployment_v1",
+  "frozen": "2026-10-09, before any topomap episode",
+  "task": "navigation along a route of reference images from a prior traversal (prior traversal is an input; this is not single-goal-photograph navigation)",
+  "routes": [
+    "s_bend_run_0000",
+    "s_bend_run_0001",
+    "junction_run_0000",
+    "junction_run_0001"
+  ],
+  "route_status": "development routes (arrival_split_v2); held-out remains sealed",
+  "chain": {
+    "builder": "scripts/build_topomap.py",
+    "spacing_frames": 12,
+    "spacing_basis": "upstream create_topomap.py dt 1.0 s at 12 Hz; 0.2 m at the 0.2 m/s teacher",
+    "root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+    "chain_json_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01"
+  },
+  "control_chain": {
+    "kind": "wrong-chain (cross-scene swap s_bend <-> junction, same run index)",
+    "root": "/home/favl/navfm-runtime-evidence/topomap-wrongchain-12f-20261009-01",
+    "chain_json_sha256": "3e161168aebd1ea5cbdbf608018a1eae7b951806ec65adf39583a4b343bca6ea",
+    "purpose": "tests whether goal-region visits depend on the supplied route; route endpoints differ by 0.45 m between the swapped routes, so chance visits are possible and are reported, not assumed"
+  },
+  "localisation": {
+    "implementation": "src/navfm/collection/topomap.py (port of navigate.py lines 195-233)",
+    "radius": 4,
+    "close_threshold": 3.0,
+    "initial_node": 0,
+    "inputs": "distance head on camera history and chain images only; no pose, time or frame index"
+  },
+  "arrival": "latched stop when closest_node == goal_node (final node = verified goal frame); chain progress logged per decision and never ends the episode",
+  "policy": {
+    "waypoint_index": 2,
+    "decision_hz": 2.0,
+    "context": "six decision frames, 0.05 m apart at 0.1 m/s",
+    "max_v": 0.1,
+    "max_w": 0.4,
+    "controller": "reference_pd_twist dt 0.5 s + 120 Hz yaw-rate PI (qualification articulated-control-20261009-10)",
+    "episode_budget_frames": 600
+  },
+  "checkpoints": {
+    "released": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f",
+    "ft-seed0": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c"
+  },
+  "measures": "configs/eval/arrival_measures_v1.json (scored to the goal-image pose; navigation success reported only with the wrong-chain control row)",
+  "departures_from_upstream": [
+    "upstream publishes reached_goal but keeps publishing waypoints; here reaching the goal node latches a zero command",
+    "chain built from a kinematic teacher traversal in simulation, not a teleoperated robot run",
+    "node spacing by frames of a 0.2 m/s traversal (0.2 m) rather than wall-clock dt of a teleoperated run",
+    "decisions at 2 Hz with 0.1 m/s (0.05 m context spacing) rather than 4 Hz at 0.2 m/s; same metric spacing",
+    "controller: reference PD map with dt 0.5 s plus a yaw-rate PI base loop; upstream uses its pd_controller at 4 Hz on a real base",
+    "preprocessing: training-style 4:3 aspect crop + resize; identical to upstream deployment's resize for 320x240 (4:3) frames"
+  ],
+  "known_limitation": "the yaw loop realises 0.52-0.78 of small commands (0.05-0.2 rad/s) within a 0.5 s hold; arms issuing different turn magnitudes are affected differently",
+  "stop_calibration": "not part of this run; a separate threshold, if any, is chosen on calibration data, frozen, and tested on fresh episodes"
+}

@@ -103,3 +103,67 @@ def test_unknown_rule_and_bad_period_rejected(tmp_path):
         rb.RGBBaseline(tmp_path / "x.pth", stop_rule="tuned")
     with pytest.raises(ValueError, match="period"):
         rb.RGBBaseline(tmp_path / "x.pth", control_period_s=0)
+
+
+class FakeBatchModel:
+    """Distances per node from a callable of (call index, batch size)."""
+
+    def __init__(self, distances):
+        self.distances = distances
+        self.calls = 0
+
+    def __call__(self, observation, goals):
+        n = goals.value.shape[0]
+        d = self.distances(self.calls, n)
+        self.calls += 1
+        actions = np.zeros((n, 5, 4))
+        actions[:, 2, 0] = 2.0
+        return FakeTensor(np.asarray(d, float)), FakeTensor(actions)
+
+
+class FakeTorchBatch(FakeTorch):
+    @staticmethod
+    def cat(items, dim=0):
+        return FakeTensor(np.concatenate([i.value for i in items], axis=dim))
+
+
+class Batchable(FakeTensor):
+    def repeat(self, n, *rest):
+        return FakeTensor(np.repeat(self.value, n, axis=0))
+
+
+def topomap_baseline(distances, nodes=4):
+    from navfm.collection.topomap import TopomapConfig, TopomapState
+
+    b = rb.RGBTopomapBaseline.__new__(rb.RGBTopomapBaseline)
+    b.torch = FakeTorchBatch
+    b.device = "cpu"
+    b.tensor = lambda images: Batchable(np.zeros((len(images), 1)))
+    b.model = FakeBatchModel(distances)
+    b.action_scale_m = 0.05
+    b.control_period_s = 0.5
+    b.stop_enabled = True
+    b.limits = rb.BaseLimits(max_v=0.1, max_w=0.4)
+    b.topomap_cfg = TopomapConfig(radius=4, close_threshold=3.0)
+    b.state_cls = TopomapState
+    b.set_chain([np.zeros((2, 2, 3))] * nodes)
+    return b
+
+
+def test_chain_progress_does_not_stop_until_goal_node():
+    # Node k is "close" at call k: the robot advances one node per decision.
+    def d(call, n):
+        return [2.0 if i == call else 9.0 for i in range(n)]
+
+    b = topomap_baseline(d, nodes=4)
+    out = [b.step([None] * 6) for _ in range(3)]
+    assert [o["chain"]["closest_node"] for o in out] == [1, 2, 3]
+    assert [o["policy_stop"] for o in out] == [False, False, True]
+    assert out[1]["command"][0] > 0 and out[2]["command"] == [0.0, 0.0, 0.0]
+
+
+def test_far_from_every_node_never_stops():
+    b = topomap_baseline(lambda call, n: [9.0] * n, nodes=4)
+    out = [b.step([None] * 6) for _ in range(5)]
+    assert not any(o["policy_stop"] for o in out)
+    assert all(o["chain"]["closest_node"] == 0 for o in out)

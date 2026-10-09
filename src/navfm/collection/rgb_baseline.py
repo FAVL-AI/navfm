@@ -138,3 +138,86 @@ class RGBBaseline:
             "policy_stop": self.stopped,
             "latency_ms": (time.perf_counter() - start) * 1000,
         }
+
+
+class RGBTopomapBaseline(RGBBaseline):
+    """ViNT navigating a route of reference images (upstream topological map).
+
+    The chain is the prior traversal's frames; localisation and node choice come
+    only from the distance head on camera images (navfm.collection.topomap).
+    Final arrival latches a stop when the goal node is reached; chain progress
+    is logged per decision and never itself ends the episode.
+    """
+
+    def __init__(
+        self, checkpoint: Path, chain, *, radius: int = 4, close_threshold: float = 3.0, **kw
+    ):
+        from navfm.collection.topomap import TopomapConfig, TopomapState
+
+        kw.setdefault("stop_enabled", True)
+        super().__init__(checkpoint, **kw)
+        if len(chain) < 2:
+            raise ValueError("a route of reference images needs at least two nodes")
+        self.chain = [np.asarray(c) for c in chain]
+        self.topomap_cfg = TopomapConfig(radius=radius, close_threshold=close_threshold)
+        self.state_cls = TopomapState
+        self.reset_chain()
+        self.manifest.update(
+            policy_inputs=["six chronological RGB observations", "route of reference RGB images"],
+            stop_rule=(
+                "upstream topomap: latched stop when closest_node == goal_node "
+                f"(radius {radius}, close_threshold {close_threshold})"
+            )
+            if self.stop_enabled
+            else "none",
+            topomap={
+                "radius": radius,
+                "close_threshold": close_threshold,
+            },
+        )
+
+    def set_chain(self, chain):
+        if len(chain) < 2:
+            raise ValueError("a route of reference images needs at least two nodes")
+        self.chain = [np.asarray(c) for c in chain]
+        self.reset_chain()
+
+    def reset_chain(self):
+        self.state = self.state_cls(goal_node=len(self.chain) - 1)
+        self.stopped = False
+
+    def step(self, history, goal=None):
+        torch = self.torch
+        if self.device == "cuda":
+            torch.cuda.synchronize()
+        begin = time.perf_counter()
+        start, end = self.state.window(self.topomap_cfg)
+        nodes = self.chain[start : end + 1]
+        obs = self.tensor(history).repeat(len(nodes), 1, 1, 1)
+        goals = torch.cat([self.tensor([n]) for n in nodes], dim=0)
+        with torch.inference_mode():
+            distance, actions = self.model(obs, goals)
+        d = np.asarray(distance.detach().cpu().numpy(), float).reshape(-1)
+        follow = self.state.update(d, self.topomap_cfg)
+        waypoint = actions[follow, 2].detach().cpu().numpy()
+        if not np.isfinite(waypoint).all():
+            raise ValueError("nonfinite baseline prediction")
+        v, w = reference_pd_twist(
+            waypoint * self.action_scale_m, self.limits, PDConfig(dt=self.control_period_s)
+        )
+        if self.stop_enabled and self.state.reached_goal:
+            self.stopped = True
+        if self.stopped:
+            v, w = 0.0, 0.0
+        if self.device == "cuda":
+            torch.cuda.synchronize()
+        record = dict(self.state.history[-1])
+        return {
+            "command": [v, 0.0, w],
+            "predicted_distance": float(d[follow]),
+            "window_distances": d.tolist(),
+            "waypoint_normalized": waypoint.tolist(),
+            "policy_stop": self.stopped,
+            "chain": record,
+            "latency_ms": (time.perf_counter() - begin) * 1000,
+        }

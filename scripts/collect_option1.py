@@ -57,6 +57,15 @@ def main():
         "--policy-max-v", type=float, default=0.1, help="must lie inside the qualified envelope"
     )
     parser.add_argument(
+        "--topomap-root",
+        type=Path,
+        help="routes of reference images (build_topomap.py); policy navigates the chain",
+    )
+    parser.add_argument("--topomap-radius", type=int, default=4, help="upstream default 4")
+    parser.add_argument(
+        "--topomap-close-threshold", type=float, default=3.0, help="upstream default 3"
+    )
+    parser.add_argument(
         "--start-arc-fraction",
         type=float,
         default=0.0,
@@ -173,14 +182,27 @@ def main():
 
         if args.policy_period_frames < 1:
             parser.error("policy period must be at least one frame")
-        policy = RGBBaseline(
-            args.checkpoint,
-            action_scale_m=0.049994826316833496,
-            stop_enabled=True,
-            max_v=args.policy_max_v,
-            control_period_s=args.policy_period_frames / 12.0,
-            stop_rule=args.stop_rule,
-        )
+        if args.topomap_root:
+            from navfm.collection.rgb_baseline import RGBTopomapBaseline
+
+            policy = RGBTopomapBaseline(
+                args.checkpoint,
+                radius=args.topomap_radius,
+                close_threshold=args.topomap_close_threshold,
+                action_scale_m=0.049994826316833496,
+                stop_enabled=True,
+                max_v=args.policy_max_v,
+                control_period_s=args.policy_period_frames / 12.0,
+            )
+        else:
+            policy = RGBBaseline(
+                args.checkpoint,
+                action_scale_m=0.049994826316833496,
+                stop_enabled=True,
+                max_v=args.policy_max_v,
+                control_period_s=args.policy_period_frames / 12.0,
+                stop_rule=args.stop_rule,
+            )
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO):
         parser.error("output must be new and external")
@@ -708,6 +730,42 @@ def main():
                         manifest["goal_time_definition"] = (
                             "capture time of the declared prior-traversal source frame"
                         )
+                    if args.topomap_root:
+                        # Route of reference images: every node verified against the
+                        # chain record and its source traversal frame, decoded as the goal is.
+                        chain_path = args.topomap_root / "chain.json"
+                        chain = json.loads(chain_path.read_text())["routes"][route["id"]]
+                        images = []
+                        for node in chain["nodes"]:
+                            data = (
+                                args.topomap_root / route["id"] / f"{node['node']}.jpg"
+                            ).read_bytes()
+                            if (
+                                hashlib.sha256(data).hexdigest() != node["sha256"]
+                                or Path(node["source"]).read_bytes() != data
+                            ):
+                                raise ValueError(
+                                    f"{route['id']}: chain node {node['node']} changed"
+                                )
+                            images.append(
+                                np.asarray(
+                                    Image.open(
+                                        args.topomap_root / route["id"] / f"{node['node']}.jpg"
+                                    ).convert("RGB")
+                                )
+                            )
+                        policy.set_chain(images)
+                        manifest["topomap"] = {
+                            "root": str(args.topomap_root.resolve()),
+                            "chain_json_sha256": hashlib.sha256(
+                                chain_path.read_bytes()
+                            ).hexdigest(),
+                            "chain_source_route": chain["chain_source_route"],
+                            "control": chain["control"],
+                            "nodes": [[n["frame"], n["sha256"]] for n in chain["nodes"]],
+                            "final_node_is_goal": chain["nodes"][-1]["sha256"]
+                            == (manifest.get("goal_source_frame") or {}).get("source_sha256"),
+                        }
                     history = [robot.rgb().copy() for _ in range(6)]
                 inference = []
                 stop_frame = None
