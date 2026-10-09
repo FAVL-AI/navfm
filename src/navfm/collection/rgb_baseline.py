@@ -9,6 +9,15 @@ import numpy as np
 
 from navfm.control import BaseLimits, PDConfig, reference_pd_twist
 
+STOP_RULES = {
+    # Historical project rule; its <=1 threshold is below the model's observed
+    # goal-as-current output floor (docs/ARRIVAL_RESEARCH_DECISION.md).
+    "project": "three consecutive predicted temporal distances <=1 and selected waypoint <=0.15m; latched",
+    # Pinned deployment close_threshold default (navigate.py --close-threshold 3),
+    # applied to the goal image as a single-node map; not fitted to project data.
+    "upstream_t3": "predicted temporal distance <=3 (upstream close_threshold default); latched",
+}
+
 
 class RGBBaseline:
     def __init__(
@@ -18,6 +27,8 @@ class RGBBaseline:
         action_scale_m: float = 0.2 / 4,
         stop_enabled: bool = False,
         max_v: float = 0.2,
+        control_period_s: float = 0.25,
+        stop_rule: str = "project",
     ):
         import torch
         from torchvision import transforms
@@ -25,7 +36,13 @@ class RGBBaseline:
         from navfm import upstream
         from navfm.models.loader import extract_state_dict, load_checkpoint, sha256
 
+        if stop_rule not in STOP_RULES:
+            raise ValueError(f"unknown stop rule {stop_rule!r}")
+        if not control_period_s > 0:
+            raise ValueError("control period must be positive")
         self.action_scale_m = action_scale_m
+        self.control_period_s = control_period_s
+        self.stop_rule = stop_rule
         self.stop_enabled = stop_enabled
         self.stop_count = 0
         self.stopped = False
@@ -65,12 +82,11 @@ class RGBBaseline:
             "controller": "reference_pd_twist; differential",
             "max_v": max_v,
             "max_w": 0.4,
-            "control_hz": 4,
+            "control_hz": 1.0 / control_period_s,
+            "pd_dt_s": control_period_s,
             "preprocessing": "official 4:3 center crop, PIL resize, ImageNet mean/std",
             "initial_history": "repeat first observation until six real control frames exist",
-            "stop_rule": "three consecutive predicted temporal distances <=1 and selected waypoint <=0.15m; latched"
-            if stop_enabled
-            else "none",
+            "stop_rule": STOP_RULES[stop_rule] if stop_enabled else "none",
         }
 
     def tensor(self, images):
@@ -99,11 +115,18 @@ class RGBBaseline:
         prediction = float(distance.detach().cpu().reshape(-1)[0])
         if not np.isfinite(waypoint).all() or not np.isfinite(prediction):
             raise ValueError("nonfinite baseline prediction")
-        v, w = reference_pd_twist(waypoint * self.action_scale_m, self.limits, PDConfig(dt=0.25))
+        v, w = reference_pd_twist(
+            waypoint * self.action_scale_m, self.limits, PDConfig(dt=self.control_period_s)
+        )
         if self.stop_enabled:
-            close = prediction <= 1.0 and np.linalg.norm(waypoint[:2] * self.action_scale_m) <= 0.15
-            self.stop_count = self.stop_count + 1 if close else 0
-            self.stopped = self.stopped or self.stop_count >= 3
+            if self.stop_rule == "project":
+                close = (
+                    prediction <= 1.0 and np.linalg.norm(waypoint[:2] * self.action_scale_m) <= 0.15
+                )
+                self.stop_count = self.stop_count + 1 if close else 0
+                self.stopped = self.stopped or self.stop_count >= 3
+            else:
+                self.stopped = self.stopped or prediction <= 3.0
             if self.stopped:
                 v, w = 0.0, 0.0
         if self.device == "cuda":

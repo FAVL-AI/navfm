@@ -49,6 +49,18 @@ def main():
     )
     parser.add_argument("--goal-root", type=Path, help="fixed raw goals indexed by route id")
     parser.add_argument(
+        "--policy-period-frames",
+        type=int,
+        default=3,
+        help="12 Hz frames per policy decision; 3 = 4 Hz (historical), 6 = 2 Hz",
+    )
+    parser.add_argument(
+        "--stop-rule",
+        choices=["project", "upstream_t3"],
+        default="project",
+        help="project = historical <=1 rule; upstream_t3 = pinned close_threshold 3",
+    )
+    parser.add_argument(
         "--goal-settle-steps",
         type=int,
         default=8,
@@ -85,8 +97,15 @@ def main():
             parser.error("articulated qualification did not pass")
         from navfm.collection.rgb_baseline import RGBBaseline
 
+        if args.policy_period_frames < 1:
+            parser.error("policy period must be at least one frame")
         policy = RGBBaseline(
-            args.checkpoint, action_scale_m=0.049994826316833496, stop_enabled=True, max_v=0.1
+            args.checkpoint,
+            action_scale_m=0.049994826316833496,
+            stop_enabled=True,
+            max_v=0.1,
+            control_period_s=args.policy_period_frames / 12.0,
+            stop_rule=args.stop_rule,
         )
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO):
@@ -585,7 +604,7 @@ def main():
                     xy, yaw = robot.pose()
                     pose_before = [*xy.tolist(), yaw]
                     if policy:
-                        if i % 3 == 0:
+                        if i % args.policy_period_frames == 0:
                             perception_start = time.perf_counter()
                             history = [*history, robot.rgb().copy()][-6:]
                             prediction = policy.step(history, goal)
