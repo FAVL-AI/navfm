@@ -561,3 +561,108 @@ normal lighting is not established.
    current routes are now development routes.
 3. A stop-threshold calibration on dev can be prepared, but cannot be evaluated
    until held-out groups exist.
+
+## Directive 4: controller re-qualification, failure decomposition, held-out freeze (2026-10-09)
+
+### Controller: the milestone 3 qualification was non-discriminating
+
+Milestone 3 counted the 0.1 m/s envelope as qualified from one saturated
+command (0.1 m/s, +/-0.4 rad/s). In-episode audit
+(`scripts/audit_closed_loop_episodes.py`, evidence `closedloop-audit-20261009-01.json`)
+compared every held policy command with the yaw rate the base actually realised
+before first contact. Across all 16 earlier closed-loop episodes (released and
+fine-tuned, 2 Hz and 4 Hz arms) the realised/commanded yaw-rate slope was
+**0.16-0.34**; typical commands were 0.1-0.2 rad/s. A free-space sweep at the
+same proxy settings (`articulated-control-20261009-08`) shows a deadband: at
+0.1 m/s, commands of 0.05 / 0.1 / 0.2 / 0.3 rad/s realised 0.00 / 0.015 / 0.06-0.08
+/ 0.12-0.14 rad/s; only 0.4 tracked. Replaying one episode's logged commands in
+free space gave slope 0.35. The deficit is therefore the open-loop wheel map
+(skid-steer sphere-wheel proxy), not the scene. **Every earlier closed-loop
+episode, and every model-failure attribution drawn from them, is confounded by
+a base that realised about a fifth of the commanded turning.**
+
+The training teacher is a separate, kinematic `pose_step` teacher at 0.2 m/s
+with turn rates up to 0.7 rad/s; it never used the wheel controller.
+
+Repair: a PI loop on measured body yaw rate (ideal gyro; base-controller input
+only, never a policy input; `src/navfm/collection/yaw_rate_tracker.py`, gains
+fixed before testing: ff 1.0, kp 1.0, ki 4.0). Acceptance was declared in the
+qualifier before running: per case |error| <= max(0.03, 0.25|w|); logged-command
+replay slope in [0.8, 1.2], sign agreement >= 0.9.
+
+| Run | PI rate | Sweep (20 turn cases, 0.1 and 0.2 m/s) | Replay slope (speed) | Status |
+| --- | --- | --- | --- | --- |
+| 08 open loop | none | 0.1 m/s: only +/-0.4 pass; 0.2 m/s: none pass | 0.35 (logged 0.1) | FAIL |
+| 09 | 12 Hz | 0.1 m/s 0.2/0.3 fail (stick-slip limit cycle, ~0.5 s period); 0.2 m/s all pass | 0.69 | FAIL |
+| 12 | 12 Hz | as 09 | 0.88 (0.2) | FAIL |
+| **10** | **120 Hz** | **all pass** | **0.85 (logged 0.1)** | **PASS** |
+| **11** | **120 Hz** | **all pass** | **0.88 (0.2)** | **PASS** |
+
+The rate was chosen after seeing 09 fail; the 120 Hz loop corresponds to a
+motor-controller loop running independently of the 2-4 Hz policy. The collector
+now runs it from a physics-step callback (`--yaw-feedback`), refuses unless the
+qualification describes the same tracker with a command replay, and records the
+number of physics-step updates per episode (6000/6000 observed in the one valid
+episode). Limits: the replay set is one episode; tracking inside a cluttered
+scene is measured per episode by the audit, not assumed.
+
+### Four-episode failure decomposition (fine-tuned seed 0, milestone 6)
+
+Declared thresholds: goal region 0.5 m, route departure 0.5 m from the route
+polyline, settled = < 0.01 m motion in the last 1 s after a stop.
+
+| Route | Event order (s) | Entered goal region | Declared arrival | Settled after stop | First event | Realised/commanded yaw |
+| --- | --- | --- | --- | --- | --- | --- |
+| s_bend_run_0000 | departure 12.4, contact 35.3 (WallLeft), timeout 49.9 | no (closest 0.90 m) | no | n/a | route departure | 0.21 |
+| s_bend_run_0001 | departure 12.6, contact 26.5 (Obstacle), timeout 49.9 | no (closest 0.72 m) | no | n/a | route departure | 0.15 |
+| junction_run_0000 | entry 19.5, departure 23.1, stop 24.0 | yes | yes, at 0.527 m (after leaving the region) | yes (0.0003 m) | goal-region entry | 0.13 |
+| junction_run_0001 | entry 15.3, departure 25.4, contact 29.4 (Obstacle), timeout 49.9 | yes (closest 0.087 m) | no (min prediction 4.38) | n/a | goal-region entry | 0.12 |
+
+Counts (n = 4): goal region entered 2/4; arrival declared 1/4 (wrong, 0.527 m);
+settled after stop 1/1; route departure before any goal entry 2/4 (both
+s_bend, at ~12 s, the first bend); collision 3/4; timeout 3/4. The released
+checkpoint shows the same pattern (s_bend departures at 12.1-12.2 s; junction_1
+entry without stop). With realised turning at 12-21% of command, the two s_bend
+departures are not attributable to the model.
+
+### Controller-repaired retest: first attempt INVALID (retained)
+
+`arrival-closedloop-yawfb-{released,ft-seed0}-20261009-01`: 1 of 8 episodes ran;
+the other 7 were refused by the source-stability gate because collector and
+`scene_layouts.py` were edited during the run (process error, gate worked as
+designed). The one valid episode (released, s_bend_run_0000) realised slope
+0.76 in-episode (was 0.16-0.21), yet still departed at 12.3 s: the policy drove
+straight at the first bend and then turned left (yaw 0.5 -> 1.1 rad) where the
+route turns right, with predicted distance never below 8.7. One episode;
+treated as a lead, not a finding.
+
+### Held-out freeze: `heldout_layouts_v1` under `arrival_split_v2`
+
+Three independent red-team passes (`gates/redteam/trigger4-heldout-freeze-2026-10-09.md`):
+DO-NOT-FREEZE, DO-NOT-FREEZE, FREEZE-WITH-AMENDMENTS; all pass-3 amendments
+applied before this freeze. `arrival_split_v2.json` amends v1 only by enlarging
+held-out from 3 to 6 groups, before any held-out data exists.
+
+- Six explicit layouts (scene indices 40-45, reserved), two routes each (12
+  routes); starts and lengths matched to training; palettes, obstacles and
+  end-wall landmarks new (every colour >= 0.15 from every training colour); the
+  two goals in a group are 1.2-1.4 m apart and dominated by landmarks of different
+  shape and colour at both the endpoint and the teacher final-frame pose.
+- Generator `scripts/make_heldout_layouts_v1.py` refuses to write unless every
+  route passes: kinematic teacher completes within 360 steps (133-137 used),
+  clearance >= 0.34 m, goal landmark fraction >= 0.3 (0.40-0.57), goal not
+  reachable by driving straight.
+- Frozen protocol: teacher 360 steps, policy 600 steps at 0.1 m/s, 12 Hz,
+  arrival radius 0.5 m. Primary endpoint completion; decision rule completion
+  >= 10/12 against goal-blind nulls (~6/12); goal-swap control criterion;
+  descriptive only.
+- Enforcement: collection, admission, replay, summary, decompose and audit
+  refuse sealed ids, reserved indices, route geometry within 0.1 m and scenes
+  reproducing half a sealed scene; unsealing needs the pinned ledger, a declared
+  role slot, the protocol budget and all routes; policy roles need checkpoints
+  pre-declared in `configs/splits/heldout_layouts_v1_checkpoints.json` (not yet
+  created); scoring needs the run recorded in the ledger.
+- Documented residuals: not robust to a determined operator; goal-swap tooling
+  not built yet.
+- Status: FROZEN SPECIFICATION, NOT COLLECTED, NOT SCORED. Previously inspected
+  dev and retired-test routes remain diagnostic/development data.

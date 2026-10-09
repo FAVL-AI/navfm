@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 from itertools import pairwise
 from pathlib import Path
 
@@ -117,9 +118,26 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--collection", type=Path, action="append", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument(
+        "--score-heldout",
+        type=Path,
+        metavar="LEDGER_DIR",
+        help="unseal ledger; sealed routes are scored only for collections recorded in it",
+    )
     a = p.parse_args()
     if a.out.exists():
         p.error("output must be new")
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+    from navfm.collection.scene_layouts import require_scoring_allowed
+
+    for root in a.collection:
+        routes = json.loads((root / "frozen_routes.json").read_text())
+        try:
+            require_scoring_allowed(
+                root.resolve(), routes, Path(__file__).resolve().parents[1], a.score_heldout
+            )
+        except ValueError as exc:
+            p.error(f"{root.name}: {exc}")
     rows = []
     for root in a.collection:
         summary = json.loads((root / "collection.json").read_text())

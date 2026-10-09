@@ -45,6 +45,9 @@ def split_routes(routes):
     route_ids = set()
     result = {s: [] for s in ("train", "dev", "test")}
     for route in routes:
+        if route["split"] not in result:
+            # Held-out routes (split "heldout") never enter a training corpus.
+            raise ValueError(f"route split {route['split']!r} cannot be admitted")
         if route["route_id"] in route_ids:
             raise ValueError("route appears more than once")
         route_ids.add(route["route_id"])

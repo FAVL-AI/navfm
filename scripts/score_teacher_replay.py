@@ -120,6 +120,16 @@ def main():
     admitted = admitted_set(a.admission)
     episodes = []
     for root in a.collection:
+        from navfm.collection.scene_layouts import refuse_sealed
+
+        try:
+            # Held-out routes never enter training, replay diagnostics or summaries.
+            refuse_sealed(
+                json.loads((root / "frozen_routes.json").read_text()),
+                Path(__file__).resolve().parents[1],
+            )
+        except ValueError as exc:
+            ap.error(f"{root.name}: {exc}")
         for e in json.loads((root / "collection.json").read_text())["episodes"]:
             path = root / e["id"]
             m = json.loads((path / "runtime_manifest.json").read_text())

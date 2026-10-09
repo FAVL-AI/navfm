@@ -37,6 +37,13 @@ def main():
         collection = json.loads((collection_root / "collection.json").read_text())
         if collection["status"] != "COMPLETED":
             p.error("every collection must finish before admission")
+        from navfm.collection.scene_layouts import refuse_sealed
+
+        try:
+            # Held-out routes never enter training, replay diagnostics or summaries.
+            refuse_sealed(json.loads((collection_root / "frozen_routes.json").read_text()), REPO)
+        except ValueError as exc:
+            p.error(f"{collection_root.name}: {exc}")
         candidates.extend((collection_root, item) for item in collection["episodes"])
     out.mkdir(parents=True)
     import numpy as np

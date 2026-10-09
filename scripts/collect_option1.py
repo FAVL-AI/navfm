@@ -32,9 +32,39 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--robot", required=True)
     parser.add_argument("--max-steps", type=int, default=240)
-    parser.add_argument("--limit", type=int, default=10)
+    parser.add_argument(
+        "--limit", type=int, help="first N routes (default 10; all for --layout-spec)"
+    )
     parser.add_argument(
         "--route-spec", type=Path, help="prospective external or tracked route/layout specification"
+    )
+    parser.add_argument(
+        "--layout-spec", type=Path, help="explicit scene boxes plus routes (scene_layouts.py)"
+    )
+    parser.add_argument(
+        "--unseal-heldout",
+        type=Path,
+        metavar="LEDGER_DIR",
+        help="external unseal ledger directory; required for any sealed held-out route",
+    )
+    parser.add_argument("--unseal-role", help="pre-declared unseal slot (spec protocol)")
+    parser.add_argument(
+        "--yaw-feedback",
+        action="store_true",
+        help="policy runs: 120 Hz PI on measured body yaw rate (yaw_rate_tracker.py)",
+    )
+    parser.add_argument(
+        "--policy-max-v", type=float, default=0.1, help="must lie inside the qualified envelope"
+    )
+    parser.add_argument(
+        "--start-arc-fraction",
+        type=float,
+        default=0.0,
+        help="prospective start at this fraction of route arc length (perturbation.py)",
+    )
+    parser.add_argument("--start-lateral-m", type=float, default=0.0, help="left-positive offset")
+    parser.add_argument(
+        "--start-yaw-deg", type=float, default=0.0, help="offset from route heading"
     )
     parser.add_argument("--route-id", action="append", help="recollect a named route; may repeat")
     parser.add_argument(
@@ -67,6 +97,32 @@ def main():
         help="render steps after teleporting to the goal before its photograph; 8 is historical",
     )
     args = parser.parse_args()
+    if args.unseal_heldout:
+        # A sealed collection follows the frozen protocol exactly: every route,
+        # the declared budget and speed, no perturbation, the sealed bytes only.
+        from navfm.collection.scene_layouts import SEALED_SPECS
+
+        sealed_spec = json.loads((REPO / SEALED_SPECS[0]).read_text())
+        given = json.loads(args.layout_spec.read_text()) if args.layout_spec else {}
+        if given.get("content_digest") != sealed_spec["content_digest"] or given != sealed_spec:
+            parser.error("--unseal-heldout requires --layout-spec to be the sealed spec itself")
+        proto = sealed_spec["protocol"]
+        if args.limit is not None or args.route_id:
+            parser.error("a sealed collection takes every route; no --limit or --route-id")
+        if args.start_arc_fraction or args.start_lateral_m or args.start_yaw_deg:
+            parser.error("a sealed collection takes no start perturbation")
+        budget = proto["policy_max_steps"] if args.checkpoint else proto["teacher_max_steps"]
+        if args.max_steps != budget:
+            parser.error(f"sealed protocol fixes --max-steps {budget}")
+        if args.checkpoint and args.policy_max_v != proto["policy_max_v_m_s"]:
+            parser.error(f"sealed protocol fixes --policy-max-v {proto['policy_max_v_m_s']}")
+        if args.unseal_role not in proto["unseal_slots"]:
+            parser.error(f"--unseal-role must be one of {sorted(proto['unseal_slots'])}")
+        from navfm.collection.scene_layouts import pinned_ledger
+
+        ledger_dir = args.unseal_heldout.expanduser().resolve()
+        if ledger_dir != pinned_ledger():
+            parser.error(f"unseal ledger must be the pinned ledger {pinned_ledger()}")
     policy = None
     if args.checkpoint:
         if args.actuation != "wheel" or not args.qualification or not args.goal_root:
@@ -95,6 +151,24 @@ def main():
             parser.error("qualification does not describe this controller")
         if qualification["status"] != "PASS":
             parser.error("articulated qualification did not pass")
+        if args.policy_max_v > qualification.get("qualified_command_envelope", {}).get(
+            "max_v", 0.1
+        ):
+            parser.error("policy speed outside the qualified envelope")
+        if args.yaw_feedback:
+            import dataclasses as _dc
+
+            from navfm.collection.yaw_rate_tracker import YawRateGains
+
+            feedback = qualification.get("yaw_feedback") or {}
+            if feedback.get("update_hz") != 120.0 or any(
+                feedback.get(k) != v for k, v in _dc.asdict(YawRateGains()).items()
+            ):
+                parser.error("qualification does not describe the 120 Hz yaw-rate tracker")
+            if not any(e.get("name") == "command_replay" for e in qualification["episodes"]):
+                parser.error("yaw feedback qualification must include a command replay")
+        elif qualification.get("yaw_feedback"):
+            parser.error("qualification describes yaw feedback; pass --yaw-feedback")
         from navfm.collection.rgb_baseline import RGBBaseline
 
         if args.policy_period_frames < 1:
@@ -103,7 +177,7 @@ def main():
             args.checkpoint,
             action_scale_m=0.049994826316833496,
             stop_enabled=True,
-            max_v=0.1,
+            max_v=args.policy_max_v,
             control_period_s=args.policy_period_frames / 12.0,
             stop_rule=args.stop_rule,
         )
@@ -112,15 +186,55 @@ def main():
         parser.error("output must be new and external")
     out.mkdir(parents=True)
     from navfm.collection.demonstrations import DemonstrationTeacher, route_specs
+    from navfm.collection.perturbation import StartPerturbation, perturbed_start
 
-    routes = (json.loads(args.route_spec.read_text()) if args.route_spec else route_specs())[
-        : args.limit
-    ]
+    perturbation = StartPerturbation(
+        args.start_arc_fraction, args.start_lateral_m, args.start_yaw_deg
+    )
+    layout_spec = None
+    if args.layout_spec:
+        if args.route_spec:
+            parser.error("choose --route-spec or --layout-spec")
+        layout_spec = json.loads(args.layout_spec.read_text())
+        routes = layout_spec["routes"][: args.limit]
+    else:
+        loaded = json.loads(args.route_spec.read_text()) if args.route_spec else route_specs()
+        if not isinstance(loaded, list):
+            parser.error("--route-spec must be a route list; layout specs use --layout-spec")
+        routes = loaded[: args.limit or 10]
     if args.route_id:
         known = {r["id"] for r in routes}
         if set(args.route_id) - known:
             parser.error("unknown route id")
         routes = [r for r in routes if r["id"] in args.route_id]
+    from navfm.collection.scene_layouts import (
+        check_heldout_goals,
+        claim_unseal_slot,
+        sealed_matches,
+    )
+
+    # Sealed held-out routes and scenes are refused from any source; unsealing
+    # claims one pre-declared slot in the external ledger.
+    sealed = sealed_matches(routes, REPO, (layout_spec or {}).get("scenes")) + (
+        ["layout spec marked sealed"] if (layout_spec or {}).get("sealed") else []
+    )
+    if sealed and not args.unseal_heldout:
+        parser.error(f"sealed held-out data refused: {sorted(set(sealed))}")
+    if args.unseal_heldout:
+        try:
+            if args.checkpoint:
+                check_heldout_goals(args.goal_root, routes, args.unseal_role, ledger_dir)
+            claim_unseal_slot(
+                ledger_dir,
+                sealed_spec,
+                out=out,
+                role=args.unseal_role,
+                routes=[r["id"] for r in routes],
+                checkpoint_sha256=args.checkpoint_sha256 if args.checkpoint else None,
+                repo=REPO,
+            )
+        except ValueError as exc:
+            parser.error(str(exc))
     (out / "frozen_routes.json").write_text(json.dumps(routes, indent=2) + "\n")
     summary = {"scope": "OPTION1_DATASET_ENGINEERING", "episodes": [], "status": "RUNNING"}
 
@@ -172,72 +286,31 @@ def main():
 
         # All geometry is created before initializing physics. Scenes are spatially
         # separated; no live schema edits or tensor-view invalidation is needed.
+        from navfm.collection.scene_layouts import layout_boxes, legacy_boxes
+
+        explicit = {s["scene_index"]: s for s in (layout_spec or {}).get("scenes", [])}
         for scene in sorted({r["scene_index"] for r in routes}):
             origin = scene * 20.0
             half = next(r["wall_half_width"] for r in routes if r["scene_index"] == scene)
             root = f"/World/Fixture/Scene{scene}"
-            cube(
-                root + "/Floor",
-                (2.0, origin, -0.05),
-                (8.0, 8.0, 0.1),
-                (0.35 + 0.04 * (scene % 5), 0.4, 0.45),
-            )
-            cube(
-                root + "/WallLeft",
-                (2.0, origin + half, 1.4),
-                (6.0, 0.2, 2.8),
-                (0.65, 0.7 - 0.05 * (scene % 5), 0.75),
-            )
-            cube(
-                root + "/WallRight",
-                (2.0, origin - half, 1.4),
-                (6.0, 0.2, 2.8),
-                (0.65, 0.7, 0.75 - 0.04 * (scene % 5)),
-            )
-            cube(root + "/EndWall", (5.0, origin, 1.4), (0.2, 2 * half, 2.8), (0.6, 0.65, 0.7))
-            obstacle = (3.5 + 0.1 * (scene % 5), origin + 1.45, 0.4)
-            cube(root + "/Obstacle", obstacle, (0.45, 0.4, 0.8), (0.1, 0.3, 0.7))
-            # Prospective scene landmarks prevent plain-wall image-goal ambiguity.
-            # These are rendered USD geometry, never overlays on captured images.
-            for side in (-1, 1):
-                for stripe in range(12):
-                    color = (0.15, 0.35, 0.65) if stripe % 2 else (0.75, 0.35, 0.12)
-                    cube(
-                        root + f"/Stripe{'L' if side > 0 else 'R'}_{stripe}",
-                        (-0.4 + stripe * 0.5, origin + side * (half - 0.105), 1.0),
-                        (0.15, 0.015, 1.3),
-                        color,
-                        False,
-                    )
-            for ix in range(8):
-                for iy in range(8):
-                    if (ix + iy) % 2 == 0:
-                        cube(
-                            root + f"/Tile{ix}_{iy}",
-                            (-1.5 + ix, origin - 3.5 + iy, 0.002),
-                            (1.0, 1.0, 0.002),
-                            (0.22, 0.26, 0.30),
-                            False,
-                        )
+            if scene in explicit:
+                boxes = layout_boxes(explicit[scene])
+            else:
+                # Distinct partition geometry is prospective and shared within each layout only.
+                boxes = legacy_boxes(scene, half, partitions=bool(args.route_spec))
+            for b in boxes:
+                cube(root + "/" + b["name"], b["xyz"], b["size"], b["color"], b["collision"])
+            named = {b["name"]: b for b in boxes}
             fixtures[scene] = {
                 "scene_index": scene,
                 "origin_y": origin,
                 "wall_half_width": half,
-                "obstacle_xyz": obstacle,
+                "obstacle_xyz": tuple(named["Obstacle"]["xyz"]) if "Obstacle" in named else None,
+                "layout": explicit[scene]["group"] if scene in explicit else "legacy_corridor",
             }
-        if args.route_spec:
-            # Distinct partition geometry is prospective and shared within each layout only.
-            for scene in sorted(fixtures):
-                origin = scene * 20.0
-                for side in (-1, 1):
-                    cube(
-                        f"/World/Fixture/Scene{scene}/DoorPartition{side + 1}",
-                        (1.75 + 0.12 * (scene % 5), origin + side * 1.45, 0.7),
-                        (0.16, 0.65 + 0.08 * (scene % 5), 1.4),
-                        (0.35, 0.45, 0.25),
-                    )
-                fixtures[scene]["door_partition_x"] = 1.75 + 0.12 * (scene % 5)
-                fixtures[scene]["door_partition_width"] = 0.65 + 0.08 * (scene % 5)
+            if "DoorPartition0" in named:
+                fixtures[scene]["door_partition_x"] = named["DoorPartition0"]["xyz"][0]
+                fixtures[scene]["door_partition_width"] = named["DoorPartition0"]["size"][1]
         sun = UsdLux.DistantLight.Define(usd, "/World/Fixture/Sun")
         sun.CreateIntensityAttr(1500.0)
         UsdGeom.XformCommonAPI(sun).SetRotate(Gf.Vec3f(-45.0, 30.0, 0.0))
@@ -366,7 +439,50 @@ def main():
         if any(len(i) != 1 for i in indices.values()):
             raise ValueError("ambiguous wheel indices")
 
+        from navfm.collection.yaw_rate_tracker import YawRateTracker
+
+        tracker = YawRateTracker() if policy and args.yaw_feedback else None
+        held = {"command": (0.0, 0.0, 0.0), "updates": 0, "idle": 0}
+
+        def wheel_targets(v, vy, w):
+            k = 0.0775 + 0.085
+            r = 0.04
+            speeds = [
+                (v - vy - k * w) / r,
+                (v + vy + k * w) / r,
+                (v + vy - k * w) / r,
+                (v - vy + k * w) / r,
+            ]
+            values = np.zeros((1, len(names)), dtype=np.float32)
+            for ids, value in zip(indices.values(), speeds, strict=True):
+                values[0, ids[0]] = value
+            robot._articulation.set_joint_velocity_targets(values)
+
+        def on_physics_step(dt):
+            # Base-controller loop at the physics rate; policy commands are held.
+            v, vy, w = held["command"]
+            if v == 0 and vy == 0 and w == 0:
+                tracker.reset()
+                wheel_targets(0.0, 0.0, 0.0)
+                held["idle"] += 1
+                return
+            measured = float(np.asarray(robot._articulation.get_velocities()).reshape(-1, 6)[0, 5])
+            wheel_targets(v, vy, tracker.update(w, measured, dt))
+            held["updates"] += 1
+
+        held["subscription"] = (
+            omni.physx.get_physx_interface().subscribe_physics_step_events(on_physics_step)
+            if tracker
+            else None
+        )
+
         def drive(command):
+            if tracker:
+                held["command"] = tuple(float(c) for c in command)
+                if not any(held["command"]):
+                    tracker.reset()
+                    wheel_targets(0.0, 0.0, 0.0)
+                return
             if args.actuation == "pose_step":
                 # Kinematic demonstration generation only. Record actual post-render
                 # poses, not these requested positions, as the training labels.
@@ -384,18 +500,7 @@ def main():
             v, vy, w = command
             if policy:
                 w *= 1.5 if abs(v) < 1e-6 else 0.8
-            k = 0.0775 + 0.085
-            r = 0.04
-            speeds = [
-                (v - vy - k * w) / r,
-                (v + vy + k * w) / r,
-                (v + vy - k * w) / r,
-                (v - vy + k * w) / r,
-            ]
-            values = np.zeros((1, len(names)), dtype=np.float32)
-            for ids, value in zip(indices.values(), speeds, strict=True):
-                values[0, ids[0]] = value
-            robot._articulation.set_joint_velocity_targets(values)
+            wheel_targets(v, vy, w)
 
         contacts = []
 
@@ -503,7 +608,13 @@ def main():
                 step()
                 goal_time = float(cam.get_current_frame()["rendering_time"])
                 Image.fromarray(robot.rgb()).save(episode / "goal.png")
-                robot.teleport(points[0], route["start_yaw"])
+                if perturbation.is_identity:
+                    start_xy, start_yaw, teacher_points = points[0], route["start_yaw"], points
+                else:
+                    start_xy, start_yaw, teacher_points = perturbed_start(points, perturbation)
+                manifest["start_perturbation"] = perturbation.to_dict()
+                manifest["start_pose"] = [float(start_xy[0]), float(start_xy[1]), float(start_yaw)]
+                robot.teleport(start_xy, start_yaw)
                 drive([0.0, 0.0, 0.0])
                 for _ in range(8):
                     step()
@@ -545,7 +656,7 @@ def main():
                         "collect.max_stationary_fraction",
                     ),
                 )
-                teacher = DemonstrationTeacher(points, route["speed"])
+                teacher = DemonstrationTeacher(teacher_points, route["speed"])
                 if policy:
                     policy.stop_count = 0
                     policy.stopped = False
@@ -616,6 +727,7 @@ def main():
                 frame_available_wall = time.perf_counter()
                 previous = float(cam.get_current_frame()["rendering_time"])
                 reached = False
+                feedback_start = held["updates"] + held["idle"]
                 for i in range(args.max_steps):
                     wall_start = time.perf_counter()
                     before = float(sim.current_time)
@@ -708,6 +820,21 @@ def main():
                 drive([0.0, 0.0, 0.0])
                 writer.close()
                 verify_saved_recording(episode / "trajectory", captures, (320, 240))
+                if tracker:
+                    # The PI must have run on every physics step of the episode.
+                    feedback_steps = held["updates"] + held["idle"] - feedback_start
+                    manifest["base_controller"] = {
+                        "yaw_feedback": dataclasses.asdict(tracker.gains),
+                        "update_hz": 1.0 / sim.get_physics_dt(),
+                        "measurement": "articulation root angular velocity z (ideal gyro)",
+                        "physics_steps_observed": feedback_steps,
+                        "physics_steps_expected": len(captures) * cfg.physics_substeps,
+                    }
+                    if (
+                        abs(feedback_steps - len(captures) * cfg.physics_substeps)
+                        > 2 * cfg.physics_substeps
+                    ):
+                        raise RuntimeError("yaw feedback did not run on every physics step")
                 manifest.update(
                     status="PASS",
                     frames=len(captures),
@@ -748,7 +875,7 @@ def main():
                         ),
                         "collision_episode": int(bool(contacts)),
                         "path_length_m": path_length,
-                        "path_efficiency": float(np.linalg.norm(points[-1] - points[0]))
+                        "path_efficiency": float(np.linalg.norm(points[-1] - start_xy))
                         / max(path_length, 1e-9)
                         if success
                         else 0.0,

@@ -37,6 +37,16 @@ def main():
     manifests = {}
     starts = {}
     for arm, root in [("pretrained", a.pretrained), ("adapted", a.adapted)]:
+        from navfm.collection.scene_layouts import refuse_sealed
+
+        try:
+            # Held-out routes never enter training, replay diagnostics or summaries.
+            refuse_sealed(
+                json.loads((root / "frozen_routes.json").read_text()),
+                Path(__file__).resolve().parents[1],
+            )
+        except ValueError as exc:
+            p.error(f"{root.name}: {exc}")
         collection = json.loads((root / "collection.json").read_text())
         if collection["status"] != "COMPLETED":
             raise ValueError("completed collections required")

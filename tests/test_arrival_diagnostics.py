@@ -105,3 +105,75 @@ def test_replay_uses_4hz_frames_and_resets_stop_state():
     rows = replay.replay(p, frames, frames[0])
     assert [r[0] for r in rows] == [0, 3, 6]
     assert rows[0][2] is False
+
+
+audit = load("audit_closed_loop_episodes")
+
+
+def closed_loop_episode(tmp_path, *, turn_fraction, stop_frame=None, contact_time=None):
+    """Straight route along x; commands w=0.2 held per decision, realised at a fraction."""
+    route = {"id": "r", "waypoints": [[0, 0], [3, 0]], "scene_index": 0}
+    dt, w = 1 / 12, 0.2
+    xy, yaw, captures = [0.0, 0.0], 0.0, []
+    for i in range(48):
+        captures.append(
+            {
+                "pose": [xy[0], xy[1], yaw],
+                "distance_to_goal_m": float(((xy[0] - 3) ** 2 + xy[1] ** 2) ** 0.5),
+                "simulation_time": i * dt,
+            }
+        )
+        moving = stop_frame is None or i < stop_frame
+        if moving:
+            yaw += turn_fraction * w * dt
+            xy = [xy[0] + 0.1 * dt * math.cos(yaw), xy[1] + 0.1 * dt * math.sin(yaw)]
+    inference = [
+        {
+            "frame": f,
+            "command": [0.1, 0.0, w],
+            "waypoint_normalized": [3.0, 0.3],
+            "sensor_time": f * dt,
+        }
+        for f in range(0, 48, 6)
+    ]
+    m = {
+        "route": route,
+        "captures": captures,
+        "inference": inference,
+        "termination": "policy_stop" if stop_frame else "timeout",
+        "policy_stop_frame": stop_frame,
+        "contacts": []
+        if contact_time is None
+        else [
+            {
+                "time": contact_time,
+                "paths": ["/World/Robot/base_link", "/World/Fixture/Scene0/Wall"],
+            }
+        ],
+        "policy": {"max_v": 0.1, "max_w": 0.4, "control_hz": 2.0},
+    }
+    (tmp_path / "runtime_manifest.json").write_text(json.dumps(m))
+    return tmp_path
+
+
+def test_audit_measures_turn_deficit_and_full_tracking(tmp_path):
+    weak = audit.audit(closed_loop_episode(tmp_path, turn_fraction=0.2))["tracking"]
+    assert weak["w_real_over_cmd_median"] == pytest.approx(0.2, abs=0.02)
+    full = audit.audit(closed_loop_episode(tmp_path, turn_fraction=1.0))["tracking"]
+    assert full["w_real_over_cmd_median"] == pytest.approx(1.0, abs=0.02)
+    assert full["v_real_over_cmd_median"] == pytest.approx(1.0, abs=0.02)
+
+
+def test_audit_timeline_orders_contact_and_excludes_post_contact_tracking(tmp_path):
+    r = audit.audit(closed_loop_episode(tmp_path, turn_fraction=1.0, contact_time=2.0))
+    assert r["events"]["first_contact_frame"] == 24
+    assert r["contact_with"] == ["/World/Fixture/Scene0/Wall"]
+    assert r["event_order"][-1] == "termination"
+    assert r["tracking"]["held_commands"] == 4
+
+
+def test_audit_settle_after_stop(tmp_path):
+    r = audit.audit(closed_loop_episode(tmp_path, turn_fraction=1.0, stop_frame=30))
+    assert r["settle"]["settled"] and r["events"]["arrival_declared_frame"] == 30
+    # Stops 3 m from the start of a 3 m route only after 30 frames at 0.1 m/s: a wrong stop.
+    assert r["outcome"]["wrong_stop"] and not r["outcome"]["completion"]
