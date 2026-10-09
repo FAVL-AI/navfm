@@ -167,7 +167,7 @@ class RGBTopomapBaseline(RGBBaseline):
         super().__init__(checkpoint, **kw)
         if verify_threshold is not None and not (verify_threshold > 0 and verify_persistence >= 1):
             raise ValueError("verification needs a positive threshold and persistence >= 1")
-        self.chain = []
+        self.chain: list = []
         self.topomap_cfg = TopomapConfig(radius=radius, close_threshold=close_threshold)
         self.bounded = bounded
         self.state_cls = TopomapState if bounded is None else BoundedTopomapState

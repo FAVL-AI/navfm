@@ -361,7 +361,7 @@ def check_heldout_goals(goal_root, routes, role, ledger_dir) -> None:
     if len(teacher) != 1:
         raise ValueError("exactly one completed teacher_goal_traversal run must exist")
     definition = json.loads((Path(goal_root) / "goal_source.json").read_text())["goals"]
-    by_scene = {}
+    by_scene: dict[int, list[str]] = {}
     for r in routes:
         by_scene.setdefault(r["scene_index"], []).append(r["id"])
     for r in routes:

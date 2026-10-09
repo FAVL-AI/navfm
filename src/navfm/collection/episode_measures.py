@@ -89,7 +89,8 @@ def episode_measures(
             settle = "SETTLED" if motion < SETTLE_MOTION_M else "MOVING"
         displacement_after_stop = float(np.max(np.linalg.norm(xy[stop:] - xy[stop], axis=1)))
     correct_stop = (
-        stop is not None
+        stop_distance is not None
+        and final_distance is not None
         and stop_distance <= ARRIVAL_RADIUS_M
         and settle == "SETTLED"
         and final_distance <= ARRIVAL_RADIUS_M
