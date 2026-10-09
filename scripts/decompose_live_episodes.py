@@ -47,6 +47,15 @@ def wrap(angle):
     return (angle + math.pi) % (2 * math.pi) - math.pi
 
 
+def first_contact_frame(m):
+    contacts = m.get("contacts", [])
+    if not contacts:
+        return None
+    times = [c["simulation_time"] for c in m["captures"]]
+    first = min(c["time"] for c in contacts)
+    return int(np.searchsorted(times, first))
+
+
 def decompose(episode: Path) -> dict:
     m = json.loads((episode / "runtime_manifest.json").read_text())
     line = np.asarray(m["route"]["waypoints"], float)
@@ -65,6 +74,9 @@ def decompose(episode: Path) -> dict:
     frames = [x["frame"] for x in inference]
     predicted = np.asarray([x["predicted_distance"] for x in inference], float)
     true_at_inference = true[np.clip(frames, 0, len(true) - 1)]
+    sensor = np.asarray([x["sensor_time"] for x in inference], float)
+    decision_xy = xy[np.clip(frames, 0, len(xy) - 1)]
+    step_m = np.linalg.norm(np.diff(decision_xy, axis=0), axis=1)
     closest = int(np.argmin(true))
     nearest_inference = int(np.argmin(np.abs(np.asarray(frames) - closest)))
     return {
@@ -85,6 +97,19 @@ def decompose(episode: Path) -> dict:
         "predicted_distance_at_closest_approach": float(predicted[nearest_inference]),
         "predicted_vs_true_spearman": spearman(predicted, true_at_inference),
         "inferences": len(inference),
+        "decision_period_s_median": float(np.median(np.diff(sensor))) if len(sensor) > 1 else None,
+        "displacement_per_decision_m_median": float(np.median(step_m)) if len(step_m) else None,
+        "displacement_per_decision_m_p90": float(np.percentile(step_m, 90))
+        if len(step_m)
+        else None,
+        "path_length_m": float(np.linalg.norm(np.diff(xy, axis=0), axis=1).sum()),
+        "contact_reports": len(m.get("contacts", [])),
+        "first_contact_frame": first_contact_frame(m),
+        "policy_stop_true_distance_m": float(true[m["policy_stop_frame"]])
+        if m.get("policy_stop_frame") is not None
+        else None,
+        "stop_rule": (m.get("policy") or {}).get("stop_rule"),
+        "control_hz": (m.get("policy") or {}).get("control_hz"),
     }
 
 

@@ -391,3 +391,68 @@ landmark-bearing endpoints, not a conclusion.
   `--goal-settle-steps` (default 8 = historical behaviour).
 - `scripts/qualify_articulated_control.py`: `--speed-matched-envelope`
   (0.2 m/s with the live 0.4 rad/s cap) for milestone 3.
+
+## Option 2 milestone 3: controller and sampling diagnosis (2026-10-09)
+
+### Controller tracking at both speeds
+
+Same sphere-wheel proxy, acceleration drives and yaw gains (1.5 pure / 0.8 mixed),
+unchanged absolute gates. Speed envelope added prospectively; nothing re-tuned.
+
+| Command v / w | 0.1 m/s envelope (`articulated-control-20261007-06`) | 0.2 m/s envelope (`articulated-control-20261009-07`) |
+| --- | --- | --- |
+| forward | 0.100 / 0.000 PASS | 0.200 / 0.000 PASS |
+| pure turn +/-0.4 | 0.374 / -0.417 PASS (~0.03 m/s drift) | 0.376 / -0.421 PASS (~0.03 m/s drift) |
+| combined v, +/-0.4 | 0.402 / -0.459 PASS | **0.110 / -0.119 FAIL** (~28% of request) |
+| 0.2, +/-0.2 | not tested | 0.062 / -0.070 "PASS" |
+| collision positive | contact reported | contact reported |
+
+The 0.2/+/-0.2 cases pass only because the absolute 0.15 rad/s tolerance exceeds
+the command itself. That gate is **non-discriminating** for small turn commands and
+is not counted as qualification. The mixed yaw gain was calibrated at 0.1 m/s;
+turning while moving at 0.2 m/s is unqualified. A 0.2 m/s closed-loop arm would
+confound speed with under-turning, so it was not run.
+
+### Matched sampling arms
+
+Motion per observation was matched to training (teacher 0.05 m per 4 Hz step)
+inside the qualified 0.1 m/s envelope by deciding at 2 Hz (PD `dt` = 0.5 s).
+Everything else was identical: released checkpoint, `upstream_t3` stop rule, 50 s
+budget, fixture-verified current-scene goals (`arrival-goal-settle8-20261009-01`),
+and routes s_bend 0/1 (dev) plus junction 0/1 (retired test, diagnostic).
+
+| Arm | Actual period / displacement per decision | Arrived <=0.5 m | Correct stop | Wrong stop | Contact | Timeout |
+| --- | --- | --- | --- | --- | --- | --- |
+| A 4 Hz `arrival-matched-a4hz-20261009-01` | 0.25 s / 0.024-0.025 m | 1/4 | 0/4 | 0/4 | 4/4 | 4/4 |
+| B 2 Hz `arrival-matched-b2hz-20261009-01` | 0.50 s / 0.045-0.049 m | 1/4 | 0/4 | 1/4 (stop at 2.56 m) | 3/4 | 3/4 |
+
+Per episode, closest approach was 0.31-1.19 m at frames 159-254 (13-21 s),
+followed by departure (max lateral deviation 1.7-2.7 m) and contact at frames
+355-509. In 2/8 episodes the robot passed within 0.31-0.45 m with minimum
+predicted distance 4.2-5.7, so the stop rule did not fire. With n=4 per arm,
+matching the sampling time-base does **not** restore competence; the
+speed/time-base hypothesis is not supported.
+
+### Implementation defects versus remaining model failures
+
+| Item | Status |
+| --- | --- |
+| Goal photographs from a different scene (obstacle position, lighting) | Defect; repaired by fixture gate and current-scene goals |
+| Collector exit 0 on failure | Defect; repaired |
+| Project stop threshold below output floor | Defect; documented `upstream_t3` alternative added; default unchanged |
+| Policy time-base 0.025 vs 0.05 m per step | Mismatch; 2 Hz arm matches it; no competence gain |
+| 0.2 m/s turning | Controller limitation; unqualified, not used |
+| Closed-loop departure after closest approach | **Remaining model failure** |
+| Near-goal distance prediction too high on some routes; wrong-goal preference | **Remaining model failure** |
+
+## Option 2 milestone 5: revised split (frozen before tuning)
+
+`configs/splits/arrival_split_v1.json` (SHA256 `e0551eb8...94be6`) retires
+`junction_run_0000/0001` from confirmatory use; they remain development
+evidence. Held-out groups are specified but **NOT COLLECTED**. The current scene
+generator varies appearance by `scene_index % 5`, so a new index (e.g. 20)
+recreates a training scene. In the existing corpus, training scenes 8 and 9
+already share those parameters with dev scene 3 and retired-test scene 4, so
+dev/test are not appearance-disjoint from training. Held-out groups require a
+new layout family with landmark-bearing endpoints, and they are sealed until a
+confirmatory protocol is frozen.

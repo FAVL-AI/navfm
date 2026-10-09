@@ -44,16 +44,20 @@ def episode(tmp_path, goal_offset=0.0):
         {
             "pose": p,
             "distance_to_goal_m": float(np.linalg.norm(np.array(p[:2]) - goal)) + goal_offset,
+            "simulation_time": 10.0 + i / 12,
         }
-        for p in poses
+        for i, p in enumerate(poses)
     ]
-    inference = [{"frame": i, "predicted_distance": 10.0 - i} for i in range(4)]
+    inference = [
+        {"frame": i, "predicted_distance": 10.0 - i, "sensor_time": 10.0 + i / 12} for i in range(4)
+    ]
     m = {
         "route": route,
         "captures": captures,
         "inference": inference,
         "termination": "timeout",
         "policy_stop_frame": None,
+        "contacts": [{"time": 10.0 + 2.5 / 12}],
     }
     (tmp_path / "runtime_manifest.json").write_text(json.dumps(m))
     return tmp_path
@@ -65,6 +69,9 @@ def test_decompose_recovers_geometry(tmp_path):
     assert r["final_lateral_deviation_m"] == pytest.approx(0.1)
     assert r["predicted_vs_true_spearman"] == pytest.approx(1.0)
     assert not r["arrival_any_frame"]
+    assert r["displacement_per_decision_m_median"] == pytest.approx(0.5, abs=0.02)
+    assert r["decision_period_s_median"] == pytest.approx(1 / 12)
+    assert r["first_contact_frame"] == 3
 
 
 def test_decompose_rejects_inconsistent_goal(tmp_path):
