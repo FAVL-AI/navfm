@@ -239,9 +239,10 @@ Evidence: `arrival-teacher-replay-20261009-01.json`.
 - Goal-identity negative control: within 0.5 m of the true goal, the mean
   prediction to a *different* route's goal was lower than to the true goal on
   `straight_run_0000` (4.58 vs 9.19) and `s_bend_run_0000` (3.61 vs 9.88), and
-  about equal on collection06 `right_run_0000` (4.22 vs 4.12). This is evidence
-  of **goal-ranking ambiguity**, not a false arrival declaration; the stop rule
-  never fired.
+  about equal on collection06 `right_run_0000` (4.22 vs 4.12). **WITHDRAWN (milestone 4):** in all
+  three cases the "wrong" goal was the sibling route variant in the *same scene*,
+  whose endpoint is 0.25 m from the true goal, so the place was not wrong. The
+  negative control was invalid; see the cross-scene re-run below.
 
 ### Interpretation (INFERENCE, engineering scope)
 
@@ -456,3 +457,58 @@ already share those parameters with dev scene 3 and retired-test scene 4, so
 dev/test are not appearance-disjoint from training. Held-out groups require a
 new layout family with landmark-bearing endpoints, and they are sealed until a
 confirmatory protocol is frozen.
+
+## Option 2 milestone 4: budgeted fine-tuning and goal semantics (2026-10-09)
+
+### Training budget (documented before running)
+
+Released ViNT, upstream objective unchanged (`alpha` 0.5, distance term weight
+`alpha*1e-2`), batch 4, AdamW lr 1e-5, frozen BatchNorm, 31 admitted training
+trajectories of the expanded corpus (945 pairs, 236 steps per epoch), 20 epochs
+(4,720 steps), three seeds (0/11/22). Dev-only evaluation at epochs 1/2/5/10/20.
+Earlier budgets (6-20 steps) were under 0.1 epoch. Trainer regression: the
+recorded n25 seed0 20-step command reproduced checkpoint `1ee4c20a...`
+byte-identically.
+
+| Dev (83 fixed pairs, 2 trajectories) | Released | Epoch 10 (3 seeds) | Epoch 20 (3 seeds) |
+| --- | --- | --- | --- |
+| Waypoint ADE (cm) | 4.84 | 1.97-2.09 | 1.92-2.00 |
+| Distance MAE, positives (label units) | 3.90 | 1.98-2.09 | 1.87-2.06 |
+| Distance Spearman, positives | 0.54 | 0.86-0.88 | 0.87-0.89 |
+| Mean prediction, 6 negatives (label 20) | 9.18 | 10.9-11.3 | 11.8-12.7 |
+
+Train losses (all seeds): `dist_loss` 23-24 to 5.7-6.0; `action_loss` 0.21 to
+0.03. Curves plateau between epochs 10 and 20. Epoch 20 was selected on dev distance
+MAE (lowest in 2/3 seeds), fixed before any closed-loop run. Checkpoints:
+`option1-arrival-n31-e20-seed{0,11,22}-20261009-01/epoch_020.pth` (seed0 SHA256
+`c7686983...0d5d7c`).
+
+### Training-to-deployment goal mismatch (implementation finding)
+
+Training and fixed-pair evaluation use **future frames of the same trajectory**
+as goals. The live/collector goal is a **separately captured photograph** at the
+exact endpoint (teleport plus settle; about 0.12 m beyond the teacher's final frame).
+Pinned upstream deployment uses topological-map nodes: frames from a prior
+traversal. On open-loop current-scene recordings with photograph goals, the
+fine-tuned checkpoints rank well (Spearman 0.70-0.93) but predict 8-15.6 near the
+goal (label ~5.4), so threshold 3 never fires.
+
+Pose-identical settle intervention on fine-tuned seeds 0/11 (same frames, goal
+photo after 8 vs 96 render steps): junction_run_0000, the only goal materially
+changed by settling, drops from 10.89 to 8.37 and from 10.21 to 8.11. The
+released model moved 2.91 to 3.04. **Fine-tuning increased sensitivity to
+goal-photograph render state** (1 route x 2 seeds; causal but small).
+
+Prior-traversal goals (final frame of the 96-step traversal, scored on the
+independent 8-step traversal; `arrival-goal-traversal-final-frame-20261009-01`)
+with **cross-scene** negatives (`arrival-goal-traversal-score-20261009-03.json`).
+Threshold 3 is the pinned default, not fitted:
+
+| Checkpoint | Own-goal near-goal prediction | Own fires (true distance at fire) | Cross-scene wrong-goal fires | Wrong-goal minimum prediction |
+| --- | --- | --- | --- | --- |
+| Released | 1.68-2.35 | 4/4 (0.30-0.57 m; 2/4 outside 0.5 m) | 1/4 (s_bend_0; min 2.94) | 2.94-6.93 |
+| Fine-tuned, 3 seeds | 3.27-6.26 | 11/12 (0.13-0.26 m) | 0/12 | 4.59-11.24 |
+
+Open-loop, four routes, two scenes. The dev scenes are partly appearance-aliased
+with training scenes 8/9 (split v1). These are engineering diagnostics, not
+held-out evidence.
