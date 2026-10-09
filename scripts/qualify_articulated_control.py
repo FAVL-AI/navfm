@@ -29,6 +29,11 @@ def main():
     p.add_argument("--sphere-wheels", action="store_true")
     p.add_argument("--mixed-yaw-gain", type=float, default=1.0)
     p.add_argument("--bounded-policy-envelope", action="store_true")
+    p.add_argument(
+        "--speed-matched-envelope",
+        action="store_true",
+        help="teacher-speed envelope: 0.2 m/s with the live 0.4 rad/s turn cap",
+    )
     a = p.parse_args()
     if a.out.exists() or a.out.resolve().is_relative_to(REPO):
         p.error("new external output required")
@@ -208,6 +213,24 @@ def main():
             ]
             result["qualified_command_envelope"] = {
                 "max_v": 0.1,
+                "max_w": 0.4,
+                "scope": "sampled commands only; outside envelope failures retained",
+            }
+        if a.speed_matched_envelope:
+            if a.bounded_policy_envelope:
+                p.error("choose one envelope")
+            cases = [
+                ("forward", 0.2, 0, 3),
+                ("left", 0, 0.4, 3),
+                ("right", 0, -0.4, 3),
+                ("combined_left", 0.2, 0.4, 3),
+                ("combined_right", 0.2, -0.4, 3),
+                ("half_turn_left", 0.2, 0.2, 3),
+                ("half_turn_right", 0.2, -0.2, 3),
+                ("collision_positive", 0.2, 0, 12),
+            ]
+            result["qualified_command_envelope"] = {
+                "max_v": 0.2,
                 "max_w": 0.4,
                 "scope": "sampled commands only; outside envelope failures retained",
             }

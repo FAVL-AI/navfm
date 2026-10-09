@@ -48,6 +48,12 @@ def main():
         "--checkpoint-sha256", help="required registered checkpoint identity for live policy"
     )
     parser.add_argument("--goal-root", type=Path, help="fixed raw goals indexed by route id")
+    parser.add_argument(
+        "--goal-settle-steps",
+        type=int,
+        default=8,
+        help="render steps after teleporting to the goal before its photograph; 8 is historical",
+    )
     args = parser.parse_args()
     policy = None
     if args.checkpoint:
@@ -300,6 +306,23 @@ def main():
         settings.set("/app/runLoops/main/rateLimitEnabled", True)
         settings.set("/app/runLoops/main/rateLimitFrequency", 12.0)
         settings.set("/omni/replicator/RTSubframes", 1)
+        # Observed, not pinned: auto-exposure adapts over frames, so the state at
+        # each capture depends on what the camera saw before it.
+        summary["renderer_settings"] = {
+            key: settings.get(key)
+            for key in (
+                "/rtx/post/histogram/enabled",
+                "/rtx/post/histogram/tau",
+                "/rtx/post/histogram/minEV",
+                "/rtx/post/histogram/maxEV",
+                "/rtx/post/histogram/whiteScale",
+                "/rtx/post/histogram/useExposureClamping",
+                "/rtx/post/tonemap/op",
+                "/rtx/post/dlss/execMode",
+            )
+        }
+        summary["goal_settle_steps"] = args.goal_settle_steps
+        save_summary()
         sim.set_simulation_dt(physics_dt=cfg.dt / cfg.physics_substeps, rendering_dt=cfg.dt)
         rep.orchestrator.set_capture_on_play(False)
 
@@ -455,7 +478,7 @@ def main():
                 end_yaw = math.atan2(*(points[-1] - points[-2])[::-1])
                 robot.teleport(points[-1], end_yaw)
                 drive([0.0, 0.0, 0.0])
-                for _ in range(8):
+                for _ in range(args.goal_settle_steps):
                     step()
                 settings.set("/rtx/post/dlss/execMode", 2)
                 step()

@@ -324,3 +324,70 @@ that pin the main checkout path and its git-ignored, immutable
 The arrival experiments do not use `navfm.arm_environment_guard` or BO-10
 captures. Assessment: no effect on the validity of this milestone; they remain
 failing and are not described as passed.
+
+## Option 2 milestone 2: arrival-signal audit (2026-10-09)
+
+### Actual distance-label semantics (VERIFIED, pinned upstream `dca7981`)
+
+- `vint_dataset.py`: label = `(goal_time - curr_time) // waypoint_spacing`, the
+  number of subsampled frames between observation and goal. It is a step count,
+  not metres. Negatives (another trajectory's frame) are labelled
+  `max_dist_cat` = 20 (`vint.yaml` `distance: 0..20`).
+- A sampled goal offset of 0 is replaced by a negative, so **label 0 is never a
+  positive example**; positives span 1..20. Regression is MSE (`alpha` 0.5 with
+  the action loss).
+- Metres per step differ by dataset (`data_config.yaml`: RECON 0.25, SACSoN 0.255,
+  GO Stanford 0.12, SCAND 0.38, TartanDrive 0.72). In this corpus one step is
+  0.05 m of teacher motion (`option1_m3pro`), so 0.5 m is about 10 label units.
+  Because the teacher stops about 0.12 m short of the goal, the mean label within 0.5 m is 4.5-5.7.
+- Pinned deployment (`navigate.py`) never thresholds distance to the goal image
+  directly. It localises to topological-map nodes with `--close-threshold`
+  default **3** and stops when the localised node is the final node.
+- The project rule (`rgb_baseline.py`: three consecutive predictions <=1 and
+  waypoint <=0.15 m) is a project choice with no upstream counterpart and no
+  recorded justification.
+
+### Audit results (`arrival-signal-audit-20261009-01.json`)
+
+8 admitted non-test teacher recordings (6 train, 2 dev), open loop, released
+checkpoint `155fd72d`, six-step adapted `d0f412e6`, and 20-step n25 seed0 `1ee4c2fa`.
+
+| Finding | Evidence | Class |
+| --- | --- | --- |
+| Project threshold below the model's output floor | Goal-as-current control (history = goal image) predicts 1.9-6.6 (released), never <=1; rule fires 0/8 for all three checkpoints | **Implementation defect** |
+| Near-goal calibration acceptable on 5/8 | Released mean prediction within 0.5 m 3.66-4.25 vs label 4.5-5.7 | Model OK on these |
+| Near-goal failure on 3/8 | `straight_run_0000`, `s_bend_run_0000`, 07 `left_run_0001`: 9.2-10.7 vs label ~5.3; Spearman -0.41 to 0.32 | **Remaining model failure** |
+| Upstream threshold 3 (not fitted) | Own goal fires 2/8 (true 0.11-0.35 m); wrong goal fires 1/8 released and 2/8 adapted (true 0.31-0.55 m to own goal) | Real false arrival under ranking ambiguity |
+| Adaptation | Six-step and 20-step checkpoints reproduce the released behaviour within about 1 unit | Failure exists in original and adapted |
+
+### Render-history hypothesis: tested and not supported
+
+The three failing recordings were the only ones whose goal photograph was 20-26%
+darker than the final teacher frame (ratio 0.74-0.80, vs 0.91-0.99 for the others;
+mostly the first episode recorded in a new scene). Recorded renderer settings show
+auto-exposure **disabled** (`/rtx/post/histogram/enabled = False`, tonemap op 6).
+A pose-identical intervention recaptured goals after 8 vs 96 render steps
+(`arrival-goal-settle{8,96}-20261009-01`, routes s_bend 0/1 and the retired
+junction 0/1, diagnostic only). Settling changed one goal materially
+(junction_run_0000: pixel mean absolute difference 11.3, ratio 0.88 to 0.96). Predictions on identical
+frames barely moved (near-goal 2.91 vs 3.04; s_bend_run_0000 8.84 vs 9.01).
+The darkness correlation is therefore not established as causal; with n=8 it was
+confounded with route and recording order. Goal-photo texture (mean gradient
+0.98-1.54) does not separate good from bad recordings either. The 3/8 failures
+remain **unexplained**.
+
+Dataset-design finding: every route endpoint faces a near-blank wall at close
+range. Goal photographs carry little distinctive content, which plausibly
+underlies the ranking ambiguity. This is an INFERENCE to test with
+landmark-bearing endpoints, not a conclusion.
+
+### Changes
+
+- `scripts/score_teacher_replay.py`: admission filter, several checkpoints,
+  label-unit fit, goal-as-current control, both stop rules,
+  `--goal-override-root` for pose-identical recaptures, explicit
+  `--include-retired-test` for diagnostics.
+- `scripts/collect_option1.py`: records renderer exposure settings;
+  `--goal-settle-steps` (default 8 = historical behaviour).
+- `scripts/qualify_articulated_control.py`: `--speed-matched-envelope`
+  (0.2 m/s with the live 0.4 rad/s cap) for milestone 3.
