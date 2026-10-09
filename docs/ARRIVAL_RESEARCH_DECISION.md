@@ -224,7 +224,9 @@ Evidence: `arrival-h0-pretrained-20261009-02/` and `-decomposition.json`.
 
 `scripts/score_teacher_replay.py` replays admitted teacher recordings at 4 Hz
 through the live preprocessing, model and stop rule, with each recording's own
-goal and, as a negative control, another route's goal. The output also contains
+goal and, as a negative control, another route's goal. Correction (Frank,
+2026-10-09): speed matching cannot explain this result, because the replay has no
+live controller. Units, labels, preprocessing and threshold must be audited first. The output also contains
 three collection05 recordings rejected at admission (`left_run_0001`,
 `right_run_0000`, `right_run_0001`); the figures below use the **8 admitted
 non-test** recordings only (6 train, 2 dev).
@@ -237,8 +239,9 @@ Evidence: `arrival-teacher-replay-20261009-01.json`.
 - Goal-identity negative control: within 0.5 m of the true goal, the mean
   prediction to a *different* route's goal was lower than to the true goal on
   `straight_run_0000` (4.58 vs 9.19) and `s_bend_run_0000` (3.61 vs 9.88), and
-  about equal on collection06 `right_run_0000` (4.22 vs 4.12). Under nominal
-  lighting, the arrival signal can prefer a lookalike goal.
+  about equal on collection06 `right_run_0000` (4.22 vs 4.12). This is evidence
+  of **goal-ranking ambiguity**, not a false arrival declaration; the stop rule
+  never fired.
 
 ### Interpretation (INFERENCE, engineering scope)
 
@@ -247,7 +250,8 @@ lighting in this domain. Its threshold is unreachable, and it does not reliably
 encode goal identity. Separately, the closed-loop policy at the 0.1 m/s cap
 approaches and then leaves the goal region. Candidate causes, none yet tested:
 speed/time-base mismatch (teacher 0.2 m/s), the proxy controller's turn drift,
-and domain gap. An illumination study built on this signal would measure a floor
+and a training-to-evaluation appearance/domain mismatch. All runs are
+simulation-only, so this is not a sim-to-real gap. An illumination study built on this signal would measure a floor
 effect. The lookalike confusion is the phenomenon the paper intended to study,
 and it already appears without illumination change.
 
@@ -270,3 +274,53 @@ and it already appears without illumination change.
    re-test H0 before any illumination work.
 
 Option 2's speed-matched check is cheap and does not prejudge option 1.
+
+## Option 2 milestone 1: fixture identity gate (2026-10-09)
+
+Decision (Frank): qualify and repair the baseline before re-scoping.
+
+`src/navfm/collection/fixture_identity.py` signs every prim under the route's
+scene plus the global Sun/Dome lights: type, applied schemas, size, transforms,
+colour and light inputs, rounded to 1e-6. The collector compares this signature
+with the goal-photo source collection's `fixture.usda` before any episode. The
+route specification must also be equal, and per episode the camera mount, local
+pose and resolution must match the goal source. Mismatch writes
+`REFUSED_FIXTURE_IDENTITY` and exits 3. Previously `SimulationApp.close()`
+returned status 0 after a failure; failed collections now exit 1.
+
+| Control | Invocation | Result |
+| --- | --- | --- |
+| Negative 1 | `--route-spec` (H0 run 01 recipe), goals from collection05 | Refused before execution: DoorPartition0/2 absent from goal source, obstacle moved (exit 0 before the exit-code repair; retained) |
+| Negative 2 | Original invocation, goals from collection05 | Refused before execution, exit 3 |
+| Positive | Original invocation, goals from `arrival-goals-current-20261009-01` | 3/3 episodes PASS (12-step check), 64 signed prims per scene |
+| Unit | `tests/test_fixture_identity.py` | 6 passed, incl. partition and lighting negative controls |
+
+### Defect found by the gate: every earlier matched live run used mismatched goals
+
+Collection05 holds the only s_bend/junction goal photographs. It was recorded with
+earlier scene code: obstacle at x=2.4 m (current code: 3.5+0.1*(scene%5) = 3.8 /
+3.9 m) and five per-scene DistantLights (1200-1600, same rotation). USD distant
+lights are not limited by hierarchy, so total directional intensity was 7000,
+against 1500 in every live run. Verified from `fixture.usda` text. Collection05 has no
+`lighting` record; 06 and 07 do and match current code.
+
+**Consequence.** Every matched live comparison so far (`option1-live-*-20261007-*`
+and H0 run 02) paired goal photographs from a scene with different obstacle
+placement and directional lighting from the live scene. In the live view near
+the goal the obstacle is visible; in the goal photograph it is not. Those runs
+are therefore **not valid baseline-competence evidence.** They are retained as
+evidence of goal/live scene mismatch: an unintended confound of exactly the
+geometry-plus-illumination kind this project must isolate. The open-loop
+teacher replay is unaffected: each recording is scored against its own goal from
+the same collection. H0 must be re-run against the current-scene goals.
+
+### Environment-identity test failures
+
+The full suite stands at 2560 passed, 2 skipped, 3 failed. The failures are
+`tests/test_environment_identity_v8.py`. They are BO-10 intervention controls
+that pin the main checkout path and its git-ignored, immutable
+`runs/bo10/intervention/arm_a/pre_capture.json`. That file exists under
+`/home/favl/projects/navfm/runs` but not in this worktree, and must not be copied.
+The arrival experiments do not use `navfm.arm_environment_guard` or BO-10
+captures. Assessment: no effect on the validity of this milestone; they remain
+failing and are not described as passed.

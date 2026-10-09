@@ -8,8 +8,10 @@ import hashlib
 import importlib.metadata
 import json
 import math
+import os
 import sys
 import time
+import traceback
 from itertools import pairwise
 from pathlib import Path
 
@@ -371,6 +373,45 @@ def main():
             contact_event
         )
         usd.GetRootLayer().Export(str(out / "fixture.usda"))
+        identity = {}
+        if policy:
+            # A fixed goal photograph is valid only for the scene it photographed.
+            from pxr import Usd
+
+            from navfm.collection import fixture_identity
+
+            goal_fixture = args.goal_root / "fixture.usda"
+            goal_stage = Usd.Stage.Open(str(goal_fixture))
+            try:
+                for route in routes:
+                    source = json.loads(
+                        (args.goal_root / route["id"] / "runtime_manifest.json").read_text()
+                    )
+                    fixture_identity.require_identical(
+                        {"route": source["route"]}, {"route": route}, what="route"
+                    )
+                    roots = fixture_identity.scene_roots(route["scene_index"])
+                    expected = fixture_identity.prim_signature(goal_stage, roots)
+                    observed = fixture_identity.prim_signature(usd, roots)
+                    if not expected:
+                        raise ValueError(f"goal-photo source has no prims under {roots[0]}")
+                    fixture_identity.require_identical(
+                        expected, observed, what=f"{route['id']} fixture"
+                    )
+                    identity[route["id"]] = {
+                        "scene_signature_sha256": fixture_identity.digest(observed),
+                        "signed_prims": len(observed),
+                        "goal_source_fixture_sha256": hashlib.sha256(
+                            goal_fixture.read_bytes()
+                        ).hexdigest(),
+                    }
+            except ValueError as error:
+                summary["status"] = "REFUSED_FIXTURE_IDENTITY"
+                summary["refusal"] = str(error)
+                save_summary()
+                raise
+            summary["fixture_identity"] = identity
+            save_summary()
         source_expected = None
         for route in routes:
             episode = out / route["id"]
@@ -472,6 +513,12 @@ def main():
                     Image.fromarray(goal).save(episode / "goal.png")
                     goal_source_path = args.goal_root / route["id"] / "runtime_manifest.json"
                     goal_source = json.loads(goal_source_path.read_text())
+                    fixture_identity.require_identical(
+                        fixture_identity.camera_signature(goal_source),
+                        fixture_identity.camera_signature(manifest),
+                        what=f"{route['id']} camera",
+                    )
+                    manifest["fixture_identity"] = identity[route["id"]]
                     manifest["fixed_goal_source_manifest_sha256"] = hashlib.sha256(
                         goal_source_path.read_bytes()
                     ).hexdigest()
@@ -681,12 +728,20 @@ def main():
         summary["status"] = "COMPLETED"
         save_summary()
     except BaseException as exc:
+        refused = str(summary.get("status", "")).startswith("REFUSED")
         summary.update(
-            status="INTERRUPTED" if isinstance(exc, KeyboardInterrupt) else "FAILED",
+            status=summary["status"]
+            if refused
+            else ("INTERRUPTED" if isinstance(exc, KeyboardInterrupt) else "FAILED"),
             error=f"{type(exc).__name__}: {exc}",
         )
         save_summary()
-        raise
+        traceback.print_exc()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        # SimulationApp.close() can end the process with status 0; a failed or
+        # refused collection must never report success to its caller.
+        os._exit(3 if refused else 1)
     finally:
         app.close()
 
