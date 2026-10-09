@@ -167,3 +167,24 @@ def test_far_from_every_node_never_stops():
     out = [b.step([None] * 6) for _ in range(5)]
     assert not any(o["policy_stop"] for o in out)
     assert all(o["chain"]["closest_node"] == 0 for o in out)
+
+
+def test_topomap_constructor_takes_the_collector_arguments(monkeypatch):
+    # Exercise the real constructor with the collector's call; the parent loads no model.
+    def parent_init(self, checkpoint, **kw):
+        self.stop_enabled = kw["stop_enabled"]
+        self.manifest = {}
+
+    monkeypatch.setattr(rb.RGBBaseline, "__init__", parent_init)
+    b = rb.RGBTopomapBaseline(
+        "x.pth",
+        radius=4,
+        close_threshold=3.0,
+        action_scale_m=0.05,
+        stop_enabled=True,
+        max_v=0.1,
+        control_period_s=0.5,
+    )
+    assert b.chain == [] and b.manifest["topomap"]["radius"] == 4
+    with pytest.raises(ValueError, match="two nodes"):
+        b.set_chain([np.zeros((2, 2, 3))])

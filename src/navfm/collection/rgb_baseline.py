@@ -149,19 +149,14 @@ class RGBTopomapBaseline(RGBBaseline):
     is logged per decision and never itself ends the episode.
     """
 
-    def __init__(
-        self, checkpoint: Path, chain, *, radius: int = 4, close_threshold: float = 3.0, **kw
-    ):
+    def __init__(self, checkpoint: Path, *, radius: int = 4, close_threshold: float = 3.0, **kw):
         from navfm.collection.topomap import TopomapConfig, TopomapState
 
         kw.setdefault("stop_enabled", True)
         super().__init__(checkpoint, **kw)
-        if len(chain) < 2:
-            raise ValueError("a route of reference images needs at least two nodes")
-        self.chain = [np.asarray(c) for c in chain]
+        self.chain = []
         self.topomap_cfg = TopomapConfig(radius=radius, close_threshold=close_threshold)
         self.state_cls = TopomapState
-        self.reset_chain()
         self.manifest.update(
             policy_inputs=["six chronological RGB observations", "route of reference RGB images"],
             stop_rule=(
