@@ -169,6 +169,8 @@ def audit(episode: Path, goal_image_xy=None) -> dict:
         "closest_endpoint_frame": closest,
         "lateral_at_closest_endpoint_m": float(lateral[closest]),
         "base_controller": m.get("base_controller"),
+        "component_variant": m.get("component_variant"),
+        "components": component_trace(m["inference"], times, None),
         "max_lateral_m": float(lateral.max()),
         "tracking": summarise_tracking(track, max_v, max_w),
         "tracking_diagnostic": turn_tracking(
@@ -235,6 +237,40 @@ def goal_xy(goal_root, episode: Path):
     declared = json.loads((goal_root / "goal_source.json").read_text())["goals"][m["route"]["id"]]
     source = json.loads((goal_root / m["route"]["id"] / "runtime_manifest.json").read_text())
     return source["captures"][declared["frame"]]["pose"][:2], identity
+
+
+def component_trace(inference, times, frames_index) -> dict:
+    """Localisation jumps, lost decisions and verification delay (diagnostics)."""
+    chain = [r.get("chain") for r in inference]
+    if not any(chain):
+        return None
+    prev, jumps, lost, events = 0, 0, 0, {}
+    first_reached = stop = None
+    for k, (r, c) in enumerate(zip(inference, chain, strict=True)):
+        cur = c["closest_node"]
+        jumps += int(cur - prev > 1 or cur < prev)
+        prev = cur
+        lost += int(bool(c.get("lost")))
+        events[c.get("event", "upstream")] = events.get(c.get("event", "upstream"), 0) + 1
+        if c["reached_goal"] and first_reached is None:
+            first_reached = k
+        if r["policy_stop"] and stop is None:
+            stop = k
+    delay = None
+    if first_reached is not None and stop is not None:
+        a, b = inference[first_reached]["frame"], inference[stop]["frame"]
+        delay = {"decisions": stop - first_reached, "seconds": float(times[b] - times[a])}
+    return {
+        "decisions": len(inference),
+        "localisation_jumps": jumps,
+        "lost_decisions": lost,
+        "events": events,
+        "chain_reached_first_decision": first_reached,
+        "verification_delay": delay,
+        "verification_rejected_decisions": sum(
+            1 for r in inference if r.get("verification") == "pending"
+        ),
+    }
 
 
 def scorer_provenance() -> dict:

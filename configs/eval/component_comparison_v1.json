@@ -1,0 +1,88 @@
+{
+  "name": "component_comparison_v1",
+  "status": "PROPOSED; frozen only after independent red-team review; no evaluation episode before then",
+  "question": "does bounded localisation prevent the s_bend jump failures, and does independent final-goal verification reject chain-end declarations that are not at the requested goal without losing correct stops?",
+  "checkpoint": {
+    "name": "ft-seed0",
+    "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
+    "reason": "held fixed across variants; the stronger checkpoint on the previous comparison"
+  },
+  "variants": {
+    "A_baseline": {
+      "bounded": null,
+      "verify_threshold": null,
+      "verify_persistence": 2
+    },
+    "B_bounded": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2
+    },
+    "C_verify": {
+      "bounded": null,
+      "verify_threshold": 7.745,
+      "verify_persistence": 2
+    },
+    "D_both": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": 7.745,
+      "verify_persistence": 2
+    }
+  },
+  "conditions": {
+    "true_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+      "chain_json_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+      "tests": "route following and correct stopping; consistent-chain look-alikes (the two point-symmetric s_bend bends; mid-route views) occur naturally"
+    },
+    "truncated_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-truncated60-12f-20261009-01",
+      "chain_json_sha256": "e29d555ced8c9cafa2d928586745d0759e62e5bd31c0a2fa2cfe081fbdb21339",
+      "tests": "same-scene mismatch: chain ends 0.75-0.96 m short of the requested goal; a chain-only arrival rule declares arrival at the wrong place; verification should withhold it and steer to the requested goal"
+    }
+  },
+  "routes": [
+    "s_bend_run_0000",
+    "s_bend_run_0001",
+    "junction_run_0000",
+    "junction_run_0001"
+  ],
+  "episodes": "4 variants x 2 conditions x 4 routes = 32, one attempt each; failed or refused attempts are counted in denominators and archived",
+  "runtime": {
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+    "radius": 4,
+    "close_threshold": 3.0,
+    "decision_hz": 2.0,
+    "max_v": 0.1,
+    "controller": "reference PD dt 0.5 s + 120 Hz yaw PI (qualification articulated-control-20261009-10)",
+    "budget_frames": 600
+  },
+  "calibration": {
+    "file": "/home/favl/navfm-runtime-evidence/component-calibration-20261009-01.json",
+    "sha256": "e092e67a3bbab31b86416d7f29420cdae451b37906790fea8f290ac3da3b27d5",
+    "data": "fine-tuned development recordings tm-ft-seed0-02, wc-ft-seed0-02, closedloop-yawfb-ft-seed0-02; none is an evaluation episode",
+    "lost_rule": "enter = 95th pct of on-route window minimum (6.75); exit = median (2.21); patience 3",
+    "verify_rule": "largest learned threshold with <=2% false accept on frames >0.75 m (7.745; true accept 0.40 per frame)",
+    "pixel_control": "NCC threshold 0.893 at the same false-accept rate (true accept 0.24); evaluated offline on the fresh episodes, never controls the robot"
+  },
+  "lost_and_pause_accounting": "lost decisions and verification-pending decisions count against the same 600-frame budget; neither can produce a stop; an episode ending lost or pending is a timeout",
+  "measures": "configs/eval/arrival_measures_v1.json over all attempted episodes, plus localisation jumps, lost decisions and verification delay (decisions and seconds from first chain-goal decision to stop)",
+  "reporting": "development evidence; counts per variant x condition with route denominators; paired per-route tables; no significance claims",
+  "known_limitations": [
+    "one checkpoint, four routes, two scenes, one seed",
+    "small-command tracking limitation of the yaw loop applies to all variants",
+    "calibration and evaluation share routes and scenes (development only); held-out sealed"
+  ]
+}

@@ -26,12 +26,19 @@ def main():
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--spacing-frames", type=int, default=12)
     p.add_argument("--swap", action="append", default=[], help="ROUTE=SOURCE_ROUTE")
+    p.add_argument(
+        "--truncate-fraction",
+        type=float,
+        help="same-scene mismatch control: keep the first fraction of nodes (chain ends short of the goal)",
+    )
     a = p.parse_args()
     out = a.out.resolve()
     if out.exists() or out.is_relative_to(REPO):
         p.error("output must be new and external")
     if a.spacing_frames < 1:
         p.error("spacing must be positive")
+    if a.truncate_fraction is not None and not 0 < a.truncate_fraction < 1:
+        p.error("truncate fraction must be in (0, 1)")
     goals = json.loads((a.goal_root / "goal_source.json").read_text())["goals"]
     swap = dict(s.split("=", 1) for s in a.swap)
     if set(swap) - set(goals) or set(swap.values()) - set(goals):
@@ -60,9 +67,15 @@ def main():
             )
         if nodes[-1]["sha256"] != declared["source_sha256"]:
             raise ValueError(f"{source_route}: final node is not the declared goal frame")
+        if a.truncate_fraction is not None:
+            keep = max(2, int(len(nodes) * a.truncate_fraction))
+            for extra in nodes[keep:]:
+                (out / route / f"{extra['node']}.jpg").unlink()
+            nodes = nodes[:keep]
         chains[route] = {
             "chain_source_route": source_route,
-            "control": source_route != route,
+            "control": source_route != route or a.truncate_fraction is not None,
+            "truncated_fraction": a.truncate_fraction,
             "traversal": str(trajectory.parent),
             "nodes": nodes,
         }

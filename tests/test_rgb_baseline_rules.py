@@ -118,6 +118,7 @@ class FakeBatchModel:
         self.calls += 1
         actions = np.zeros((n, 5, 4))
         actions[:, 2, 0] = 2.0
+        actions[-1, 2, 1] = 0.5  # last batch entry (the requested goal, if any) turns left
         return FakeTensor(np.asarray(d, float)), FakeTensor(actions)
 
 
@@ -132,7 +133,7 @@ class Batchable(FakeTensor):
         return FakeTensor(np.repeat(self.value, n, axis=0))
 
 
-def topomap_baseline(distances, nodes=4):
+def topomap_baseline(distances, nodes=4, verify_threshold=None):
     from navfm.collection.topomap import TopomapConfig, TopomapState
 
     b = rb.RGBTopomapBaseline.__new__(rb.RGBTopomapBaseline)
@@ -145,6 +146,9 @@ def topomap_baseline(distances, nodes=4):
     b.stop_enabled = True
     b.limits = rb.BaseLimits(max_v=0.1, max_w=0.4)
     b.topomap_cfg = TopomapConfig(radius=4, close_threshold=3.0)
+    b.bounded = None
+    b.verify_threshold = verify_threshold
+    b.verify_persistence = 2
     b.state_cls = TopomapState
     b.set_chain([np.zeros((2, 2, 3))] * nodes)
     return b
@@ -188,3 +192,28 @@ def test_topomap_constructor_takes_the_collector_arguments(monkeypatch):
     assert b.chain == [] and b.manifest["topomap"]["radius"] == 4
     with pytest.raises(ValueError, match="two nodes"):
         b.set_chain([np.zeros((2, 2, 3))])
+
+
+def test_verification_holds_stop_until_requested_goal_is_close():
+    # Chain completes at decision 3; requested-goal distance (last entry) is far,
+    # then close twice. Arrival must wait for two consecutive close verdicts.
+    requested = [9.0, 9.0, 9.0, 9.0, 2.0, 2.0]
+
+    def d(call, n):
+        chain = [2.0 if i == min(call, n - 2) else 9.0 for i in range(n - 1)]
+        return [*chain, requested[min(call, len(requested) - 1)]]
+
+    b = topomap_baseline(d, nodes=4, verify_threshold=3.0)
+    out = [b.step([None] * 6, goal=np.zeros((2, 2, 3))) for _ in range(6)]
+    assert [o["chain"]["reached_goal"] for o in out][2:] == [True] * 4
+    assert [o["verification"] for o in out][2:] == ["pending", "pending", "pending", "accepted"]
+    assert [o["policy_stop"] for o in out] == [False] * 5 + [True]
+    # While pending, the robot steers by the requested goal's waypoint.
+    assert out[2]["waypoint_normalized"][1] == 0.5
+    assert out[5]["chain_reached_decisions"] == 4
+
+
+def test_verification_without_requested_goal_is_refused():
+    b = topomap_baseline(lambda call, n: [2.0] * n, nodes=2, verify_threshold=3.0)
+    with pytest.raises(ValueError, match="requested goal"):
+        b.step([None] * 6)

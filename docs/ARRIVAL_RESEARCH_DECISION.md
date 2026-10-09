@@ -972,3 +972,26 @@ to both arms.
   are the identified causes; a monotonic-progress or temporal-consistency
   constraint (upstream has none) and a lost-state rule are candidate repairs to
   test on development routes before any calibration or new data.
+
+## Task contract and what the wrong-chain control tested (2026-10-09)
+
+Inputs per episode: (1) the requested final goal, a verified RGB image from the
+goal root (`goal_identity`), loaded independently of the chain; (2) a route of
+reference images (chain) from a prior traversal; (3) the camera history.
+In the `-02` comparison the chain policy received the requested goal but did
+not use it (`RGBTopomapBaseline.step(history, goal=None)` ignores `goal`);
+arrival was `closest_node == goal_node` on the chain alone.
+
+The wrong-chain control therefore tested:
+
+- whether goal-region visits depend on the supplied chain (yes: 0/8 vs 5/8);
+- whether the system checks the chain against the requested goal before
+  declaring arrival (no: 6/8 declarations at the end of a chain that did not
+  lead to the requested goal).
+
+It did **not** test goal recognition: the chain ended at a different
+destination, so stopping there was consistent with the chain, and no component
+compared the view with the requested goal. The result is a missing validation
+between requested destination and supplied chain, not a recognition failure.
+The cross-scene swap also makes the mismatch visually trivial; a same-scene
+mismatch is needed for a meaningful verification test (below).

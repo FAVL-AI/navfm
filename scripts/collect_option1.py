@@ -62,6 +62,8 @@ def main():
         help="routes of reference images (build_topomap.py); policy navigates the chain",
     )
     parser.add_argument("--topomap-radius", type=int, default=4, help="upstream default 4")
+    parser.add_argument("--comparison-config", type=Path, help="frozen component comparison")
+    parser.add_argument("--variant", help="variant name in --comparison-config")
     parser.add_argument(
         "--topomap-close-threshold", type=float, default=3.0, help="upstream default 3"
     )
@@ -106,6 +108,10 @@ def main():
         help="render steps after teleporting to the goal before its photograph; 8 is historical",
     )
     args = parser.parse_args()
+    if bool(args.variant) != bool(args.comparison_config) or (
+        args.variant and not args.topomap_root
+    ):
+        parser.error("--variant needs --comparison-config and --topomap-root")
     if args.unseal_heldout:
         # A sealed collection follows the frozen protocol exactly: every route,
         # the declared budget and speed, no perturbation, the sealed bytes only.
@@ -185,10 +191,22 @@ def main():
         if args.topomap_root:
             from navfm.collection.rgb_baseline import RGBTopomapBaseline
 
+            component = {}
+            if args.variant:
+                # Frozen component comparison: the variant fixes both components.
+                from navfm.collection.topomap import BoundedConfig
+
+                spec = json.loads(args.comparison_config.read_text())["variants"][args.variant]
+                component = {
+                    "bounded": BoundedConfig(**spec["bounded"]) if spec["bounded"] else None,
+                    "verify_threshold": spec["verify_threshold"],
+                    "verify_persistence": spec["verify_persistence"],
+                }
             policy = RGBTopomapBaseline(
                 args.checkpoint,
                 radius=args.topomap_radius,
                 close_threshold=args.topomap_close_threshold,
+                **component,
                 action_scale_m=0.049994826316833496,
                 stop_enabled=True,
                 max_v=args.policy_max_v,
@@ -755,6 +773,14 @@ def main():
                                 )
                             )
                         policy.set_chain(images)
+                        manifest["component_variant"] = {
+                            "variant": args.variant,
+                            "comparison_config_sha256": hashlib.sha256(
+                                args.comparison_config.read_bytes()
+                            ).hexdigest()
+                            if args.comparison_config
+                            else None,
+                        }
                         manifest["topomap"] = {
                             "root": str(args.topomap_root.resolve()),
                             "chain_json_sha256": hashlib.sha256(
