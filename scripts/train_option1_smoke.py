@@ -15,6 +15,19 @@ sys.path.insert(0, str(REPO / "src"))
 EXPECTED_CHECKPOINT = "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f"
 
 
+def spearman(pairs):
+    import numpy as np
+
+    if len(pairs) < 3:
+        return None
+    y, p = (np.asarray(v, float) for v in zip(*pairs, strict=True))
+    if np.ptp(y) == 0 or np.ptp(p) == 0:
+        return None
+    ry = np.argsort(np.argsort(y)).astype(float)
+    rp = np.argsort(np.argsort(p)).astype(float)
+    return float(np.corrcoef(ry, rp)[0, 1])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, required=True)
@@ -28,10 +41,27 @@ def main():
         "--train-names", type=Path, help="fixed nested training subset; dev/test unchanged"
     )
     parser.add_argument("--development-only", action="store_true")
+    parser.add_argument(
+        "--epochs",
+        type=int,
+        help="full passes over the training subset (ignores --steps); omitted = smoke path",
+    )
+    parser.add_argument(
+        "--curve-epochs",
+        default="",
+        help="comma-separated epochs at which to save weights and evaluate dev only",
+    )
     args = parser.parse_args()
     out = args.out.resolve()
     if out.exists() or out.is_relative_to(REPO) or args.steps < 1:
         parser.error("new external output and positive step count required")
+    curve_epochs = sorted({int(x) for x in args.curve_epochs.split(",") if x.strip()})
+    if args.epochs is not None and (
+        args.epochs < 1 or any(e < 1 or e > args.epochs for e in curve_epochs)
+    ):
+        parser.error("epochs must be positive and curve epochs within range")
+    if curve_epochs and args.epochs is None:
+        parser.error("--curve-epochs requires --epochs")
     admission = json.loads((args.dataset / "admission.json").read_text())
     if admission["admitted"] < 10:
         parser.error("ten admitted trajectories required")
@@ -145,6 +175,8 @@ def main():
             final_error = []
             latency = []
             realised = []
+            distance_positive = []
+            distance_negative = []
             model.eval()
             for i, pair in enumerate(pairs):
                 frozen_goal = goals[i]
@@ -160,7 +192,7 @@ def main():
                 start = time.perf_counter()
                 sample = ds[i]
                 realised.append(vint_dataset._NAVFM_REALISED_PAIRS[-1])
-                obs, goal, label, _, _, _, mask = sample
+                obs, goal, label, distance_label, _, _, mask = sample
                 obs, goal = upstream.apply_reference_transform(
                     obs.unsqueeze(0), goal.unsqueeze(0), transform, device
                 )
@@ -168,6 +200,11 @@ def main():
                     distance, actions = model(obs, goal)
                 if not torch.isfinite(actions).all() or not torch.isfinite(distance).all():
                     raise ValueError("nonfinite evaluation predictions")
+                predicted_distance = float(distance.reshape(-1)[0])
+                if frozen_goal[2]:
+                    distance_negative.append(predicted_distance)
+                else:
+                    distance_positive.append((float(distance_label), predicted_distance))
                 if float(mask) > 0:
                     errors = (
                         torch.linalg.vector_norm(actions[0, :, :2].cpu() - label[:, :2], dim=-1)
@@ -185,6 +222,18 @@ def main():
                 "waypoint_ade_m": float(np.mean(error)) if error else None,
                 "waypoint_fde_m": float(np.mean(final_error)) if error else None,
                 "offline_full_loop_p95_ms": float(np.percentile(latency, 95)),
+                # Distance head in label units (subsampled steps), never metres.
+                "distance_positive_pairs": len(distance_positive),
+                "distance_mae_positive_label_units": float(
+                    np.mean([abs(p - y) for y, p in distance_positive])
+                )
+                if distance_positive
+                else None,
+                "distance_spearman_positive": spearman(distance_positive),
+                "distance_negative_pairs": len(distance_negative),
+                "distance_mean_negative_prediction": float(np.mean(distance_negative))
+                if distance_negative
+                else None,
                 "pair_sha256": manifest.sha256,
                 "sampled_goal_flags_sha256": sha256(args.dataset / f"{split}_sampled_goals.json"),
             }
@@ -230,25 +279,50 @@ def main():
             generator=torch.Generator().manual_seed(cfg.seed),
         )
 
-        vint_dataset.navfm_seed_sampling(cfg.seed)
         before = {
             name: p.detach().cpu().clone()
             for name, p in model.named_parameters()
             if p.requires_grad
         }
         start = time.perf_counter()
-        metrics = train_one_epoch(
-            model,
-            optimizer,
-            loader,
-            cfg=cfg,
-            device=device,
-            alpha=float(modelcfg["alpha"]),
-            learn_angle=bool(modelcfg["learn_angle"]),
-            grad_clip=cfg.grad_clip,
-            progress=False,
-            max_steps=args.steps,
-        )
+        epoch_metrics = []
+        result["learning_curve_dev"] = []
+        for epoch in range(1, (args.epochs or 1) + 1):
+            # Epoch 1 keeps the historical goal-sampling seed.
+            vint_dataset.navfm_seed_sampling(cfg.seed + epoch - 1)
+            metrics = train_one_epoch(
+                model,
+                optimizer,
+                loader,
+                cfg=cfg,
+                device=device,
+                alpha=float(modelcfg["alpha"]),
+                learn_angle=bool(modelcfg["learn_angle"]),
+                grad_clip=cfg.grad_clip,
+                progress=False,
+                max_steps=None if args.epochs else args.steps,
+            )
+            epoch_metrics.append({"epoch": epoch, **metrics})
+            if epoch in curve_epochs:
+                weights = out / f"epoch_{epoch:03d}.pth"
+                save_weights(weights, model)
+                result["learning_curve_dev"].append(
+                    {
+                        "epoch": epoch,
+                        "optimizer_steps_total": sum(m["optimizer_steps"] for m in epoch_metrics),
+                        "weights": str(weights),
+                        "weights_sha256": sha256(weights),
+                        "dev": evaluate_fixed(model, "dev", dev),
+                    }
+                )
+                save()
+        result["epoch_metrics"] = epoch_metrics
+        metrics = {
+            k: float(np.mean([m[k] for m in epoch_metrics]))
+            for k in epoch_metrics[-1]
+            if k != "epoch"
+        }
+        metrics["optimizer_steps"] = float(sum(m["optimizer_steps"] for m in epoch_metrics))
         train_utils._compute_losses = original_loss
         if (
             not metrics
