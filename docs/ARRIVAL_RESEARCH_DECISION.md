@@ -512,3 +512,52 @@ Threshold 3 is the pinned default, not fitted:
 Open-loop, four routes, two scenes. The dev scenes are partly appearance-aliased
 with training scenes 8/9 (split v1). These are engineering diagnostics, not
 held-out evidence.
+
+### Closed-loop retest under normal lighting (milestone 6, competence check)
+
+Matched arms with identical fixture-verified scene, prior-traversal goals, 2 Hz
+decisions (0.05 m per decision), the `upstream_t3` stop rule, a 50 s budget and
+the qualified 0.1 m/s controller, on four development routes. Fine-tuned seed 0
+was fixed in advance from dev metrics.
+
+| Route | Released closest m (frame) | Released outcome | Fine-tuned closest m (frame) | Fine-tuned outcome |
+| --- | --- | --- | --- | --- |
+| s_bend_run_0000 | 1.108 (165) | timeout, contact | 0.898 (221) | timeout, contact |
+| s_bend_run_0001 | 1.092 (187) | timeout, contact | 0.716 (238) | timeout, contact |
+| junction_run_0000 | 1.157 (162) | timeout, contact | 0.477 (255) | **stop at 0.527 m**, no contact |
+| junction_run_0001 | 0.322 (267) | timeout, contact | **0.087 (244)** | no stop (min prediction 4.38), contact |
+
+| Endpoint (denominator 4 attempted episodes) | Released | Fine-tuned seed 0 |
+| --- | --- | --- |
+| Arrival (any frame <=0.5 m) | 1/4 | 2/4 |
+| Correct terminal stop (<=0.5 m) | 0/4 | 0/4 |
+| Wrong terminal stop (>0.5 m) | 0/4 | 1/4 (0.527 m) |
+| Missed arrival / overshoot | 1/4 | 1/4 |
+| Collision episode | 4/4 | 3/4 |
+| Completion (correct stop, no contact) | 0/4 | 0/4 |
+
+Evidence: `arrival-closedloop-{released,ft-seed0}-20261009-01` and their
+`-decomposition.json` files.
+
+**The normal-light baseline is NOT competent.** Fine-tuning improves closest
+approach on 4/4 paired routes (one seed; n=4; no significance claimed) but
+yields no correct stop. At closest approach the heading differs from the goal
+frame by 9-21 degrees, and closed-loop predictions stay at 4.3-5.3 even 0.087 m
+from the goal; on teacher frames the same model fired at 0.13-0.26 m. The
+remaining failure is closed-loop distribution shift: the policy visits headings
+and lateral offsets absent from the straight-on teacher demonstrations, and
+both waypoints and distances degrade there.
+
+Illumination isolation (step 6) was **not started**, because competence under
+normal lighting is not established.
+
+### Next decision for Frank
+
+1. **Recovery data (recommended):** teacher demonstrations with prospective
+   heading and lateral perturbations (DAgger-style relabelling of off-route
+   states), trained with the same budget, to target the measured closed-loop shift.
+2. **New layout family and sealed held-out groups (split v1):** needed for any
+   confirmatory claim and for honest dev-only stop calibration. All four
+   current routes are now development routes.
+3. A stop-threshold calibration on dev can be prepared, but cannot be evaluated
+   until held-out groups exist.
