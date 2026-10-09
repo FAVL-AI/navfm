@@ -789,3 +789,85 @@ visit** because no goal-blind control row exists yet.
 | Timeout | 4/4 | 4/4 |
 | In-episode tracking (diagnostic) | OUTSIDE_BAND, slope 0.69-0.77 | INSUFFICIENT (< 20 turn commands) |
 | Admitted trajectory rate | not applicable (policy runs) | not applicable |
+
+### Junction stop diagnosis (offline; `stop-probe-junction-20261009-01.json`)
+
+Evaluation-only replay: the exact six-frame histories the fine-tuned policy saw
+in the two junction episodes (decision frames from the recorded trajectory) and
+the teacher's own frames near the goal, through both checkpoints with the
+deployed preprocessing and the verified goal image. Ground-truth distance is
+used only to index the interval, never as a policy input. Label units: 0.05 m of
+teacher travel per unit; stop rule `upstream_t3` fires at prediction <= 3.
+
+- **Replay reproduces the log.** Replayed fine-tuned predictions match the logged
+  ones closely (e.g. 15.75 logged / 15.53 replayed; 11.92 / 11.70), so
+  preprocessing and the JPEG round-trip of saved frames do not explain the miss.
+- **The fine-tuned head fires only at the goal frame.** On teacher frames it first
+  reaches <= 3 at 0.085 m (junction_0) and only at 0.000 m (junction_1); at
+  0.13-0.19 m it predicts 3.3-6.9 where the label is 2.6-3.8 units. Its floor with
+  the goal as current view is 1.87 / 2.68.
+- **Closed-loop predictions match teacher predictions at matched distance.**
+  Median closed-loop minus teacher gap at <= 0.5 m: 1.03 and 0.05 units; the
+  large positive outliers (up to 9.8) are frames after the robot passed the goal.
+  The closest closed-loop approaches (0.122 and 0.181 m to the goal-image pose,
+  heading -2 to -16 deg) were outside the head's ~0.1 m firing range.
+- **The released head is compressed (about 2-4 everywhere near the goal).** On
+  the fine-tuned histories it would cross 3 at 0.59 m, a wrong stop; on teacher
+  frames it fires within 0.13-0.30 m.
+
+INFERENCE: the junction stop failure is a calibration mismatch between the
+fine-tuned distance head and the upstream threshold of 3: the effective stopping
+radius is about 0.1 m, much tighter than the 0.5 m arrival radius and tighter
+than the closed-loop approach accuracy. It is not primarily a closed-loop shift
+of the distance head. A stop rule calibrated on training or development teacher
+replays (never held-out) is the supported next test. It must be evaluated on
+fresh closed-loop runs, not on the episodes used to diagnose it.
+
+### Bend probe checked against the dataloader: earlier inference RETRACTED
+
+The checks requested before acting on the bend probe (coordinate transforms,
+action horizon, sampling, scaling) found the probe's conclusion wrong in cause:
+
+- Against upstream dataloader labels on the dev pairs (no hand-built transform),
+  fine-tuned waypoint-2 bearings correlate 0.89 (MAE 2.0-2.4 deg) on both s_bend
+  routes; released 0.70-0.87. Transforms, horizon (waypoint 2 = three 0.05 m
+  steps), spacing and scaling agree with the probe's own true-bearing range.
+- Decomposition with the deployed preprocessing (`bend_factor`, fine-tuned):
+
+| Route | Scene recording | Goal 5 steps ahead | Final-frame goal |
+| --- | --- | --- | --- |
+| s_bend_run_0000 | corpus (collection 05) | 0.87 / 2.7 deg | 0.23 / 5.0 deg |
+| s_bend_run_0000 | current fixture teacher | 0.90 / 2.3 deg | 0.42 / 4.6 deg |
+| s_bend_run_0001 | corpus (collection 05) | 0.89 / 2.6 deg | 0.36 / 5.2 deg |
+| s_bend_run_0001 | current fixture teacher | 0.90 / 2.5 deg | 0.29 / 7.4 deg |
+
+The scene recording does not matter; the goal distance does. Training samples
+goals at most 20 steps (1.0 m) ahead (`max_dist_cat`), while the development
+routes are 2.1-2.3 m (about 45 steps). Every closed-loop run so far gave the
+policy one final-frame goal, outside its training goal range for most of the
+episode. This also explains distance predictions saturating near 15-20 away
+from the goal. The pinned upstream deployment (`navigate.py`) never does this:
+it navigates a topological map of prior-traversal subgoal images, localising
+with the distance head and conditioning on a nearby node.
+
+**Retraction.** "The model's turn prediction at the s_bend is weak on teacher
+states; more bend data is the supported intervention" is withdrawn. Bearing
+correlation on teacher frames is high when the goal is within the training
+range. The supported next intervention is the upstream deployment semantics, a
+topological map of subgoals from the prior traversal, not new data.
+
+### Controller: live versus isolated tracking (bounded)
+
+Free-space step responses of the 120 Hz loop (run 10) show magnitude-dependent
+settling within one 0.5 s policy hold: mean realised fraction 0.52 at
+0.05 rad/s, 0.68 at 0.1, 0.78 at 0.2, 0.94 at 0.3, 1.05 at 0.4 (t90 0.61 s, 0.28 s,
+0.25 s, 0.13 s, 0.08 s). The isolated replay used open-loop-era commands (median
+|w| 0.218); live yaw-feedback commands are smaller (median 0.035-0.090 rad/s).
+Live slopes by command size match the free-space response: |w| >= 0.15:
+0.72-0.80; 0.05-0.15: 0.39-0.68. Turn saturation is 0-12% of decisions; forward
+speed is at the 0.1 m/s cap in 49-100%. The 0.61-0.75 live ratio is therefore the
+loop's rise time against 0.5 s holds for small commands, not a scene effect. Bound:
+for commands >= 0.15 rad/s the deficit is <= 28%; below that it is up to 61%.
+Closed-loop changes cannot be attributed to training until this is either
+removed (faster small-signal settling, requalified with a per-hold criterion) or
+held identical across compared arms, as it was in the retest.
