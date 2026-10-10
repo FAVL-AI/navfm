@@ -4,7 +4,7 @@ Recorded 2026-10-10. **Identical input/state repeats are bitwise stable in this 
 
 ## Fixed scope and execution
 
-Freeze `32b83460839fbad96267ae9f3acbf81543903ad2`, design `docs/OFFLINE_NUMERICAL_V1_PROTOCOL.md`, manifest `configs/eval/offline_numerical_v1.json`. Only `offline-numerical-v1-p1` and `offline-numerical-v1-p2` ran in the original pinned CUDA executable. Both PASS, 42 calls each: 28 isolated calls (all seven saved reference prestates, two input arms, two repetitions) and 14 full-sequence calls (one seven-invocation sequence per arm). Total 84 calls; zero retries/timeouts/new images/simulator launches/post-kidnap decisions. All commands were recorded and never executed. Source/assets were checked before/after; prior freezes and failures remain immutable.
+Freeze `32b83460839fbad96267ae9f3acbf81543903ad2`, design `docs/OFFLINE_NUMERICAL_V1_PROTOCOL.md`, manifest `configs/eval/offline_numerical_v1.json`. Only `offline-numerical-v1-p1` and `offline-numerical-v1-p2` ran in the original pinned CUDA executable. Both PASS, 42 calls each: 28 isolated calls (all seven saved reference prestates, two input arms, two repetitions) and 14 full-sequence calls (one seven-invocation sequence per arm). Total 84 calls; zero retries/timeouts/new images/simulator launches/post-kidnap decisions. A separate single CPU preprocessing-only audit process subsequently reconstructed tensors without constructing a model or initializing CUDA; it performed zero inference calls. All commands were recorded and never executed. Source/assets were checked before/after; prior freezes and failures remain immutable.
 
 Each isolated call restores the full declared policy state/config/search window, wrapper counters and common seeded RNG state. Each full sequence starts from the same initial state/RNG, then retains its own evolving state. Actual model-entry tensor bytes and raw-output bytes are hashed; shape/dtype, full outputs/predictions/states and decision margins are retained externally.
 
@@ -25,6 +25,22 @@ Observed settings in both processes: Torch 2.7.0+cu128, CUDA 12.8, NVIDIA GeForc
 The 28/14 contrast counts repeat seven saved input pairs; they are not independent experimental starts. All identical-input isolated comparisons have identical restored state and RNG digests, and bitwise identical raw outputs. Each arm's full sequence also repeats bitwise across fresh processes. For all 14 representative step/sequence input contrasts, observation tensor hashes differ while goal/chain tensor hashes match. Thus changes in these preserved observation inputs are sufficient to reproduce numerical output differences under this offline execution, without a different initial policy state. This is not a claim that all historical execution variation is excluded.
 
 All seven per-arm predictions reconstruct the corresponding original observer-window v2 predictions exactly: maximum absolute reconstruction delta 0, all discrete fields identical. Both offline repetitions/processes agree. The same per-arm prediction values occur in isolated and full-sequence execution. Numerical disagreement is present at the first invocation; full-state history then retains differing distances. Only `state.history` differs; all other declared policy-state fields match. Sequence pre-state maximum numeric difference is 0 initially, 0.007875443 at step 6, 0.029499054 at steps 12–30, and 0.055519104 at step 36. Final post-state maximum is 0.068376541. These are stored-history differences; additional output amplification from accumulated state was not observed in this seven-invocation sequence.
+
+## Quantitative preprocessing audit
+
+Original entry tensor bytes were not retained as files; shape/dtype/byte hashes were recorded. One subsequent read-only CPU audit used the pinned original preprocessing function/runtime on preserved RGBs, without model construction/inference or CUDA initialization. All 168 reconstructed observation/goal tensor hashes (two entry tensors × 84 calls) match actual-entry hashes exactly. Differences below are float64 measurements of those hash-validated normalized float32 observation tensors. Goals/chain tensors have zero max/mean/RMS difference and zero differing elements at every step.
+
+| Physical step | Batch size | Maximum absolute | Mean absolute | RMS | Nonzero / total elements |
+|---|---|---|---|---|---|
+| 0 | 7 | 0.035014138 | 0.004476241 | 0.008908404 | 174888 / 685440 |
+| 6 | 7 | 0.051374257 | 0.004322050 | 0.008752066 | 168903 / 685440 |
+| 12 | 9 | 0.052521020 | 0.004140926 | 0.008572833 | 207936 / 881280 |
+| 18 | 16 | 0.069716778 | 0.003988456 | 0.008426189 | 355664 / 1566720 |
+| 24 | 16 | 0.070028007 | 0.003852554 | 0.008323225 | 342208 / 1566720 |
+| 30 | 16 | 0.070028007 | 0.003708836 | 0.008178825 | 328960 / 1566720 |
+| 36 | 16 | 0.070028007 | 0.003553810 | 0.008041046 | 313920 / 1566720 |
+
+Each observation shape is `[batch, 18, 64, 85]`; batch repeats the six-frame observation once per chain/goal candidate. Counts include these repeated elements, not independent pixels or starts. Actual input differences are quantified; no frozen analysis, outcome or inference count was changed.
 
 ## Differences and observed margins
 
@@ -70,3 +86,6 @@ Raw evidence remains external at `/home/favl/navfm-runtime-evidence/offline-nume
 | `offline-numerical-v1-p1.log` | `c3fd0212ce6e5f92d881df92fe619766242144e734b000d5239d4ba509a0c776` |
 | `offline-numerical-v1-p2/result.json` | `c5c32ccf526970744dd7712833cc55506cc4e9e71b5283d1c8a5664afaf98252` |
 | `offline-numerical-v1-p2.log` | `c3fd0212ce6e5f92d881df92fe619766242144e734b000d5239d4ba509a0c776` |
+| `tensor-difference-summary.json` | `aeb0441b1e861d82d9079232027436271b9d04d3160750f6c99d82a987191a6b` |
+| `tensor-audit.py` | `1b5425bd4c0cb46ad461a555ca7bd65ec3c795888ce2f9859824ae050b0aae72` |
+| `tensor-audit.log` | `aeb0441b1e861d82d9079232027436271b9d04d3160750f6c99d82a987191a6b` |
