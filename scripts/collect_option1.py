@@ -165,7 +165,8 @@ def main():
                     "trial_variant": args.variant in t["variants"],
                     "trial_condition": chain_root
                     == str(Path(comparison["conditions"][t["condition"]]["root"]).resolve()),
-                    "trial_routes": sorted(args.route_id or []) == sorted(t["routes"]),
+                    # A subset is allowed so that a declared rerun covers only failed routes.
+                    "trial_routes": bool(args.route_id) and set(args.route_id) <= set(t["routes"]),
                     "trial_budget": args.max_steps == t.get("budget_frames", rt["budget_frames"]),
                     "trial_start_lost": bool(args.start_lost) == bool(t.get("start_lost")),
                     "trial_resume": (
@@ -904,7 +905,16 @@ def main():
                                 raise ValueError("resume episode used another chain or goal")
                             policy.initial_node = resume["initial_node"]
                         policy.set_chain(images)
+                        trial_spec = (
+                            json.loads(args.comparison_config.read_text())
+                            .get("trials", {})
+                            .get(args.trial)
+                            if args.comparison_config and args.trial
+                            else None
+                        )
                         manifest["component_variant"] = {
+                            "trial": args.trial,
+                            "stage": None if trial_spec is None else trial_spec["stage"],
                             "variant": args.variant,
                             "comparison_config_sha256": hashlib.sha256(
                                 args.comparison_config.read_bytes()

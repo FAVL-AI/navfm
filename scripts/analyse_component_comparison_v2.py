@@ -1,12 +1,13 @@
-"""Integrity, outcomes, mechanism measures and gates for component_comparison_v2 (stages 2-3).
+"""Integrity, outcomes, mechanism measures, stage-2 gates and stage-3 decisions (component_comparison_v2).
 
-Definitions and gates are those frozen in configs/eval/component_comparison_v2.json
-("definitions", "gates_to_stage_3"); this file is their computation. Pose is used
-only for evaluation. Collections are named v2-<trial>-<variant>-<tag>.
+Definitions, gates and criteria are those frozen in configs/eval/component_comparison_v2.json
+("definitions", "gates_to_stage_3", "stage_3_criteria", "retry_rule"); this file is their
+computation. Pose is used only for evaluation. Collections are named
+v2-<trial>-<variant>-<tag>; every tag found is reported (retry rule).
 
-Usage: analyse_component_comparison_v2.py --config CFG --freeze-commit SHA
-       --audit AUDIT.json --tag TAG --trial NAME [--trial ...] --out OUT.json
-       [--negative-control]
+Usage: analyse_component_comparison_v2.py --config CFG --freeze-commit SHA --audit AUDIT.json
+       --trial NAME [--trial ...] --out OUT.json [--stage2-result GATES.json]
+       [--negative-control MODE]
 """
 
 from __future__ import annotations
@@ -63,7 +64,9 @@ def true_nodes(m: dict, npose: np.ndarray) -> list[int]:
     return [
         int(
             np.argmin(
-                np.linalg.norm(npose - np.array(m["captures"][r["frame"]]["pose"][:2]), axis=1)
+                np.linalg.norm(
+                    npose - np.array(m["captures"][max(r["frame"] - 1, 0)]["pose"][:2]), axis=1
+                )
             )
         )
         for r in m["inference"]
@@ -193,18 +196,27 @@ def recovery(m: dict, true: list[int], start_lost: bool) -> dict:
     }
 
 
-NEGATIVE_MODES = ("variant", "chain", "resume", "start_lost")
+NEGATIVE_MODES = ("variant", "chain", "resume", "start_lost", "trial")
+COMPARATORS = ("A_baseline", "B1_bounded", "B1x_exit", "C1_verify")
+COUNTERPART = {
+    "B1_bounded": "A_baseline",
+    "V2a_confirm": "C1_verify",
+    "V2b_confirm_steer": "C1_verify",
+    "R2_recover": "B1x_exit",
+}
 
 
-def attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx) -> dict:
+def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) -> dict:
     """Integrity checks for one attempt; every expected value comes from the frozen config."""
-    neg = a.negative_control
     pt = m["policy"]["topomap"]
     tm = m["topomap"]
+    cv = m["component_variant"]
     want_lost = bool(t.get("start_lost")) != (neg == "start_lost")
     checks = {
-        "variant": m["component_variant"]["variant"] == v,
-        "config_sha": m["component_variant"]["comparison_config_sha256"] == ctx["cfg_sha"],
+        "variant": cv["variant"] == v,
+        "trial": cv.get("trial") == (trial + "_x" if neg == "trial" else trial)
+        and cv.get("stage") == t["stage"],
+        "config_sha": cv["comparison_config_sha256"] == ctx["cfg_sha"],
         "checkpoint": m["policy"]["sha256"] == ctx["cfg"]["checkpoint"]["sha256"],
         "chain_root": str(Path(tm["root"]).resolve()) == str(Path(cond["root"]).resolve()),
         "chain_sha": tm["chain_json_sha256"]
@@ -215,6 +227,8 @@ def attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx) -> dict:
         "approach_steering": pt.get("approach_steering")
         == (spec.get("approach_steering", True) if spec.get("confirmation") else None),
         "recovery": pt.get("recovery") == spec.get("recovery"),
+        "scan_rate": pt.get("scan_rate")
+        == (spec.get("scan_rate", 0.4) if spec.get("recovery") else None),
         "start_lost": bool(pt.get("start_lost")) == want_lost
         and bool(tm.get("start_lost")) == want_lost,
         "radius": pt["radius"] == ctx["cfg"]["runtime"]["radius"],
@@ -233,7 +247,7 @@ def attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx) -> dict:
         q.split(str(REPO) + "/", 1)[1]: d for q, d in obs.items() if q.startswith(str(REPO) + "/")
     }
     checks["source_at_freeze"] = bool(rf) and all(
-        git_blob_sha(a.freeze_commit, r, ctx["cache"]) == d for r, d in rf.items()
+        git_blob_sha(freeze_commit, r, ctx["cache"]) == d for r, d in rf.items()
     )
     ctx["nonrepo"].append({q: d for q, d in obs.items() if not q.startswith(str(REPO) + "/")})
     frames = [r["frame"] for r in m["inference"]]
@@ -248,6 +262,8 @@ def attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx) -> dict:
         rm = json.loads((rm_path / "runtime_manifest.json").read_text())
         K = t["resume_decision"] + (1 if neg == "resume" else 0)
         node = rm["inference"][K - 1]["chain"]["closest_node"]
+        f = rm["inference"][K]["frame"]
+        hist = [rm["inference"][j]["frame"] - 1 for j in range(K - 6, K)]
         checks["resume"] = (
             resume is not None
             and resume["episode"] == str(rm_path.resolve())
@@ -255,19 +271,339 @@ def attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx) -> dict:
             and resume["initial_node"] == node
             and tm.get("initial_node") == node
             and resume["source_checkpoint_sha256"] == ctx["cfg"]["checkpoint"]["sha256"]
+            and resume["history_frames"] == hist
             and resume["history_sha256"]
             == [
                 hashlib.sha256((rm_path / "trajectory" / f"{q}.jpg").read_bytes()).hexdigest()
-                for q in resume["history_frames"]
+                for q in hist
             ]
+            and np.allclose(m["start_pose"], rm["captures"][f - 1]["pose"], atol=1e-9)
         )
     else:
         checks["resume"] = resume is None and tm.get("initial_node") == 0
-    r = ctx["audit"].get((coll, route))
-    checks["audited"] = r is not None and "measures" in r
-    gi = (r or {}).get("goal_identity") or {}
-    checks["goal_identity"] = bool(gi) and all(x for x in gi.values() if isinstance(x, bool))
     return checks
+
+
+def discover(trial: str, variant: str, routes: list[str]) -> tuple[dict, list]:
+    """Apply the retry rule over every v2-<trial>-<variant>-* collection.
+
+    Returns {route: (root, entry)} for the counted attempt and a full log of every
+    attempt found. A route's counted attempt is its first PASS in launch order;
+    at most one rerun, and only after a non-PASS attempt; a rerun of a PASS
+    attempt, or a third attempt, is an integrity failure.
+    """
+    roots = sorted(
+        (d for d in E.glob(f"v2-{trial}-{variant}-*") if (d / "frozen_routes.json").exists()),
+        key=lambda d: (d / "frozen_routes.json").stat().st_mtime,
+    )
+    log, counted, violations = [], {}, []
+    for root in roots:
+        cj = (
+            json.loads((root / "collection.json").read_text())
+            if (root / "collection.json").exists()
+            else {"episodes": []}
+        )
+        for e in cj["episodes"]:
+            log.append({"collection": root.name, "route": e["id"], "status": e["status"]})
+    for route in routes:
+        tries = [x for x in log if x["route"] == route]
+        passes = [k for k, x in enumerate(tries) if x["status"] == "PASS"]
+        if len(tries) > 2:
+            violations.append((route, "more than one rerun"))
+        if passes and passes[0] < len(tries) - 1:
+            violations.append((route, "attempt after a PASS"))
+        if passes:
+            x = tries[passes[0]]
+            counted[route] = (E / x["collection"], x)
+    return counted, log, violations
+
+
+def measures(m: dict, r: dict, t: dict, spec: dict, close: float, goal) -> dict:
+    ms = r["measures"]
+    inf = m["inference"]
+    k_end = task_end_decision(inf)
+    first_end = next((k for k, x in enumerate(inf) if x["chain"].get("reached_goal")), None)
+    stop_k = next((k for k, x in enumerate(inf) if x["policy_stop"]), None)
+    out = {
+        k: ms[k]
+        for k in (
+            "correct_stop",
+            "wrong_stop",
+            "timeout",
+            "navigation_success",
+            "collision_before_task_end",
+            "stop_goal_distance_m",
+            "min_goal_distance_m",
+            "final_goal_distance_m",
+            "exposure_s",
+            "elapsed_s",
+            "path_length_m",
+        )
+    }
+    out["abstained"] = m.get("policy_abstain_reason")
+    out["termination"] = m["termination"]
+    out["added_stopping_delay"] = (
+        {"decisions": stop_k - first_end, "seconds": 0.5 * (stop_k - first_end)}
+        if ms["correct_stop"] and first_end is not None and stop_k is not None
+        else None
+    )
+    latch = next(
+        (k for k, x in enumerate(inf) if (x.get("confirmation") or {}).get("phase") == "approach"),
+        None,
+    )
+    if latch is not None and goal is not None:
+        d = float(
+            np.linalg.norm(
+                np.array(m["captures"][max(inf[latch]["frame"] - 1, 0)]["pose"][:2]) - goal
+            )
+        )
+        out["approach_latch"] = {"decision": latch, "goal_distance_m": d, "premature": d > 0.5}
+    else:
+        out["approach_latch"] = None
+    if t["condition"] == "wrong_chain_swap":
+        return out
+    npose = node_poses(m)
+    true = true_nodes(m, npose)
+    out["current_off_true"] = sum(
+        abs(inf[k]["chain"]["closest_node"] - true[k]) > 1 for k in range(k_end + 1)
+    )
+    exit_ = (spec.get("recovery") or {}).get("exit") or (spec.get("bounded") or {}).get("lost_exit")
+    lost_ks = [k for k in range(k_end + 1) if inf[k]["chain"].get("lost")]
+    out["lost_decisions"] = len(lost_ks)
+    out["lost_false_global_matches"] = (
+        None
+        if exit_ is None
+        else sum(
+            inf[k]["chain"]["argmin_distance"] <= exit_
+            and abs(inf[k]["chain"]["argmin_node"] - true[k]) > 1
+            for k in lost_ks
+        )
+    )
+    line = np.asarray(m["route"]["waypoints"], float)
+    line[:, 1] += m["route"]["scene_index"] * 20.0
+    lateral = np.array([to_polyline(np.array(c["pose"][:2]), line) for c in m["captures"]])
+    if t["question"] == "look-alike":
+        out["ambiguity"] = ambiguity(m, true, lateral, m["topomap"].get("initial_node", 0), close)
+    out["recovery"] = recovery(m, true, bool(t.get("start_lost")))
+    return out
+
+
+def goal_xy(cfg: dict, route: str) -> np.ndarray:
+    """Scoring goal: the goal image's capture position (evaluation only)."""
+    root = Path(cfg["runtime"]["goal_root"])
+    goals = json.loads((root / "goal_source.json").read_text())["goals"]
+    src = json.loads((root / route / "runtime_manifest.json").read_text())
+    return np.array(src["captures"][goals[route]["frame"]]["pose"][:2])
+
+
+def contacts(rs):
+    return sum(bool(x["collision_before_task_end"]) for x in rs)
+
+
+def exposure(rs):
+    path = sum(x["path_length_m"] for x in rs)
+    n = contacts(rs)
+    return {
+        "contacts": n,
+        "path_m": path,
+        "exposure_s": sum(x["exposure_s"] for x in rs),
+        "contacts_per_m": n / path if path else (0.0 if n == 0 else None),
+    }
+
+
+def per_m_le(a_rows, b_rows) -> bool:
+    a, b = exposure(a_rows)["contacts_per_m"], exposure(b_rows)["contacts_per_m"]
+    return a is not None and (b is None or a <= b)
+
+
+def compute_gates(cfg: dict, attempts: list, ran: set, globally_ok: bool) -> dict:
+    """Stage-2 gates (config gates_to_stage_3)."""
+
+    def rows(tns, v):
+        return [
+            x for x in attempts if x["trial"] in tns and x["variant"] == v and "correct_stop" in x
+        ]
+
+    def planned(tns, v):
+        return sum(
+            len(cfg["trials"][tn]["routes"]) for tn in tns if v in cfg["trials"][tn]["variants"]
+        )
+
+    def complete(tns, vs):
+        rs = [x for x in attempts if x["trial"] in tns and x["variant"] in vs]
+        return (
+            globally_ok
+            and all(x.get("integrity_ok") for x in rs)
+            and all(len(rows(tns, v)) == planned(tns, v) for v in vs)
+        )
+
+    def q(question):
+        return sorted(tn for tn in ran if cfg["trials"][tn]["question"] == question)
+
+    gates = {}
+    amb = q("look-alike")
+    if amb:
+        ra, rb = rows(amb, "A_baseline"), rows(amb, "B1_bounded")
+        b_enc = [e for x in rb for e in x["ambiguity"]["encounters"]]
+        evaluable = [e for e in b_enc if e["outcome"] != "NOT_EVALUABLE"]
+        g = {
+            "complete": complete(amb, ["A_baseline", "B1_bounded"]),
+            "A_follows_in_some_trial": any(x["ambiguity"]["followed"] for x in ra),
+            "B1_evaluable_encounters": len(evaluable),
+            "B1_corrects_every_evaluable_encounter": bool(evaluable)
+            and all(e["outcome"] == "corrected" for e in evaluable),
+            "B1_contacts_le_A": contacts(rb) <= contacts(ra),
+            "exposure": {"A_baseline": exposure(ra), "B1_bounded": exposure(rb)},
+        }
+        if not g["complete"]:
+            g["status"] = "INCOMPLETE"
+        elif not g["A_follows_in_some_trial"] or not evaluable:
+            g["status"] = "NOT_TESTED"
+        else:
+            ok = g["B1_corrects_every_evaluable_encounter"] and g["B1_contacts_le_A"]
+            g["status"] = "PASS" if ok else "FAIL"
+        gates["B1_bounded"] = g
+    kid = q("recovery")
+    if kid:
+        uninf = [tn for tn in kid if cfg["trials"][tn].get("uninformative_view")]
+
+        def succ(tns, v):
+            return sum(x["recovery"]["first_entry_success"] for x in rows(tns, v))
+
+        r2, bx = rows(kid, "R2_recover"), rows(kid, "B1x_exit")
+        g = {
+            "complete": complete(kid, ["B1_bounded", "B1x_exit", "R2_recover"]),
+            "R2_uninformative_successes": succ(uninf, "R2_recover"),
+            "B1x_uninformative_successes": succ(uninf, "B1x_exit"),
+            "R2_all_successes": succ(kid, "R2_recover"),
+            "B1x_all_successes": succ(kid, "B1x_exit"),
+            "B1_all_successes": succ(kid, "B1_bounded"),
+            "R2_wrong_stops": sum(x["wrong_stop"] for x in r2),
+            "B1x_wrong_stops": sum(x["wrong_stop"] for x in bx),
+            "exposure": {
+                v: exposure(rows(kid, v)) for v in ("B1_bounded", "B1x_exit", "R2_recover")
+            },
+        }
+        ok = (
+            g["R2_uninformative_successes"] >= 6
+            and g["R2_uninformative_successes"] > g["B1x_uninformative_successes"]
+            and g["R2_all_successes"] >= g["B1x_all_successes"]
+            and g["R2_wrong_stops"] <= g["B1x_wrong_stops"]
+            and contacts(r2) <= contacts(bx)
+            and per_m_le(r2, bx)
+        )
+        g["status"] = "INCOMPLETE" if not g["complete"] else ("PASS" if ok else "FAIL")
+        gates["R2_recover"] = g
+    arr, pre = q("arrival recognition"), q("premature confirmation")
+    if arr or pre:
+        vs = ["A_baseline", "C1_verify", "V2a_confirm", "V2b_confirm_steer"]
+        summary = {}
+        for name, tns in (("arrival_truncated", arr), ("premature_true", pre)):
+            summary[name] = {
+                v: {
+                    "correct": sum(x["correct_stop"] for x in rows(tns, v)),
+                    "wrong": sum(x["wrong_stop"] for x in rows(tns, v)),
+                    "abstained": sum(bool(x["abstained"]) for x in rows(tns, v)),
+                    "timeouts": sum(x["timeout"] and not x["abstained"] for x in rows(tns, v)),
+                    "premature_latches": sum(
+                        bool((x.get("approach_latch") or {}).get("premature")) for x in rows(tns, v)
+                    ),
+                    **exposure(rows(tns, v)),
+                    "n": len(rows(tns, v)),
+                }
+                for v in vs
+            }
+        done = complete(arr + pre, vs) and bool(arr) and bool(pre)
+        for v in ("V2a_confirm", "V2b_confirm_steer"):
+            a_, p_ = summary["arrival_truncated"], summary["premature_true"]
+            ok = (
+                a_[v]["correct"] >= 3
+                and a_[v]["wrong"] == 0
+                and a_[v]["contacts"] <= a_["A_baseline"]["contacts"]
+                and a_[v]["correct"] > a_["C1_verify"]["correct"]
+                and p_[v]["wrong"] == 0
+            )
+            gates[v] = {"status": "INCOMPLETE" if not done else ("PASS" if ok else "FAIL")}
+        gates["V2_summary"] = summary
+        gates["V2b_vs_V2a (descriptive)"] = {
+            k: {
+                f: summary[k]["V2b_confirm_steer"][f] - summary[k]["V2a_confirm"][f]
+                for f in ("correct", "wrong", "contacts")
+            }
+            for k in summary
+        }
+    return gates
+
+
+def stage3_decisions(cfg: dict, attempts: list, ran: set, passed: set, globally_ok: bool) -> dict:
+    """Stage-3 retain / revise (config stage_3_criteria)."""
+    tns = sorted(tn for tn in ran if cfg["trials"][tn]["stage"] == 3)
+    if not tns:
+        return {}
+
+    def rows(cond, v):
+        return [
+            x
+            for x in attempts
+            if x["trial"] in tns
+            and cfg["trials"][x["trial"]]["condition"] == cond
+            and x["variant"] == v
+            and "correct_stop" in x
+        ]
+
+    rs3 = [x for x in attempts if x["trial"] in tns]
+    ok_integrity = globally_ok and all(x.get("integrity_ok") for x in rs3)
+    out = {}
+    for comp in sorted(passed):
+        cp = COUNTERPART[comp]
+        conds, not_tested = {}, []
+        retain = ok_integrity
+        for cond in ("true_chain", "truncated_chain", "wrong_chain_swap"):
+            c, k, a = rows(cond, comp), rows(cond, cp), rows(cond, "A_baseline")
+            if not c or not k or not a:
+                retain = False
+                conds[cond] = "MISSING"
+                continue
+            reg = not (
+                contacts(c) <= contacts(k)
+                and contacts(c) <= contacts(a)
+                and per_m_le(c, k)
+                and per_m_le(c, a)
+            )
+            cs = {v: sum(x["correct_stop"] for x in rs) for v, rs in (("c", c), ("k", k))}
+            ws = {v: sum(x["wrong_stop"] for x in rs) for v, rs in (("c", c), ("k", k))}
+            if comp in ("V2a_confirm", "V2b_confirm_steer"):
+                primary = cs["c"] >= cs["k"] and ws["c"] <= ws["k"]
+                if cond == "true_chain":
+                    primary = primary and ws["c"] == 0
+            elif comp == "R2_recover":
+                lost_c = sum(x["recovery"]["lost_entries"] for x in c if "recovery" in x)
+                lost_k = sum(x["recovery"]["lost_entries"] for x in k if "recovery" in x)
+                if cond == "wrong_chain_swap":
+                    primary = ws["c"] <= ws["k"]
+                elif lost_c == 0 and lost_k == 0:
+                    not_tested.append(f"{cond}: recovery (no lost entries)")
+                    primary = ws["c"] <= ws["k"]
+                else:
+                    sc = sum(x["recovery"]["successes"] for x in c)
+                    sk = sum(x["recovery"]["successes"] for x in k)
+                    primary = sc >= sk and ws["c"] <= ws["k"]
+            else:
+                primary = cs["c"] >= cs["k"]
+            conds[cond] = {
+                "contact_regression": reg,
+                "primary_ok": primary,
+                "exposure": {comp: exposure(c), cp: exposure(k), "A_baseline": exposure(a)},
+            }
+            retain = retain and not reg and primary
+        out[comp] = {
+            "counterpart": cp,
+            "conditions": conds,
+            "not_tested": not_tested,
+            "decision": "RETAIN" if retain else "REVISE",
+            "integrity_ok": ok_integrity,
+        }
+    return out
 
 
 def main():
@@ -275,9 +611,9 @@ def main():
     p.add_argument("--config", type=Path, required=True)
     p.add_argument("--freeze-commit", required=True)
     p.add_argument("--audit", type=Path, required=True)
-    p.add_argument("--tag", required=True)
     p.add_argument("--trial", action="append", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--stage2-result", type=Path, help="this script's stage-2 output (gates)")
     p.add_argument("--negative-control", choices=NEGATIVE_MODES)
     a = p.parse_args()
     if a.out.exists():
@@ -295,6 +631,17 @@ def main():
     cfg = json.loads(cfg_bytes)
     if cfg != json.loads(a.config.read_text()):
         p.error("--config differs from the frozen commit's protocol")
+    stage3 = [tn for tn in a.trial if cfg["trials"][tn]["stage"] == 3]
+    passed: set = set()
+    stage2_time = None
+    if stage3:
+        if a.stage2_result is None:
+            p.error("stage-3 trials need --stage2-result")
+        s2 = json.loads(a.stage2_result.read_text())
+        passed = {
+            k for k, g in s2["gates"].items() if isinstance(g, dict) and g.get("status") == "PASS"
+        }
+        stage2_time = a.stage2_result.stat().st_mtime
     ctx = {
         "cfg": cfg,
         "cfg_sha": hashlib.sha256(a.config.read_bytes()).hexdigest(),
@@ -305,254 +652,80 @@ def main():
                 text=True,
             ).stdout
         ),
-        "audit": {
-            (r["collection"], r["route"]): r for r in json.loads(a.audit.read_text())["rows"]
-        },
         "qual_sha": hashlib.sha256(Path(cfg["runtime"]["qualification"]).read_bytes()).hexdigest(),
         "cache": {},
         "nonrepo": [],
     }
+    audit = {(r["collection"], r["route"]): r for r in json.loads(a.audit.read_text())["rows"]}
     variants = list(cfg["variants"])
     close = cfg["runtime"]["close_threshold"]
-    attempts, failures = [], []
+    attempts, failures, logs = [], [], {}
     for trial in a.trial:
         t = cfg["trials"][trial]
         cond = cfg["conditions"][t["condition"]]
         for v in t["variants"]:
-            coll = f"v2-{trial}-{v}-{a.tag}"
-            root = E / coll
+            if t["stage"] == 3 and v not in passed and v not in COMPARATORS:
+                continue  # not admitted to stage 3
             shifted = variants[(variants.index(v) + 1) % len(variants)]
             spec = cfg["variants"][shifted if a.negative_control == "variant" else v]
-            cj = (
-                json.loads((root / "collection.json").read_text())
-                if (root / "collection.json").exists()
-                else {"episodes": []}
-            )
-            eps = {e["id"]: e for e in cj["episodes"]}
+            counted, log, violations = discover(trial, v, t["routes"])
+            logs[f"{trial}/{v}"] = log
+            for route, why in violations:
+                failures.append((f"{trial}/{v}", route, [why]))
             for route in t["routes"]:
-                att = {"trial": trial, "variant": v, "route": route, "collection": coll}
-                e = eps.get(route)
-                if e is None or e["status"] != "PASS":
-                    att["status"] = "NEVER_RUN" if e is None else e["status"]
-                    failures.append((coll, route, [att["status"]]))
+                att = {"trial": trial, "variant": v, "route": route}
+                if route not in counted:
+                    att["status"] = "NO_PASS_ATTEMPT"
+                    failures.append((f"{trial}/{v}", route, ["no PASS attempt"]))
                     attempts.append(att)
                     continue
-                att["status"] = "PASS"
+                root, _ = counted[route]
+                att.update(status="PASS", collection=root.name)
                 m = json.loads((root / route / "runtime_manifest.json").read_text())
-                checks = attempt_checks(a, t, cond, spec, v, m, root, coll, route, ctx)
+                checks = attempt_checks(
+                    a.negative_control, a.freeze_commit, t, trial, cond, spec, v, m, root, ctx
+                )
+                if stage2_time is not None and t["stage"] == 3:
+                    checks["launched_after_stage2_result"] = (
+                        root / "frozen_routes.json"
+                    ).stat().st_mtime > stage2_time
+                r = audit.get((root.name, route))
+                checks["audited"] = r is not None and "measures" in r
+                gi = (r or {}).get("goal_identity") or {}
+                checks["goal_identity"] = bool(gi) and all(
+                    x for x in gi.values() if isinstance(x, bool)
+                )
                 att["checks"] = checks
                 att["integrity_ok"] = all(checks.values())
                 if not att["integrity_ok"]:
-                    failures.append((coll, route, sorted(k for k, ok in checks.items() if not ok)))
-                r = ctx["audit"].get((coll, route))
-                if r is None:
-                    attempts.append(att)
-                    continue
-                ms = r["measures"]
-                inf = m["inference"]
-                k_end = task_end_decision(inf)
-                first_end = next(
-                    (k for k, x in enumerate(inf) if x["chain"].get("reached_goal")), None
-                )
-                stop_k = next((k for k, x in enumerate(inf) if x["policy_stop"]), None)
-                att.update(
-                    {
-                        k: ms[k]
-                        for k in (
-                            "correct_stop",
-                            "wrong_stop",
-                            "timeout",
-                            "navigation_success",
-                            "collision_before_task_end",
-                            "stop_goal_distance_m",
-                            "min_goal_distance_m",
-                            "final_goal_distance_m",
-                            "exposure_s",
-                            "elapsed_s",
-                            "path_length_m",
-                        )
-                    }
-                )
-                att["abstained"] = m.get("policy_abstain_reason")
-                att["termination"] = m["termination"]
-                att["added_stopping_delay"] = (
-                    {"decisions": stop_k - first_end, "seconds": 0.5 * (stop_k - first_end)}
-                    if ms["correct_stop"] and first_end is not None and stop_k is not None
-                    else None
-                )
-                if t["condition"] != "wrong_chain_swap":
-                    npose = node_poses(m)
-                    true = true_nodes(m, npose)
-                    att["current_off_true"] = sum(
-                        abs(inf[k]["chain"]["closest_node"] - true[k]) > 1 for k in range(k_end + 1)
+                    failures.append(
+                        (root.name, route, sorted(k for k, ok in checks.items() if not ok))
                     )
-                    goal_node = len(npose) - 1
-                    latch = next(
-                        (
-                            k
-                            for k, x in enumerate(inf)
-                            if (x.get("confirmation") or {}).get("phase") == "approach"
-                        ),
-                        None,
-                    )
-                    att["approach_latch"] = (
-                        None
-                        if latch is None
-                        else {
-                            "decision": latch,
-                            "true_node": true[latch],
-                            "premature": true[latch] <= goal_node - 3,
-                        }
-                    )
-                    exit_ = (spec.get("recovery") or {}).get("exit") or (
-                        (spec.get("bounded") or {}).get("lost_exit")
-                    )
-                    lost_ks = [k for k in range(k_end + 1) if inf[k]["chain"].get("lost")]
-                    att["lost_decisions"] = len(lost_ks)
-                    att["lost_false_global_matches"] = (
-                        None
-                        if exit_ is None
-                        else sum(
-                            inf[k]["chain"]["argmin_distance"] <= exit_
-                            and abs(inf[k]["chain"]["argmin_node"] - true[k]) > 1
-                            for k in lost_ks
-                        )
-                    )
-                    caps = m["captures"]
-                    line = np.asarray(m["route"]["waypoints"], float)
-                    line[:, 1] += m["route"]["scene_index"] * 20.0
-                    lateral = np.array([to_polyline(np.array(c["pose"][:2]), line) for c in caps])
-                    if t["question"] == "look-alike":
-                        att["ambiguity"] = ambiguity(
-                            m, true, lateral, m["topomap"].get("initial_node", 0), close
-                        )
-                    att["recovery"] = recovery(m, true, bool(t.get("start_lost")))
+                if r is not None:
+                    att.update(measures(m, r, t, spec, close, goal_xy(cfg, route)))
                 attempts.append(att)
     nonrepo = ctx["nonrepo"]
-    if nonrepo and not all(n == nonrepo[0] for n in nonrepo):
+    globally_ok = not nonrepo or all(n == nonrepo[0] for n in nonrepo)
+    if not globally_ok:
         failures.append(("all", "all", ["nonrepo_influencing_files"]))
     per_check: dict = {}
     for _, _, ks in failures:
         for k in ks:
             per_check[k] = per_check.get(k, 0) + 1
-
-    def rows(trial_names, variant):
-        return [
-            x
-            for x in attempts
-            if x["trial"] in trial_names and x["variant"] == variant and "correct_stop" in x
-        ]
-
-    def planned(trial_names, variant):
-        return sum(
-            len(cfg["trials"][tn]["routes"])
-            for tn in trial_names
-            if variant in cfg["trials"][tn]["variants"]
-        )
-
-    def complete(trial_names, variants_):
-        rs = [x for v in variants_ for x in rows(trial_names, v)]
-        return all(x.get("integrity_ok") for x in rs) and all(
-            len(rows(trial_names, v)) == planned(trial_names, v) for v in variants_
-        )
-
-    def contacts(rs):
-        return sum(bool(x["collision_before_task_end"]) for x in rs)
-
-    def exposure(rs):
-        secs = sum(x["exposure_s"] for x in rs)
-        path = sum(x["path_length_m"] for x in rs)
-        n = contacts(rs)
-        return {
-            "contacts": n,
-            "exposure_s": secs,
-            "path_m": path,
-            "contacts_per_min": 60 * n / secs if secs else None,
-            "contacts_per_m": n / path if path else None,
-        }
-
-    gates = {}
     ran = set(a.trial)
-    amb = sorted(tn for tn in ran if cfg["trials"][tn]["question"] == "look-alike")
-    if amb:
-        ra, rb = rows(amb, "A_baseline"), rows(amb, "B1_bounded")
-        b_enc = [e for x in rb for e in x["ambiguity"]["encounters"]]
-        evaluable = [e for e in b_enc if e["outcome"] != "NOT_EVALUABLE"]
-        g = {
-            "complete": complete(amb, ["A_baseline", "B1_bounded"]),
-            "A_follows_in_some_trial": any(x["ambiguity"]["followed"] for x in ra),
-            "B1_encounters": bool(b_enc),
-            "B1_corrects_every_evaluable_encounter": bool(evaluable)
-            and all(e["outcome"] == "corrected" for e in evaluable),
-            "B1_contacts_le_A": contacts(rb) <= contacts(ra),
-        }
-        g["pass"] = all(g.values())
-        g["status"] = "NOT_TESTED" if not b_enc else ("PASS" if g["pass"] else "FAIL")
-        g["exposure"] = {"A_baseline": exposure(ra), "B1_bounded": exposure(rb)}
-        gates["B1_bounded (look-alike)"] = g
-    kid = sorted(tn for tn in ran if cfg["trials"][tn]["question"] == "recovery")
-    if kid:
-        uninf = [tn for tn in kid if cfg["trials"][tn].get("uninformative_view")]
-        arms = ("B1_bounded", "B1x_exit", "R2_recover")
-
-        def succ(tns, v):
-            return sum(x["recovery"]["first_entry_success"] for x in rows(tns, v))
-
-        g = {
-            "complete": complete(kid, list(arms)),
-            "R2_uninformative_successes": succ(uninf, "R2_recover"),
-            "B1x_uninformative_successes": succ(uninf, "B1x_exit"),
-            "R2_all_successes": succ(kid, "R2_recover"),
-            "B1x_all_successes": succ(kid, "B1x_exit"),
-            "B1_all_successes": succ(kid, "B1_bounded"),
-            "uninformative_trials": planned(uninf, "R2_recover"),
-        }
-        g["pass"] = (
-            g["complete"]
-            and g["R2_uninformative_successes"] >= 6
-            and g["R2_uninformative_successes"] > g["B1x_uninformative_successes"]
-            and g["R2_all_successes"] >= g["B1x_all_successes"]
-            and contacts(rows(kid, "R2_recover")) <= contacts(rows(kid, "B1x_exit"))
-        )
-        g["exposure"] = {v: exposure(rows(kid, v)) for v in arms}
-        gates["R2_recover"] = g
-    arr = sorted(tn for tn in ran if cfg["trials"][tn]["question"] == "arrival recognition")
-    if arr:
-        vs = cfg["trials"][arr[0]]["variants"]
-        g = {
-            v: {
-                "correct": sum(x["correct_stop"] for x in rows(arr, v)),
-                "wrong": sum(x["wrong_stop"] for x in rows(arr, v)),
-                "abstained": sum(bool(x["abstained"]) for x in rows(arr, v)),
-                "timeouts": sum(x["timeout"] and not x["abstained"] for x in rows(arr, v)),
-                "premature_latches": sum(
-                    bool((x.get("approach_latch") or {}).get("premature")) for x in rows(arr, v)
-                ),
-                **exposure(rows(arr, v)),
-                "n": len(rows(arr, v)),
-            }
-            for v in vs
-        }
-        g["complete"] = complete(arr, vs)
-        for v in ("V2a_confirm", "V2b_confirm_steer"):
-            if v in g:
-                g[f"{v}_pass"] = (
-                    g["complete"]
-                    and g[v]["correct"] >= 3
-                    and g[v]["wrong"] == 0
-                    and g[v]["contacts"] <= g["A_baseline"]["contacts"]
-                    and g[v]["correct"] > g["C1_verify"]["correct"]
-                )
-        gates["V2 (arrival recognition)"] = g
+    gates = compute_gates(cfg, attempts, ran, globally_ok)
+    decisions = stage3_decisions(cfg, attempts, ran, passed, globally_ok)
     out = {
         "scope": "component_comparison_v2 development",
         "freeze_commit": a.freeze_commit,
         "config_sha256": ctx["cfg_sha"],
         "negative_control": a.negative_control,
+        "attempt_log": logs,
         "attempts": attempts,
         "integrity_failures": failures,
         "integrity_failures_per_check": per_check,
         "gates": gates,
+        "stage3": decisions,
     }
     a.out.write_text(json.dumps(out, indent=1, default=str) + "\n")
     print(
@@ -560,7 +733,8 @@ def main():
             {
                 "attempts": len(attempts),
                 "integrity_failures_per_check": per_check,
-                "gates": gates,
+                "gates": {k: g.get("status") for k, g in gates.items() if isinstance(g, dict)},
+                "stage3": {k: d["decision"] for k, d in decisions.items()},
             },
             indent=1,
             default=str,

@@ -54,10 +54,11 @@ def main():
     cfg = json.loads(a.config.read_text())
     cc = ConfirmationConfig(**cfg["variants"]["V2a_confirm"]["confirmation"])
     goal_root = Path(cfg["runtime"]["goal_root"])
-    rows = []
+    rows, skipped = [], []
     for root in a.collection:
         for e in json.loads((root / "collection.json").read_text())["episodes"]:
             if e["status"] != "PASS":
+                skipped.append({"collection": root.name, "route": e["id"], "status": e["status"]})
                 continue
             m = json.loads((root / e["id"] / "runtime_manifest.json").read_text())
             g = goal_xy(goal_root, m["route"]["id"])
@@ -134,6 +135,7 @@ def main():
         "scope": "STAGE_1_LOGIC_REPLAY (open loop, development, in-sample consistency check)",
         "confirmation": cfg["variants"]["V2a_confirm"]["confirmation"],
         "sequences": len(rows),
+        "skipped_non_pass": skipped,
         "S1a_false_confirmations": [
             (r["collection"], r["route"], r["confirm_goal_distance_m"]) for r in s1a
         ],
