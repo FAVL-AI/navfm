@@ -191,13 +191,13 @@ def test_admission_rejects_heldout_split():
         split_routes(spec["routes"][:1])
 
 
-def run_collector(tmp_path, *extra):
+def run_collector(tmp_path, *extra, out_name="run"):
     return subprocess.run(
         [
             sys.executable,
             str(ROOT / "scripts" / "collect_option1.py"),
             "--out",
-            str(tmp_path / "run"),
+            str(tmp_path / out_name),
             "--robot",
             "unused.usd",
             *map(str, extra),
@@ -465,7 +465,20 @@ def test_collector_refuses_start_conditions_not_declared_as_v2_trials(tmp_path):
     assert proc.returncode == 2
     for field in ("trial_variant", "trial_start_lost", "trial_perturbation"):
         assert field in proc.stderr
-    # The declared invocation passes the enforcement stage.
+    # The declared invocation passes the enforcement stage, under a v2 collection name.
+    proc = run_collector(
+        tmp_path / "f",
+        "--variant",
+        "A_baseline",
+        *common,
+        "--trial",
+        "ambiguity_d22",
+        "--max-steps",
+        "480",
+        *resume,
+        "22",
+    )
+    assert proc.returncode == 2 and "out_name" in proc.stderr
     proc = run_collector(
         tmp_path / "d",
         "--variant",
@@ -477,6 +490,7 @@ def test_collector_refuses_start_conditions_not_declared_as_v2_trials(tmp_path):
         "480",
         *resume,
         "22",
+        out_name="v2-ambiguity_d22-A_baseline-t1",
     )
     assert "differs from the frozen" not in proc.stderr and "declared trial" not in proc.stderr
     # Trial options without a v2 config are refused.

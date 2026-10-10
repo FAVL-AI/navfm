@@ -1,6 +1,6 @@
 {
   "name": "component_comparison_v2",
-  "status": "PROPOSED revision 3 after second red-team (FREEZE-WITH-AMENDMENTS: N1-N9, N13 required; N10-N12, N14 recommended; all addressed)",
+  "status": "FROZEN 2026-10-10 after three red-team rounds (1da4e55 DO-NOT-FREEZE; 0468814 FREEZE-WITH-AMENDMENTS; 4030a37 FREEZE-WITH-AMENDMENTS; all required amendments applied with tests); changes need a new version",
   "supersedes": "none; component_comparison_v1 is retained unchanged as the comparator",
   "question": "does the revised logic recognise arrival at the requested goal, and recover from localisation ambiguity, rather than only suppressing declarations?",
   "checkpoint": {
@@ -567,13 +567,15 @@
     }
   },
   "stage_3_criteria": {
-    "design": "fresh complete episodes on true (4), truncated (4) and swap (1) chains for each passing component, its v1 counterpart and A (V2a/V2b: C1; R2: B1x and B1; B1: A)",
-    "retain": "no contact regression against the counterpart and A (raw count and contacts per metre) AND the primary outcome no worse than the counterpart on every condition: V2a/V2b: correct stops >= C1, wrong stops <= C1, and zero wrong stops on true chains; R2: recovery successes >= B1x when either arm has a lost entry (else that condition's recovery is NOT_TESTED and only wrong stops <= B1x is required); B1: correct stops >= A",
+    "design": "fresh complete episodes on true (4), truncated (4) and swap (1) chains for each passing component, A and its counterpart: V2a/V2b: C1; R2: B1x (decisive) and B1 (reported only); B1: A",
+    "retain": "no contact regression against the counterpart and A (raw count and contacts per metre) AND the primary outcome no worse than the counterpart on every condition: V2a/V2b: correct stops >= C1, wrong stops <= C1, and zero wrong stops on true chains; R2: recovery successes >= B1x when either arm has a lost entry, else only wrong stops <= B1x; B1: correct stops >= A",
     "revise": "a contact regression, or a primary outcome worse than the counterpart on any condition",
     "reporting": "counts per variant x condition over all attempts; no significance claims",
     "admission": "only components whose stage-2 gate is PASS run stage 3, with A and their counterparts",
-    "code": "scripts/analyse_component_comparison_v2.py stage3_decisions"
+    "code": "scripts/analyse_component_comparison_v2.py stage3_decisions",
+    "not_tested": "recorded, not counted as evidence: R2 recovery on the swap chain (no pose-true node on a swapped chain); recovery with no lost entries in either arm; comparisons where both arms have no stops (V2) or no correct stops (B1)",
+    "incomplete": "INCOMPLETE, not REVISE, when any required attempt is missing, any integrity check fails, or non-repo files differ"
   },
-  "retry_rule": "each planned attempt may be rerun once, under a new collection tag, only after an infrastructure failure (the route's attempt is not PASS); a PASS attempt is never rerun; the counted attempt is the first PASS in launch order; every collection found for a trial and variant (v2-<trial>-<variant>-*) is listed in the report; a route without a PASS after its one rerun is a missing attempt and makes its gate INCOMPLETE",
-  "trial_identity": "the collector records component_variant.trial and .stage in every manifest; the analysis checks them; stage-3 collections must be launched after the stage-2 result file and only for components whose stage-2 gate is PASS (plus comparators A, B1, B1x, C1)"
+  "retry_rule": "each planned attempt may be rerun once, under a new collection tag, only after an infrastructure failure; every route a collection planned is an attempt (its episode status, or CRASHED if no episode was recorded); a PASS is never rerun; only a route's first two attempts can count; the counted attempt is the first PASS among them; a third attempt or an attempt after a PASS is a violation and leaves the route without a counted attempt, which makes its gate INCOMPLETE; every collection found (v2-<trial>-<variant>-*) and every attempt are listed; the collector refuses any other output name",
+  "trial_identity": "the collector records component_variant.trial and .stage in every manifest; the analysis checks them. Stage-2 gates use every declared trial of a question (never a subset) and are INCOMPLETE unless all were analysed. The stage-2 gate record is committed to the repository (gates/v2/); stage-3 analysis reads it from that commit, checks its freeze commit, config hash, negative-control flag and trial coverage, recomputes its gates from its recorded attempts, and requires stage-3 collections to be launched after that commit. Stage 3 runs exactly: components whose stage-2 gate is PASS, A, and their counterparts (and B1 for R2, reported)"
 }

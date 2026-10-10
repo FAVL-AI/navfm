@@ -6,8 +6,13 @@ computation. Pose is used only for evaluation. Collections are named
 v2-<trial>-<variant>-<tag>; every tag found is reported (retry rule).
 
 Usage: analyse_component_comparison_v2.py --config CFG --freeze-commit SHA --audit AUDIT.json
-       --trial NAME [--trial ...] --out OUT.json [--stage2-result GATES.json]
-       [--negative-control MODE]
+       --trial NAME [--trial ...] --out OUT.json
+       [--stage2-commit SHA --stage2-path gates/v2/<record>.json] [--negative-control MODE]
+
+Stage 3 is admitted only from a stage-2 gate record committed to the repository:
+its freeze commit, config hash, negative-control flag and trial coverage are
+checked and its gates are recomputed from its recorded attempts; stage-3
+collections must be launched after that commit.
 """
 
 from __future__ import annotations
@@ -197,7 +202,6 @@ def recovery(m: dict, true: list[int], start_lost: bool) -> dict:
 
 
 NEGATIVE_MODES = ("variant", "chain", "resume", "start_lost", "trial")
-COMPARATORS = ("A_baseline", "B1_bounded", "B1x_exit", "C1_verify")
 COUNTERPART = {
     "B1_bounded": "A_baseline",
     "V2a_confirm": "C1_verify",
@@ -284,37 +288,48 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
     return checks
 
 
-def discover(trial: str, variant: str, routes: list[str]) -> tuple[dict, list]:
+def discover(
+    trial: str, variant: str, routes: list[str], base: Path = E
+) -> tuple[dict, list, list]:
     """Apply the retry rule over every v2-<trial>-<variant>-* collection.
 
-    Returns {route: (root, entry)} for the counted attempt and a full log of every
-    attempt found. A route's counted attempt is its first PASS in launch order;
-    at most one rerun, and only after a non-PASS attempt; a rerun of a PASS
-    attempt, or a third attempt, is an integrity failure.
+    Every planned route of every collection is an attempt: its episode status, or
+    CRASHED when the collection planned it but recorded no episode (also when the
+    collection is still RUNNING). Only a route's first two attempts can count; the
+    counted attempt is the first PASS among them, and only if the attempt before it
+    (if any) was not a PASS. A third attempt or an attempt after a PASS is a
+    violation: the route then has no counted attempt.
     """
     roots = sorted(
-        (d for d in E.glob(f"v2-{trial}-{variant}-*") if (d / "frozen_routes.json").exists()),
+        (d for d in base.glob(f"v2-{trial}-{variant}-*") if (d / "frozen_routes.json").exists()),
         key=lambda d: (d / "frozen_routes.json").stat().st_mtime,
     )
     log, counted, violations = [], {}, []
     for root in roots:
+        planned_ids = [r["id"] for r in json.loads((root / "frozen_routes.json").read_text())]
         cj = (
             json.loads((root / "collection.json").read_text())
             if (root / "collection.json").exists()
-            else {"episodes": []}
+            else {"episodes": [], "status": "MISSING"}
         )
-        for e in cj["episodes"]:
-            log.append({"collection": root.name, "route": e["id"], "status": e["status"]})
+        seen = {e["id"]: e["status"] for e in cj.get("episodes", [])}
+        for rid in planned_ids:
+            status = seen.get(rid, "CRASHED")
+            if cj.get("status") == "RUNNING" and status == "PASS":
+                status = "PASS_IN_RUNNING_COLLECTION"
+            log.append({"collection": root.name, "route": rid, "status": status})
     for route in routes:
         tries = [x for x in log if x["route"] == route]
-        passes = [k for k, x in enumerate(tries) if x["status"] == "PASS"]
         if len(tries) > 2:
             violations.append((route, "more than one rerun"))
-        if passes and passes[0] < len(tries) - 1:
+        first_pass = next((k for k, x in enumerate(tries) if x["status"] == "PASS"), None)
+        if first_pass is not None and first_pass < len(tries) - 1:
             violations.append((route, "attempt after a PASS"))
-        if passes:
-            x = tries[passes[0]]
-            counted[route] = (E / x["collection"], x)
+        if any(r == route for r, _ in violations):
+            continue
+        if first_pass is not None and first_pass < 2:
+            x = tries[first_pass]
+            counted[route] = (base / x["collection"], x)
     return counted, log, violations
 
 
@@ -433,12 +448,15 @@ def compute_gates(cfg: dict, attempts: list, ran: set, globally_ok: bool) -> dic
         rs = [x for x in attempts if x["trial"] in tns and x["variant"] in vs]
         return (
             globally_ok
+            and all(tn in ran for tn in tns)  # every declared trial of the question analysed
             and all(x.get("integrity_ok") for x in rs)
             and all(len(rows(tns, v)) == planned(tns, v) for v in vs)
         )
 
     def q(question):
-        return sorted(tn for tn in ran if cfg["trials"][tn]["question"] == question)
+        # All declared trials of the question, never only those named on the command line.
+        tns = sorted(tn for tn in cfg["trials"] if cfg["trials"][tn]["question"] == question)
+        return tns if set(tns) & ran else []
 
     gates = {}
     amb = q("look-alike")
@@ -535,11 +553,20 @@ def compute_gates(cfg: dict, attempts: list, ran: set, globally_ok: bool) -> dic
     return gates
 
 
+def required_stage3(passed: set) -> set:
+    """Variants stage 3 runs: passing components, A, their counterparts (R2 also B1, reported)."""
+    req = set(passed) | {"A_baseline"} | {COUNTERPART[c] for c in passed}
+    if "R2_recover" in passed:
+        req.add("B1_bounded")
+    return req
+
+
 def stage3_decisions(cfg: dict, attempts: list, ran: set, passed: set, globally_ok: bool) -> dict:
-    """Stage-3 retain / revise (config stage_3_criteria)."""
-    tns = sorted(tn for tn in ran if cfg["trials"][tn]["stage"] == 3)
-    if not tns:
+    """Stage-3 retain / revise / INCOMPLETE (config stage_3_criteria)."""
+    tns = sorted(tn for tn in cfg["trials"] if cfg["trials"][tn]["stage"] == 3)
+    if not set(tns) & ran or not passed:
         return {}
+    required = required_stage3(passed)
 
     def rows(cond, v):
         return [
@@ -551,17 +578,29 @@ def stage3_decisions(cfg: dict, attempts: list, ran: set, passed: set, globally_
             and "correct_stop" in x
         ]
 
-    rs3 = [x for x in attempts if x["trial"] in tns]
-    ok_integrity = globally_ok and all(x.get("integrity_ok") for x in rs3)
+    def planned(cond, v):
+        return sum(
+            len(cfg["trials"][tn]["routes"])
+            for tn in tns
+            if cfg["trials"][tn]["condition"] == cond and v in cfg["trials"][tn]["variants"]
+        )
+
+    conds_all = ("true_chain", "truncated_chain", "wrong_chain_swap")
+    rs3 = [x for x in attempts if x["trial"] in tns and x["variant"] in required]
+    complete = (
+        globally_ok
+        and all(tn in ran for tn in tns)
+        and all(x.get("integrity_ok") for x in rs3)
+        and all(len(rows(c, v)) == planned(c, v) for c in conds_all for v in required)
+    )
     out = {}
     for comp in sorted(passed):
         cp = COUNTERPART[comp]
         conds, not_tested = {}, []
-        retain = ok_integrity
-        for cond in ("true_chain", "truncated_chain", "wrong_chain_swap"):
+        retain = True
+        for cond in conds_all:
             c, k, a = rows(cond, comp), rows(cond, cp), rows(cond, "A_baseline")
             if not c or not k or not a:
-                retain = False
                 conds[cond] = "MISSING"
                 continue
             reg = not (
@@ -576,34 +615,86 @@ def stage3_decisions(cfg: dict, attempts: list, ran: set, passed: set, globally_
                 primary = cs["c"] >= cs["k"] and ws["c"] <= ws["k"]
                 if cond == "true_chain":
                     primary = primary and ws["c"] == 0
+                if cs["c"] == cs["k"] == 0 and ws["c"] == ws["k"] == 0:
+                    not_tested.append(f"{cond}: no stops in either arm")
             elif comp == "R2_recover":
-                lost_c = sum(x["recovery"]["lost_entries"] for x in c if "recovery" in x)
-                lost_k = sum(x["recovery"]["lost_entries"] for x in k if "recovery" in x)
                 if cond == "wrong_chain_swap":
-                    primary = ws["c"] <= ws["k"]
-                elif lost_c == 0 and lost_k == 0:
-                    not_tested.append(f"{cond}: recovery (no lost entries)")
+                    not_tested.append(f"{cond}: recovery (no pose-true node on a swapped chain)")
                     primary = ws["c"] <= ws["k"]
                 else:
-                    sc = sum(x["recovery"]["successes"] for x in c)
-                    sk = sum(x["recovery"]["successes"] for x in k)
-                    primary = sc >= sk and ws["c"] <= ws["k"]
+                    lost_c = sum(x["recovery"]["lost_entries"] for x in c if "recovery" in x)
+                    lost_k = sum(x["recovery"]["lost_entries"] for x in k if "recovery" in x)
+                    if lost_c == 0 and lost_k == 0:
+                        not_tested.append(f"{cond}: recovery (no lost entries)")
+                        primary = ws["c"] <= ws["k"]
+                    else:
+                        sc = sum(x["recovery"]["successes"] for x in c if "recovery" in x)
+                        sk = sum(x["recovery"]["successes"] for x in k if "recovery" in x)
+                        primary = sc >= sk and ws["c"] <= ws["k"]
             else:
                 primary = cs["c"] >= cs["k"]
+                if cs["c"] == cs["k"] == 0:
+                    not_tested.append(f"{cond}: no correct stops in either arm")
             conds[cond] = {
                 "contact_regression": reg,
                 "primary_ok": primary,
-                "exposure": {comp: exposure(c), cp: exposure(k), "A_baseline": exposure(a)},
+                "exposure": {
+                    v: exposure(rows(cond, v))
+                    for v in sorted(
+                        {comp, cp, "A_baseline"}
+                        | ({"B1_bounded"} if comp == "R2_recover" else set())
+                    )
+                },
             }
             retain = retain and not reg and primary
+        decision = "INCOMPLETE" if not complete else ("RETAIN" if retain else "REVISE")
         out[comp] = {
             "counterpart": cp,
+            "reported_also": ["B1_bounded"] if comp == "R2_recover" else [],
             "conditions": conds,
             "not_tested": not_tested,
-            "decision": "RETAIN" if retain else "REVISE",
-            "integrity_ok": ok_integrity,
+            "decision": decision,
+            "complete": complete,
         }
     return out
+
+
+def load_stage2(cfg: dict, cfg_sha: str, a, p) -> tuple[set, int]:
+    """Admission to stage 3 from a committed stage-2 gate record, recomputed and checked."""
+    if not (a.stage2_commit and a.stage2_path):
+        p.error("stage-3 trials need --stage2-commit and --stage2-path")
+    blob = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{a.stage2_commit}:{a.stage2_path}"],
+        capture_output=True,
+    )
+    if blob.returncode:
+        p.error("stage-2 record not found at that commit")
+    s2 = json.loads(blob.stdout)
+    stage2_trials = {tn for tn, t in cfg["trials"].items() if t["stage"] == 2}
+    problems = [
+        k
+        for k, ok in {
+            "freeze_commit": s2.get("freeze_commit") == a.freeze_commit,
+            "config_sha256": s2.get("config_sha256") == cfg_sha,
+            "negative_control": s2.get("negative_control") is None,
+            "all_stage2_trials": stage2_trials <= set(s2.get("trials_analysed", [])),
+        }.items()
+        if not ok
+    ]
+    recomputed = compute_gates(cfg, s2["attempts"], set(s2["trials_analysed"]), s2["globally_ok"])
+    status = {k: g.get("status") for k, g in recomputed.items() if isinstance(g, dict)}
+    if status != {k: g.get("status") for k, g in s2["gates"].items() if isinstance(g, dict)}:
+        problems.append("gates_do_not_recompute")
+    if problems:
+        p.error(f"stage-2 record refused: {problems}")
+    commit_time = int(
+        subprocess.run(
+            ["git", "-C", str(REPO), "log", "-1", "--format=%ct", a.stage2_commit],
+            capture_output=True,
+            text=True,
+        ).stdout
+    )
+    return {k for k, st in status.items() if st == "PASS"}, commit_time
 
 
 def main():
@@ -613,7 +704,8 @@ def main():
     p.add_argument("--audit", type=Path, required=True)
     p.add_argument("--trial", action="append", required=True)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--stage2-result", type=Path, help="this script's stage-2 output (gates)")
+    p.add_argument("--stage2-commit", help="commit holding the stage-2 gate record")
+    p.add_argument("--stage2-path", help="repo path of the stage-2 gate record at that commit")
     p.add_argument("--negative-control", choices=NEGATIVE_MODES)
     a = p.parse_args()
     if a.out.exists():
@@ -634,17 +726,12 @@ def main():
     stage3 = [tn for tn in a.trial if cfg["trials"][tn]["stage"] == 3]
     passed: set = set()
     stage2_time = None
+    cfg_sha = hashlib.sha256(a.config.read_bytes()).hexdigest()
     if stage3:
-        if a.stage2_result is None:
-            p.error("stage-3 trials need --stage2-result")
-        s2 = json.loads(a.stage2_result.read_text())
-        passed = {
-            k for k, g in s2["gates"].items() if isinstance(g, dict) and g.get("status") == "PASS"
-        }
-        stage2_time = a.stage2_result.stat().st_mtime
+        passed, stage2_time = load_stage2(cfg, cfg_sha, a, p)
     ctx = {
         "cfg": cfg,
-        "cfg_sha": hashlib.sha256(a.config.read_bytes()).hexdigest(),
+        "cfg_sha": cfg_sha,
         "freeze_time": int(
             subprocess.run(
                 ["git", "-C", str(REPO), "log", "-1", "--format=%ct", a.freeze_commit],
@@ -664,8 +751,8 @@ def main():
         t = cfg["trials"][trial]
         cond = cfg["conditions"][t["condition"]]
         for v in t["variants"]:
-            if t["stage"] == 3 and v not in passed and v not in COMPARATORS:
-                continue  # not admitted to stage 3
+            if t["stage"] == 3 and v not in required_stage3(passed):
+                continue  # not required: the protocol does not run it in stage 3
             shifted = variants[(variants.index(v) + 1) % len(variants)]
             spec = cfg["variants"][shifted if a.negative_control == "variant" else v]
             counted, log, violations = discover(trial, v, t["routes"])
@@ -682,11 +769,15 @@ def main():
                 root, _ = counted[route]
                 att.update(status="PASS", collection=root.name)
                 m = json.loads((root / route / "runtime_manifest.json").read_text())
-                checks = attempt_checks(
-                    a.negative_control, a.freeze_commit, t, trial, cond, spec, v, m, root, ctx
-                )
+                try:
+                    checks = attempt_checks(
+                        a.negative_control, a.freeze_commit, t, trial, cond, spec, v, m, root, ctx
+                    )
+                except (KeyError, TypeError, IndexError) as exc:
+                    checks = {"manifest_fields": False}
+                    att["manifest_error"] = repr(exc)
                 if stage2_time is not None and t["stage"] == 3:
-                    checks["launched_after_stage2_result"] = (
+                    checks["launched_after_stage2_commit"] = (
                         root / "frozen_routes.json"
                     ).stat().st_mtime > stage2_time
                 r = audit.get((root.name, route))
@@ -701,7 +792,7 @@ def main():
                     failures.append(
                         (root.name, route, sorted(k for k, ok in checks.items() if not ok))
                     )
-                if r is not None:
+                if r is not None and "manifest_fields" not in checks:
                     att.update(measures(m, r, t, spec, close, goal_xy(cfg, route)))
                 attempts.append(att)
     nonrepo = ctx["nonrepo"]
@@ -720,6 +811,8 @@ def main():
         "freeze_commit": a.freeze_commit,
         "config_sha256": ctx["cfg_sha"],
         "negative_control": a.negative_control,
+        "trials_analysed": sorted(a.trial),
+        "globally_ok": globally_ok,
         "attempt_log": logs,
         "attempts": attempts,
         "integrity_failures": failures,

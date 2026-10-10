@@ -355,3 +355,153 @@ def test_stage3_revises_on_a_contact_regression_and_retains_otherwise():
     assert d["B1_bounded"]["decision"] == "REVISE"
     d = v2.stage3_decisions(CFG, rows(False)[:-1], ran, {"B1_bounded"}, True)
     assert d["B1_bounded"]["conditions"]["wrong_chain_swap"] == "MISSING"
+    # Red-team M3: missing data or an integrity failure is INCOMPLETE, not REVISE.
+    assert d["B1_bounded"]["decision"] == "INCOMPLETE"
+    bad = rows(False)
+    bad[1]["integrity_ok"] = False
+    assert v2.stage3_decisions(CFG, bad, ran, {"B1_bounded"}, True)["B1_bounded"]["decision"] == (
+        "INCOMPLETE"
+    )
+
+
+def test_a_gate_needs_every_declared_trial_of_its_question():
+    # Red-team H1: a gate computed from a hand-picked subset of trials.
+    cfg = {"trials": {**CFG["trials"], "amb2": {**CFG["trials"]["amb"]}}}
+    rows = [
+        att("amb", "A_baseline", ambiguity=amb(1)),
+        att("amb", "B1_bounded", ambiguity=amb(0, ["corrected"])),
+    ]
+    assert v2.compute_gates(cfg, rows, {"amb"}, True)["B1_bounded"]["status"] == "INCOMPLETE"
+    rows += [
+        att("amb2", "A_baseline", ambiguity=amb(0)),
+        att("amb2", "B1_bounded", ambiguity=amb(0)),
+    ]
+    assert v2.compute_gates(cfg, rows, {"amb", "amb2"}, True)["B1_bounded"]["status"] == "PASS"
+
+
+def test_stage3_requires_only_the_protocol_variants():
+    # Red-team H2: V2a passing runs V2a, C1 and A; B1 and B1x are not required.
+    cfg = {
+        "trials": {
+            f"s3_{c}": {
+                "stage": 3,
+                "condition": c,
+                "question": "complete",
+                "routes": ["r"],
+                "variants": ["A_baseline", "B1_bounded", "B1x_exit", "C1_verify", "V2a_confirm"],
+            }
+            for c in ("true_chain", "truncated_chain", "wrong_chain_swap")
+        }
+    }
+    rows = [
+        att(tn, v, correct_stop=(v != "C1_verify"))
+        for tn in cfg["trials"]
+        for v in ("A_baseline", "C1_verify", "V2a_confirm")
+    ]
+    d = v2.stage3_decisions(cfg, rows, set(cfg["trials"]), {"V2a_confirm"}, True)
+    assert d["V2a_confirm"]["decision"] == "RETAIN"
+    assert v2.required_stage3({"R2_recover"}) == {
+        "R2_recover",
+        "B1x_exit",
+        "B1_bounded",
+        "A_baseline",
+    }
+
+
+def make_collection(base, name, planned, episodes, status="COMPLETED", age=0):
+    import os
+    import time
+
+    d = base / name
+    d.mkdir()
+    (d / "frozen_routes.json").write_text(json.dumps([{"id": r} for r in planned]))
+    (d / "collection.json").write_text(
+        json.dumps({"status": status, "episodes": [{"id": r, "status": st} for r, st in episodes]})
+    )
+    t = time.time() - 1000 + age
+    os.utime(d / "frozen_routes.json", (t, t))
+
+
+def test_retry_rule_is_enforced(tmp_path):
+    # Red-team M1: fail, fail, PASS must not count; a crash is an attempt.
+    make_collection(
+        tmp_path,
+        "v2-tr-B1_bounded-a",
+        ["r1", "r2", "r3"],
+        [("r1", "FAIL"), ("r2", "FAIL"), ("r3", "PASS")],
+        age=0,
+    )
+    make_collection(tmp_path, "v2-tr-B1_bounded-b", ["r1", "r2"], [("r1", "FAIL")], age=10)
+    make_collection(
+        tmp_path, "v2-tr-B1_bounded-c", ["r1", "r2"], [("r1", "PASS"), ("r2", "PASS")], age=20
+    )
+    counted, log, violations = v2.discover("tr", "B1_bounded", ["r1", "r2", "r3"], base=tmp_path)
+    assert {"collection": "v2-tr-B1_bounded-b", "route": "r2", "status": "CRASHED"} in log
+    assert "r1" not in counted and ("r1", "more than one rerun") in violations
+    assert "r2" not in counted  # FAIL, CRASHED, PASS: a third attempt
+    assert counted["r3"][0].name == "v2-tr-B1_bounded-a"
+
+
+def test_a_rerun_after_a_pass_is_a_violation(tmp_path):
+    make_collection(tmp_path, "v2-tr-A_baseline-a", ["r"], [("r", "PASS")], age=0)
+    make_collection(tmp_path, "v2-tr-A_baseline-b", ["r"], [("r", "PASS")], age=10)
+    counted, _, violations = v2.discover("tr", "A_baseline", ["r"], base=tmp_path)
+    assert "r" not in counted and ("r", "attempt after a PASS") in violations
+
+
+def test_one_rerun_after_a_failure_counts(tmp_path):
+    make_collection(tmp_path, "v2-tr-A_baseline-a", ["r"], [("r", "FAIL")], age=0)
+    make_collection(tmp_path, "v2-tr-A_baseline-b", ["r"], [("r", "PASS")], age=10)
+    counted, _, violations = v2.discover("tr", "A_baseline", ["r"], base=tmp_path)
+    assert counted["r"][0].name == "v2-tr-A_baseline-b" and not violations
+
+
+def test_stage2_record_must_be_committed_consistent_and_complete(tmp_path, monkeypatch):
+    # Red-team M2: the stage-2 record is checked, not trusted.
+    import argparse
+
+    import pytest
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    run = lambda *c: subprocess.run(["git", "-C", str(repo), *c], check=True, capture_output=True)  # noqa: E731
+    run("init", "-q")
+    run("config", "user.email", "t@example.invalid")
+    run("config", "user.name", "t")
+    monkeypatch.setattr(v2, "REPO", repo)
+    cfg = {"trials": {"amb": CFG["trials"]["amb"]}}
+    rows = [
+        att("amb", "A_baseline", ambiguity=amb(1)),
+        att("amb", "B1_bounded", ambiguity=amb(0, ["corrected"])),
+    ]
+    good = {
+        "freeze_commit": "F",
+        "config_sha256": "S",
+        "negative_control": None,
+        "trials_analysed": ["amb"],
+        "globally_ok": True,
+        "attempts": rows,
+        "gates": v2.compute_gates(cfg, rows, {"amb"}, True),
+    }
+
+    def commit(record):
+        (repo / "g.json").write_text(json.dumps(record))
+        run("add", "g.json")
+        run("commit", "-q", "-m", "g")
+        return subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True, text=True
+        ).stdout.strip()
+
+    parser = argparse.ArgumentParser()
+    args = argparse.Namespace(freeze_commit="F", stage2_commit=commit(good), stage2_path="g.json")
+    passed, _ = v2.load_stage2(cfg, "S", args, parser)
+    assert passed == {"B1_bounded"}
+    for bad in (
+        {**good, "negative_control": "chain"},
+        {**good, "config_sha256": "X"},
+        {**good, "trials_analysed": []},
+        {**good, "gates": {"B1_bounded": {"status": "PASS"}}, "attempts": rows[:1]},
+    ):
+        args.stage2_commit = commit(bad)
+        with pytest.raises(SystemExit):
+            v2.load_stage2(cfg, "S", args, parser)

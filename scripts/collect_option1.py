@@ -188,6 +188,10 @@ def main():
                 }
             )
             checks["budget_frames"] = checks.pop("trial_budget")
+            # The analysis finds collections by name; a misnamed one would be invisible.
+            checks["out_name"] = args.out.name.startswith(f"v2-{args.trial}-{args.variant}-") and (
+                len(args.out.name) > len(f"v2-{args.trial}-{args.variant}-")
+            )
         elif args.trial or args.resume_from or args.start_lost:
             parser.error("trial start options need a v2 comparison config with declared trials")
         mismatches = sorted(k for k, ok in checks.items() if not ok)
