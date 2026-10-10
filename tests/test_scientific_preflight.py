@@ -52,6 +52,47 @@ def test_saved_readback_detects_pose_corruption(tmp_path):
         verify_saved_recording(path, [capture], (4, 3))
 
 
+def _write_turning(path, yaws):
+    from navfm.collection.recording import RecordingTrajectoryWriter
+
+    captures = []
+    with RecordingTrajectoryWriter(path) as writer:
+        for i, y in enumerate(yaws):
+            t = (i + 1) / 12
+            writer.append(np.arange(36, dtype=np.uint8).reshape(3, 4, 3), [0., 0.], y,
+                transition=dict(frame_index=i, pre_image_index=None if i == 0 else i - 1,
+                    time_before=i / 12, time_after=t,
+                    pose_before=[0., 0., y], pose_after=[0., 0., y],
+                    command_requested=[0., 0., 0.4], command_accepted=[0., 0., 0.4]))
+            captures.append({"pose": [0., 0., y], "simulation_time": t})
+    return captures
+
+
+def test_saved_readback_accepts_heading_through_pi(tmp_path):
+    """Regression: an in-place turn through +/-pi (stored unwrapped) is not corruption."""
+    from navfm.collection.scientific_preflight import verify_saved_recording
+
+    raw = np.angle(np.exp(1j * np.linspace(2.9, 3.6, 8)))  # wraps from +pi to -pi
+    assert raw.min() < 0 < raw.max()
+    path = tmp_path / "trajectory"
+    captures = _write_turning(path, [float(y) for y in raw])
+    verify_saved_recording(path, captures, (4, 3))
+
+
+def test_saved_readback_still_detects_heading_corruption_after_wrap(tmp_path):
+    """Negative control: a wrong heading or position is still refused after a wrap."""
+    from navfm.collection.scientific_preflight import verify_saved_recording
+
+    raw = [float(y) for y in np.angle(np.exp(1j * np.linspace(2.9, 3.6, 8)))]
+    path = tmp_path / "trajectory"
+    captures = _write_turning(path, raw)
+    for k, bad in ((5, [0., 0., raw[5] + 0.01]), (2, [0.001, 0., raw[2]])):
+        tampered = [dict(c) for c in captures]
+        tampered[k] = {**tampered[k], "pose": bad}
+        with pytest.raises(ValueError, match="saved pose"):
+            verify_saved_recording(path, tampered, (4, 3))
+
+
 def test_render_target_reader_handles_nonpickleable_runtime_path():
     import json
 

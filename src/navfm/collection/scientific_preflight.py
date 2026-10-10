@@ -51,13 +51,21 @@ def verify_saved_recording(path: Path, captures: list[dict[str, Any]],
         raise ValueError("pickle contains fields beyond position/yaw")
     if len(list(path.glob("*.jpg"))) != len(captures):
         raise ValueError("saved image count differs from captures")
+    # The writer stores yaw unwrapped (the GNM format requires continuous yaw), so
+    # the expected yaw is the writer's own transform of the captured yaws, not the
+    # raw wrapped value: a heading through +/-pi is not a corrupted pose.
+    from navfm.kinematics import unwrap_yaw
+
+    expected_yaw = unwrap_yaw(np.asarray([c["pose"][2] for c in captures], dtype=float))
     for i, capture in enumerate(captures):
         with Image.open(path / f"{i}.jpg") as image:
             image.load()
             if image.size != resolution:
                 raise ValueError("saved image resolution mismatch")
         observed_pose = [*poses["position"][i], float(np.asarray(poses["yaw"][i]).item())]
-        if not np.allclose(observed_pose, capture["pose"], rtol=0., atol=1e-8):
+        expected_pose = [*capture["pose"][:2], float(expected_yaw[i])]
+        if len(capture["pose"]) != 3 or not np.allclose(
+                observed_pose, expected_pose, rtol=0., atol=1e-8):
             raise ValueError("saved pose differs from captured pose")
         if transitions[i]["time_after"] != capture["simulation_time"]:
             raise ValueError("saved transition timestamp differs from capture")
