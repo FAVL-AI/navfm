@@ -1,10 +1,22 @@
 # Project handoff: arrival component comparison v2 (development)
 
-Updated 2026-10-10 after the observer-window v2 reference/replay validation pair.
+Updated 2026-10-10 after the fixed offline CUDA numerical diagnostic.
 Start from the current milestone below; prior stage 3 results
 remain audited and preserved. Verify statements against files; files win.
 
-## Current milestone: observer passes; numerical learned handover FAILS
+## Current milestone: saved-input numerical mismatch reproduced offline
+
+Freeze `32b83460839fbad96267ae9f3acbf81543903ad2` completed exactly two original-CUDA offline workers and 84 calls, without simulator launch, new image, retry or post-kidnap decision. Byte-identical preprocessed tensors with identical restored state/RNG produce bitwise identical outputs within/fresh processes. Differing preserved reference/replay observation tensors reproduce all seven original per-arm predictions exactly. All seven input pairs have matching discrete decisions but fail numerical agreement; yaw commands differ at steps 0/6, and later agreement is fixed scanning. Only stored state.history diverges; no additional sequence output amplification is observed.
+
+- Result/deltas/settings/external hashes: `docs/OFFLINE_NUMERICAL_V1_RESULT.md`.
+- Frozen protocol/manifest: `docs/OFFLINE_NUMERICAL_V1_PROTOCOL.md`, `configs/eval/offline_numerical_v1.json`.
+- Single bounded interpretation review: `gates/redteam/offline-numerical-v1-interpretation-review-20261010.md`.
+- External evidence: `/home/favl/navfm-runtime-evidence/offline-numerical-v1-20261010-01`.
+- Checks: 89 focused PASS (13 new), ruff/mypy89 PASS, exact three preserved environment-identity failures.
+
+Existing initialization/handover FAIL remains unchanged. The result identifies input-associated differences in this instrumented offline environment, not original rendering cause or universal CUDA determinism. Original global flags were incompletely recorded; evidence hooks synchronize. Next decision is preparation only of independently justified prospective behavioral-state/physical-command criteria for live-image variation, retaining same-input reproducibility and passive audit history. Use separate data near relevant margins; do not fit tolerances to observed maxima, reclassify attempts or launch automatically. No further process/efficacy is authorised by this result.
+
+## Preserved milestone: observer passes; numerical learned handover FAILS
 
 Freeze `9120decc6376db0f4f5bcece58e2866e488fdace` ran only the declared R2 A/s_bend0000 reference/replay pair. Both individual traces PASS; all 12 acquisition events are retained and all 84 image hashes checked. All 38 physical/history comparisons and all seven discrete learned outputs match, but all seven numerical invocation comparisons and full boundary policy state FAIL the unchanged 0.001 absolute / 0.00001 relative bound. Maximum window/predicted-distance difference is 0.068376541. Frozen decision is INITIALIZATION_HANDOVER_FAIL; execution STOPPED after two launches, with no post-kidnap policy invocation or efficacy run.
 
