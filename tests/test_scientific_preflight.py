@@ -126,3 +126,25 @@ def test_legacy_renderer_key_cannot_substitute_for_effective_mode():
     renderer = next(o for o in read_effective_settings(Settings()) if o.name == "active_renderer")
     assert renderer.status is Status.UNRESOLVED_NO_SUPPORTED_ROUTE
     assert renderer.value is None
+
+
+def test_saved_readback_checks_the_wrap_property_not_only_unwrap(tmp_path, monkeypatch):
+    """A stored yaw off by 2*pi on one frame (a discontinuity) is refused even if
+    unwrap_yaw itself were wrong in the same way."""
+    import pickle
+
+    import navfm.kinematics as kin
+    from navfm.collection.scientific_preflight import verify_saved_recording
+
+    raw = [float(y) for y in np.angle(np.exp(1j * np.linspace(2.9, 3.6, 8)))]
+    path = tmp_path / "trajectory"
+    captures = _write_turning(path, raw)
+    with (path / "traj_data.pkl").open("rb") as f:
+        poses = pickle.load(f)
+    bad = np.asarray(poses["yaw"], float).copy()
+    bad[4] += 2 * np.pi
+    with (path / "traj_data.pkl").open("wb") as f:
+        pickle.dump({"position": poses["position"], "yaw": bad}, f)
+    monkeypatch.setattr(kin, "unwrap_yaw", lambda y: bad)  # a matching unwrap defect
+    with pytest.raises(ValueError, match="not continuous"):
+        verify_saved_recording(path, captures, (4, 3))

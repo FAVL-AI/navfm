@@ -56,7 +56,16 @@ def verify_saved_recording(path: Path, captures: list[dict[str, Any]],
     # raw wrapped value: a heading through +/-pi is not a corrupted pose.
     from navfm.kinematics import unwrap_yaw
 
-    expected_yaw = unwrap_yaw(np.asarray([c["pose"][2] for c in captures], dtype=float))
+    raw_yaw = np.asarray([c["pose"][2] for c in captures], dtype=float)
+    expected_yaw = unwrap_yaw(raw_yaw)
+    stored_yaw = np.asarray(poses["yaw"], dtype=float).reshape(-1)
+    # The property itself, independent of unwrap_yaw: the stored yaw is the
+    # captured yaw modulo 2*pi and is continuous (no step beyond pi).
+    if stored_yaw.shape != raw_yaw.shape or not np.allclose(
+            np.angle(np.exp(1j * (stored_yaw - raw_yaw))), 0., rtol=0., atol=1e-8):
+        raise ValueError("saved pose differs from captured pose (yaw modulo 2*pi)")
+    if stored_yaw.size > 1 and np.abs(np.diff(stored_yaw)).max() > np.pi:
+        raise ValueError("saved pose yaw is not continuous")
     for i, capture in enumerate(captures):
         with Image.open(path / f"{i}.jpg") as image:
             image.load()
