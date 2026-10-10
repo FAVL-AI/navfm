@@ -129,3 +129,15 @@ pin (the script pins the record; the record does not name the script's hash).
 - H4 LOW: file-time check remains; disclosed; no change.
 Freeze commit: status FROZEN and the record's sha256 pinned in the analysis script, in
 the same commit; the reviewer re-checks the pin against that commit before any launch.
+
+### Final check on the freeze commit 8959333: SURVIVES (LAUNCH)
+Pin verified against the commit (record sha256 6c3d7b2a...b64f equals the script's
+AMENDMENT_SHA256; status FROZEN; running script equals its blob at 8959333;
+load_amendment accepts it with freeze 83101fa and refuses it with another freeze).
+H1-H3 verified fixed. Non-blocking notes:
+- N1 LOW: the launcher's stage-3 admission reads gate statuses from the record, while the
+  analysis recomputes them; a disagreement can over-collect stage-3 cells but cannot
+  change a decision. Report it if it occurs.
+- N2 LOW: rerun mode needs the first collection's collection.json; a collection that
+  crashed before writing it needs a recorded manual decision. Stage 3 is analysed with
+  a ledger commit that includes its lines.
