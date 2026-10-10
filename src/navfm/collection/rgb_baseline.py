@@ -159,9 +159,19 @@ class RGBTopomapBaseline(RGBBaseline):
         bounded=None,
         verify_threshold: float | None = None,
         verify_persistence: int = 2,
+        confirmation=None,
+        recovery=None,
+        scan_rate: float = 0.4,
+        initial_node: int = 0,
+        start_lost: bool = False,
         **kw,
     ):
-        from navfm.collection.topomap import BoundedTopomapState, TopomapConfig, TopomapState
+        from navfm.collection.topomap import (
+            BoundedTopomapState,
+            RecoveringTopomapState,
+            TopomapConfig,
+            TopomapState,
+        )
 
         kw.setdefault("stop_enabled", True)
         super().__init__(checkpoint, **kw)
@@ -173,7 +183,30 @@ class RGBTopomapBaseline(RGBBaseline):
         self.state_cls = TopomapState if bounded is None else BoundedTopomapState
         self.verify_threshold = verify_threshold
         self.verify_persistence = verify_persistence
+        # v2 components (component_comparison_v2); None keeps the v1 code path.
+        if confirmation is not None and verify_threshold is not None:
+            raise ValueError("choose the v1 check or the v2 confirmation, not both")
+        if recovery is not None and bounded is None:
+            raise ValueError("recovery replaces the bounded lost state; it needs bounded")
+        if start_lost and bounded is None:
+            raise ValueError("a lost start needs a lost state")
+        if recovery is not None and not 0 < abs(scan_rate) <= self.limits.max_w:
+            raise ValueError("scan rate must be nonzero and within the angular limit")
+        if recovery is not None:
+            self.state_cls = RecoveringTopomapState
+        self.confirmation = confirmation
+        self.recovery = recovery
+        self.scan_rate = scan_rate
+        self.initial_node = initial_node
+        self.start_lost = start_lost
         arrival = "latched stop when closest_node == goal_node"
+        if confirmation is not None:
+            arrival = (
+                "latched stop only when the requested-goal confirmation state confirms "
+                "(approach latched at the first chain end; votes <= threshold; "
+                f"{confirmation.votes} of the last {confirmation.window}; abstain after "
+                f"{confirmation.approach_budget} approach decisions)"
+            )
         if verify_threshold is not None:
             arrival += (
                 f" AND requested-goal distance <= {verify_threshold} on "
@@ -184,7 +217,7 @@ class RGBTopomapBaseline(RGBBaseline):
                 "six chronological RGB observations",
                 "route of reference RGB images",
                 "requested goal RGB image (verification only)"
-                if verify_threshold is not None
+                if verify_threshold is not None or confirmation is not None
                 else "requested goal RGB image (logged, unused)",
             ],
             stop_rule=arrival if self.stop_enabled else "none",
@@ -194,6 +227,11 @@ class RGBTopomapBaseline(RGBBaseline):
                 "bounded": None if bounded is None else dataclasses.asdict(bounded),
                 "verify_threshold": verify_threshold,
                 "verify_persistence": verify_persistence if verify_threshold is not None else None,
+                "confirmation": None if confirmation is None else dataclasses.asdict(confirmation),
+                "recovery": None if recovery is None else dataclasses.asdict(recovery),
+                "scan_rate": scan_rate if recovery is not None else None,
+                "initial_node": initial_node,
+                "start_lost": start_lost,
             },
         )
 
@@ -204,11 +242,24 @@ class RGBTopomapBaseline(RGBBaseline):
         self.reset_chain()
 
     def reset_chain(self):
+        from navfm.collection.arrival_confirmation import ConfirmationState
+
         kw = {} if self.bounded is None else {"bounded": self.bounded}
-        self.state = self.state_cls(goal_node=len(self.chain) - 1, **kw)
+        if self.recovery is not None:
+            kw["recovery"] = self.recovery
+        goal_node = len(self.chain) - 1
+        if not 0 <= self.initial_node <= goal_node:
+            raise ValueError("initial node outside the chain")
+        self.state = self.state_cls(goal_node=goal_node, closest_node=self.initial_node, **kw)
+        if self.start_lost:
+            self.state.lost = True
+            if self.recovery is not None:
+                self.state.attempts = 1
         self.stopped = False
+        self.abstained = None
         self.verified_count = 0
         self.chain_reached_decisions = 0
+        self.confirm = None if self.confirmation is None else ConfirmationState(self.confirmation)
 
     def step(self, history, goal=None):
         torch = self.torch
@@ -225,8 +276,15 @@ class RGBTopomapBaseline(RGBBaseline):
         d_all = np.asarray(distance.detach().cpu().numpy(), float).reshape(-1)
         d = d_all[: len(nodes)]
         requested = float(d_all[-1]) if goal is not None else None
+        v2 = self.confirmation is not None or self.recovery is not None
+        if v2 and (self.stopped or self.abstained):
+            # v2 terminal: nothing further is decided; the robot is held still.
+            # (The v1 path keeps updating after a stop, as recorded in v1.)
+            return self._terminal_record(d, requested, begin)
         follow = self.state.update(d, self.topomap_cfg)
         waypoint = actions[follow, 2].detach().cpu().numpy()
+        if v2:
+            return self._step_v2(d, requested, actions, follow, waypoint, len(nodes), begin)
         verification = None
         if self.state.reached_goal:
             self.chain_reached_decisions += 1
@@ -267,5 +325,77 @@ class RGBTopomapBaseline(RGBBaseline):
             "waypoint_normalized": waypoint.tolist(),
             "policy_stop": self.stopped,
             "chain": dict(self.state.history[-1]),
+            "latency_ms": (time.perf_counter() - begin) * 1000,
+        }
+
+    def _step_v2(self, d, requested, actions, follow, waypoint, n_nodes, begin):
+        """v2 decision: explicit recovery scan and/or requested-goal confirmation."""
+        torch = self.torch
+        scan = False
+        confirmation = None
+        if self.state.reached_goal:
+            self.chain_reached_decisions += 1
+        if self.recovery is not None and self.state.recovery_failed:
+            self.abstained = "recovery_failed"
+        elif self.recovery is not None and self.state.scanning:
+            scan = True
+        if self.confirm is not None and not self.abstained:
+            if requested is None:
+                raise ValueError("confirmation needs the requested goal image")
+            confirmation = self.confirm.update(
+                self.state.reached_goal, requested, paused=bool(getattr(self.state, "lost", False))
+            )
+            if confirmation["phase"] == "approach" and not scan:
+                # Chain exhausted at least once: steer to the requested goal, never back.
+                waypoint = actions[n_nodes, 2].detach().cpu().numpy()
+            elif confirmation["phase"] == "abstained":
+                self.abstained = "confirmation_budget"
+        if not np.isfinite(waypoint).all():
+            raise ValueError("nonfinite baseline prediction")
+        v, w = reference_pd_twist(
+            waypoint * self.action_scale_m, self.limits, PDConfig(dt=self.control_period_s)
+        )
+        if scan:
+            v, w = 0.0, self.scan_rate
+        if self.confirm is not None:
+            arrived = confirmation is not None and confirmation["phase"] == "confirmed"
+        else:
+            arrived = self.state.reached_goal
+        if self.stop_enabled and arrived and not self.abstained:
+            self.stopped = True
+        if self.stopped or self.abstained:
+            v, w = 0.0, 0.0
+        if self.device == "cuda":
+            torch.cuda.synchronize()
+        return {
+            "command": [v, 0.0, w],
+            "predicted_distance": float(d[follow]),
+            "window_distances": d.tolist(),
+            "requested_goal_distance": requested,
+            "verification": None,
+            "confirmation": confirmation,
+            "scan": scan,
+            "chain_reached_decisions": self.chain_reached_decisions,
+            "waypoint_normalized": waypoint.tolist(),
+            "policy_stop": self.stopped,
+            "policy_abstain": self.abstained,
+            "chain": dict(self.state.history[-1]),
+            "latency_ms": (time.perf_counter() - begin) * 1000,
+        }
+
+    def _terminal_record(self, d, requested, begin):
+        return {
+            "command": [0.0, 0.0, 0.0],
+            "predicted_distance": float(np.min(d)),
+            "window_distances": d.tolist(),
+            "requested_goal_distance": requested,
+            "verification": None,
+            "confirmation": None,
+            "scan": False,
+            "chain_reached_decisions": self.chain_reached_decisions,
+            "waypoint_normalized": [0.0, 0.0],
+            "policy_stop": self.stopped,
+            "policy_abstain": self.abstained,
+            "chain": dict(self.state.history[-1]) if self.state.history else {},
             "latency_ms": (time.perf_counter() - begin) * 1000,
         }

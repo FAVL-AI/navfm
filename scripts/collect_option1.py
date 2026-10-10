@@ -78,6 +78,20 @@ def main():
         "--start-yaw-deg", type=float, default=0.0, help="offset from route heading"
     )
     parser.add_argument("--route-id", action="append", help="recollect a named route; may repeat")
+    parser.add_argument("--trial", help="declared trial in a v2 --comparison-config")
+    parser.add_argument(
+        "--resume-from",
+        type=Path,
+        help="matched-state start: a recorded topomap episode directory (same route and chain)",
+    )
+    parser.add_argument(
+        "--resume-decision",
+        type=int,
+        help="decision index of --resume-from whose inputs the first decision reproduces",
+    )
+    parser.add_argument(
+        "--start-lost", action="store_true", help="policy starts in its lost state (no node)"
+    )
     parser.add_argument(
         "--actuation", choices=["wheel", "body_velocity", "pose_step"], default="pose_step"
     )
@@ -140,9 +154,52 @@ def main():
             and hashlib.sha256((args.topomap_root / "chain.json").read_bytes()).hexdigest()
             == roots[chain_root],
         }
+        trials = comparison.get("trials")
+        if trials is not None:
+            # v2: every start condition must be a declared trial.
+            if args.trial not in trials:
+                parser.error(f"--trial must name a declared trial: {sorted(trials)}")
+            t = trials[args.trial]
+            checks.update(
+                {
+                    "trial_variant": args.variant in t["variants"],
+                    "trial_condition": chain_root
+                    == str(Path(comparison["conditions"][t["condition"]]["root"]).resolve()),
+                    "trial_routes": sorted(args.route_id or []) == sorted(t["routes"]),
+                    "trial_budget": args.max_steps == t.get("budget_frames", rt["budget_frames"]),
+                    "trial_start_lost": bool(args.start_lost) == bool(t.get("start_lost")),
+                    "trial_resume": (
+                        None if args.resume_from is None else str(args.resume_from.resolve()),
+                        args.resume_decision,
+                    )
+                    == (
+                        None
+                        if t.get("resume_from") is None
+                        else str(Path(t["resume_from"]).resolve()),
+                        t.get("resume_decision"),
+                    ),
+                    "trial_perturbation": [
+                        args.start_arc_fraction,
+                        args.start_lateral_m,
+                        args.start_yaw_deg,
+                    ]
+                    == t.get("perturbation", [0.0, 0.0, 0.0]),
+                }
+            )
+            checks["budget_frames"] = checks.pop("trial_budget")
+        elif args.trial or args.resume_from or args.start_lost:
+            parser.error("trial start options need a v2 comparison config with declared trials")
         mismatches = sorted(k for k, ok in checks.items() if not ok)
         if mismatches:
             parser.error(f"invocation differs from the frozen comparison: {mismatches}")
+    if (args.trial or args.resume_from or args.start_lost) and not args.variant:
+        parser.error("trial start options need --variant with a v2 comparison config")
+    if (args.resume_from is None) != (args.resume_decision is None):
+        parser.error("--resume-from and --resume-decision go together")
+    if args.resume_from and (
+        args.start_lost or args.start_arc_fraction or args.start_lateral_m or args.start_yaw_deg
+    ):
+        parser.error("a matched-state start takes no other start option")
     if args.unseal_heldout:
         # A sealed collection follows the frozen protocol exactly: every route,
         # the declared budget and speed, no perturbation, the sealed bytes only.
@@ -233,6 +290,22 @@ def main():
                     "verify_threshold": spec["verify_threshold"],
                     "verify_persistence": spec["verify_persistence"],
                 }
+                if "confirmation" in spec or "recovery" in spec:
+                    from navfm.collection.arrival_confirmation import ConfirmationConfig
+                    from navfm.collection.topomap import RecoveryConfig
+
+                    component.update(
+                        confirmation=ConfirmationConfig(**spec["confirmation"])
+                        if spec.get("confirmation")
+                        else None,
+                        recovery=RecoveryConfig(**spec["recovery"])
+                        if spec.get("recovery")
+                        else None,
+                        scan_rate=spec.get("scan_rate", 0.4),
+                        start_lost=bool(args.start_lost),
+                    )
+            elif args.start_lost:
+                parser.error("--start-lost needs a frozen variant")
             policy = RGBTopomapBaseline(
                 args.checkpoint,
                 radius=args.topomap_radius,
@@ -679,7 +752,41 @@ def main():
                 step()
                 goal_time = float(cam.get_current_frame()["rendering_time"])
                 Image.fromarray(robot.rgb()).save(episode / "goal.png")
-                if perturbation.is_identity:
+                resume = None
+                if args.resume_from is not None:
+                    # Matched-state start: the pose whose image the recorded decision saw
+                    # (frame f-1 for the decision at frame f), the recorded image history
+                    # and the recorded policy node. Pose sets the trial up; it never enters
+                    # a decision.
+                    rm = json.loads((args.resume_from / "runtime_manifest.json").read_text())
+                    K = args.resume_decision
+                    if rm["route"]["id"] != route["id"] or not 6 <= K < len(rm["inference"]):
+                        raise ValueError("resume episode must be this route; decision >= 6")
+                    f = rm["inference"][K]["frame"]
+                    pose = rm["captures"][f - 1]["pose"]
+                    hist_frames = [rm["inference"][j]["frame"] - 1 for j in range(K - 6, K)]
+                    resume = {
+                        "episode": str(args.resume_from.resolve()),
+                        "manifest_sha256": hashlib.sha256(
+                            (args.resume_from / "runtime_manifest.json").read_bytes()
+                        ).hexdigest(),
+                        "decision": K,
+                        "frame": f,
+                        "pose": pose,
+                        "initial_node": rm["inference"][K - 1]["chain"]["closest_node"],
+                        "history_frames": hist_frames,
+                        "history_sha256": [
+                            hashlib.sha256(
+                                (args.resume_from / "trajectory" / f"{q}.jpg").read_bytes()
+                            ).hexdigest()
+                            for q in hist_frames
+                        ],
+                        "chain_json_sha256": rm["topomap"]["chain_json_sha256"],
+                        "fixed_goal_sha256": rm.get("fixed_goal_sha256"),
+                    }
+                    start_xy, start_yaw, teacher_points = np.asarray(pose[:2]), pose[2], points
+                    manifest["resume"] = resume
+                elif perturbation.is_identity:
                     start_xy, start_yaw, teacher_points = points[0], route["start_yaw"], points
                 else:
                     start_xy, start_yaw, teacher_points = perturbed_start(points, perturbation)
@@ -803,6 +910,14 @@ def main():
                                     ).convert("RGB")
                                 )
                             )
+                        if resume is not None:
+                            if resume["chain_json_sha256"] != hashlib.sha256(
+                                chain_path.read_bytes()
+                            ).hexdigest() or resume["fixed_goal_sha256"] != manifest.get(
+                                "fixed_goal_sha256"
+                            ):
+                                raise ValueError("resume episode used another chain or goal")
+                            policy.initial_node = resume["initial_node"]
                         policy.set_chain(images)
                         manifest["component_variant"] = {
                             "variant": args.variant,
@@ -824,8 +939,18 @@ def main():
                             == (manifest.get("goal_source_frame") or {}).get("source_sha256"),
                         }
                     history = [robot.rgb().copy() for _ in range(6)]
+                    if resume is not None:
+                        history = [
+                            np.asarray(
+                                Image.open(args.resume_from / "trajectory" / f"{q}.jpg").convert(
+                                    "RGB"
+                                )
+                            )
+                            for q in resume["history_frames"]
+                        ]
                 inference = []
                 stop_frame = None
+                abstain_frame = abstain_reason = None
                 command = [0.0, 0.0, 0.0]
                 writer = RecordingTrajectoryWriter(
                     episode / "trajectory",
@@ -868,7 +993,11 @@ def main():
                             inference.append(prediction)
                             if prediction["policy_stop"] and stop_frame is None:
                                 stop_frame = i
-                        reached = stop_frame is not None and i - stop_frame >= 24
+                            if prediction.get("policy_abstain") and abstain_frame is None:
+                                abstain_frame = i
+                                abstain_reason = prediction["policy_abstain"]
+                        end = stop_frame if stop_frame is not None else abstain_frame
+                        reached = end is not None and i - end >= 24
                     else:
                         command, reached = teacher.step(xy, yaw)
                     drive(command)
@@ -955,13 +1084,21 @@ def main():
                     frames=len(captures),
                     captures=captures,
                     contacts=contacts.copy(),
-                    termination=("policy_stop" if stop_frame is not None else "timeout")
+                    termination=(
+                        "policy_stop"
+                        if stop_frame is not None
+                        else "abstained"
+                        if abstain_frame is not None
+                        else "timeout"
+                    )
                     if policy
                     else "teacher_goal"
                     if reached
                     else "timeout",
                     inference=inference,
                     policy_stop_frame=stop_frame,
+                    policy_abstain_frame=abstain_frame,
+                    policy_abstain_reason=abstain_reason,
                     max_steps=args.max_steps,
                     preflight=decision.to_dict(),
                     observations=[o.to_dict() for o in observations],

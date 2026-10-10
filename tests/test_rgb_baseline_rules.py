@@ -133,8 +133,21 @@ class Batchable(FakeTensor):
         return FakeTensor(np.repeat(self.value, n, axis=0))
 
 
-def topomap_baseline(distances, nodes=4, verify_threshold=None):
-    from navfm.collection.topomap import TopomapConfig, TopomapState
+def topomap_baseline(
+    distances,
+    nodes=4,
+    verify_threshold=None,
+    confirmation=None,
+    bounded=None,
+    recovery=None,
+    start_lost=False,
+):
+    from navfm.collection.topomap import (
+        BoundedTopomapState,
+        RecoveringTopomapState,
+        TopomapConfig,
+        TopomapState,
+    )
 
     b = rb.RGBTopomapBaseline.__new__(rb.RGBTopomapBaseline)
     b.torch = FakeTorchBatch
@@ -146,10 +159,17 @@ def topomap_baseline(distances, nodes=4, verify_threshold=None):
     b.stop_enabled = True
     b.limits = rb.BaseLimits(max_v=0.1, max_w=0.4)
     b.topomap_cfg = TopomapConfig(radius=4, close_threshold=3.0)
-    b.bounded = None
+    b.bounded = bounded
     b.verify_threshold = verify_threshold
     b.verify_persistence = 2
-    b.state_cls = TopomapState
+    b.state_cls = TopomapState if bounded is None else BoundedTopomapState
+    if recovery is not None:
+        b.state_cls = RecoveringTopomapState
+    b.confirmation = confirmation
+    b.recovery = recovery
+    b.scan_rate = 0.4
+    b.initial_node = 0
+    b.start_lost = start_lost
     b.set_chain([np.zeros((2, 2, 3))] * nodes)
     return b
 
@@ -217,3 +237,104 @@ def test_verification_without_requested_goal_is_refused():
     b = topomap_baseline(lambda call, n: [2.0] * n, nodes=2, verify_threshold=3.0)
     with pytest.raises(ValueError, match="requested goal"):
         b.step([None] * 6)
+
+
+def chain_then(requested, flag):
+    """Chain flag pattern `flag(call)`; requested-goal distance requested[call]."""
+
+    def d(call, n):
+        reached = flag(call)
+        chain = [2.0 if (reached and i == n - 2) else 9.0 for i in range(n - 1)]
+        if reached:
+            chain[-1] = 1.0  # goal node is the argmin: reached
+        return [*chain, requested[min(call, len(requested) - 1)]]
+
+    return d
+
+
+def test_v2_confirmation_survives_an_alternating_chain_flag():
+    from navfm.collection.arrival_confirmation import ConfirmationConfig
+
+    # v1 pattern: flag true with a far requested goal, flag false with a near one.
+    cfg = ConfirmationConfig(threshold=7.745, votes=2, window=4, approach_budget=10)
+    req = [9.0, 10.6, 6.1, 11.0, 6.5, 9.0]
+    b = topomap_baseline(chain_then(req, lambda c: c in (1, 3)), nodes=2, confirmation=cfg)
+    out = [b.step([None] * 6, goal=np.zeros((2, 2, 3))) for _ in range(5)]
+    assert [o["confirmation"]["phase"] for o in out] == [
+        "tracking",
+        "approach",
+        "approach",
+        "approach",
+        "confirmed",
+    ]
+    assert [o["policy_stop"] for o in out] == [False] * 4 + [True]
+    # In the approach phase the robot steers by the requested goal, never back to the chain.
+    assert out[2]["waypoint_normalized"][1] == 0.5
+
+
+def test_v2_confirmation_budget_is_an_abstention_not_a_stop():
+    from navfm.collection.arrival_confirmation import ConfirmationConfig
+
+    cfg = ConfirmationConfig(threshold=7.745, votes=2, window=4, approach_budget=4)
+    b = topomap_baseline(chain_then([9.0], lambda c: True), nodes=2, confirmation=cfg)
+    out = [b.step([None] * 6, goal=np.zeros((2, 2, 3))) for _ in range(6)]
+    assert out[3]["policy_abstain"] == "confirmation_budget"
+    assert not any(o["policy_stop"] for o in out)
+    assert all(o["command"] == [0.0, 0.0, 0.0] for o in out[3:])
+
+
+def test_v2_recovery_scans_in_place_then_fails_terminally():
+    from navfm.collection.topomap import BoundedConfig, RecoveryConfig
+
+    bc = BoundedConfig(max_jump=2, persistence=2, lost_enter=6.0, lost_exit=2.0, lost_patience=3)
+    rc = RecoveryConfig(exit=5.0, persistence=2, scan_budget=3, max_attempts=1)
+    b = topomap_baseline(
+        lambda call, n: [9.0] * n, nodes=4, bounded=bc, recovery=rc, start_lost=True
+    )
+    out = [b.step([None] * 6) for _ in range(5)]
+    assert all(o["scan"] and o["command"] == [0.0, 0.0, 0.4] for o in out[:2])
+    assert out[2]["policy_abstain"] == "recovery_failed" and not out[2]["scan"]
+    assert all(o["command"] == [0.0, 0.0, 0.0] for o in out[2:])
+    assert not any(o["policy_stop"] for o in out)
+
+
+def test_v2_recovery_relocalises_and_resumes_tracking():
+    from navfm.collection.topomap import BoundedConfig, RecoveryConfig
+
+    bc = BoundedConfig(max_jump=2, persistence=2, lost_enter=6.0, lost_exit=2.0, lost_patience=3)
+    rc = RecoveryConfig(exit=5.0, persistence=2, scan_budget=10, max_attempts=1)
+
+    def d(call, n):
+        return [4.0 if i == 2 else 9.0 for i in range(n)]
+
+    b = topomap_baseline(d, nodes=6, bounded=bc, recovery=rc, start_lost=True)
+    out = [b.step([None] * 6) for _ in range(3)]
+    assert out[0]["scan"] and out[1]["chain"]["event"] == "relocalised"
+    assert out[1]["chain"]["closest_node"] == 2 and not out[2]["scan"]
+    assert out[2]["command"][0] > 0
+
+
+def test_v2_constructor_guards(monkeypatch):
+    from navfm.collection.arrival_confirmation import ConfirmationConfig
+    from navfm.collection.topomap import BoundedConfig, RecoveryConfig
+
+    def parent_init(self, checkpoint, **kw):
+        self.stop_enabled = kw["stop_enabled"]
+        self.manifest = {}
+        self.limits = rb.BaseLimits(max_v=0.1, max_w=0.4)
+
+    monkeypatch.setattr(rb.RGBBaseline, "__init__", parent_init)
+    cc = ConfirmationConfig(threshold=7.745)
+    rc = RecoveryConfig(exit=5.0)
+    with pytest.raises(ValueError, match="not both"):
+        rb.RGBTopomapBaseline("x", verify_threshold=7.7, confirmation=cc, stop_enabled=True)
+    with pytest.raises(ValueError, match="needs bounded"):
+        rb.RGBTopomapBaseline("x", recovery=rc, stop_enabled=True)
+    with pytest.raises(ValueError, match="lost start"):
+        rb.RGBTopomapBaseline("x", start_lost=True, stop_enabled=True)
+    with pytest.raises(ValueError, match="scan rate"):
+        rb.RGBTopomapBaseline(
+            "x", bounded=BoundedConfig(), recovery=rc, scan_rate=0.9, stop_enabled=True
+        )
+    b = rb.RGBTopomapBaseline("x", confirmation=cc, stop_enabled=True)
+    assert b.manifest["topomap"]["confirmation"]["threshold"] == 7.745

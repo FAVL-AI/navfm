@@ -3,6 +3,8 @@ import pytest
 from navfm.collection.topomap import (
     BoundedConfig,
     BoundedTopomapState,
+    RecoveringTopomapState,
+    RecoveryConfig,
     TopomapConfig,
     TopomapState,
 )
@@ -134,3 +136,105 @@ def test_lost_recovery_requires_consecutive_matches():
     s.update([9.0] * 15, cfg4)
     s.update(far_except(15, 9, best=2.0, rest=15.0), cfg4)
     assert s.lost
+
+
+RC = RecoveryConfig(exit=6.0, persistence=2, scan_budget=5, max_attempts=2)
+CFG4 = TopomapConfig(radius=4, close_threshold=3.0)
+
+
+def recovering(goal_node=14, closest=5):
+    return RecoveringTopomapState(
+        goal_node=goal_node, closest_node=closest, bounded=BC, recovery=RC
+    )
+
+
+def enter_lost(s):
+    for _ in range(3):
+        start, end = s.window(CFG4)
+        s.update([20.0] * (end - start + 1), CFG4)
+    assert s.lost and s.scanning
+
+
+def test_recovery_relocalises_on_consecutive_global_matches():
+    s = recovering()
+    enter_lost(s)
+    assert s.attempts == 1
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    assert s.lost and s.history[-1]["event"] == "scan"
+    s.update(far_except(15, 10, best=5.9, rest=15.0), CFG4)
+    assert not s.lost and s.closest_node == 10 and s.history[-1]["event"] == "relocalised"
+
+
+def test_recovery_match_must_be_consecutive():
+    s = recovering()
+    enter_lost(s)
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    s.update([15.0] * 15, CFG4)
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    assert s.lost
+
+
+def test_recovery_match_must_be_at_a_consistent_node():
+    s = recovering()
+    enter_lost(s)
+    s.update(far_except(15, 3, best=5.5, rest=15.0), CFG4)
+    s.update(far_except(15, 10, best=5.5, rest=15.0), CFG4)
+    assert s.lost
+
+
+def test_scan_budget_exhaustion_is_terminal_and_never_arrival():
+    s = recovering(goal_node=6)
+    enter_lost(s)
+    for _ in range(5):
+        s.update([15.0] * 7, CFG4)
+        assert not s.reached_goal
+    assert s.recovery_failed and s.history[-1]["event"] == "recovery_failed"
+    with pytest.raises(ValueError):
+        s.update([15.0] * 7, CFG4)
+
+
+def test_lost_entries_beyond_max_attempts_are_terminal():
+    s = recovering()
+    for attempt in (1, 2):
+        enter_lost(s)
+        s.update(far_except(15, 5, best=1.0, rest=15.0), CFG4)
+        s.update(far_except(15, 5, best=1.0, rest=15.0), CFG4)
+        assert not s.lost and s.attempts == attempt
+    for _ in range(3):
+        start, end = s.window(CFG4)
+        s.update([20.0] * (end - start + 1), CFG4)
+    assert s.recovery_failed and s.attempts == 3
+
+
+def test_tracking_while_not_lost_is_the_bounded_v1_logic():
+    a, b = bounded(), recovering()
+    for d in ([9.0, 2.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0], [9.0] * 10):
+        start, end = a.window(CFG4)
+        n = end - start + 1
+        assert a.update(d[:n] + [9.0] * (n - len(d)), CFG4) == b.update(
+            d[:n] + [9.0] * (n - len(d)), CFG4
+        )
+        assert a.closest_node == b.closest_node
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        {"exit": 0},
+        {"exit": 1, "persistence": 0},
+        {"exit": 1, "scan_budget": 1, "persistence": 2},
+        {"exit": 1, "max_attempts": 0},
+    ],
+)
+def test_recovery_config_validation(kw):
+    with pytest.raises(ValueError):
+        RecoveryConfig(**kw)
+
+
+def test_relocalising_onto_the_goal_node_is_not_arrival():
+    s = recovering(goal_node=6)
+    enter_lost(s)
+    s.update([15.0] * 6 + [1.0], CFG4)
+    s.update([15.0] * 6 + [1.0], CFG4)
+    assert not s.lost and s.closest_node == 6
+    assert not s.reached_goal and s.history[-1]["event"] == "relocalised"

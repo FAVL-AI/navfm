@@ -365,3 +365,120 @@ def test_collector_refuses_invocation_differing_from_frozen_comparison(tmp_path)
     assert proc.returncode == 2 and "budget_frames" in proc.stderr
     proc = run_collector(tmp_path / "y", *common[:-1], "--max-steps", "600")
     assert proc.returncode == 2 and "yaw_feedback" in proc.stderr
+
+
+def test_collector_refuses_start_conditions_not_declared_as_v2_trials(tmp_path):
+    import hashlib
+
+    chain = tmp_path / "chain"
+    chain.mkdir()
+    (chain / "chain.json").write_text("{}")
+    rec = tmp_path / "recorded"
+    config = tmp_path / "comparison.json"
+    variant = {"bounded": None, "verify_threshold": None, "verify_persistence": 2}
+    config.write_text(
+        json.dumps(
+            {
+                "checkpoint": {"sha256": "a" * 64},
+                "variants": {"A_baseline": variant, "B1_bounded": variant},
+                "conditions": {
+                    "true_chain": {
+                        "root": str(chain),
+                        "chain_json_sha256": hashlib.sha256(b"{}").hexdigest(),
+                    }
+                },
+                "runtime": {
+                    "radius": 4,
+                    "close_threshold": 3.0,
+                    "max_v": 0.1,
+                    "decision_hz": 2.0,
+                    "budget_frames": 600,
+                    "goal_root": str(tmp_path / "goals"),
+                    "qualification": str(tmp_path / "q.json"),
+                },
+                "trials": {
+                    "ambiguity_d22": {
+                        "variants": ["A_baseline", "B1_bounded"],
+                        "condition": "true_chain",
+                        "routes": ["s_bend_run_0000"],
+                        "budget_frames": 480,
+                        "resume_from": str(rec),
+                        "resume_decision": 22,
+                    },
+                    "kidnapped": {
+                        "variants": ["B1_bounded"],
+                        "condition": "true_chain",
+                        "routes": ["s_bend_run_0000"],
+                        "start_lost": True,
+                        "perturbation": [0.4, 0.2, 20.0],
+                    },
+                },
+            }
+        )
+    )
+    common = [
+        "--comparison-config",
+        config,
+        "--topomap-root",
+        chain,
+        "--goal-root",
+        tmp_path / "goals",
+        "--qualification",
+        tmp_path / "q.json",
+        "--checkpoint-sha256",
+        "a" * 64,
+        "--policy-period-frames",
+        "6",
+        "--yaw-feedback",
+        "--route-id",
+        "s_bend_run_0000",
+    ]
+    resume = ["--resume-from", rec, "--resume-decision"]
+    # No declared trial named.
+    proc = run_collector(tmp_path / "a", "--variant", "A_baseline", *common, "--max-steps", "600")
+    assert proc.returncode == 2 and "declared trial" in proc.stderr
+    # Wrong resume decision.
+    proc = run_collector(
+        tmp_path / "b",
+        "--variant",
+        "A_baseline",
+        *common,
+        "--trial",
+        "ambiguity_d22",
+        "--max-steps",
+        "480",
+        *resume,
+        "21",
+    )
+    assert proc.returncode == 2 and "trial_resume" in proc.stderr
+    # Variant not declared for the trial; missing lost start; wrong perturbation.
+    proc = run_collector(
+        tmp_path / "c",
+        "--variant",
+        "A_baseline",
+        *common,
+        "--trial",
+        "kidnapped",
+        "--max-steps",
+        "600",
+    )
+    assert proc.returncode == 2
+    for field in ("trial_variant", "trial_start_lost", "trial_perturbation"):
+        assert field in proc.stderr
+    # The declared invocation passes the enforcement stage.
+    proc = run_collector(
+        tmp_path / "d",
+        "--variant",
+        "A_baseline",
+        *common,
+        "--trial",
+        "ambiguity_d22",
+        "--max-steps",
+        "480",
+        *resume,
+        "22",
+    )
+    assert "differs from the frozen" not in proc.stderr and "declared trial" not in proc.stderr
+    # Trial options without a v2 config are refused.
+    proc = run_collector(tmp_path / "e", "--start-lost", "--max-steps", "600")
+    assert proc.returncode == 2
