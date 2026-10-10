@@ -1,6 +1,6 @@
 {
   "name": "component_comparison_v2",
-  "status": "PROPOSED v2.1: v2 (frozen at f663882) amended before any counted trial because an engineering smoke check showed the start-at-rest matched state does not reproduce the recorded camera view; needs review and freeze",
+  "status": "PROPOSED v2.1 revision 2 after narrow review of the amendment (FREEZE-WITH-AMENDMENTS: items 1-8 addressed)",
   "supersedes": "none; component_comparison_v1 is retained unchanged as the comparator",
   "question": "does the revised logic recognise arrival at the requested goal, and recover from localisation ambiguity, rather than only suppressing declarations?",
   "checkpoint": {
@@ -127,7 +127,7 @@
     "recovery": "src/navfm/collection/topomap.py RecoveringTopomapState: entry unchanged (window minimum > 6.752 on 3 decisions); while lost the robot does not translate and rotates in place at 0.4 rad/s; every node scored; relocalise when the global argmin distance <= 5.881 on 2 consecutive decisions at the same node (+/-1); a relocalisation decision is never an arrival; 36 scan decisions without relocalising, or a third lost entry, = recovery_failed (terminal non-arrival halt)",
     "terminals": "ARRIVED (policy_stop_frame) is the only arrival. ABSTAINED (policy_abstain_frame, reason confirmation_budget or recovery_failed) is a non-arrival halt. The episode budget is separate (timeout). Under arrival_measures_v1 an abstention has no stop decision (timeout field true); it is reported separately as abstention, never as a correct or wrong stop. For an abstention the task end under arrival_measures_v1 is the last recorded frame (abstention + 24 stationary frames), as for a timeout; contacts in that tail count",
     "ground_truth": "pose is used only for evaluation, calibration and to place the robot at trial starts; it never enters a decision",
-    "matched_state_start": "replay to handover: the robot starts at the recorded episode's start pose; the recorded commands of decisions 0..K-1 are applied, decision by decision, through the same drive path and yaw loop; the 6-image history fills with live frames; the variant takes over at decision K with the recorded current node at K-1 (a policy output, not ground truth) and fresh internal counters. Pose is used only to report replay fidelity (handover position and yaw error against the recorded pose). The effective initial node and lost state are recorded per episode; the resumed episode's checkpoint must equal this checkpoint"
+    "matched_state_start": "replay to handover: the robot starts at the recorded episode's start pose; the recorded commands of decisions 0..K-1 are applied, decision by decision, through the same drive path and yaw loop; the 6-image history fills with live frames; the variant takes over at decision K with the recorded current node at K-1 (a policy output, not ground truth) and fresh internal counters. Pose is used only to report replay fidelity (handover position and yaw error against the recorded pose). The effective initial node and lost state are recorded per episode; the resumed episode's checkpoint must equal this checkpoint. The collector refuses a source episode that stopped or abstained before the handover. Measures spanning the whole recording (contact before task end, elapsed and exposure time, path length) include the replay frames 0..6K-1; the replay is identical for every variant (deterministic physics, same commands), and a contact before the handover is an integrity failure. Route following after the start is measured from the handover frame"
   },
   "calibration": {
     "confirmation_threshold": {
@@ -209,7 +209,9 @@
     "v2 reruns of A, B1 and C1 run new source blobs; their behaviour equivalence to v1 is shown by a recorded-decision regression test, not by identical source",
     "the v1-equivalence regression covers the A and B state machines (incl. lost entry, not the v1 'recovered' path); the C1 verification path and the policy step are covered by unit tests, not by recorded decisions",
     "the recovery exit threshold is calibrated on local window minima and applied to global minima (documented; measured as lost_false_global_matches)",
-    "replayed commands are open loop; replay is not bit-deterministic, so the handover state matches the recording only within the fidelity bound"
+    "replayed commands are open loop; replay is not bit-deterministic, so the handover state matches the recording only within the fidelity bound",
+    "fresh internal counters at handover: A has no state beyond its node, so A's handover state is exact; B1 starts with no pending proposal, so it cannot accept a multi-node jump on the handover decision itself, whereas a B1 run from the route start along A's path might have held one (for example node 4 pending at decision 20); a native B1 state on A's path is counterfactual",
+    "the A-rep resume source has not been exercised under replay before freeze; its fidelity is checked per attempt"
   ],
   "held_out": "sealed; not used",
   "trials": {
@@ -568,14 +570,16 @@
   "trial_identity": "the collector records component_variant.trial and .stage in every manifest; the analysis checks them. Stage-2 gates use every declared trial of a question (never a subset) and are INCOMPLETE unless all were analysed. The stage-2 gate record is committed to the repository (gates/v2/); stage-3 analysis reads it from that commit, checks its freeze commit, config hash, negative-control flag and trial coverage, recomputes its gates from its recorded attempts, and requires stage-3 collections to be launched after that commit. Stage 3 runs exactly: components whose stage-2 gate is PASS, A, and their counterparts (and B1 for R2, reported)",
   "version": "2.1",
   "amendment_v2_1": {
-    "finding": "engineering smoke check (3 single-route collections under smoke-v2-20261010/, not counted, never scored): at A's recorded pose the at-rest render differed from the recorded frame by about 12 grey levels mean absolute (run-to-run at the same pose: 0.6-2.4; goal photographs across collections: 0.0), the floor horizon shifted, and the first decision's distances differed by up to 10.3, with argmin node 5 instead of A's node 10. Cause (inference): a moving robot's camera sits at a different pitch than a robot at rest; pose records only x, y, yaw",
+    "finding": "engineering smoke check (3 single-route collections under smoke-v2-20261010/, not counted, never scored): at A's recorded pose the at-rest render differed from the recorded frame by about 12 grey levels mean absolute (two closed-loop v1 runs 0.0003-0.0064 m apart at frames 60-131: 0.6-2.4; identical poses under replay: 0.35-0.42; goal photographs across collections: 0.0), the floor horizon shifted, and the first decision's distances differed by up to 10.3, with argmin node 5 instead of A's node 10. Cause (inference): a moving robot's camera sits at a different pitch than a robot at rest; pose records only x, y, yaw",
     "change": "matched-state starts now replay the recorded episode from its own start: the recorded commands for decisions 0..K-1 are applied through the same drive path, the image history fills with live frames, and the variant takes over at decision K from the recorded node at K-1. Resumed trials use the standard 600-frame budget counted from the route start",
-    "disclosure": "the smoke checks ran B1 on ambiguity_true_d22 (at-rest start; no look-alike encountered), R2 on kidnapped_c junction_run_0000 (scanned 11 decisions and relocalised) and V2b on arrival_truncated junction_run_0000 (approach latched at decision 15; stopped at frame 228). These outcomes were seen before this amendment; none is counted",
+    "disclosure": "four smoke collections ran before freeze, all under smoke-v2-20261010/ (not counted, never scored, invisible to the analysis): (1) B1 on ambiguity_true_d22 with the old at-rest start: no look-alike encountered; (2) R2 on kidnapped_c junction_run_0000: scanned 11 decisions, relocalised, stopped at frame 204; (3) V2b on arrival_truncated junction_run_0000: approach latched at decision 15, stopped at frame 228; (4) A on ambiguity_true_d22 with the replay start (final mechanism): poses identical to the recording, the decision-22 look-alike reproduced and followed, timeout at 600 frames with EndWall contact from frame 476. Smokes 2 and 3 ran on the same route and conditions as counted cells, so they preview those cells. After the smokes, nothing changed except the replay start, the image-level fidelity checks, the replay-applied and pre-handover-contact checks and the stop guard required by the amendment review",
     "unchanged": "variants, thresholds, other trials, gates, definitions and stage-3 criteria"
   },
   "replay_fidelity": {
     "position_m": 0.02,
     "yaw_deg": 2.0,
-    "basis": "about 3x the closed-loop run-to-run position difference at the d22 handover frame between two v1 A runs (0.0064 m); an attempt outside it is an integrity failure (not a valid matched state)"
+    "image_mean_abs_grey": 2.5,
+    "max_distance_diff": 1.0,
+    "basis": "position and yaw catch a changed physics or drive path (replay error 0.0 by construction); the image and decision-K distance bounds catch the view defect that motivated the amendment and renderer drift: replay smoke 0.39 grey and 0.068, at-rest start 11.3 grey and 10.28. The handover window must equal the recorded one. An attempt outside any bound is an integrity failure (not a valid matched state)"
   }
 }

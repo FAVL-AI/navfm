@@ -751,6 +751,13 @@ def main():
                         raise ValueError("resume episode must be this route; decision >= 6")
                     if rm["inference"][K]["frame"] != K * args.policy_period_frames:
                         raise ValueError("resume episode has another decision period")
+                    ended = [
+                        f
+                        for f in (rm.get("policy_stop_frame"), rm.get("policy_abstain_frame"))
+                        if f is not None
+                    ]
+                    if ended and min(ended) < K * args.policy_period_frames:
+                        raise ValueError("resume episode ended before the handover")
                     resume = {
                         "episode": str(args.resume_from.resolve()),
                         "manifest_sha256": hashlib.sha256(
@@ -765,6 +772,8 @@ def main():
                             "pose"
                         ],
                         "initial_node": rm["inference"][K - 1]["chain"]["closest_node"],
+                        "recorded_handover_window": rm["inference"][K]["chain"]["window"],
+                        "recorded_handover_distances": rm["inference"][K]["window_distances"],
                         "chain_json_sha256": rm["topomap"]["chain_json_sha256"],
                         "fixed_goal_sha256": rm.get("fixed_goal_sha256"),
                         "source_checkpoint_sha256": rm["policy"]["sha256"],
@@ -979,6 +988,17 @@ def main():
                             perception_start = time.perf_counter()
                             history = [*history, robot.rgb().copy()][-6:]
                             if resume is not None and i == resume["handover_frame"]:
+                                # Image-level fidelity: the view the first decision sees
+                                # against the recorded frame that decision saw (f-1).
+                                recorded = np.asarray(
+                                    Image.open(
+                                        args.resume_from / "trajectory" / f"{i - 1}.jpg"
+                                    ).convert("RGB"),
+                                    float,
+                                )
+                                resume["handover_image_mean_abs_grey"] = float(
+                                    np.abs(history[-1].astype(float) - recorded).mean()
+                                )
                                 rp = resume["recorded_handover_pose"]
                                 resume["handover_pose"] = pose_before
                                 resume["handover_position_error_m"] = float(
@@ -993,6 +1013,24 @@ def main():
                                     )
                                 )
                             prediction = policy.step(history, goal)
+                            if resume is not None and i == resume["handover_frame"]:
+                                same = (
+                                    prediction["chain"].get("window")
+                                    == resume["recorded_handover_window"]
+                                )
+                                resume["handover_window_matches"] = bool(same)
+                                resume["handover_max_distance_diff"] = (
+                                    float(
+                                        np.max(
+                                            np.abs(
+                                                np.asarray(prediction["window_distances"])
+                                                - np.asarray(resume["recorded_handover_distances"])
+                                            )
+                                        )
+                                    )
+                                    if same
+                                    else None
+                                )
                             command = prediction["command"]
                             drive(command)
                             prediction["perception_to_command_ms"] = (

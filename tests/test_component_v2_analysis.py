@@ -119,7 +119,12 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
     cfg = {
         "checkpoint": {"sha256": "c" * 64},
         "runtime": {"radius": 4, "close_threshold": 3.0, "budget_frames": 600},
-        "replay_fidelity": {"position_m": 0.02, "yaw_deg": 2.0},
+        "replay_fidelity": {
+            "position_m": 0.02,
+            "yaw_deg": 2.0,
+            "image_mean_abs_grey": 2.5,
+            "max_distance_diff": 1.0,
+        },
     }
     t = {"stage": 2, "start_lost": False}
     K = 8
@@ -160,6 +165,9 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
         "start_pose": rm["start_pose"] if resume else [0, 0, 0],
         "inference": [{"frame": 6 * k} for k in range(K if resume else 0, 100)],
         "policy_stop_frame": None,
+        "route": {"id": "r"},
+        "captures": [{"simulation_time": q / 12} for q in range(600)],
+        "contacts": [],
         "preflight": {
             "observations": [
                 {
@@ -181,7 +189,25 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
             "recorded_start_pose": rm["start_pose"],
             "handover_position_error_m": 0.004,
             "handover_yaw_error_deg": 0.3,
+            "handover_image_mean_abs_grey": 0.39,
+            "handover_window_matches": True,
+            "handover_max_distance_diff": 0.068,
+            "manifest_sha256": hashlib.sha256(
+                (rec / "runtime_manifest.json").read_bytes()
+            ).hexdigest(),
         }
+        tdir = root / "r" / "trajectory"
+        tdir.mkdir(parents=True, exist_ok=True)
+        (tdir / "transitions.json").write_text(
+            json.dumps(
+                {
+                    "records": [
+                        {"command_requested": rm["inference"][i // 6]["command"]}
+                        for i in range(6 * K)
+                    ]
+                }
+            )
+        )
     ctx = {
         "cfg": cfg,
         "cfg_sha": "s" * 64,
@@ -512,3 +538,46 @@ def test_stage2_record_must_be_committed_consistent_and_complete(tmp_path, monke
         args.stage2_commit = commit(bad)
         with pytest.raises(SystemExit):
             v2.load_stage2(cfg, "S", args, parser)
+
+
+def resumed(tmp_path, mutate):
+    t, cond, spec, m, root, ctx = fixture(tmp_path, resume=True)
+    mutate(m, root)
+    return v2.attempt_checks(None, "HEAD", t, "tr", cond, spec, "B1_bounded", m, root, ctx)
+
+
+def test_replay_checks_fail_on_broken_states(tmp_path):
+    def unapplied(m, root):
+        p = root / "r" / "trajectory" / "transitions.json"
+        recs = json.loads(p.read_text())
+        recs["records"][7]["command_requested"] = [0.0, 0.0, 0.0]
+        p.write_text(json.dumps(recs))
+
+    assert not resumed(tmp_path, unapplied)["replay_applied"]
+    assert not resumed(tmp_path, lambda m, r: m["resume"].update(manifest_sha256="0" * 64))[
+        "resume"
+    ]
+    # The at-rest start's image error (11.3 grey) fails image fidelity.
+    c = resumed(tmp_path, lambda m, r: m["resume"].update(handover_image_mean_abs_grey=11.3))
+    assert not c["replay_fidelity"]
+    c = resumed(tmp_path, lambda m, r: m["resume"].update(handover_max_distance_diff=10.28))
+    assert not c["replay_fidelity"]
+    c = resumed(tmp_path, lambda m, r: m["resume"].update(handover_window_matches=False))
+    assert not c["replay_fidelity"]
+    # A perfect match (0.0) is not mistaken for a missing value.
+    c = resumed(tmp_path, lambda m, r: m["resume"].update(handover_max_distance_diff=0.0))
+    assert c["replay_fidelity"]
+    c = resumed(tmp_path, lambda m, r: m["resume"].pop("handover_image_mean_abs_grey"))
+    assert not c["replay_fidelity"]
+
+
+def test_resumed_inference_must_start_at_handover(tmp_path):
+    c = resumed(tmp_path, lambda m, r: m.update(inference=[{"frame": 6 * k} for k in range(100)]))
+    assert not c["inference_complete"]
+
+
+def test_contact_before_handover_is_an_integrity_failure(tmp_path):
+    c = resumed(tmp_path, lambda m, r: m.update(contacts=[{"time": 10 / 12}]))
+    assert not c["no_contact_before_handover"]
+    c = resumed(tmp_path, lambda m, r: m.update(contacts=[{"time": 100 / 12}]))
+    assert c["no_contact_before_handover"]

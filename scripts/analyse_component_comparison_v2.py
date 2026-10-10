@@ -143,7 +143,9 @@ def ambiguity(
                         "proposal_closer_to_true": abs(proposal - true[k]) < abs(prev - true[k]),
                     }
                 )
-    first = inf[encounters[0]["decision"]]["frame"] if encounters else 0
+    # Route following from the first encounter, else from the first decision (the
+    # handover frame for a resumed trial, so replay frames never count).
+    first = inf[encounters[0]["decision"]]["frame"] if encounters else inf[0]["frame"]
     after = lateral[first:]
     count = {
         o: sum(e["outcome"] == o for e in encounters)
@@ -279,12 +281,37 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
             and resume["replayed_commands"] == [rm["inference"][k]["command"] for k in range(K)]
             and resume["recorded_start_pose"] == rm["start_pose"]
             and np.allclose(m["start_pose"], rm["start_pose"], atol=1e-9)
+            and resume.get("manifest_sha256")
+            == hashlib.sha256((rm_path / "runtime_manifest.json").read_bytes()).hexdigest()
         )
+        # The replayed commands were applied, frame by frame (not just recorded).
+        tr_path = root / m["route"]["id"] / "trajectory" / "transitions.json"
+        records = json.loads(tr_path.read_text())["records"] if tr_path.exists() else []
+        h = K * PERIOD
+        checks["replay_applied"] = (
+            resume is not None
+            and len(records) >= h
+            and all(
+                records[i]["command_requested"] == resume["replayed_commands"][i // PERIOD]
+                for i in range(h)
+            )
+        )
+        times = [c["simulation_time"] for c in m["captures"]]
+        first_contact = (
+            int(np.searchsorted(times, min(c["time"] for c in m["contacts"]), side="left"))
+            if m.get("contacts")
+            else None
+        )
+        checks["no_contact_before_handover"] = first_contact is None or first_contact >= h
         fid = ctx["cfg"]["replay_fidelity"]
         checks["replay_fidelity"] = (
             resume is not None
             and resume.get("handover_position_error_m", 1e9) <= fid["position_m"]
             and resume.get("handover_yaw_error_deg", 1e9) <= fid["yaw_deg"]
+            and resume.get("handover_image_mean_abs_grey", 1e9) <= fid["image_mean_abs_grey"]
+            and resume.get("handover_window_matches") is True
+            and resume.get("handover_max_distance_diff") is not None
+            and resume["handover_max_distance_diff"] <= fid["max_distance_diff"]
         )
     else:
         checks["resume"] = resume is None and tm.get("initial_node") == 0
