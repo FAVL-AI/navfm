@@ -1,10 +1,43 @@
 # Project handoff: arrival component comparison v2 (development)
 
-Updated 2026-10-10 after the prospective recovery pilot halted under its frozen
-integrity rule. Start from the current milestone below; prior stage 3 results
+Updated 2026-10-10 after the bounded initialization/history diagnostic.
+Start from the current milestone below; prior stage 3 results
 remain audited and preserved. Verify statements against files; files win.
 
-## Current milestone: prospective recovery pilot
+## Current milestone: initialization/history diagnostic
+
+Diagnostic freeze `f831a110e6854c919a21c8397eee950cf79b77fd` is preserved. Result:
+**BOUNDED UNRESOLVED**. Existing first-image divergence precedes current-episode
+policy actions; the original cause is UNKNOWN. All eight preserved CPU inputs
+reconstruct twice with identical repeats and recorded discrete node/terminal
+states. Numerical distance equivalence to original CUDA/runtime fails the frozen
+bound; first command/waypoint comparisons pass. Device and environment differ,
+so the source of those small numerical differences is not isolated.
+
+The first technical process failed its very first conditioning render: requested
+1/12 s physics advance produced zero time advance/feedback and sensor time 0.
+No image capture, scripted handover, or comparison method completed. Seven further
+processes are NOT RUN; no retries. No start procedure is verified. A separately
+reviewed/frozen startup/render-advance repair is the next technical decision;
+do not amend/retry version 1 or resume halted recovery starts.
+
+- Design: `docs/INITIALIZATION_DIAGNOSTIC_V1_PLAN.md`.
+- Result/evidence hashes: `docs/INITIALIZATION_DIAGNOSTIC_V1_RESULT.md`.
+- Reviews: `gates/redteam/initialization-diagnostic-protocol-review-20261010.md`
+  and `gates/redteam/initialization-diagnostic-results-review-20261010.md`.
+- External evidence root:
+  `/home/favl/navfm-runtime-evidence/initialization-diagnostic-v1-20261010-01`.
+- Final `make verify`: ruff/mypy pass; exactly the three preserved
+  `test_environment_identity_v8` failures. Twenty diagnostic and twelve
+  prospective-pilot focused tests pass.
+
+Only scoped `agent/engineering-recording` publication to the existing FAVL-AI/navfm
+remote and a draft pull request are authorised after outgoing-history checks.
+No force push, history rewrite or merge. Held-out geometry stays sealed,
+illumination paused, and real robot actuation unauthorised. Runtime artifacts
+remain external.
+
+## Preserved milestone: prospective recovery pilot
 
 The narrow R2 versus B1x prospective protocol was independently reviewed and
 frozen at `54bfc239b3f8d4e5443212822582711b78925bbd`, then executed on four declared
@@ -23,10 +56,9 @@ HALTED: 12 further pairs/24 arm attempts are NOT RUN. Overall result:
 - External analysis: `/home/favl/navfm-runtime-evidence/prospective-r2-v1-pilot-analysis-20261010-01.json`.
 - External ledger: `/home/favl/navfm-runtime-evidence/prospective-r2-v1-launch-ledger.jsonl`.
 
-Do not resume the remaining version 1 starts or loosen its matching bound. A
-separately reviewed initialization/state/history diagnostic is the next decision;
-it is now separately reviewed/frozen under `docs/INITIALIZATION_DIAGNOSTIC_V1_PLAN.md`
-and has NOT RUN at this freeze. The earlier next-experiment proposal in section 7 is superseded
+Do not resume the remaining version 1 starts or loosen its matching bound. The
+separately frozen initialization/state/history diagnostic and its unresolved
+outcome are recorded above. The earlier next-experiment proposal in section 7 is superseded
 by this frozen pilot and its halted outcome. The complete stage 2/stage 3 evidence
 below is preserved and was reverified: stage 3 analysis equals saved evidence,
 all 18 report rows reconcile, and recovery remained NOT TESTED there.
@@ -42,8 +74,8 @@ Held-out access, illumination experiment and real robot actuation remain unautho
 | | |
 |---|---|
 | Worktree | `/home/favl/projects/navfm-engineering-recording` |
-| Branch | `agent/engineering-recording`; **not pushed**; scoped branch publication and draft pull request authorised after the initialization diagnostic |
-| HEAD | current result/handoff commit (see `git log -1`); prospective freeze is `54bfc23`, preceding audited baseline is `6a47011` |
+| Branch | `agent/engineering-recording`; scoped branch publication and draft pull request authorised after diagnostic/outgoing-history checks (see remote/PR for publication status) |
+| HEAD | current diagnostic result/handoff commit (see `git log -1`); diagnostic freeze `f831a11`, prospective freeze `54bfc23`, prior baseline `6a47011` |
 | Working tree | clean at handoff (`git status --porcelain` is empty) |
 | Commits to preserve | `7d2e383`, `d6139c0` (v1 results) and everything after them |
 
