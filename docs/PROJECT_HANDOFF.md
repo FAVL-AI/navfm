@@ -1,10 +1,21 @@
 # Project handoff: arrival component comparison v2 (development)
 
-Updated 2026-10-10 after the first actual learned-policy replay validation attempt.
+Updated 2026-10-10 after the observer-window v2 reference/replay validation pair.
 Start from the current milestone below; prior stage 3 results
 remain audited and preserved. Verify statements against files; files win.
 
-## Current milestone: first learned-policy validation reference HALTED
+## Current milestone: observer passes; numerical learned handover FAILS
+
+Freeze `9120decc6376db0f4f5bcece58e2866e488fdace` ran only the declared R2 A/s_bend0000 reference/replay pair. Both individual traces PASS; all 12 acquisition events are retained and all 84 image hashes checked. All 38 physical/history comparisons and all seven discrete learned outputs match, but all seven numerical invocation comparisons and full boundary policy state FAIL the unchanged 0.001 absolute / 0.00001 relative bound. Maximum window/predicted-distance difference is 0.068376541. Frozen decision is INITIALIZATION_HANDOVER_FAIL; execution STOPPED after two launches, with no post-kidnap policy invocation or efficacy run.
+
+- Result, differing fields and external hashes: `docs/OBSERVER_WINDOW_V2_RESULT.md`.
+- Frozen design/review: `docs/OBSERVER_WINDOW_V2_PROTOCOL.md` and `gates/redteam/observer-window-v2-executable-review-20261010.md`.
+- External evidence: `/home/favl/navfm-runtime-evidence/replay-recovery-validation-v2-20261010-01`.
+- Checks: 76 focused PASS; final ruff/mypy89 PASS, exactly three preserved environment-identity failures.
+
+The observer repair does not validate actual learned handover or establish the numerical/image mismatch cause. All inherited freezes and failed attempts remain unchanged. Next decision: separately reviewed bounded input/numerical-equivalence investigation; no further launch, efficacy batch or threshold change follows automatically. Publication remains scoped to the engineering branch; root handles outgoing audit/publication.
+
+## Preserved milestone: first learned-policy validation reference HALTED
 
 First-pair executable freeze `d74927f7f2e88dd75e20f13646dc22f8e05c5671` is preserved. Only `A-s_bend_run_0000-R2_recover-r1-reference` ran: 114 render calls, 42 captures and seven scripted pre-kidnap CUDA learned-policy invocations. The frozen acquisition guard rejected an event with null active-call index alongside two boundary-call events. Saved RGB matches the last boundary event; stale pixels are not proved. Structured FAIL correctly halted despite process exit 0, without timeout/retry. Replay and all efficacy runs are NOT RUN; learned-policy handover remains unvalidated.
 
@@ -39,7 +50,7 @@ remain external.
 
 Commit `7b7590061a338848fca9f3c1f54cca2cb831647a` was published on the engineering branch. Draft PR submission is handled separately; no merge is authorised. The durable authored description is `docs/ENGINEERING_DRAFT_PR.md`.
 
-`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires metadata attestation of new experimental starts, intended-start initialization matching and actual learned-policy handover validation before efficacy. The timestamped post-kidnap boundary, actual arm-state/reset schema and finite first-pair launch contract were reviewed and frozen. The first reference failed integrity and halted, as recorded above; replay and efficacy did not run. Metadata-only comparison of 283 numeric tuple records establishes new experimental starts in that inventory, not research novelty. Full cross-repeat/cross-arm gates and efficacy remain blocked; do not resume the halted pilot automatically.
+`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires metadata attestation of new experimental starts, intended-start initialization matching and actual learned-policy handover validation before efficacy. The timestamped post-kidnap boundary, actual arm-state/reset schema and finite first-pair launch contract were reviewed and frozen. The first version-1 reference failed integrity and halted. The separately frozen observer-window v2 pair passed acquisition/physical guards but failed numerical learned handover, as recorded above; efficacy did not run. Metadata-only comparison of 283 numeric tuple records establishes new experimental starts in that inventory, not research novelty. Full cross-repeat/cross-arm gates and efficacy remain blocked; do not resume the halted pilot automatically.
 
 ## Preserved milestone: prospective recovery pilot
 
