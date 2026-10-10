@@ -739,33 +739,32 @@ def main():
                 Image.fromarray(robot.rgb()).save(episode / "goal.png")
                 resume = None
                 if args.resume_from is not None:
-                    # Matched-state start: the pose whose image the recorded decision saw
-                    # (frame f-1 for the decision at frame f), the recorded image history
-                    # and the recorded policy node. Pose sets the trial up; it never enters
-                    # a decision.
+                    # Matched-state start by replay to handover: start where the recorded
+                    # episode started and replay its recorded commands, decision by
+                    # decision, through the same drive path; the policy takes over at the
+                    # handover decision K from the recorded node at K-1. The robot is then
+                    # moving and its image history is live. Pose never enters a decision;
+                    # it is only compared with the recording to report replay fidelity.
                     rm = json.loads((args.resume_from / "runtime_manifest.json").read_text())
                     K = args.resume_decision
                     if rm["route"]["id"] != route["id"] or not 6 <= K < len(rm["inference"]):
                         raise ValueError("resume episode must be this route; decision >= 6")
-                    f = rm["inference"][K]["frame"]
-                    pose = rm["captures"][f - 1]["pose"]
-                    hist_frames = [rm["inference"][j]["frame"] - 1 for j in range(K - 6, K)]
+                    if rm["inference"][K]["frame"] != K * args.policy_period_frames:
+                        raise ValueError("resume episode has another decision period")
                     resume = {
                         "episode": str(args.resume_from.resolve()),
                         "manifest_sha256": hashlib.sha256(
                             (args.resume_from / "runtime_manifest.json").read_bytes()
                         ).hexdigest(),
+                        "mode": "replay_to_handover",
                         "decision": K,
-                        "frame": f,
-                        "pose": pose,
-                        "initial_node": rm["inference"][K - 1]["chain"]["closest_node"],
-                        "history_frames": hist_frames,
-                        "history_sha256": [
-                            hashlib.sha256(
-                                (args.resume_from / "trajectory" / f"{q}.jpg").read_bytes()
-                            ).hexdigest()
-                            for q in hist_frames
+                        "handover_frame": K * args.policy_period_frames,
+                        "replayed_commands": [rm["inference"][k]["command"] for k in range(K)],
+                        "recorded_start_pose": rm["start_pose"],
+                        "recorded_handover_pose": rm["captures"][K * args.policy_period_frames - 1][
+                            "pose"
                         ],
+                        "initial_node": rm["inference"][K - 1]["chain"]["closest_node"],
                         "chain_json_sha256": rm["topomap"]["chain_json_sha256"],
                         "fixed_goal_sha256": rm.get("fixed_goal_sha256"),
                         "source_checkpoint_sha256": rm["policy"]["sha256"],
@@ -773,7 +772,8 @@ def main():
                     }
                     if resume["source_checkpoint_sha256"] != args.checkpoint_sha256:
                         raise ValueError("resume episode ran another checkpoint")
-                    start_xy, start_yaw, teacher_points = np.asarray(pose[:2]), pose[2], points
+                    sp = rm["start_pose"]
+                    start_xy, start_yaw, teacher_points = np.asarray(sp[:2]), sp[2], points
                     manifest["resume"] = resume
                 elif perturbation.is_identity:
                     start_xy, start_yaw, teacher_points = points[0], route["start_yaw"], points
@@ -941,15 +941,6 @@ def main():
                             "start_lost": bool(getattr(policy.state, "lost", False)),
                         }
                     history = [robot.rgb().copy() for _ in range(6)]
-                    if resume is not None:
-                        history = [
-                            np.asarray(
-                                Image.open(args.resume_from / "trajectory" / f"{q}.jpg").convert(
-                                    "RGB"
-                                )
-                            )
-                            for q in resume["history_frames"]
-                        ]
                 inference = []
                 stop_frame = None
                 abstain_frame = abstain_reason = None
@@ -975,10 +966,32 @@ def main():
                     before = float(sim.current_time)
                     xy, yaw = robot.pose()
                     pose_before = [*xy.tolist(), yaw]
-                    if policy:
+                    replaying = resume is not None and i < resume["handover_frame"]
+                    if policy and replaying:
+                        if i % args.policy_period_frames == 0:
+                            # Replay phase: the history fills with live images, the
+                            # recorded command is applied, no policy decision is made.
+                            history = [*history, robot.rgb().copy()][-6:]
+                            command = resume["replayed_commands"][i // args.policy_period_frames]
+                            drive(command)
+                    elif policy:
                         if i % args.policy_period_frames == 0:
                             perception_start = time.perf_counter()
                             history = [*history, robot.rgb().copy()][-6:]
+                            if resume is not None and i == resume["handover_frame"]:
+                                rp = resume["recorded_handover_pose"]
+                                resume["handover_pose"] = pose_before
+                                resume["handover_position_error_m"] = float(
+                                    np.hypot(pose_before[0] - rp[0], pose_before[1] - rp[1])
+                                )
+                                resume["handover_yaw_error_deg"] = float(
+                                    abs(
+                                        math.degrees(
+                                            (pose_before[2] - rp[2] + math.pi) % (2 * math.pi)
+                                            - math.pi
+                                        )
+                                    )
+                                )
                             prediction = policy.step(history, goal)
                             command = prediction["command"]
                             drive(command)

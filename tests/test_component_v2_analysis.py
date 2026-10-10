@@ -105,7 +105,11 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
     for q in range(60):
         (rec / "trajectory" / f"{q}.jpg").write_bytes(f"img{q}".encode())
     rm = {
-        "inference": [{"frame": 6 * k, "chain": {"closest_node": k // 2}} for k in range(10)],
+        "start_pose": [1.0, 60.0, 0.5],
+        "inference": [
+            {"frame": 6 * k, "chain": {"closest_node": k // 2}, "command": [0.1, 0.0, 0.01 * k]}
+            for k in range(10)
+        ],
         "captures": [{"pose": [0.01 * q, 1.0, 0.1]} for q in range(60)],
     }
     (rec / "runtime_manifest.json").write_text(json.dumps(rm))
@@ -115,14 +119,14 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
     cfg = {
         "checkpoint": {"sha256": "c" * 64},
         "runtime": {"radius": 4, "close_threshold": 3.0, "budget_frames": 600},
+        "replay_fidelity": {"position_m": 0.02, "yaw_deg": 2.0},
     }
     t = {"stage": 2, "start_lost": False}
     K = 8
     if resume:
-        t.update(resume_from=str(rec), resume_decision=K, budget_frames=480)
+        t.update(resume_from=str(rec), resume_decision=K)
     cond = {"root": str(chain), "chain_json_sha256": "h" * 64}
     spec = SPECS[variant]
-    hist = [rm["inference"][j]["frame"] - 1 for j in range(K - 6, K)]
     m = {
         "policy": {
             "sha256": "c" * 64,
@@ -150,13 +154,11 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
             "stage": 2,
             "comparison_config_sha256": "s" * 64,
         },
-        "max_steps": 480 if resume else 600,
+        "max_steps": 600,
         "qualification_sha256": "q" * 64,
         "start_perturbation": {"arc_fraction": 0.0, "lateral_m": 0.0, "yaw_deg": 0.0},
-        "start_pose": rm["captures"][rm["inference"][K]["frame"] - 1]["pose"]
-        if resume
-        else [0, 0, 0],
-        "inference": [{"frame": 6 * k} for k in range(100)],
+        "start_pose": rm["start_pose"] if resume else [0, 0, 0],
+        "inference": [{"frame": 6 * k} for k in range(K if resume else 0, 100)],
         "policy_stop_frame": None,
         "preflight": {
             "observations": [
@@ -169,15 +171,16 @@ def fixture(tmp_path, variant="B1_bounded", resume=False):
     }
     if resume:
         m["resume"] = {
+            "mode": "replay_to_handover",
             "episode": str(rec.resolve()),
             "decision": K,
+            "handover_frame": 6 * K,
             "initial_node": rm["inference"][K - 1]["chain"]["closest_node"],
             "source_checkpoint_sha256": "c" * 64,
-            "history_frames": hist,
-            "history_sha256": [
-                hashlib.sha256((rec / "trajectory" / f"{q}.jpg").read_bytes()).hexdigest()
-                for q in hist
-            ],
+            "replayed_commands": [rm["inference"][k]["command"] for k in range(K)],
+            "recorded_start_pose": rm["start_pose"],
+            "handover_position_error_m": 0.004,
+            "handover_yaw_error_deg": 0.3,
         }
     ctx = {
         "cfg": cfg,
@@ -214,11 +217,15 @@ def test_each_negative_control_mode_fails_its_check(tmp_path):
     assert not c["bounded"]
 
 
-def test_a_tampered_resume_history_is_detected(tmp_path):
+def test_a_tampered_replay_or_poor_fidelity_is_detected(tmp_path):
     t, cond, spec, m, root, ctx = fixture(tmp_path, resume=True)
-    m["resume"]["history_frames"][0] += 1
+    m["resume"]["replayed_commands"][3] = [0.1, 0.0, 0.4]
     c = v2.attempt_checks(None, "HEAD", t, "tr", cond, spec, "B1_bounded", m, root, ctx)
-    assert not c["resume"]
+    assert not c["resume"] and c["replay_fidelity"]
+    t, cond, spec, m, root, ctx = fixture(tmp_path, resume=True)
+    m["resume"]["handover_position_error_m"] = 0.05
+    c = v2.attempt_checks(None, "HEAD", t, "tr", cond, spec, "B1_bounded", m, root, ctx)
+    assert c["resume"] and not c["replay_fidelity"]
 
 
 # --- gates and stage-3 decisions -------------------------------------------------

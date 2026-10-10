@@ -257,7 +257,8 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
     frames = [r["frame"] for r in m["inference"]]
     end = m.get("policy_stop_frame")
     end = end if end is not None else m.get("policy_abstain_frame")
-    checks["inference_complete"] = frames == list(range(0, PERIOD * len(frames), PERIOD)) and (
+    h = (m.get("resume") or {}).get("handover_frame", 0)
+    checks["inference_complete"] = frames == list(range(h, h + PERIOD * len(frames), PERIOD)) and (
         end is not None or frames[-1] >= m["max_steps"] - PERIOD
     )
     resume = m.get("resume")
@@ -266,22 +267,24 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
         rm = json.loads((rm_path / "runtime_manifest.json").read_text())
         K = t["resume_decision"] + (1 if neg == "resume" else 0)
         node = rm["inference"][K - 1]["chain"]["closest_node"]
-        f = rm["inference"][K]["frame"]
-        hist = [rm["inference"][j]["frame"] - 1 for j in range(K - 6, K)]
         checks["resume"] = (
             resume is not None
+            and resume.get("mode") == "replay_to_handover"
             and resume["episode"] == str(rm_path.resolve())
             and resume["decision"] == K
+            and resume["handover_frame"] == K * PERIOD
             and resume["initial_node"] == node
             and tm.get("initial_node") == node
             and resume["source_checkpoint_sha256"] == ctx["cfg"]["checkpoint"]["sha256"]
-            and resume["history_frames"] == hist
-            and resume["history_sha256"]
-            == [
-                hashlib.sha256((rm_path / "trajectory" / f"{q}.jpg").read_bytes()).hexdigest()
-                for q in hist
-            ]
-            and np.allclose(m["start_pose"], rm["captures"][f - 1]["pose"], atol=1e-9)
+            and resume["replayed_commands"] == [rm["inference"][k]["command"] for k in range(K)]
+            and resume["recorded_start_pose"] == rm["start_pose"]
+            and np.allclose(m["start_pose"], rm["start_pose"], atol=1e-9)
+        )
+        fid = ctx["cfg"]["replay_fidelity"]
+        checks["replay_fidelity"] = (
+            resume is not None
+            and resume.get("handover_position_error_m", 1e9) <= fid["position_m"]
+            and resume.get("handover_yaw_error_deg", 1e9) <= fid["yaw_deg"]
         )
     else:
         checks["resume"] = resume is None and tm.get("initial_node") == 0
