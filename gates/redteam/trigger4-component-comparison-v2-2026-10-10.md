@@ -43,3 +43,23 @@ Three independent read-only reviews before freeze (no v2 trial run before freeze
   tested. L3 malformed manifests become integrity failures, not crashes.
 
 Remaining stated limitations are listed in the config (known_limitations).
+
+## Amendment v2.1 (before any counted trial)
+An engineering smoke check (not counted) showed the at-rest matched state did not
+reproduce the recorded camera view (11.3 grey levels, first-decision distances off
+by 10.28, argmin 5 instead of the look-alike node 10). Matched states now replay the
+recorded episode's commands from its start to the handover decision (cbbf3ea); a
+replay smoke reproduced the recording exactly (0.0 m) and the decision-22 look-alike.
+
+## Round 4 (cbbf3ea, narrow review of the amendment): FREEZE-WITH-AMENDMENTS
+Nothing HIGH; replay mechanics, indexing and the amendment's numbers verified.
+- Fidelity checked only x, y, yaw, which replay matches by construction. Fixed (ca03cde):
+  image (<= 2.5 grey) and decision-K distance (<= 1.0, same window) bounds.
+- Disclosure omitted the replay smoke and that two smokes ran counted cells. Fixed.
+- Replay check read the collector's own record. Fixed: applied commands verified from
+  trajectory transitions; source manifest hash recomputed.
+- Replay-phase measures and fresh-counter consequence declared; pre-handover contact is
+  an integrity failure; route following measured from handover; collector refuses a
+  source episode that ended before handover; negative tests for each new check.
+A fifth smoke confirmed the fidelity fields are recorded in Isaac (outcome not inspected).
+Frozen as v2.1.
