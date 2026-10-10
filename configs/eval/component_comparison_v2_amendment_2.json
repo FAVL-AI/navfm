@@ -1,0 +1,120 @@
+{
+ "id": "component_comparison_v2 amendment 2 (v2.2): saved-recording readback yaw wrap; recovery block re-collected",
+ "date": "2026-10-10",
+ "status": "FROZEN",
+ "nature": "A PROTOCOL CHANGE, not a retry under the frozen retry rule. It fixes an instrumentation defect that removed attempts in proportion to rotation. It is not a hypothesis rescue in intent, but it was decided after the likely recovery outcome had become readable (see disclosures), so that risk is stated, not denied.",
+ "base_freeze_commit": "83101fa",
+ "base_config_sha256": "44285743347e20e89ea03be74d001f9647d7f54dd2bff8903cbae9b41b2a088a",
+ "base_config_unchanged": "configs/eval/component_comparison_v2.json is not edited: variants, thresholds, trials, routes, budgets, gates, stage-3 criteria and fidelity bounds are as frozen. The retry rule is unchanged everywhere except as stated under recollected_block.",
+ "fix_commits": [
+  "284045d",
+  "1273db9"
+ ],
+ "files": {
+  "src/navfm/collection/scientific_preflight.py": {
+   "sha256_at_freeze": "db8f24d6daf353d920562494a72e65e8ba5056e9b881713b9f09c9daa571272f",
+   "sha256_amended": "77fb3e4a6776691057f0c5016d0c5bf5be143e790694d2f5637b765a537d66e8"
+  }
+ },
+ "defect": "verify_saved_recording compared the pickled yaw (stored unwrapped by the writer, as the GNM format requires) with the raw captured yaw in (-pi, pi] at atol 1e-8. Every episode whose heading crossed +/-pi raised 'saved pose differs from captured pose' after it had run, and the collector recorded it as FAILED without writing its inference, captures, contacts or later integrity results.",
+ "fix": "the readback compares with the writer's transform of the captured yaws (navfm.kinematics unwrap_yaw) and, independently, requires stored yaw == captured yaw modulo 2*pi and no stored step beyond pi; tolerance unchanged (1e-8); position, image, count and timestamp checks unchanged",
+ "classification": "instrumentation (post-episode integrity check); not a component result and not a policy-behaviour change",
+ "evidence": {
+  "failed_first_attempts": 14,
+  "failed_with_a_raw_yaw_step_beyond_pi": 14,
+  "passing_stage2_attempts_with_a_raw_yaw_step_beyond_pi": 0,
+  "readback_replay": "captures rebuilt from saved transitions (on all 34 passing kidnap attempts they equal the recorded captures exactly): the frozen readback rejects exactly the 14; the amended readback accepts all 92 stage-2 attempts",
+  "other_causes_excluded": "positions, image counts and timestamps all agree in the 14; only yaw differs, by multiples of 2*pi",
+  "earlier_collections_affected": "none: no other collection.json under the evidence root records this error",
+  "behaviour": "the readback runs at scripts/collect_option1.py:1119, after the episode loop, drive(0) and writer.close(); no decision, command, stop or preflight reads it. Between 83101fa and the fix commits, the only change under configs/, src/ and scripts/collect_option1.py is inside verify_saved_recording",
+  "tests": "tests/test_scientific_preflight.py: heading through +/-pi accepted (fails on the frozen code); wrong heading or position after a wrap refused; a 2*pi discontinuity refused even with a matching unwrap defect",
+  "independent_review": "gates/redteam/trigger4-component-comparison-v2-2026-10-10.md, amendment-2 section"
+ },
+ "affected_attempts": {
+  "kidnapped_a (yaw +20)": "R2 s_bend_run_0000",
+  "kidnapped_b (yaw -20)": "R2 s_bend_run_0000",
+  "kidnapped_c (yaw 180)": "8 of its 12 attempts: B1, B1x and R2 on both s_bend routes, B1 and B1x on junction_run_0001 (junction_run_0000 of all three variants and R2 junction_run_0001 passed)",
+  "kidnapped_d (yaw 90)": "R2 on all 4 routes",
+  "by_variant": "R2 8 of 16, B1 3 of 16, B1x 3 of 16",
+  "why_bias_relevant": "the defect removed attempts in proportion to rotation: half of R2's attempts (its in-place scans) and most yaw-180 starts. Scoring only the survivors would select against the mechanism under test; leaving them out makes the recovery gate INCOMPLETE."
+ },
+ "recollected_block": {
+  "rule": "the recovery question's stage-2 block is re-collected in full on the amended source: every route of every cell below, as fresh collections tagged 20261010-02, launched after this amendment's commit by scripts/run_component_v2_block.sh in block mode, in the record's cell order (the frozen stage-2 trial and variant order) and the frozen route order. For these cells only the block counts: tag 20261010-02, plus the frozen retry rule's one rerun of a non-PASS route under tag 20261010-03 (rerun mode). The original 20261010-01 collections are SUPERSEDED (kept, listed, never scored); any other collection of a replaced cell is a violation that leaves its routes without a counted attempt. No partial reruns of the original draws: first and second draws and the two source versions are never mixed within a cell.",
+  "attempts": 48,
+  "unchanged_cells": "all look-alike, premature-confirmation and arrival trials (44 attempts) keep their 20261010-01 attempts; none was affected and their gates use no kidnap attempt"
+ },
+ "analysis": "scripts/analyse_component_comparison_v2.py --amendment-commit <commit> --ledger <committed ledger>: the record must be byte-identical to the one pinned in the script (sha256), have status FROZEN, base_freeze_commit and base_config_sha256 equal to the run's, descend from 83101fa and both fix commits, and the running analysis script must be byte-identical to its blob at the amendment commit (the gate record stores that script's sha256 and stage-3 admission requires the same script). The amended readback blob is accepted for the declared file only, every other influencing file still at the freeze blob, only for collections launched after the amendment commit, and in stage 2 only for replaced cells in collections tagged 20261010-02 or 20261010-03. Every such attempt, and every stage-3 attempt, must also have launch-ledger records (read from git at --ledger-commit/--ledger-path, never from a working file; the ledger's blob sha256 is stored in the output) showing a clean worktree at a HEAD that descends from the amendment commit, a frozen_routes.json sha256 equal to the file on disk, and a robot USD sha256 equal before and after the collection and equal to the ledger's first launch record.",
+ "concordance_rule": "DESCRIPTIVE ONLY, computed by scripts/concordance_kidnap_v2.py (committed with this amendment, before the re-collection); no gate reads it, all 48 pairs are reported whatever the result, and no further amendment of the recovery block follows from it. For each (trial, variant, route) of the replaced cells it compares the superseded attempt with the counted re-collected attempt on (i) termination class (ended before the 600-frame budget, i.e. a stop or a halt, vs timeout) and (ii) ended within 0.5 m of the goal image's capture position; both draws are measured the same way from their saved transitions (the method reproduces v2-stage2-kidnap-first-attempts-inferred-20261010-01.json exactly on all 48 superseded attempts). A stop and an abstain halt are both 'ended'; recovery success needs decisions and is not compared.",
+ "launch_evidence": "scripts/run_component_v2_block.sh refuses a dirty worktree, a rerun of a route whose first attempt is PASS, a HEAD that does not descend from the amendment commit, an amendment record differing from the committed one, a cell outside the record, a route outside the trial and an existing output; before each collection it appends {collection, head, worktree_status, launch_utc, robot_usd_sha256} to the ledger and after it {collection, exit, frozen_routes_sha256, robot_usd_sha256_after}. The ledger (in the evidence root) is copied into gates/v2/ and committed with the stage-2 gate record; the analysis checks it.",
+ "disclosures": [
+  "Before this amendment, the as-collected stage 2 was audited and analysed with the frozen script (v2-stage2-audit-20261010-01.json, v2-stage2-analysis-20261010-01.json; kept unchanged). Gates as collected: B1_bounded FAIL, V2a_confirm FAIL, V2b_confirm_steer PASS, R2_recover INCOMPLETE. As collected, R2 and B1x each had 8 recovery successes over all 16 attempts (with 8 R2 and 3 B1x attempts unscored), and on the 8 uninformative-view trials R2 2 and B1x 1.",
+  "The 14 superseded failed attempts are NOT blind: their saved transitions hold every command and the pose track. Read from them (v2-stage2-kidnap-first-attempts-inferred-20261010-01.json; the inference rule agrees with the recorded termination on 34 of 34 passing kidnap attempts): all 8 failed R2 attempts ended on a stop or halt before the budget (307 to 415 frames) with final goal distance 0.13 to 0.31 m; kidnapped_c B1x s_bend_run_0001 stopped at 541 frames, about 0.50 to 0.51 m from the goal (just outside the 0.5 m success radius); the other five failed B1/B1x attempts (kidnapped_c) timed out. Their decisions (hence recovery success by the frozen definition) and contacts were never written and are unknown. This was read by the red-team reviewer and then by the author before this revision; the revision therefore re-collects the whole block, including the R2 and comparator attempts that had passed, rather than only the failed ones, so no draw can be kept or discarded by its outcome.",
+  "The B1, V2a and V2b gates use no kidnap attempt; the amendment cannot change them. Their stage-2 attempts ran the frozen readback, which none of them failed.",
+  "The 14 failed first attempts also skipped the checks the collector runs after the readback (yaw-feedback physics-step count, source snapshot, influencing-file digests, manifest captures, inference and contacts), so their executed source is not attested by their own manifests; they are diagnostic only.",
+  "Re-collection is a new stochastic draw of the same frozen configuration; replay is not bit-deterministic (base protocol). Re-collecting whole cells keeps the frozen within-process route order.",
+  "Launch-after-commit is also checked from the frozen_routes.json modification time against the commit time, as the frozen launched_after_freeze check already does; file times and commit dates can be altered. The ledger (HEAD ancestry, clean tree, frozen_routes.json digest), the collection tag and the amended-blob digest in each manifest are the additional evidence; none is cryptographic, and stage-2 collections before this amendment have no ledger.",
+  "The robot USD (/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd, outside this repository) is NOT pinned by any frozen check: manifests record only its path, and the frozen non-repository check covers only the upstream Python files recorded as influencing files. Its sha256 is written to the launch ledger before and after every amendment-2 collection; earlier collections have no USD digest.",
+  "A source change between collections means each gate's stage-2 attempts were collected under one of two readback versions; within every cell all counted attempts share one version."
+ ],
+ "tag": "20261010-02",
+ "rerun_tag": "20261010-03",
+ "superseded_tag": "20261010-01",
+ "replaced_cells": [
+  [
+   "kidnapped_a",
+   "B1_bounded"
+  ],
+  [
+   "kidnapped_a",
+   "B1x_exit"
+  ],
+  [
+   "kidnapped_a",
+   "R2_recover"
+  ],
+  [
+   "kidnapped_b",
+   "B1_bounded"
+  ],
+  [
+   "kidnapped_b",
+   "B1x_exit"
+  ],
+  [
+   "kidnapped_b",
+   "R2_recover"
+  ],
+  [
+   "kidnapped_c",
+   "B1_bounded"
+  ],
+  [
+   "kidnapped_c",
+   "B1x_exit"
+  ],
+  [
+   "kidnapped_c",
+   "R2_recover"
+  ],
+  [
+   "kidnapped_d",
+   "B1_bounded"
+  ],
+  [
+   "kidnapped_d",
+   "B1x_exit"
+  ],
+  [
+   "kidnapped_d",
+   "R2_recover"
+  ]
+ ],
+ "reporting_conditions": [
+  "The R2 stage-2 gate is reported as AMENDED AFTER THE DATA WERE SEEN, next to the as-collected result (INCOMPLETE) and the inferred first-attempt outcomes.",
+  "Stage 2 remains a development gate. Confirmatory weight on recovery rests on stage 3 (fresh complete episodes; R2 against B1x as the deciding comparison), not on this block.",
+  "No further amendment of the recovery block will be made on the basis of its result."
+ ],
+ "stage3_tag": "s3-01",
+ "stage3_rerun_tag": "s3-02",
+ "stage3": "stage-3 collections are launched after this amendment by scripts/run_component_v2_block.sh stage3, whose cells are the stage-3 trials' variants admitted by the committed stage-2 gate record (the analysis's required_stage3 rule), every route, tag s3-01, one rerun of a non-PASS route under s3-02 (rerun mode); they run the amended readback, carry ledger records, and are analysed with the same --amendment-commit and ledger checks"
+}

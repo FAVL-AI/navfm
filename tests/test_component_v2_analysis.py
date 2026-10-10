@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import analyse_component_comparison_v2 as v2
@@ -511,6 +512,8 @@ def test_stage2_record_must_be_committed_consistent_and_complete(tmp_path, monke
         "freeze_commit": "F",
         "config_sha256": "S",
         "negative_control": None,
+        "amendment_commit": None,
+        "analysis_script_sha256": hashlib.sha256(Path(v2.__file__).read_bytes()).hexdigest(),
         "trials_analysed": ["amb"],
         "globally_ok": True,
         "attempts": rows,
@@ -526,12 +529,16 @@ def test_stage2_record_must_be_committed_consistent_and_complete(tmp_path, monke
         ).stdout.strip()
 
     parser = argparse.ArgumentParser()
-    args = argparse.Namespace(freeze_commit="F", stage2_commit=commit(good), stage2_path="g.json")
+    args = argparse.Namespace(
+        freeze_commit="F", stage2_commit=commit(good), stage2_path="g.json", amendment_commit=None
+    )
     passed, _ = v2.load_stage2(cfg, "S", args, parser)
     assert passed == {"B1_bounded"}
     for bad in (
         {**good, "negative_control": "chain"},
         {**good, "config_sha256": "X"},
+        {**good, "amendment_commit": "AM"},  # record analysed under another amendment
+        {**good, "analysis_script_sha256": "x"},  # record made by another analysis script
         {**good, "trials_analysed": []},
         {**good, "gates": {"B1_bounded": {"status": "PASS"}}, "attempts": rows[:1]},
     ):
@@ -581,3 +588,259 @@ def test_contact_before_handover_is_an_integrity_failure(tmp_path):
     assert not c["no_contact_before_handover"]
     c = resumed(tmp_path, lambda m, r: m.update(contacts=[{"time": 100 / 12}]))
     assert c["no_contact_before_handover"]
+
+
+def amended(
+    tmp_path,
+    monkeypatch,
+    *,
+    cell=True,
+    after=True,
+    declared=True,
+    stage=2,
+    amendment=True,
+    tag="T2",
+    ledger="ok",
+):
+    """An attempt whose pyproject.toml digest is the amendment commit's blob, not the freeze's."""
+    tmp_path = tmp_path / f"case{len(list(tmp_path.iterdir()))}"
+    tmp_path.mkdir()
+    t, cond, spec, m, root, ctx = fixture(tmp_path)
+    root = root.rename(root.parent / ("v2-tr-B1_bounded-" + tag))
+    t["stage"] = stage
+    rel = "pyproject.toml"
+    m["preflight"]["observations"][0]["observed"] = {str(REPO / rel): "new"}
+    ctx["cache"] = {("F", rel): "old", ("AM", rel): "new"}
+    mtime = (root / "frozen_routes.json").stat().st_mtime
+    monkeypatch.setattr(v2, "is_ancestor", lambda old, new: (old, new) == ("AM", "H2"))
+    fr = hashlib.sha256((root / "frozen_routes.json").read_bytes()).hexdigest()
+    launch = {"head": "H2", "worktree_status": "", "robot_usd_sha256": "U"}
+    done = {"frozen_routes_sha256": fr, "robot_usd_sha256_after": "U"}
+    led = {
+        "ok": {"launch": launch, "exit": done},
+        "dirty": {"launch": {**launch, "worktree_status": "M x;"}, "exit": done},
+        "old_head": {"launch": {**launch, "head": "H1"}, "exit": done},
+        "other_routes": {"launch": launch, "exit": {**done, "frozen_routes_sha256": "x"}},
+        "usd_changed_during": {"launch": launch, "exit": {**done, "robot_usd_sha256_after": "V"}},
+        "usd_differs_from_ledger": {
+            "launch": {**launch, "robot_usd_sha256": "V"},
+            "exit": {**done, "robot_usd_sha256_after": "V"},
+        },
+        "missing": None,
+    }[ledger]
+    ctx["ledger"] = {
+        "collections": {} if led is None else {root.name: led},
+        "robot_usd_sha256": "U",
+    }
+    if amendment:
+        ctx["amendment"] = {
+            "commit": "AM",
+            "commit_time": mtime - 10 if after else mtime + 10,
+            "files": {rel if declared else "other.py": {}},
+            "replaced_cells": [["tr", "B1_bounded" if cell else "A_baseline"]],
+            "tag": "T2",
+            "rerun_tag": "T3",
+            "superseded_tag": "T1",
+        }
+    return v2.attempt_checks(None, "F", t, "tr", cond, spec, "B1_bounded", m, root, ctx)
+
+
+def test_amended_source_is_accepted_only_in_the_declared_post_amendment_block(
+    tmp_path, monkeypatch
+):
+    c = amended(tmp_path, monkeypatch)
+    assert c["source_at_freeze"] and c["launch_ledger"]
+    assert amended(tmp_path, monkeypatch, tag="T3")["source_at_freeze"]  # the block's rerun tag
+    assert amended(tmp_path, monkeypatch, stage=3, cell=False, tag="T1")["source_at_freeze"]
+    for kw in (
+        {"amendment": False},  # no amendment: the freeze alone decides
+        {"cell": False},  # a stage-2 cell that is not re-collected
+        {"tag": "T1"},  # the superseded collection
+        {"tag": "T4"},  # a collection outside the declared block
+        {"after": False},  # launched before the amendment commit
+        {"declared": False},  # the differing file is not an amended file
+    ):
+        assert not amended(tmp_path, monkeypatch, **kw)["source_at_freeze"], kw
+
+
+def test_block_attempts_need_a_consistent_launch_ledger(tmp_path, monkeypatch):
+    bad_ledgers = (
+        "dirty",
+        "old_head",
+        "other_routes",
+        "usd_changed_during",
+        "usd_differs_from_ledger",
+        "missing",
+    )
+    for bad in bad_ledgers:
+        assert not amended(tmp_path, monkeypatch, ledger=bad)["launch_ledger"], bad
+    assert "launch_ledger" not in amended(tmp_path, monkeypatch, amendment=False)
+    # Stage 3 runs under the amendment too: it passes with a ledger entry and fails without.
+    assert amended(tmp_path, monkeypatch, stage=3, cell=False, tag="S3")["launch_ledger"]
+    assert not amended(tmp_path, monkeypatch, stage=3, cell=False, tag="S3", ledger="missing")[
+        "launch_ledger"
+    ]
+
+
+def test_the_ledger_is_read_from_git_and_its_usd_is_the_first_launch(monkeypatch):
+    import types
+
+    text = "\n".join(
+        json.dumps(x)
+        for x in (
+            {"collection": "c1", "head": "H", "robot_usd_sha256": "U"},
+            {"collection": "c1", "exit": 0, "robot_usd_sha256_after": "U"},
+            {"collection": "c2", "head": "H", "robot_usd_sha256": "V"},
+        )
+    )
+    led = v2.read_ledger(text)
+    assert led["robot_usd_sha256"] == "U" and set(led["collections"]) == {"c1", "c2"}
+
+    class P:
+        def error(self, msg):
+            raise SystemExit(msg)
+
+    a = types.SimpleNamespace(amendment_commit="AM", ledger_commit=None, ledger_path=None)
+    with pytest.raises(SystemExit, match="ledger-commit"):
+        v2.load_ledger(a, P())
+    seen = []
+
+    def run(cmd, capture_output=True):
+        seen.append(cmd)
+        return types.SimpleNamespace(returncode=0, stdout=text.encode())
+
+    monkeypatch.setattr(v2.subprocess, "run", run)
+    a = types.SimpleNamespace(amendment_commit="AM", ledger_commit="L", ledger_path="g/l.jsonl")
+    led, sha = v2.load_ledger(a, P())
+    assert seen[-1][-1] == "L:g/l.jsonl" and sha == hashlib.sha256(text.encode()).hexdigest()
+
+
+AM = {
+    "replaced_cells": [["k", "R2_recover"]],
+    "tag": "20261010-02",
+    "rerun_tag": "20261010-03",
+    "superseded_tag": "20261010-01",
+}
+
+
+def block(tmp_path, collections):
+    tmp_path.mkdir(exist_ok=True)
+    for k, (name, eps) in enumerate(collections):
+        make_collection(tmp_path, "v2-k-R2_recover-" + name, [r for r, _ in eps], eps, age=k)
+    return v2.discover("k", "R2_recover", ["r1", "r2"], base=tmp_path, am=AM)
+
+
+def test_a_replaced_cell_counts_only_its_block(tmp_path):
+    counted, log, violations = block(
+        tmp_path,
+        [
+            ("20261010-01", [("r1", "PASS"), ("r2", "FAILED")]),
+            ("20261010-02", [("r1", "PASS"), ("r2", "PASS")]),
+        ],
+    )
+    assert not violations
+    assert {r: x["collection"] for r, (_, x) in counted.items()} == {
+        "r1": "v2-k-R2_recover-20261010-02",
+        "r2": "v2-k-R2_recover-20261010-02",
+    }
+    assert {
+        "collection": "v2-k-R2_recover-20261010-01",
+        "route": None,
+        "status": "SUPERSEDED",
+    } in log
+    # Without the amendment the same evidence violates the retry rule (rerun after a PASS).
+    _, _, violations = v2.discover("k", "R2_recover", ["r1", "r2"], base=tmp_path)
+    assert ("r1", "attempt after a PASS") in violations
+
+
+def test_the_block_rerun_tag_follows_the_retry_rule(tmp_path):
+    base = [("20261010-02", [("r1", "PASS"), ("r2", "FAILED")])]
+    counted, log, violations = block(tmp_path / "a", [*base, ("20261010-03", [("r2", "PASS")])])
+    assert not violations and counted["r2"][1]["collection"].endswith("-20261010-03")
+    _, _, violations = block(tmp_path / "b", [*base, ("20261010-03", [("r1", "PASS")])])
+    assert ("r1", "attempt after a PASS") in violations
+    _, log, violations = block(tmp_path / "c", [*base, ("20261010-04", [("r2", "PASS")])])
+    assert ("r2", "collection outside the declared block") in violations
+    assert any(x["status"] == "OUTSIDE_BLOCK" for x in log)
+    _, _, violations = block(tmp_path / "d", [("20261010-03", [("r1", "PASS"), ("r2", "PASS")])])
+    assert ("r1", "first block attempt not under the block tag") in violations
+
+
+def test_amendment_record_is_pinned_and_checked(monkeypatch):
+    import hashlib as hl
+    import types
+
+    good = {
+        "status": "FROZEN",
+        "base_freeze_commit": "F",
+        "base_config_sha256": "S",
+        "fix_commits": ["X"],
+        "files": {"x.py": {"sha256_at_freeze": "old", "sha256_amended": "new"}},
+        "replaced_cells": [["k", "R2_recover"]],
+        "tag": "T2",
+        "rerun_tag": "T3",
+        "superseded_tag": "T1",
+        "stage3_tag": "S3",
+        "stage3_rerun_tag": "S3r",
+    }
+    state = {"record": good, "ancestor": True}
+
+    def run(cmd, capture_output=True, text=False):
+        if "merge-base" in cmd:
+            return types.SimpleNamespace(returncode=0 if state["ancestor"] else 1, stdout=b"")
+        if "show" in cmd:
+            return types.SimpleNamespace(returncode=0, stdout=json.dumps(state["record"]).encode())
+        return types.SimpleNamespace(returncode=0, stdout="100" if text else b"100")
+
+    class P:
+        def error(self, msg):
+            raise SystemExit(msg)
+
+    monkeypatch.setattr(v2.subprocess, "run", run)
+    me = hashlib.sha256(Path(v2.__file__).read_bytes()).hexdigest()
+    blobs = {
+        ("F", "x.py"): "old",
+        ("AM", "x.py"): "new",
+        ("AM", "y.py"): "new2",
+        ("F", "y.py"): "o2",
+        ("AM", v2.SCRIPT): me,
+    }
+    monkeypatch.setattr(v2, "git_blob_sha", lambda c, r, cache: blobs[c, r])
+    pin = lambda rec: monkeypatch.setattr(  # noqa: E731
+        v2, "AMENDMENT_SHA256", hl.sha256(json.dumps(rec).encode()).hexdigest()
+    )
+    a = types.SimpleNamespace(amendment_commit="AM", freeze_commit="F")
+    pin(good)
+    am = v2.load_amendment(a, P(), "S")
+    assert am["commit"] == "AM" and am["commit_time"] == 100
+    # A widened record (an extra file, self-consistent) is refused because it is not the pinned one.
+    widened = {
+        **good,
+        "files": {**good["files"], "y.py": {"sha256_at_freeze": "o2", "sha256_amended": "new2"}},
+    }
+    state["record"] = widened
+    with pytest.raises(SystemExit, match="pinned_record"):
+        v2.load_amendment(a, P(), "S")
+    for bad, key in (
+        ({**good, "status": "PROPOSED"}, "status_frozen"),
+        ({**good, "base_config_sha256": "Z"}, "base_config_sha256"),
+        ({**good, "base_freeze_commit": "G"}, "base_freeze_commit"),
+        (
+            {**good, "files": {"x.py": {"sha256_at_freeze": "old", "sha256_amended": "x"}}},
+            "blobs_after",
+        ),
+    ):
+        state["record"] = bad
+        pin(bad)  # even if pinned, each check refuses it
+        with pytest.raises(SystemExit, match=key):
+            v2.load_amendment(a, P(), "S")
+    state["record"] = good
+    pin(good)
+    blobs["AM", v2.SCRIPT] = "another analysis script"
+    with pytest.raises(SystemExit, match="analysis_script_at_amendment"):
+        v2.load_amendment(a, P(), "S")
+    blobs["AM", v2.SCRIPT] = me
+    state["ancestor"] = False
+    with pytest.raises(SystemExit, match="ancestry"):
+        v2.load_amendment(a, P(), "S")
+    assert v2.load_amendment(types.SimpleNamespace(amendment_commit=None), P(), "S") is None

@@ -107,6 +107,37 @@ then recovery.
 a PASS, and only a route's first two attempts can count. A rerun takes a new
 suffix (`-20261010-02`).
 
+## 3a. Amendment 2 (v2.2), made after stage 2 ran
+
+Stage 2 finished as follows:
+
+- 44 collections, 92 attempts: 78 PASS and 14 FAILED.
+- All 14 failures were kidnap attempts whose heading crossed ±π. The cause was
+  a defect in the saved-recording readback (fixed in `284045d`, `1273db9`).
+- Gates as collected:
+  - `B1_bounded`: FAIL
+  - `V2a_confirm`: FAIL
+  - `V2b_confirm_steer`: PASS
+  - `R2_recover`: INCOMPLETE
+- Evidence:
+  - `v2-stage2-audit-20261010-01.json`
+  - `v2-stage2-analysis-20261010-01.json`
+  - `v2-stage2-kidnap-first-attempts-inferred-20261010-01.json` (diagnostic)
+
+Record: `configs/eval/component_comparison_v2_amendment_2.json` (FROZEN; pinned in
+the analysis script). Review: the amendment-2 section of
+`gates/redteam/trigger4-component-comparison-v2-2026-10-10.md`. The amendment does
+three things:
+
+- **Re-collect** the whole recovery block (12 kidnap cells, 48 attempts) under the tag
+  `20261010-02`; the original `-01` collections are superseded.
+- **Launch** every amendment-era collection with `scripts/run_component_v2_block.sh`
+  (modes `block`, `stage3`, `rerun`). It writes a launch ledger.
+- **Analyse** with `--amendment-commit <freeze commit> --ledger-commit <c> --ledger-path gates/v2/<ledger>`.
+
+`scripts/concordance_kidnap_v2.py` is descriptive only. The R2 stage-2 gate must be
+reported as amended after the data were seen. Confirmatory weight rests on stage 3.
+
 ## 4. Next steps, in order
 
 1. Confirm all 44 collections finished and list every non-PASS attempt.

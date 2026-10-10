@@ -255,6 +255,42 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
     checks["source_at_freeze"] = bool(rf) and all(
         git_blob_sha(freeze_commit, r, ctx["cache"]) == d for r, d in rf.items()
     )
+    am = ctx.get("amendment")
+    if not checks["source_at_freeze"] and am is not None and rf:
+        # Amendment 2 (pinned, committed): only its files may differ from the
+        # freeze, only with the amendment commit's blob, only for attempts launched
+        # after that commit, and in stage 2 only in its re-collected block.
+        declared = set(am["files"])
+        in_scope = t["stage"] == 3 or (
+            [trial, v] in am["replaced_cells"] and in_block(root.name, am)
+        )
+        checks["source_at_freeze"] = (
+            in_scope
+            and (root / "frozen_routes.json").stat().st_mtime > am["commit_time"]
+            and all(
+                git_blob_sha(am["commit"] if r in declared else freeze_commit, r, ctx["cache"]) == d
+                for r, d in rf.items()
+            )
+        )
+    if am is not None and (
+        t["stage"] == 3 or ([trial, v] in am["replaced_cells"] and in_block(root.name, am))
+    ):
+        # Launched under amendment 2: the committed launch ledger must show a clean
+        # tree at a HEAD descending from the amendment commit, the same
+        # frozen_routes.json as on disk, and one robot USD digest throughout.
+        led = ctx["ledger"]["collections"].get(root.name, {})
+        launch, done = led.get("launch") or {}, led.get("exit") or {}
+        usd = ctx["ledger"]["robot_usd_sha256"]
+        checks["launch_ledger"] = (
+            launch.get("worktree_status") == ""
+            and bool(launch.get("head"))
+            and is_ancestor(am["commit"], launch["head"])
+            and done.get("frozen_routes_sha256")
+            == hashlib.sha256((root / "frozen_routes.json").read_bytes()).hexdigest()
+            and usd is not None
+            and launch.get("robot_usd_sha256") == usd
+            and done.get("robot_usd_sha256_after") == usd
+        )
     ctx["nonrepo"].append({q: d for q, d in obs.items() if not q.startswith(str(REPO) + "/")})
     frames = [r["frame"] for r in m["inference"]]
     end = m.get("policy_stop_frame")
@@ -319,7 +355,7 @@ def attempt_checks(neg, freeze_commit, t, trial, cond, spec, v, m, root, ctx) ->
 
 
 def discover(
-    trial: str, variant: str, routes: list[str], base: Path = E
+    trial: str, variant: str, routes: list[str], base: Path = E, am: dict | None = None
 ) -> tuple[dict, list, list]:
     """Apply the retry rule over every v2-<trial>-<variant>-* collection.
 
@@ -335,6 +371,19 @@ def discover(
         key=lambda d: (d / "frozen_routes.json").stat().st_mtime,
     )
     log, counted, violations = [], {}, []
+    outside: list = []
+    if am is not None and [trial, variant] in am["replaced_cells"]:
+        # Amendment 2: this cell is re-collected as one block (tag, plus its one
+        # rerun tag); the original collections are superseded (kept and logged,
+        # never counted); any other collection of the cell is a violation.
+        block = [d for d in roots if in_block(d.name, am)]
+        for root in roots:
+            if root.name.endswith("-" + am["superseded_tag"]):
+                log.append({"collection": root.name, "route": None, "status": "SUPERSEDED"})
+            elif root not in block:
+                log.append({"collection": root.name, "route": None, "status": "OUTSIDE_BLOCK"})
+                outside += [r["id"] for r in json.loads((root / "frozen_routes.json").read_text())]
+        roots = block
     for root in roots:
         planned_ids = [r["id"] for r in json.loads((root / "frozen_routes.json").read_text())]
         cj = (
@@ -350,6 +399,11 @@ def discover(
             log.append({"collection": root.name, "route": rid, "status": status})
     for route in routes:
         tries = [x for x in log if x["route"] == route]
+        if route in outside:
+            violations.append((route, "collection outside the declared block"))
+        replaced = am is not None and [trial, variant] in am["replaced_cells"]
+        if replaced and tries and not tries[0]["collection"].endswith("-" + am["tag"]):
+            violations.append((route, "first block attempt not under the block tag"))
         if len(tries) > 2:
             violations.append((route, "more than one rerun"))
         first_pass = next((k for k, x in enumerate(tries) if x["status"] == "PASS"), None)
@@ -689,6 +743,108 @@ def stage3_decisions(cfg: dict, attempts: list, ran: set, passed: set, globally_
     return out
 
 
+AMENDMENT = Path("configs/eval/component_comparison_v2_amendment_2.json")
+SCRIPT = "scripts/analyse_component_comparison_v2.py"
+# The one accepted amendment record (pinned: a different or widened record is refused).
+AMENDMENT_SHA256 = "6c3d7b2ad1e1d3649e95560fdea3b0c4ce9d250fde11a950d52f2a1200a4b64f"
+
+
+def read_ledger(text: str) -> dict:
+    """Launch ledger lines by collection (launch and exit records); the robot USD
+    digest is the first launch line's, which every record must then repeat."""
+    out: dict = {}
+    usd = None
+    for line in text.splitlines():
+        if line.strip():
+            r = json.loads(line)
+            out.setdefault(r["collection"], {})["exit" if "exit" in r else "launch"] = r
+            if usd is None and "exit" not in r:
+                usd = r.get("robot_usd_sha256")
+    return {"collections": out, "robot_usd_sha256": usd}
+
+
+def load_ledger(a, p) -> tuple[dict, str | None]:
+    """The launch ledger, read from git at --ledger-commit (never from a working file)."""
+    if not a.amendment_commit:
+        return {"collections": {}, "robot_usd_sha256": None}, None
+    if not (a.ledger_commit and a.ledger_path):
+        p.error("--amendment-commit needs --ledger-commit and --ledger-path")
+    blob = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{a.ledger_commit}:{a.ledger_path}"], capture_output=True
+    )
+    if blob.returncode:
+        p.error("launch ledger not found at that commit")
+    return read_ledger(blob.stdout.decode()), hashlib.sha256(blob.stdout).hexdigest()
+
+
+def in_block(name: str, am: dict) -> bool:
+    return name.endswith("-" + am["tag"]) or name.endswith("-" + am["rerun_tag"])
+
+
+def is_ancestor(old: str, new: str) -> bool:
+    return (
+        subprocess.run(
+            ["git", "-C", str(REPO), "merge-base", "--is-ancestor", old, new], capture_output=True
+        ).returncode
+        == 0
+    )
+
+
+def load_amendment(a, p, cfg_sha: str) -> dict | None:
+    """The v2.2 amendment record, read from its commit, pinned and checked against the freeze."""
+    if not a.amendment_commit:
+        return None
+    blob = subprocess.run(
+        ["git", "-C", str(REPO), "show", f"{a.amendment_commit}:{AMENDMENT}"], capture_output=True
+    )
+    if blob.returncode:
+        p.error("amendment record not found at that commit")
+    am = json.loads(blob.stdout)
+    cache: dict = {}
+    problems = [
+        k
+        for k, ok in {
+            "pinned_record": hashlib.sha256(blob.stdout).hexdigest() == AMENDMENT_SHA256,
+            "status_frozen": am.get("status") == "FROZEN",
+            "base_freeze_commit": am.get("base_freeze_commit") == a.freeze_commit,
+            "base_config_sha256": am.get("base_config_sha256") == cfg_sha,
+            "ancestry": all(
+                is_ancestor(c, a.amendment_commit)
+                for c in [a.freeze_commit, *am.get("fix_commits", [])]
+            )
+            and bool(am.get("fix_commits")),
+            "files_declared": bool(am.get("files")),
+            "block_declared": bool(am.get("replaced_cells"))
+            and all(
+                am.get(k)
+                for k in ("tag", "rerun_tag", "superseded_tag", "stage3_tag", "stage3_rerun_tag")
+            ),
+            "analysis_script_at_amendment": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+            == git_blob_sha(a.amendment_commit, SCRIPT, cache),
+            "blobs_before": all(
+                git_blob_sha(a.freeze_commit, f, cache) == d["sha256_at_freeze"]
+                for f, d in am.get("files", {}).items()
+            ),
+            "blobs_after": all(
+                git_blob_sha(a.amendment_commit, f, cache) == d["sha256_amended"]
+                for f, d in am.get("files", {}).items()
+            ),
+        }.items()
+        if not ok
+    ]
+    if problems:
+        p.error(f"amendment record refused: {problems}")
+    am["commit"] = a.amendment_commit
+    am["commit_time"] = int(
+        subprocess.run(
+            ["git", "-C", str(REPO), "log", "-1", "--format=%ct", a.amendment_commit],
+            capture_output=True,
+            text=True,
+        ).stdout
+    )
+    return am
+
+
 def load_stage2(cfg: dict, cfg_sha: str, a, p) -> tuple[set, int]:
     """Admission to stage 3 from a committed stage-2 gate record, recomputed and checked."""
     if not (a.stage2_commit and a.stage2_path):
@@ -707,6 +863,9 @@ def load_stage2(cfg: dict, cfg_sha: str, a, p) -> tuple[set, int]:
             "freeze_commit": s2.get("freeze_commit") == a.freeze_commit,
             "config_sha256": s2.get("config_sha256") == cfg_sha,
             "negative_control": s2.get("negative_control") is None,
+            "amendment_commit": s2.get("amendment_commit") == a.amendment_commit,
+            "analysis_script": s2.get("analysis_script_sha256")
+            == hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "all_stage2_trials": stage2_trials <= set(s2.get("trials_analysed", [])),
         }.items()
         if not ok
@@ -737,6 +896,11 @@ def main():
     p.add_argument("--stage2-commit", help="commit holding the stage-2 gate record")
     p.add_argument("--stage2-path", help="repo path of the stage-2 gate record at that commit")
     p.add_argument("--negative-control", choices=NEGATIVE_MODES)
+    p.add_argument(
+        "--amendment-commit", help="commit holding configs/eval/" + AMENDMENT.name + " (v2.2)"
+    )
+    p.add_argument("--ledger-commit", help="commit holding the launch ledger (with an amendment)")
+    p.add_argument("--ledger-path", help="repo path of the launch ledger at that commit")
     a = p.parse_args()
     if a.out.exists():
         p.error("output must be new")
@@ -757,6 +921,8 @@ def main():
     passed: set = set()
     stage2_time = None
     cfg_sha = hashlib.sha256(a.config.read_bytes()).hexdigest()
+    amendment = load_amendment(a, p, cfg_sha)
+    ledger, ledger_sha = load_ledger(a, p)
     if stage3:
         passed, stage2_time = load_stage2(cfg, cfg_sha, a, p)
     ctx = {
@@ -772,6 +938,8 @@ def main():
         "qual_sha": hashlib.sha256(Path(cfg["runtime"]["qualification"]).read_bytes()).hexdigest(),
         "cache": {},
         "nonrepo": [],
+        "amendment": amendment,
+        "ledger": ledger,
     }
     audit = {(r["collection"], r["route"]): r for r in json.loads(a.audit.read_text())["rows"]}
     variants = list(cfg["variants"])
@@ -785,7 +953,7 @@ def main():
                 continue  # not required: the protocol does not run it in stage 3
             shifted = variants[(variants.index(v) + 1) % len(variants)]
             spec = cfg["variants"][shifted if a.negative_control == "variant" else v]
-            counted, log, violations = discover(trial, v, t["routes"])
+            counted, log, violations = discover(trial, v, t["routes"], am=amendment)
             logs[f"{trial}/{v}"] = log
             for route, why in violations:
                 failures.append((f"{trial}/{v}", route, [why]))
@@ -841,6 +1009,9 @@ def main():
         "freeze_commit": a.freeze_commit,
         "config_sha256": ctx["cfg_sha"],
         "negative_control": a.negative_control,
+        "amendment_commit": a.amendment_commit,
+        "analysis_script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "ledger": None if ledger_sha is None else [a.ledger_commit, a.ledger_path, ledger_sha],
         "trials_analysed": sorted(a.trial),
         "globally_ok": globally_ok,
         "attempt_log": logs,
