@@ -25,20 +25,24 @@ HALTED: 12 further pairs/24 arm attempts are NOT RUN. Overall result:
 
 Do not resume the remaining version 1 starts or loosen its matching bound. A
 separately reviewed initialization/state/history diagnostic is the next decision;
-it has NOT RUN. The earlier next-experiment proposal in section 7 is superseded
+it is now separately reviewed/frozen under `docs/INITIALIZATION_DIAGNOSTIC_V1_PLAN.md`
+and has NOT RUN at this freeze. The earlier next-experiment proposal in section 7 is superseded
 by this frozen pilot and its halted outcome. The complete stage 2/stage 3 evidence
 below is preserved and was reverified: stage 3 analysis equals saved evidence,
 all 18 report rows reconcile, and recovery remained NOT TESTED there.
 Post-experiment full verification still has exactly the three documented
 `test_environment_identity_v8` failures; ruff/mypy and 40 focused tests pass.
-No push, held-out access, illumination experiment or real robot actuation.
+Only publication of `agent/engineering-recording` to the existing FAVL-AI/navfm
+remote and a draft pull request is authorised after the reviewed initialization
+diagnostic and outgoing-history checks. No force push, history rewrite or merge.
+Held-out access, illumination experiment and real robot actuation remain unauthorised.
 
 ## 1. Repository state
 
 | | |
 |---|---|
 | Worktree | `/home/favl/projects/navfm-engineering-recording` |
-| Branch | `agent/engineering-recording`; **not pushed** (no push is authorised) |
+| Branch | `agent/engineering-recording`; **not pushed**; scoped branch publication and draft pull request authorised after the initialization diagnostic |
 | HEAD | current result/handoff commit (see `git log -1`); prospective freeze is `54bfc23`, preceding audited baseline is `6a47011` |
 | Working tree | clean at handoff (`git status --porcelain` is empty) |
 | Commits to preserve | `7d2e383`, `d6139c0` (v1 results) and everything after them |
