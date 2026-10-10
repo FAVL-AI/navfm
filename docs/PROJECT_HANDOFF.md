@@ -1,8 +1,37 @@
 # Project handoff: arrival component comparison v2 (development)
 
-Updated 2026-10-10 after stage 3 finished, been audited and committed. Start from
-this audited result; do not restart the investigation. Verify every statement
-against the files; where they disagree, the files win.
+Updated 2026-10-10 after the prospective recovery pilot halted under its frozen
+integrity rule. Start from the current milestone below; prior stage 3 results
+remain audited and preserved. Verify statements against files; files win.
+
+## Current milestone: prospective recovery pilot
+
+The narrow R2 versus B1x prospective protocol was independently reviewed and
+frozen at `54bfc239b3f8d4e5443212822582711b78925bbd`, then executed on four declared
+development start pairs. Eight recordings are PASS, with no retries; two paired
+initial-image differences fail the frozen 2.5 grayscale bound. Expansion was
+HALTED: 12 further pairs/24 arm attempts are NOT RUN. Overall result:
+**INCONCLUSIVE**, not recovery confirmation or a safety improvement.
+
+- Result and all eight external attempt identities/hashes:
+  `docs/PROSPECTIVE_R2_PILOT_RESULT.md`.
+- Frozen protocol: `docs/PROSPECTIVE_R2_PROTOCOL_V1.md` and
+  `configs/eval/prospective_r2_recovery_v1.json`.
+- Independent review records:
+  `gates/redteam/prospective-r2-protocol-review-20261010.md` and
+  `gates/redteam/prospective-r2-pilot-review-20261010.md`.
+- External analysis: `/home/favl/navfm-runtime-evidence/prospective-r2-v1-pilot-analysis-20261010-01.json`.
+- External ledger: `/home/favl/navfm-runtime-evidence/prospective-r2-v1-launch-ledger.jsonl`.
+
+Do not resume the remaining version 1 starts or loosen its matching bound. A
+separately reviewed initialization/state/history diagnostic is the next decision;
+it has NOT RUN. The earlier next-experiment proposal in section 7 is superseded
+by this frozen pilot and its halted outcome. The complete stage 2/stage 3 evidence
+below is preserved and was reverified: stage 3 analysis equals saved evidence,
+all 18 report rows reconcile, and recovery remained NOT TESTED there.
+Post-experiment full verification still has exactly the three documented
+`test_environment_identity_v8` failures; ruff/mypy and 40 focused tests pass.
+No push, held-out access, illumination experiment or real robot actuation.
 
 ## 1. Repository state
 
@@ -10,15 +39,15 @@ against the files; where they disagree, the files win.
 |---|---|
 | Worktree | `/home/favl/projects/navfm-engineering-recording` |
 | Branch | `agent/engineering-recording`; **not pushed** (no push is authorised) |
-| HEAD | the commit that adds this file (see `git log -1`); its parent chain is listed below |
+| HEAD | current result/handoff commit (see `git log -1`); prospective freeze is `54bfc23`, preceding audited baseline is `6a47011` |
 | Working tree | clean at handoff (`git status --porcelain` is empty) |
 | Commits to preserve | `7d2e383`, `d6139c0` (v1 results) and everything after them |
 
-Commits since v1, newest first:
+Historical stage-3 handoff chain before the prospective freeze (preserved):
 
 | Commit | What it does |
 |---|---|
-| this commit | Stage-3 report and decision record; this handoff (renamed from the earlier handoff note) |
+| `6a47011` | Stage-3 report and decision record; initial handoff (renamed from the earlier handoff note) |
 | `2879550` | Stage-3 lines appended to the launch ledger |
 | `c2ef497` | Stage-2 gate record, report and results review. This is also the **executed source of stage 3** |
 | `eb418e5` | Launch ledger, stage-2 block |
