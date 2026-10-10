@@ -612,7 +612,7 @@ def capture(
         "runtime_contract": _runtime_contract(),
         "session": {"boot_id": _boot_id()},
         "observational": {
-            "captured_at_utc": _dt.datetime.now(_dt.UTC).isoformat(),
+            "captured_at_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(),
             "hostname": platform.node(),
             "pid": os.getpid(),
             "uptime_seconds": _uptime_seconds(),

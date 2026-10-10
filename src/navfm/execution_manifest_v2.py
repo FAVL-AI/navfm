@@ -336,7 +336,7 @@ def generate_live_preflight(
         "artifact_semantics": "RUNTIME_PREFLIGHT_NO_ARM_HAS_RUN",
         "authoritative_contract_path": contract_rel,
         "author": "Frank Asante Van Laarhoven",
-        "generated_at_utc": _dt.datetime.now(_dt.UTC).isoformat(),
+        "generated_at_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(),
         "bound": bound,
         "sources": dict(_SOURCES),
         "manifest_path": str(manifest_file),
