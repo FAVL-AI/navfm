@@ -6,30 +6,16 @@ remain audited and preserved. Verify statements against files; files win.
 
 ## Current milestone: initialization/history diagnostic
 
-Diagnostic freeze `f831a110e6854c919a21c8397eee950cf79b77fd` is preserved. Result:
-**BOUNDED UNRESOLVED**. Existing first-image divergence precedes current-episode
-policy actions; the original cause is UNKNOWN. All eight preserved CPU inputs
-reconstruct twice with identical repeats and recorded discrete node/terminal
-states. Numerical distance equivalence to original CUDA/runtime fails the frozen
-bound; first command/waypoint comparisons pass. Device and environment differ,
-so the source of those small numerical differences is not isolated.
+Version 2 freeze `0393d46e814c80f2cc53ff9570af2c4015da2e7a` completed all eight fixed technical processes without retries, timeouts or provenance drift. **VERIFIED ON TWO SCRIPTED TECHNICAL CASES:** fresh-process command replay passes physical/controller, live six-buffer history and cross-repetition guards. Direct root reset fails; direct full observable-state restore passes physical/image bounds but fails temporal/index history equivalence. The recommendation requires fixed bootstrap, three eligible live frames, identical conditioning and 36-command replay with its own live history. No learned model or learned-policy handover was tested.
 
-The first technical process failed its very first conditioning render: requested
-1/12 s physics advance produced zero time advance/feedback and sensor time 0.
-No image capture, scripted handover, or comparison method completed. Seven further
-processes are NOT RUN; no retries. No start procedure is verified. A separately
-reviewed/frozen startup/render-advance repair is the next technical decision;
-do not amend/retry version 1 or resume halted recovery starts.
+The original paired-image cause remains UNKNOWN and recovery pilot INCONCLUSIVE. Version 1 freeze `f831a110e6854c919a21c8397eee950cf79b77fd` and its failed first technical attempt remain preserved without retry. Its retrospective CPU reconstructions repeat exactly but fail the original CUDA/runtime numerical distance bound. Neither diagnostic reopens the remaining recovery starts.
 
-- Design: `docs/INITIALIZATION_DIAGNOSTIC_V1_PLAN.md`.
-- Result/evidence hashes: `docs/INITIALIZATION_DIAGNOSTIC_V1_RESULT.md`.
-- Reviews: `gates/redteam/initialization-diagnostic-protocol-review-20261010.md`
-  and `gates/redteam/initialization-diagnostic-results-review-20261010.md`.
-- External evidence root:
-  `/home/favl/navfm-runtime-evidence/initialization-diagnostic-v1-20261010-01`.
-- Final `make verify`: ruff/mypy pass; exactly the three preserved
-  `test_environment_identity_v8` failures. Twenty diagnostic and twelve
-  prospective-pilot focused tests pass.
+- Current result/evidence hashes: `docs/INITIALIZATION_DIAGNOSTIC_V2_RESULT.md`.
+- Frozen design: `docs/INITIALIZATION_DIAGNOSTIC_V2_PLAN.md`.
+- Reviews: `gates/redteam/initialization-diagnostic-v2-protocol-review-20261010.md` and `gates/redteam/initialization-diagnostic-v2-results-review-20261010.md`.
+- External evidence: `/home/favl/navfm-runtime-evidence/initialization-diagnostic-v2-20261010-01`.
+- Preserved version 1: `docs/INITIALIZATION_DIAGNOSTIC_V1_RESULT.md`.
+- Final `make verify`: ruff/mypy pass; exactly the three preserved `test_environment_identity_v8` failures. All 45 focused diagnostic/pilot tests pass.
 
 Only scoped `agent/engineering-recording` publication to the existing FAVL-AI/navfm
 remote and a draft pull request are authorised after outgoing-history checks.
@@ -57,7 +43,7 @@ HALTED: 12 further pairs/24 arm attempts are NOT RUN. Overall result:
 - External ledger: `/home/favl/navfm-runtime-evidence/prospective-r2-v1-launch-ledger.jsonl`.
 
 Do not resume the remaining version 1 starts or loosen its matching bound. The
-separately frozen initialization/state/history diagnostic and its unresolved
+separately frozen initialization/state/history diagnostic and its bounded technical
 outcome are recorded above. The earlier next-experiment proposal in section 7 is superseded
 by this frozen pilot and its halted outcome. The complete stage 2/stage 3 evidence
 below is preserved and was reverified: stage 3 analysis equals saved evidence,
