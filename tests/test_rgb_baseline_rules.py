@@ -141,6 +141,7 @@ def topomap_baseline(
     bounded=None,
     recovery=None,
     start_lost=False,
+    approach_steering=True,
 ):
     from navfm.collection.topomap import (
         BoundedTopomapState,
@@ -168,6 +169,7 @@ def topomap_baseline(
     b.confirmation = confirmation
     b.recovery = recovery
     b.scan_rate = 0.4
+    b.approach_steering = approach_steering
     b.initial_node = 0
     b.start_lost = start_lost
     b.set_chain([np.zeros((2, 2, 3))] * nodes)
@@ -338,3 +340,52 @@ def test_v2_constructor_guards(monkeypatch):
         )
     b = rb.RGBTopomapBaseline("x", confirmation=cc, stop_enabled=True)
     assert b.manifest["topomap"]["confirmation"]["threshold"] == 7.745
+
+
+def test_v2a_steers_as_v1_and_v2b_steers_to_the_requested_goal_in_approach():
+    from navfm.collection.arrival_confirmation import ConfirmationConfig
+
+    cfg = ConfirmationConfig(threshold=7.745, votes=2, window=4, approach_budget=10)
+    req = [9.0, 10.6, 9.0, 11.0]
+    flag = lambda c: c in (1, 3)  # noqa: E731
+    outs = {}
+    for steering in (False, True):
+        b = topomap_baseline(
+            chain_then(req, flag), nodes=2, confirmation=cfg, approach_steering=steering
+        )
+        outs[steering] = [b.step([None] * 6, goal=np.zeros((2, 2, 3))) for _ in range(3)]
+    # Decision 2: approach latched, chain flag false.
+    assert outs[False][2]["waypoint_normalized"][1] == 0.0
+    assert outs[True][2]["waypoint_normalized"][1] == 0.5
+    # On a chain-end decision both steer to the requested goal.
+    assert (
+        outs[False][1]["waypoint_normalized"][1] == outs[True][1]["waypoint_normalized"][1] == 0.5
+    )
+
+
+def test_every_variant_spec_carries_a_lost_start(monkeypatch):
+    # Red-team H1: a v1-shaped spec (B1) silently dropped --start-lost.
+    def parent_init(self, checkpoint, **kw):
+        self.stop_enabled = kw["stop_enabled"]
+        self.manifest = {}
+        self.limits = rb.BaseLimits(max_v=0.1, max_w=0.4)
+
+    monkeypatch.setattr(rb.RGBBaseline, "__init__", parent_init)
+    b1 = {
+        "bounded": {
+            "max_jump": 2,
+            "persistence": 2,
+            "lost_enter": 6.752,
+            "lost_exit": 2.215,
+            "lost_patience": 3,
+        },
+        "verify_threshold": None,
+        "verify_persistence": 2,
+    }
+    kw = rb.topomap_components(b1, start_lost=True)
+    assert kw["start_lost"] is True
+    policy = rb.RGBTopomapBaseline("x", stop_enabled=True, **kw)
+    policy.set_chain([np.zeros((2, 2, 3))] * 4)
+    assert policy.state.lost
+    a = rb.topomap_components({**b1, "bounded": None}, start_lost=False)
+    assert a["start_lost"] is False and a["bounded"] is None

@@ -277,33 +277,13 @@ def main():
         if args.policy_period_frames < 1:
             parser.error("policy period must be at least one frame")
         if args.topomap_root:
-            from navfm.collection.rgb_baseline import RGBTopomapBaseline
+            from navfm.collection.rgb_baseline import RGBTopomapBaseline, topomap_components
 
             component = {}
             if args.variant:
                 # Frozen component comparison: the variant fixes both components.
-                from navfm.collection.topomap import BoundedConfig
-
                 spec = json.loads(args.comparison_config.read_text())["variants"][args.variant]
-                component = {
-                    "bounded": BoundedConfig(**spec["bounded"]) if spec["bounded"] else None,
-                    "verify_threshold": spec["verify_threshold"],
-                    "verify_persistence": spec["verify_persistence"],
-                }
-                if "confirmation" in spec or "recovery" in spec:
-                    from navfm.collection.arrival_confirmation import ConfirmationConfig
-                    from navfm.collection.topomap import RecoveryConfig
-
-                    component.update(
-                        confirmation=ConfirmationConfig(**spec["confirmation"])
-                        if spec.get("confirmation")
-                        else None,
-                        recovery=RecoveryConfig(**spec["recovery"])
-                        if spec.get("recovery")
-                        else None,
-                        scan_rate=spec.get("scan_rate", 0.4),
-                        start_lost=bool(args.start_lost),
-                    )
+                component = topomap_components(spec, start_lost=bool(args.start_lost))
             elif args.start_lost:
                 parser.error("--start-lost needs a frozen variant")
             policy = RGBTopomapBaseline(
@@ -783,7 +763,11 @@ def main():
                         ],
                         "chain_json_sha256": rm["topomap"]["chain_json_sha256"],
                         "fixed_goal_sha256": rm.get("fixed_goal_sha256"),
+                        "source_checkpoint_sha256": rm["policy"]["sha256"],
+                        "source_variant": (rm.get("component_variant") or {}).get("variant"),
                     }
+                    if resume["source_checkpoint_sha256"] != args.checkpoint_sha256:
+                        raise ValueError("resume episode ran another checkpoint")
                     start_xy, start_yaw, teacher_points = np.asarray(pose[:2]), pose[2], points
                     manifest["resume"] = resume
                 elif perturbation.is_identity:
@@ -910,6 +894,7 @@ def main():
                                     ).convert("RGB")
                                 )
                             )
+                        policy.initial_node = 0
                         if resume is not None:
                             if resume["chain_json_sha256"] != hashlib.sha256(
                                 chain_path.read_bytes()
@@ -937,6 +922,9 @@ def main():
                             "nodes": [[n["frame"], n["sha256"]] for n in chain["nodes"]],
                             "final_node_is_goal": chain["nodes"][-1]["sha256"]
                             == (manifest.get("goal_source_frame") or {}).get("source_sha256"),
+                            # Effective per-episode policy state before the first decision.
+                            "initial_node": int(policy.state.closest_node),
+                            "start_lost": bool(getattr(policy.state, "lost", False)),
                         }
                     history = [robot.rgb().copy() for _ in range(6)]
                     if resume is not None:

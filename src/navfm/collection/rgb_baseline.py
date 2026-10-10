@@ -162,6 +162,7 @@ class RGBTopomapBaseline(RGBBaseline):
         confirmation=None,
         recovery=None,
         scan_rate: float = 0.4,
+        approach_steering: bool = True,
         initial_node: int = 0,
         start_lost: bool = False,
         **kw,
@@ -197,6 +198,7 @@ class RGBTopomapBaseline(RGBBaseline):
         self.confirmation = confirmation
         self.recovery = recovery
         self.scan_rate = scan_rate
+        self.approach_steering = approach_steering
         self.initial_node = initial_node
         self.start_lost = start_lost
         arrival = "latched stop when closest_node == goal_node"
@@ -206,6 +208,11 @@ class RGBTopomapBaseline(RGBBaseline):
                 "(approach latched at the first chain end; votes <= threshold; "
                 f"{confirmation.votes} of the last {confirmation.window}; abstain after "
                 f"{confirmation.approach_budget} approach decisions)"
+            )
+            arrival += (
+                "; in approach the robot steers by the requested goal"
+                if approach_steering
+                else "; steering as v1 (requested goal only on chain-end decisions)"
             )
         if verify_threshold is not None:
             arrival += (
@@ -230,7 +237,8 @@ class RGBTopomapBaseline(RGBBaseline):
                 "confirmation": None if confirmation is None else dataclasses.asdict(confirmation),
                 "recovery": None if recovery is None else dataclasses.asdict(recovery),
                 "scan_rate": scan_rate if recovery is not None else None,
-                "initial_node": initial_node,
+                "approach_steering": approach_steering if confirmation is not None else None,
+                # The effective initial node is per episode (manifest["topomap"]), not here.
                 "start_lost": start_lost,
             },
         )
@@ -345,8 +353,13 @@ class RGBTopomapBaseline(RGBBaseline):
             confirmation = self.confirm.update(
                 self.state.reached_goal, requested, paused=bool(getattr(self.state, "lost", False))
             )
-            if confirmation["phase"] == "approach" and not scan:
-                # Chain exhausted at least once: steer to the requested goal, never back.
+            if (
+                confirmation["phase"] == "approach"
+                and not scan
+                and (self.approach_steering or self.state.reached_goal)
+            ):
+                # V2b: steer to the requested goal throughout the approach phase.
+                # V2a (approach_steering False): only on chain-end decisions, as v1.
                 waypoint = actions[n_nodes, 2].detach().cpu().numpy()
             elif confirmation["phase"] == "abstained":
                 self.abstained = "confirmation_budget"
@@ -399,3 +412,27 @@ class RGBTopomapBaseline(RGBBaseline):
             "chain": dict(self.state.history[-1]) if self.state.history else {},
             "latency_ms": (time.perf_counter() - begin) * 1000,
         }
+
+
+def topomap_components(spec: dict, *, start_lost: bool = False) -> dict:
+    """Constructor arguments for a frozen comparison variant (v1 or v2 spec).
+
+    Every variant receives start_lost, so a lost start can never be silently
+    dropped for a v1-shaped variant.
+    """
+    from navfm.collection.arrival_confirmation import ConfirmationConfig
+    from navfm.collection.topomap import BoundedConfig, RecoveryConfig
+
+    out = {
+        "bounded": BoundedConfig(**spec["bounded"]) if spec["bounded"] else None,
+        "verify_threshold": spec["verify_threshold"],
+        "verify_persistence": spec["verify_persistence"],
+        "start_lost": bool(start_lost),
+    }
+    if spec.get("confirmation"):
+        out["confirmation"] = ConfirmationConfig(**spec["confirmation"])
+        out["approach_steering"] = bool(spec.get("approach_steering", True))
+    if spec.get("recovery"):
+        out["recovery"] = RecoveryConfig(**spec["recovery"])
+        out["scan_rate"] = spec.get("scan_rate", 0.4)
+    return out
