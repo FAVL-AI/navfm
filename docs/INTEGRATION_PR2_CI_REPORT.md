@@ -12,6 +12,25 @@
 | upstream-compat | Complete unit tests; population ownership | 23 failed IDs (Torch provisioned); same history/live/archive causes, stale population and resource skips. |
 | go-stanford-corpus | Owned tests; population ownership | 24 failed IDs; same history/unowned Torch/live/archive causes, stale population and resource skips. Released corpus node itself did not fail. |
 
+## Fresh hosted verification and lifecycle cause
+
+Run `38085487891` tests integration candidate `9fc5f3727fd9ca9c17dc95738ae329d30689feb4`. All five jobs remain FAIL: `test (3.10)`, `test (3.11)`, `test (3.12)`, `upstream-compat`, and `go-stanford-corpus`. Each reports nine failed test IDs and a failed population ownership gate. The UTC typecheck, historical commit lookup, Torch ownership and expanded population defects no longer appear; this does not establish successful integration.
+
+Each job retains the three V8 failures listed below and these six lifecycle failures:
+
+- `tests/test_arm_lifecycle.py::test_rehearsal_completes_the_whole_lifecycle[ARM_A_CONTROL]`
+- `tests/test_arm_lifecycle.py::test_rehearsal_completes_the_whole_lifecycle[ARM_B_TREATMENT]`
+- `tests/test_arm_lifecycle.py::test_the_arms_differ_only_in_the_treatment_factor`
+- `tests/test_arm_lifecycle.py::test_calling_an_exactly_once_producer_twice_is_detected`
+- `tests/test_arm_lifecycle.py::test_invoking_a_producer_out_of_order_is_detected`
+- `tests/test_arm_lifecycle.py::test_v3_readiness_is_measured_against_the_manifest_it_describes`
+
+Targeted source inspection establishes why rehearsal is host-coupled: `RehearsalRuntimeAdapter` substitutes the simulator boundary, while `_capture_environment` still calls the real `capture_arm_environment`. That shared capture validator rejects absent critical fields and Isaac interpreter probe errors even for SELFTEST labels. Its default interpreter is `~/miniforge3/envs/isaac/bin/python`, which the hosted workflow does not provision. The normal lifecycle stops at `PRE_ENV_CAPTURED`; the deliberately reordered control stops at `POST_ENV_CAPTURED`. Missing `collect_config` and unmet multiplicity/order expectations are downstream cascades, not evidence of six independent orchestration defects. Saved logs expose capture FAIL, not complete capture reasons; the source dependency diagnosis is not a reconstructed host measurement.
+
+The three unexpected resource skips remain the two GPU/hold-stack checks and archived-manifest check listed below. Existing ownership gates correctly reject them. No synthetic successful capture, new skip exemption, weakened readiness assertion or production change is introduced. Remaining readiness requires an appropriate real resource owner and preserved archive evidence; hosted CPU success cannot stand in for that validation. No simulator, model, experiment or additional test execution occurred during this final diagnosis.
+
+External failed-log evidence: `/home/favl/navfm-runtime-evidence/pr2-ci-38085487891-failed.log`, SHA256 `cdec86ff4ed575a458a5aff37841f6c84f20c449ba299f7d4d5e22fc4f08a018`. Raw logs remain outside Git. **Normal merge/main publication remains blocked; no bypass is authorised.**
+
 ## Genuine repairs and preserved contracts
 
 All three checkout steps now fetch full history (`fetch-depth: 0`) because tests read historical frozen commits. Population membership is repinned from complete collection: 2,791 nodes, zero collection errors, all 777 earlier nodes and their ownership entries retained exactly, 2,014 added. Sets: hermetic 2,715; resource union 76; upstream 42; Torch 55; plot 1; corpus 1. Overlapping marker counts are not summed. Three new official-loader cases expand the independent upstream node digest/count from 39 to 42; substitution/drop controls remain unchanged in force.
