@@ -138,7 +138,26 @@ three things:
 `scripts/concordance_kidnap_v2.py` is descriptive only. The R2 stage-2 gate must be
 reported as amended after the data were seen. Confirmatory weight rests on stage 3.
 
-## 4. Next steps, in order
+## 3b. Stage 2 result (committed)
+
+The record is `gates/v2/stage2-gate-record-20261010.json` and the report
+`gates/v2/stage2-report-20261010.md`. The results review is
+`gates/redteam/trigger6-component-results-v2-stage2-2026-10-10.md` (ACCEPT WITH
+CHANGES, all applied).
+
+| Component | Gate | Notes |
+|---|---|---|
+| V2b_confirm_steer | PASS | at threshold |
+| R2_recover | PASS | at threshold; amended after the data were seen; 4 of 6 hard-view successes on the ±1-node tolerance |
+| V2a_confirm | FAIL | |
+| B1_bounded | FAIL | |
+
+Stage 3 runs the 18 cells derived by `required_stage3` (54 attempts), launched with
+`scripts/run_component_v2_block.sh stage3 8959333 <ledger> <gate-record commit>
+gates/v2/stage2-gate-record-20261010.json`. Its ledger lines append to the same
+ledger, which is committed again before the stage-3 analysis.
+
+## 4. Next steps, in order (steps 1-5 are done for stage 2; continue at 6)
 
 1. Confirm all 44 collections finished and list every non-PASS attempt.
    Apply the retry rule; do not change code first.
