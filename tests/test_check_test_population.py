@@ -44,7 +44,7 @@ EXPECTED_UPSTREAM_NODE_IDS = frozenset(
     node for node, markers in _MANIFEST["population"].items() if "upstream" in markers
 )
 # Updated only through a reviewed re-pin, together with the manifest.
-EXPECTED_UPSTREAM_DIGEST = "72ba6969c0d92a13142f4e3e0784edfb2fa03e9e50243a33fb1056afe713bb85"
+EXPECTED_UPSTREAM_DIGEST = "4c22c174801548a193de34aa5a9b32ff42bfe0a4c733ee722fd4f05d161ba07c"
 
 
 def _healthy_report() -> dict[str, Any]:
@@ -183,7 +183,8 @@ class TestPin:
         # The upstream set is derivable from the manifest's own population map,
         # so the two representations must agree. Re-pinning is a reviewed act:
         # 26 pre-existing upstream-marked tests, + 7 RNG-domain tests that need
-        # the patched clone, + 6 newly owned under Repair 3.
+        # the patched clone, + 6 newly owned under Repair 3,
+        # + 3 engineering-recording official-loader compatibility cases.
         derived = {
             node for node, markers in manifest["population"].items() if "upstream" in markers
         }
@@ -192,13 +193,13 @@ class TestPin:
         assert pinned == EXPECTED_UPSTREAM_NODE_IDS
         assert ctp.node_id_digest(sorted(pinned)) == EXPECTED_UPSTREAM_DIGEST
         assert manifest["required_node_ids_sha256"] == EXPECTED_UPSTREAM_DIGEST
-        assert manifest["expected_required_count"] == len(EXPECTED_UPSTREAM_NODE_IDS) == 39
+        assert manifest["expected_required_count"] == len(EXPECTED_UPSTREAM_NODE_IDS) == 42
 
     def test_a_substituted_node_id_is_caught_though_the_count_is_right(self) -> None:
         """The failure a count-only assertion cannot see."""
         manifest = json.loads(ctp.MANIFEST.read_text())
         swapped = sorted((set(manifest["required_node_ids"]) - {min(EXPECTED_UPSTREAM_NODE_IDS)}) | {"tests/test_forged.py::t"})
-        assert len(swapped) == 39
+        assert len(swapped) == 42
         assert set(swapped) != EXPECTED_UPSTREAM_NODE_IDS
         assert ctp.node_id_digest(swapped) != EXPECTED_UPSTREAM_DIGEST
 
@@ -207,7 +208,7 @@ class TestPin:
         nodes = set(EXPECTED_UPSTREAM_NODE_IDS)
         mutated = nodes - {min(nodes)} if drop else nodes | {"tests/test_extra.py::t"}
         assert ctp.node_id_digest(sorted(mutated)) != EXPECTED_UPSTREAM_DIGEST
-        assert len(mutated) != 39
+        assert len(mutated) != 42
 
     def test_a_malformed_population_entry_is_refused(self) -> None:
         manifest = json.loads(ctp.MANIFEST.read_text())

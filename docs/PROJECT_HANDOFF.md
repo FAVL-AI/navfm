@@ -4,7 +4,16 @@ Updated 2026-10-10 after the fixed offline CUDA numerical diagnostic.
 Start from the current milestone below; prior stage 3 results
 remain audited and preserved. Verify statements against files; files win.
 
-## Current milestone: saved-input numerical mismatch reproduced offline
+## Current milestone: PR 2 integration CI repairs; merge BLOCKED
+
+Normal PR 2 merge/main publication is authorised after meaningful checks. This milestone runs no experiment. All five original CI checks failed; genuine fixes fetch full history, repin all 2,791 nodes without losing any prior node/owner, and route the Torch-dependent constructor test to its existing owner. Full admitted-upstream verification retains three meaningful V8 failures. Clean no-Torch 3.11 reproduction confirms exact hermetic membership but ownership still rejects missing archived-manifest evidence; hosted CPU jobs also lack the frozen GPU/hold-stack resource. Python 3.10 has two real UTC alias compatibility errors, authorised for an isolated integration candidate preserving original freeze bytes.
+
+- Diagnosis/commands/counts/evidence: `docs/INTEGRATION_PR2_CI_REPORT.md`.
+- Current durable PR text: `docs/ENGINEERING_DRAFT_PR.md`.
+- Root handles publication/remote check review; no merge or main push with unvalidated meaningful checks, no bypass/force/history rewrite.
+- Other worktrees and all prior experimental evidence are preserved. Held-out geometry sealed, illumination paused, robot actuation unauthorised.
+
+## Preserved milestone: saved-input numerical mismatch reproduced offline
 
 Freeze `32b83460839fbad96267ae9f3acbf81543903ad2` completed exactly two original-CUDA offline workers and 84 calls, without simulator launch, new image, retry or post-kidnap decision. Byte-identical preprocessed tensors with identical restored state/RNG produce bitwise identical outputs within/fresh processes. A separate CPU preprocessing-only audit performs zero inference and verifies all 168 reconstructed tensor hashes; observation max-absolute differences range 0.035014138–0.070028007 while goal/chain tensors match exactly. Differing preserved reference/replay observation tensors reproduce all seven original per-arm predictions exactly. All seven input pairs have matching discrete decisions but fail numerical agreement; yaw commands differ at steps 0/6, and later agreement is fixed scanning. Only stored state.history diverges; no additional sequence output amplification is observed.
 

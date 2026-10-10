@@ -1,31 +1,11 @@
-This branch adds the engineering recording and evidence pipeline, development arrival/recovery evaluation, and a reviewed initialization/history diagnostic. The latest diagnostic verifies a fresh-process command-replay start procedure on two short scripted development cases; it preserves the halted recovery pilot as inconclusive.
+This branch preserves the development arrival/recovery evidence and adds initialization/history validation with explicit halt gates. Stage 3 did not test recovery from a qualifying lost state. The prospective pilot is inconclusive: two initial-image pairs fail matching; 24 further arm attempts remain unrun.
 
-## Implemented pipeline
+Fresh-process command replay passed proxy state/history checks on two scripted technical cases. Actual learned-policy validation then passed acquisition/physical-history guards but failed numerical handover equivalence. The bounded offline diagnostic (two CUDA workers, 84 calls) reproduced the original seven input-pair predictions exactly: identical-input repeats are bitwise stable, while differing observation tensors reproduce numerical differences. Discrete outputs match; the first two yaw commands differ. No efficacy, safety or general learned-handover claim follows.
 
-- Opt-in bounded engineering recording with observed transitions, source/asset provenance, external evidence paths, and fail-closed integrity checks.
-- Development data admission, training/evaluation and topomap navigation tooling, qualified controller feedback, and frozen staged component-comparison protocols with matched conditions, independent reviews and traceable decision records.
-- Prospective R2 pilot instrumentation and scoring with exact-node primary recovery, separate outcomes, contact/exposure accounting, immutable attempts and an integrity-gated launch ledger.
-- Separate initialization/history collectors, deterministic reconstruction, runtime readbacks, fixed bootstrap/eligibility checks, and continuous/replay/direct-reset comparisons with frozen tolerances and cross-repetition controls.
+CI integration fixes fetch complete Git history for historical provenance tests, repin all 2,791 current test node IDs (all 777 prior nodes/ownership entries preserved), and assign the genuinely Torch-dependent constructor test to its existing owner. The independent upstream pin expands from 39 to 42, with substitution/drop controls retained. No test assertions or frozen experiment gates are weakened.
 
-## Verified results
+Validation: 89 focused diagnostic tests and 100 population/rule controls pass. Documented admitted NAVFM_UPSTREAM full verification passes ruff/mypy89 but retains three meaningful V8 failures: current host does not match the archived physical environment, Attempt001 pre_capture.json is absent, and regeneration refuses. Hosted CI results are tracked in docs/INTEGRATION_PR2_CI_REPORT.md; a successful population-membership gate does not erase test failures.
 
-- Stage 2 and stage 3 were reproduced from saved evidence (92 and 54 attempts respectively, zero integrity failures); final stage-3 tables reconcile. Stage 3 did not test qualifying recovery.
-- The prospective pilot preserved eight recordings, with no retries. Two paired initial-image histories exceeded the frozen 2.5 grayscale bound despite closely matched positions/headings. The pilot is INCONCLUSIVE; the remaining 24 attempts were not run. No claim that R2 works or fails follows.
-- Diagnostic v1 preserved its first-use stepping failure. Reconstruction of eight existing initial inputs repeats exactly on CPU and agrees on discrete outputs, but fails numerical equivalence with recorded CUDA outputs.
-- Diagnostic v2 completed all eight declared technical processes with no retries/timeouts/drift. Fresh-process command replay passed all within-pair and cross-repetition state/history guards on two scripted cases. Direct root reset failed equivalence; full observable-state restoration passed physical/image bounds but failed history age/index guards. Independent analysis recomputation and all 376 capture hashes matched.
+Normal PR merge and main publication are requested only after meaningful checks are validated. No force push, history rewrite, bypass or merge with these evidence blockers is requested. Runtime images/logs/tensors/weights remain external; historical freezes and failed attempts remain unchanged. Held-out geometry stays sealed, illumination paused and robot actuation unauthorised. This integration milestone runs no experiment.
 
-## Validation and known failures
-
-With the documented admitted `NAVFM_UPSTREAM`, ruff and mypy pass; 45 focused prospective/diagnostic tests pass. Full `make verify` remains failed on exactly these three existing `tests/test_environment_identity_v8.py` cases:
-
-- `test_v8_accepts_the_repaired_tree`: archived identity FAIL instead of expected PASS.
-- `test_attempt_001_pre_capture_is_preserved_byte_for_byte`: missing archived `runs/bo10/intervention/arm_a/pre_capture.json`.
-- `test_regeneration_on_an_unchanged_tree_is_idempotent`: REFUSED instead of expected FROZEN.
-
-## Research limits and review scope
-
-The original pilot image-mismatch cause remains unknown. The verified start procedure covers only the two short scripted technical cases and initialized proxy state; learned-policy handover/memory, recovery competence and broader generalization remain unverified. Shorter exposure does not establish improved safety. Held-out layouts remain sealed, illumination remains paused, and no real-robot actuation occurred. No additional recovery batch was run.
-
-Runtime datasets, images, logs and weights remain outside Git. Reports contain evidence identities and hashes; the raw local evidence is not included in this PR. Original freezes and failed attempts are preserved. This is a draft for review, with no merge or history rewrite requested.
-
-See `docs/PROJECT_HANDOFF.md`, `docs/PROSPECTIVE_R2_PILOT_RESULT.md`, and `docs/INITIALIZATION_DIAGNOSTIC_V2_RESULT.md` for the current state, detailed outcomes and exact evidence references.
+Current state: docs/PROJECT_HANDOFF.md. Detailed evidence: docs/PROSPECTIVE_R2_PILOT_RESULT.md, docs/OBSERVER_WINDOW_V2_RESULT.md and docs/OFFLINE_NUMERICAL_V1_RESULT.md.

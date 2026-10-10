@@ -98,6 +98,7 @@ def test_control_period_rescales_feedforward_velocity():
     assert fast == pytest.approx(0.2) and slow == pytest.approx(0.1)
 
 
+@pytest.mark.torch
 def test_unknown_rule_and_bad_period_rejected(tmp_path):
     with pytest.raises(ValueError, match="stop rule"):
         rb.RGBBaseline(tmp_path / "x.pth", stop_rule="tuned")
