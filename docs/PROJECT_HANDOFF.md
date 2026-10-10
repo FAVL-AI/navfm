@@ -27,7 +27,7 @@ remain external.
 
 Commit `7b7590061a338848fca9f3c1f54cca2cb831647a` was published on the engineering branch. Draft PR submission is handled separately; no merge is authorised. The durable authored description is `docs/ENGINEERING_DRAFT_PR.md`.
 
-`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires novelty attestation, intended-start initialization matching and actual learned-policy handover validation before efficacy. Exact post-kidnap history/state schemas and a finite executable launch manifest remain freeze blockers. No new probe/model/recovery run occurred. Do not execute this proposal or resume the halted pilot automatically.
+`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires metadata attestation of new experimental starts, intended-start initialization matching and actual learned-policy handover validation before efficacy. The timestamped post-kidnap boundary, actual arm-state/reset schema and finite first-pair launch contract are now implemented in separate files and undergoing one bounded executable review. Only after named freeze may the first R2 reference/replay validation pair run, then it must stop even if matched. No model/probe/recovery invocation has occurred at this checkpoint. Metadata-only comparison of 283 numeric tuple records establishes new experimental starts in that inventory, not research novelty. Full cross-repeat/cross-arm gates and efficacy remain blocked; do not resume the halted pilot automatically.
 
 ## Preserved milestone: prospective recovery pilot
 
