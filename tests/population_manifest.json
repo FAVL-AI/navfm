@@ -59,16 +59,16 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2791,
-      "sha256": "c0eea5161fbbddbfd0a8a97d55c8a89377ba5297f58e2fc837f52ae44f48b1ea"
+      "count": 2812,
+      "sha256": "f4e444887bd8383192d2edd2c55a47a5b814afd4d0fc8d51bbaa4c13cdbeb3f2"
     },
     "hermetic": {
-      "count": 2715,
-      "sha256": "51ca3cff3d933d2c8d40ed0e587d4671f3d4fca0ecbd0ad3570f83d0b8214aa7"
+      "count": 2687,
+      "sha256": "4af0459ee1048bf15d1186457c55391c3e654b0b672d157860cd85bf11bc2f9d"
     },
     "resource_union": {
-      "count": 76,
-      "sha256": "5b5f9ade01c6b975f167b4e6e1a5a8257a1af546a5735a7f3140492f3b367f14"
+      "count": 125,
+      "sha256": "2224586d2edfcb835b25d837e9fec5a22e4038abb2def919f758a83e51eb24e0"
     },
     "upstream": {
       "count": 42,
@@ -81,6 +81,18 @@
     "plot": {
       "count": 1,
       "sha256": "4aae920fd70fd03242edc1addd9a3c4bad6beb86f8093034b637e41a3778e268"
+    },
+    "isaac_host": {
+      "count": 44,
+      "sha256": "337023d3c3e3da50950ffad8665c5656d751e34f35e1d05f474e3851e682c573"
+    },
+    "archive": {
+      "count": 4,
+      "sha256": "b7253f53a3440f0370eb47b91258fa7745885ccc3c63c31a5a79c6d32b1f9420"
+    },
+    "alternate_python": {
+      "count": 1,
+      "sha256": "995ce8ffc96cfd919e9dae079b2f17c42623cef9385b4c0a9fd2812e7608c61b"
     },
     "go_stanford": {
       "count": 1,
@@ -490,8 +502,12 @@
     "tests/test_arclength_treatment.py::test_treatment_cannot_reach_the_speed_law": [],
     "tests/test_arclength_treatment.py::test_treatment_is_not_a_no_op": [],
     "tests/test_arclength_treatment.py::test_treatment_satisfies_the_selector_protocol": [],
-    "tests/test_arclength_treatment.py::test_v2_still_refuses_for_the_historically_correct_reason": [],
-    "tests/test_arclength_treatment.py::test_v3_now_refuses_because_the_treatment_landed_in_the_pinned_seam": [],
+    "tests/test_arclength_treatment.py::test_v2_still_refuses_for_the_historically_correct_reason": [
+      "isaac_host"
+    ],
+    "tests/test_arclength_treatment.py::test_v3_now_refuses_because_the_treatment_landed_in_the_pinned_seam": [
+      "isaac_host"
+    ],
     "tests/test_arclength_treatment.py::test_valid_input_is_not_refused": [],
     "tests/test_arclength_treatment.py::test_validation_passed_and_no_arm_ran": [],
     "tests/test_arclength_treatment.py::test_wrong_offset_is_caught_on_the_target_coordinate": [],
@@ -577,7 +593,9 @@
     "tests/test_arm_environment_guard.py::test_failed_comparison_preserves_evidence_and_forbids_rescue": [],
     "tests/test_arm_environment_guard.py::test_four_identical_captures_are_equivalent": [],
     "tests/test_arm_environment_guard.py::test_four_production_labels_are_declared": [],
-    "tests/test_arm_environment_guard.py::test_hold_list_is_not_a_substitute_for_the_loaded_stack": [],
+    "tests/test_arm_environment_guard.py::test_hold_list_is_not_a_substitute_for_the_loaded_stack": [
+      "isaac_host"
+    ],
     "tests/test_arm_environment_guard.py::test_kernel_drift_without_a_new_boot_id_is_not_called_a_reboot": [],
     "tests/test_arm_environment_guard.py::test_label_parsing[POST_ARM_A-A-POST]": [],
     "tests/test_arm_environment_guard.py::test_label_parsing[POST_ARM_B-B-POST]": [],
@@ -602,7 +620,9 @@
     "tests/test_arm_environment_guard.py::test_no_fabricated_scene_hash_anywhere": [],
     "tests/test_arm_environment_guard.py::test_no_new_broad_ignore_patterns": [],
     "tests/test_arm_environment_guard.py::test_nvidia_hold_guard_can_fail": [],
-    "tests/test_arm_environment_guard.py::test_nvidia_hold_guard_passes_on_this_machine": [],
+    "tests/test_arm_environment_guard.py::test_nvidia_hold_guard_passes_on_this_machine": [
+      "isaac_host"
+    ],
     "tests/test_arm_environment_guard.py::test_observational_only_mutation_never_fails[observational.captured_at_utc]": [],
     "tests/test_arm_environment_guard.py::test_observational_only_mutation_never_fails[observational.disk_free_gib]": [],
     "tests/test_arm_environment_guard.py::test_observational_only_mutation_never_fails[observational.gpu_memory_total_mib]": [],
@@ -640,6 +660,8 @@
     "tests/test_arm_lifecycle.py::test_every_required_producer_is_bound_into_the_plan": [],
     "tests/test_arm_lifecycle.py::test_invoking_a_producer_out_of_order_is_detected": [],
     "tests/test_arm_lifecycle.py::test_plan_never_moves_backwards_through_the_stages": [],
+    "tests/test_arm_lifecycle.py::test_real_mode_refuses_fixture_before_creating_outputs": [],
+    "tests/test_arm_lifecycle.py::test_rehearsal_capture_rejection_remains_fail_closed": [],
     "tests/test_arm_lifecycle.py::test_rehearsal_completes_the_whole_lifecycle[ARM_A_CONTROL]": [],
     "tests/test_arm_lifecycle.py::test_rehearsal_completes_the_whole_lifecycle[ARM_B_TREATMENT]": [],
     "tests/test_arm_lifecycle.py::test_rehearsal_never_touches_a_production_label_or_path[ARM_A_CONTROL]": [],
@@ -647,7 +669,9 @@
     "tests/test_arm_lifecycle.py::test_removing_a_producer_from_the_plan_is_detected": [],
     "tests/test_arm_lifecycle.py::test_the_arms_differ_only_in_the_treatment_factor": [],
     "tests/test_arm_lifecycle.py::test_the_lifecycle_refuses_a_manifest_version_it_has_no_validator_for": [],
-    "tests/test_arm_lifecycle.py::test_v3_readiness_is_measured_against_the_manifest_it_describes": [],
+    "tests/test_arm_lifecycle.py::test_v3_readiness_is_measured_against_the_manifest_it_describes": [
+      "isaac_host"
+    ],
     "tests/test_arrival_confirmation.py::test_alternating_chain_flag_does_not_discard_evidence": [],
     "tests/test_arrival_confirmation.py::test_budget_exhaustion_is_abstention_not_arrival": [],
     "tests/test_arrival_confirmation.py::test_config_validation[kw0]": [],
@@ -1057,7 +1081,9 @@
     "tests/test_collector_wiring_and_runner.py::test_every_scientific_field_is_covered_by_the_refusal_list": [],
     "tests/test_collector_wiring_and_runner.py::test_every_shipped_manifest_version_has_a_validator": [],
     "tests/test_collector_wiring_and_runner.py::test_executability_passes_and_states_its_boundary": [],
-    "tests/test_collector_wiring_and_runner.py::test_manifest_v1_is_now_stale_and_refused": [],
+    "tests/test_collector_wiring_and_runner.py::test_manifest_v1_is_now_stale_and_refused": [
+      "archive"
+    ],
     "tests/test_collector_wiring_and_runner.py::test_operational_arguments_are_permitted": [],
     "tests/test_collector_wiring_and_runner.py::test_the_cli_refuses_an_override_before_parsing": [],
     "tests/test_collector_wiring_and_runner.py::test_the_cli_refuses_execution_without_validate_only": [],
@@ -1352,8 +1378,12 @@
     "tests/test_environment_identity_v3.py::test_claim_does_not_assert_universal_equivalence": [],
     "tests/test_environment_identity_v3.py::test_claim_wording_is_domain_bounded": [],
     "tests/test_environment_identity_v3.py::test_contract_drift_would_also_refuse_underneath_the_chronology_guard": [],
-    "tests/test_environment_identity_v3.py::test_current_tree_now_refuses_against_v3_because_the_treatment_landed": [],
-    "tests/test_environment_identity_v3.py::test_current_tree_still_fails_against_v2": [],
+    "tests/test_environment_identity_v3.py::test_current_tree_now_refuses_against_v3_because_the_treatment_landed": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v3.py::test_current_tree_still_fails_against_v2": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v3.py::test_equivalence_artefact_is_bound_by_hash": [],
     "tests/test_environment_identity_v3.py::test_every_changed_field_carries_a_justification_and_evidence": [],
     "tests/test_environment_identity_v3.py::test_no_arm_ran": [],
@@ -1369,13 +1399,17 @@
     "tests/test_environment_identity_v3.py::test_the_added_field_is_marked_as_an_addition": [],
     "tests/test_environment_identity_v3.py::test_the_counts_that_earned_the_pass_are_bound": [],
     "tests/test_environment_identity_v3.py::test_the_frozen_v3_artefact_is_never_rewritten": [],
-    "tests/test_environment_identity_v3.py::test_the_guard_does_not_fall_back_between_versions": [],
+    "tests/test_environment_identity_v3.py::test_the_guard_does_not_fall_back_between_versions": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v3.py::test_the_obsolete_claim_is_retired_not_restated": [],
     "tests/test_environment_identity_v3.py::test_the_protocol_is_not_counted_as_a_selector": [],
     "tests/test_environment_identity_v3.py::test_treatment_absence_claim_is_precise_about_the_old_subclass": [],
     "tests/test_environment_identity_v3.py::test_treatment_was_absent_at_freeze": [],
     "tests/test_environment_identity_v3.py::test_unknown_contract_version_is_refused_not_guessed": [],
-    "tests/test_environment_identity_v3.py::test_v2_and_v3_refuse_for_different_reasons": [],
+    "tests/test_environment_identity_v3.py::test_v2_and_v3_refuse_for_different_reasons": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v3.py::test_v2_field_set_is_not_mutated_by_v3": [],
     "tests/test_environment_identity_v3.py::test_v2_file_is_untouched": [],
     "tests/test_environment_identity_v3.py::test_v3_accepted_the_tree_at_its_own_freeze_commit": [],
@@ -1391,7 +1425,9 @@
     "tests/test_environment_identity_v4.py::test_a_mutated_pin_refuses_and_writes_nothing[V3_SHA256]": [],
     "tests/test_environment_identity_v4.py::test_a_mutated_pin_refuses_and_writes_nothing[V4_SEAM_SHA256]": [],
     "tests/test_environment_identity_v4.py::test_both_arms_must_execute_from_one_tree": [],
-    "tests/test_environment_identity_v4.py::test_each_predecessor_refuses_for_its_own_reason": [],
+    "tests/test_environment_identity_v4.py::test_each_predecessor_refuses_for_its_own_reason": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v4.py::test_no_arm_ran_and_the_manifest_is_not_frozen_here": [],
     "tests/test_environment_identity_v4.py::test_one_factor_contract_declares_exactly_one_difference": [],
     "tests/test_environment_identity_v4.py::test_pinned_v4_sha_matches_the_artefact": [],
@@ -1406,15 +1442,23 @@
     "tests/test_environment_identity_v4.py::test_the_frozen_v4_artefact_is_never_rewritten": [],
     "tests/test_environment_identity_v4.py::test_treatment_evidence_is_bound_by_hash": [],
     "tests/test_environment_identity_v4.py::test_treatment_evidence_is_not_reduced_to_a_boolean": [],
-    "tests/test_environment_identity_v4.py::test_v2_still_refuses_the_post_seam_tree": [],
+    "tests/test_environment_identity_v4.py::test_v2_still_refuses_the_post_seam_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v4.py::test_v3_accepted_the_tree_at_its_own_freeze_commit": [],
-    "tests/test_environment_identity_v4.py::test_v3_still_refuses_the_treatment_tree": [],
+    "tests/test_environment_identity_v4.py::test_v3_still_refuses_the_treatment_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v4.py::test_v4_accepted_the_tree_at_its_own_freeze_commit": [],
     "tests/test_environment_identity_v4.py::test_v4_adds_no_contract_field": [],
     "tests/test_environment_identity_v4.py::test_v4_does_not_claim_to_repair_v3": [],
-    "tests/test_environment_identity_v4.py::test_v4_now_refuses_the_wired_tree": [],
+    "tests/test_environment_identity_v4.py::test_v4_now_refuses_the_wired_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v4.py::test_v4_pinned_the_seam_module_as_it_was_at_its_freeze": [],
-    "tests/test_environment_identity_v4.py::test_v4_remains_reachable_after_being_superseded": [],
+    "tests/test_environment_identity_v4.py::test_v4_remains_reachable_after_being_superseded": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v4.py::test_version_chain_is_complete_and_linked": [],
     "tests/test_environment_identity_v5.py::test_a_failed_wiring_regression_blocks_the_freeze": [],
     "tests/test_environment_identity_v5.py::test_a_fresh_preflight_is_current": [],
@@ -1443,9 +1487,15 @@
     "tests/test_environment_identity_v5.py::test_an_old_bound_value_is_stale_not_passing[runner_sha256]": [],
     "tests/test_environment_identity_v5.py::test_an_old_bound_value_is_stale_not_passing[target_selection_sha256]": [],
     "tests/test_environment_identity_v5.py::test_currency_covers_every_execution_identity": [],
-    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V2]": [],
-    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V3]": [],
-    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V4]": [],
+    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V2]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V3]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v5.py::test_every_predecessor_still_refuses[V4]": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v5.py::test_executability_evidence_is_bound": [],
     "tests/test_environment_identity_v5.py::test_manifest_v2_carries_the_producer_map": [],
     "tests/test_environment_identity_v5.py::test_manifest_v2_declares_v5_and_executability": [],
@@ -1463,24 +1513,40 @@
     "tests/test_environment_identity_v5.py::test_the_v5_artefact_is_byte_unchanged_by_any_of_this": [],
     "tests/test_environment_identity_v5.py::test_transitions_are_measured_not_prescribed": [],
     "tests/test_environment_identity_v5.py::test_v4_file_is_byte_unchanged": [],
-    "tests/test_environment_identity_v5.py::test_v4_refuses_for_the_wiring_transition": [],
+    "tests/test_environment_identity_v5.py::test_v4_refuses_for_the_wiring_transition": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v5.py::test_v5_accepted_the_tree_at_its_own_freeze_commit": [],
     "tests/test_environment_identity_v5.py::test_v5_adds_the_execution_machinery_to_the_contract": [],
     "tests/test_environment_identity_v5.py::test_v5_does_not_claim_to_repair_v4": [],
-    "tests/test_environment_identity_v5.py::test_v5_now_refuses_the_lifecycle_tree": [],
+    "tests/test_environment_identity_v5.py::test_v5_now_refuses_the_lifecycle_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v5.py::test_v5_refuses_to_refreeze_on_a_tree_it_no_longer_describes": [],
-    "tests/test_environment_identity_v5.py::test_v5_remains_reachable_after_being_superseded": [],
+    "tests/test_environment_identity_v5.py::test_v5_remains_reachable_after_being_superseded": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v5.py::test_version_chain_is_nine_linked_nodes": [],
     "tests/test_environment_identity_v5.py::test_wiring_regression_is_bound_with_its_counts": [],
     "tests/test_environment_identity_v6.py::test_a_failed_lifecycle_rehearsal_blocks_the_freeze": [],
     "tests/test_environment_identity_v6.py::test_a_mutated_pin_refuses_and_writes_nothing[PREREG_SHA256]": [],
     "tests/test_environment_identity_v6.py::test_a_mutated_pin_refuses_and_writes_nothing[V5_SHA256]": [],
-    "tests/test_environment_identity_v6.py::test_each_predecessor_refuses_for_its_own_reason": [],
+    "tests/test_environment_identity_v6.py::test_each_predecessor_refuses_for_its_own_reason": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v6.py::test_every_negative_control_is_recorded_as_having_fired": [],
-    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V2]": [],
-    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V3]": [],
-    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V4]": [],
-    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V5]": [],
+    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V2]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V3]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V4]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v6.py::test_every_predecessor_still_refuses[V5]": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v6.py::test_no_arm_has_executed": [],
     "tests/test_environment_identity_v6.py::test_one_orchestration_serves_both_arms_and_both_modes": [],
     "tests/test_environment_identity_v6.py::test_pinned_v6_sha_matches_the_artefact": [],
@@ -1493,26 +1559,42 @@
     "tests/test_environment_identity_v6.py::test_the_only_manipulated_factor_is_target_selection": [],
     "tests/test_environment_identity_v6.py::test_the_v6_artefact_is_byte_unchanged_by_any_of_this": [],
     "tests/test_environment_identity_v6.py::test_v5_is_still_readable_from_history": [],
-    "tests/test_environment_identity_v6.py::test_v5_refuses_for_the_lifecycle_transition_specifically": [],
+    "tests/test_environment_identity_v6.py::test_v5_refuses_for_the_lifecycle_transition_specifically": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v6.py::test_v6_accepted_the_tree_at_its_own_freeze_commit": [],
     "tests/test_environment_identity_v6.py::test_v6_adds_exactly_one_contract_field": [],
     "tests/test_environment_identity_v6.py::test_v6_does_not_claim_isaac_will_run": [],
     "tests/test_environment_identity_v6.py::test_v6_does_not_claim_to_repair_v5": [],
     "tests/test_environment_identity_v6.py::test_v6_establishes_levels_one_to_three_and_not_level_five": [],
     "tests/test_environment_identity_v6.py::test_v6_freezes_no_execution_manifest": [],
-    "tests/test_environment_identity_v6.py::test_v6_now_refuses_the_real_mode_tree": [],
+    "tests/test_environment_identity_v6.py::test_v6_now_refuses_the_real_mode_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v6.py::test_v6_refuses_to_refreeze_on_a_tree_it_no_longer_describes": [],
     "tests/test_environment_identity_v6.py::test_v6_refuses_to_silently_overwrite_itself": [],
-    "tests/test_environment_identity_v6.py::test_v6_remains_reachable_after_being_superseded": [],
+    "tests/test_environment_identity_v6.py::test_v6_remains_reachable_after_being_superseded": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v7.py::test_a_failed_reachability_probe_blocks_the_freeze": [],
     "tests/test_environment_identity_v7.py::test_a_mutated_pin_refuses_and_writes_nothing[CONTROL_SHA256]": [],
     "tests/test_environment_identity_v7.py::test_a_mutated_pin_refuses_and_writes_nothing[PREREG_SHA256]": [],
     "tests/test_environment_identity_v7.py::test_every_moved_value_carries_a_rationale": [],
-    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V2]": [],
-    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V3]": [],
-    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V4]": [],
-    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V5]": [],
-    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V6]": [],
+    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V2]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V3]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V4]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V5]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v7.py::test_every_predecessor_still_refuses[V6]": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v7.py::test_every_reachability_control_fired": [],
     "tests/test_environment_identity_v7.py::test_no_arm_has_executed": [],
     "tests/test_environment_identity_v7.py::test_only_the_execution_path_moved": [],
@@ -1525,16 +1607,22 @@
     "tests/test_environment_identity_v7.py::test_the_v7_artefact_is_byte_unchanged_by_any_of_this": [],
     "tests/test_environment_identity_v7.py::test_v6_is_byte_unchanged": [],
     "tests/test_environment_identity_v7.py::test_v6_is_still_readable_from_history": [],
-    "tests/test_environment_identity_v7.py::test_v6_refuses_for_the_runner_transition_specifically": [],
+    "tests/test_environment_identity_v7.py::test_v6_refuses_for_the_runner_transition_specifically": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v7.py::test_v7_accepted_the_tree_at_its_own_freeze_commit": [],
     "tests/test_environment_identity_v7.py::test_v7_does_not_claim_isaac_will_run": [],
     "tests/test_environment_identity_v7.py::test_v7_does_not_claim_to_repair_v6": [],
     "tests/test_environment_identity_v7.py::test_v7_establishes_level_four_five_and_not_level_five": [],
     "tests/test_environment_identity_v7.py::test_v7_freezes_no_execution_manifest": [],
-    "tests/test_environment_identity_v7.py::test_v7_now_refuses_the_repaired_seam_tree": [],
+    "tests/test_environment_identity_v7.py::test_v7_now_refuses_the_repaired_seam_tree": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v7.py::test_v7_pins_the_same_fields_as_v6": [],
     "tests/test_environment_identity_v7.py::test_v7_refuses_to_refreeze_on_a_tree_it_no_longer_describes": [],
-    "tests/test_environment_identity_v7.py::test_v7_remains_reachable_after_being_superseded": [],
+    "tests/test_environment_identity_v7.py::test_v7_remains_reachable_after_being_superseded": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v8.py::test_a_failed_seam_blocks_the_freeze": [],
     "tests/test_environment_identity_v8.py::test_a_mutated_pin_refuses_and_writes_nothing[CONTROL_SHA256]": [],
     "tests/test_environment_identity_v8.py::test_a_mutated_pin_refuses_and_writes_nothing[PREREG_SHA256]": [],
@@ -1545,17 +1633,36 @@
     "tests/test_environment_identity_v8.py::test_arm_a_behaviour_is_unchanged": [],
     "tests/test_environment_identity_v8.py::test_attempt_001_is_not_a_navigation_outcome": [],
     "tests/test_environment_identity_v8.py::test_attempt_001_observed_facts_match_what_ran": [],
-    "tests/test_environment_identity_v8.py::test_attempt_001_pre_capture_is_preserved_byte_for_byte": [],
+    "tests/test_environment_identity_v8.py::test_attempt_001_pre_capture_is_preserved_byte_for_byte": [
+      "archive"
+    ],
+    "tests/test_environment_identity_v8.py::test_current_candidate_is_refused_by_historical_v8": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v8.py::test_every_moved_value_carries_a_rationale": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V2]": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V3]": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V4]": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V5]": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V6]": [],
-    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V7]": [],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V2]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V3]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V4]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V5]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V6]": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_every_predecessor_still_refuses[V7]": [
+      "isaac_host"
+    ],
     "tests/test_environment_identity_v8.py::test_every_seam_control_fired": [],
     "tests/test_environment_identity_v8.py::test_no_arm_has_executed": [],
-    "tests/test_environment_identity_v8.py::test_regeneration_on_an_unchanged_tree_is_idempotent": [],
+    "tests/test_environment_identity_v8.py::test_regeneration_on_an_unchanged_tree_is_idempotent": [
+      "archive"
+    ],
     "tests/test_environment_identity_v8.py::test_the_amender_declines_rather_than_raising": [],
     "tests/test_environment_identity_v8.py::test_the_label_set_is_still_closed": [],
     "tests/test_environment_identity_v8.py::test_the_manipulated_factor_did_not_move": [],
@@ -1563,8 +1670,12 @@
     "tests/test_environment_identity_v8.py::test_the_seam_facts_are_about_objects_not_configuration": [],
     "tests/test_environment_identity_v8.py::test_v7_is_byte_unchanged": [],
     "tests/test_environment_identity_v8.py::test_v7_is_still_readable_from_history": [],
-    "tests/test_environment_identity_v8.py::test_v7_refuses_for_the_seam_repair_specifically": [],
-    "tests/test_environment_identity_v8.py::test_v8_accepts_the_repaired_tree": [],
+    "tests/test_environment_identity_v8.py::test_v7_refuses_for_the_seam_repair_specifically": [
+      "isaac_host"
+    ],
+    "tests/test_environment_identity_v8.py::test_v8_accepts_the_repaired_tree": [
+      "archive"
+    ],
     "tests/test_environment_identity_v8.py::test_v8_does_not_claim_the_scene_loads": [],
     "tests/test_environment_identity_v8.py::test_v8_freezes_no_execution_manifest": [],
     "tests/test_environment_identity_v8.py::test_v8_is_authoritative": [],
@@ -1749,7 +1860,9 @@
     "tests/test_forensics.py::TestTheRealLedger::test_it_builds_and_ids_are_unique": [],
     "tests/test_forensics.py::TestTheRealLedger::test_no_entry_claims_more_than_its_evidence": [],
     "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_absent_expected_identity_fails_rather_than_passing": [],
-    "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_perturbed_executable_identity_fails": [],
+    "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_perturbed_executable_identity_fails": [
+      "alternate_python"
+    ],
     "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_perturbed_expected_identity_fails": [],
     "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_perturbed_pythonpath_fails": [],
     "tests/test_freeze_audit_negatives.py::TestIdentityCheckCanFail::test_unperturbed_copy_trips_neither_detector": [],
@@ -2411,6 +2524,24 @@
     "tests/test_replay_recovery_contracts_v2.py::test_unknown_event_not_silently_discarded_even_with_later_valid_event": [],
     "tests/test_replay_recovery_contracts_v2.py::test_unordered_duplicate_event_identity_fails": [],
     "tests/test_replay_recovery_contracts_v2.py::test_v2_ids_root_separate_from_preserved_attempt_only_two_authorized": [],
+    "tests/test_resource_ci.py::test_collected_but_unexecuted_node_is_refused": [],
+    "tests/test_resource_ci.py::test_current_run_missing_or_failed_owner_is_refused[jobs0]": [],
+    "tests/test_resource_ci.py::test_current_run_missing_or_failed_owner_is_refused[jobs1]": [],
+    "tests/test_resource_ci.py::test_current_run_missing_or_failed_owner_is_refused[jobs2]": [],
+    "tests/test_resource_ci.py::test_current_successful_owner_verifies_artifact_without_overall_run_success": [],
+    "tests/test_resource_ci.py::test_different_source_or_population_is_refused[head]": [],
+    "tests/test_resource_ci.py::test_different_source_or_population_is_refused[manifest_sha256]": [],
+    "tests/test_resource_ci.py::test_each_workstation_security_requirement_is_mandatory[deployment_branch_policy]": [],
+    "tests/test_resource_ci.py::test_each_workstation_security_requirement_is_mandatory[prevent_self_review]": [],
+    "tests/test_resource_ci.py::test_each_workstation_security_requirement_is_mandatory[reviewers]": [],
+    "tests/test_resource_ci.py::test_every_nonpassing_outcome_blocks_attestation[error]": [],
+    "tests/test_resource_ci.py::test_every_nonpassing_outcome_blocks_attestation[failed]": [],
+    "tests/test_resource_ci.py::test_every_nonpassing_outcome_blocks_attestation[skipped]": [],
+    "tests/test_resource_ci.py::test_matching_head_with_different_tracked_bytes_is_refused": [],
+    "tests/test_resource_ci.py::test_missing_environment_protection_is_refused": [],
+    "tests/test_resource_ci.py::test_missing_manual_owner_run_is_failure_not_pending_success": [],
+    "tests/test_resource_ci.py::test_source_or_head_change_after_preflight_is_refused[head]": [],
+    "tests/test_resource_ci.py::test_source_or_head_change_after_preflight_is_refused[tracked_sha256]": [],
     "tests/test_rgb_baseline_rules.py::test_chain_progress_does_not_stop_until_goal_node": [],
     "tests/test_rgb_baseline_rules.py::test_control_period_rescales_feedforward_velocity": [],
     "tests/test_rgb_baseline_rules.py::test_every_variant_spec_carries_a_lost_start": [],
@@ -3078,7 +3209,10 @@
     "upstream": "upstream-compat",
     "torch": "upstream-compat",
     "plot": "upstream-compat",
-    "go_stanford": "go-stanford-corpus"
+    "go_stanford": "go-stanford-corpus",
+    "isaac_host": "resource-validation",
+    "archive": "resource-validation",
+    "alternate_python": "resource-validation"
   },
   "required_owners": {
     "go_stanford": {
@@ -3105,5 +3239,12 @@
     "added_nodes": 2014,
     "ownership_change": "test_rgb_baseline_rules::test_unknown_rule_and_bad_period_rejected is torch-owned: constructor imports torch/torchvision before parameter validation. Assertions unchanged.",
     "method": "Complete local collection with admitted pinned upstream; no collection errors. This pins expected membership, not a successful test outcome. CI/full execution validation remains separate; host/archive V8 failures remain blocking."
+  },
+  "ci_resource_contract_update": {
+    "previous_total": 2791,
+    "retained_node_count": 2791,
+    "new_node_count": 21,
+    "resource_owner": "resource-validation",
+    "scope": "Explicit measured-host/archive/alternate ownership; orchestration fixtures synthetic and REAL injection refused; archival V8 scope separated from live candidate refusal."
   }
 }

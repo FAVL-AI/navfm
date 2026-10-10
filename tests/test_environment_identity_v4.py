@@ -65,6 +65,7 @@ def _sha() -> str:
 V4_FREEZE_COMMIT = "effcce1ee22e8480a4c43e656e7355e628cadcc5"
 
 
+@pytest.mark.isaac_host
 def test_v4_remains_reachable_after_being_superseded() -> None:
     """Which version is authoritative is asserted by that version's own suite.
     What this checks is that V4 still answers for itself."""
@@ -88,6 +89,7 @@ def test_v4_accepted_the_tree_at_its_own_freeze_commit() -> None:
         assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest()
 
 
+@pytest.mark.isaac_host
 def test_v4_now_refuses_the_wired_tree() -> None:
     """Expected: the collector was wired for execution after V4 froze."""
     result = check_contract(REPO, "V4")
@@ -95,6 +97,7 @@ def test_v4_now_refuses_the_wired_tree() -> None:
     assert "scientific_code.collect_sha256" in [d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 def test_v3_still_refuses_the_treatment_tree() -> None:
     """Permanent. If this passes, V3 was rewritten."""
     result = check_contract(REPO, "V3")
@@ -103,12 +106,14 @@ def test_v3_still_refuses_the_treatment_tree() -> None:
         d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 def test_v2_still_refuses_the_post_seam_tree() -> None:
     result = check_contract(REPO, "V2")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
     assert "scientific_code.control_sha256" in [d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 def test_each_predecessor_refuses_for_its_own_reason() -> None:
     v2 = [d["field"] for d in check_contract(REPO, "V2")["drift"]]
     v3 = [d["field"] for d in check_contract(REPO, "V3")["drift"]]

@@ -331,12 +331,14 @@ def test_interior_agreement_is_geometrically_impossible() -> None:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.isaac_host
 def test_v2_still_refuses_for_the_historically_correct_reason() -> None:
     result = check_contract(REPO, "V2")
     assert result["CONTRACT_SATISFIED"] == "FAIL"
     assert "scientific_code.control_sha256" in [d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 def test_v3_now_refuses_because_the_treatment_landed_in_the_pinned_seam() -> None:
     result = check_contract(REPO, "V3")
     assert result["CONTRACT_SATISFIED"] == "FAIL"

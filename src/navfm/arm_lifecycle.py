@@ -450,6 +450,7 @@ class _Context:
     recorder: LifecycleRecorder
     label: str
     output_root: Path
+    environment_capture: Callable[[str, Path], dict[str, Any]] | None = None
     outputs: dict[str, Any] = dataclasses.field(default_factory=dict)
     episode: EpisodeOutcome | None = None
     pre_capture: dict[str, Any] | None = None
@@ -579,6 +580,12 @@ def _validate_manifest(ctx: _Context) -> None:
 
 
 def _capture_environment(ctx: _Context, label: str, path: Path) -> dict[str, Any]:
+    if ctx.environment_capture is not None:
+        record = ctx.environment_capture(label, path)
+        # Injected records only exercise orchestration; never host attestation.
+        record = {**record, "capture_semantics": "SYNTHETIC_ORCHESTRATION_FIXTURE"}
+        ctx.outputs["environment_attestation"] = "NOT_MEASURED"
+        return record
     from navfm.arm_environment_guard import capture_arm_environment, write_capture
 
     head = str(ctx.manifest["repository"]["head"])
@@ -747,6 +754,7 @@ def execute_arm(
     mode: str = "REHEARSAL",
     output_root: Path | str | None = None,
     plan: Sequence[_PlanStep] | None = None,
+    environment_capture: Callable[[str, Path], dict[str, Any]] | None = None,
 ) -> ArmOutcome:
     """Walk the frozen plan once. The only orchestration there is.
 
@@ -754,7 +762,9 @@ def execute_arm(
     that took a different path through the lifecycle could pass while the real
     path stayed broken, which is the defect this exists to prevent. ``plan`` is
     injectable for fault-injection tests only; production always walks
-    ``ARM_PLAN``.
+    ``ARM_PLAN``. ``environment_capture`` is an explicit rehearsal fixture
+    boundary; REAL mode refuses it before creating outputs. Default captures
+    always measure the actual environment, including in rehearsal.
     """
     import json
 
@@ -765,6 +775,11 @@ def execute_arm(
     if mode not in {"REAL", "REHEARSAL"}:
         return ArmOutcome(arm, mode, "REFUSED", recorder.validate(),
                           refusal={"stage": "<entry>", "reason": f"unknown mode {mode!r}"})
+
+    if environment_capture is not None and mode != "REHEARSAL":
+        return ArmOutcome(arm, mode, "REFUSED", recorder.validate(),
+                          refusal={"stage": "<entry>",
+                                   "reason": "injected environment captures are rehearsal-only"})
 
     suffix = "a" if arm.endswith("_A") or arm == "ARM_A_CONTROL" else "b"
 
@@ -796,7 +811,7 @@ def execute_arm(
     context = _Context(
         arm=arm, mode=mode, repo_root=root, manifest=manifest, resolution=None,
         runtime=runtime, recorder=recorder,
-        label=label, output_root=target_root)
+        label=label, output_root=target_root, environment_capture=environment_capture)
 
     try:
         for step in steps:

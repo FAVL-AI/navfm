@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -80,17 +81,38 @@ def test_v8_is_authoritative() -> None:
     assert {"V2", "V3", "V4", "V5", "V6", "V7", "V8"} <= set(CONTRACTS)
 
 
-def test_v8_accepts_the_repaired_tree() -> None:
-    result = check_contract(REPO, "V8")
-    assert result["CONTRACT_SATISFIED"] == "PASS", result["drift"]
+@pytest.mark.archive
+def test_v8_accepts_the_repaired_tree(amendment: dict[str, Any]) -> None:
+    """Archived repaired source/host evidence, never current-tree attestation."""
+    from navfm.execution_environment import _SCIENTIFIC_SOURCES
+    seam = json.loads((REPO / SEAM_REL).read_text())
+    frozen = amendment["EXECUTION_ENVIRONMENT_IDENTITY_V8"]["frozen_contract_values"]
+    for key, relative in _SCIENTIFIC_SOURCES.items():
+        field = f"scientific_code.{key}"
+        if field not in frozen:
+            continue
+        blob = subprocess.run(["git", "-C", str(REPO), "show",
+                               f"{seam['repository_head']}:{relative}"],
+                              capture_output=True, check=True).stdout
+        assert hashlib.sha256(blob).hexdigest() == frozen[field], field
+    archived = Path(os.environ.get("NAVFM_ARCHIVE_ROOT", str(REPO))) / ATTEMPT_001_PRE
+    raw = archived.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == amendment["ARM_A_ATTEMPT_001"]["pre_capture"]["sha256"]
+    observed = json.loads(raw)["equality_critical_snapshot"]
+    # V8 changed software; the original measured host/runtime fields are retained.
+    for field, value in frozen.items():
+        if field.startswith(("host.", "gpu.", "python.", "isaac.", "runtime_contract.")):
+            assert observed[field] == value, field
 
 
+@pytest.mark.isaac_host
 @pytest.mark.parametrize("version", ["V2", "V3", "V4", "V5", "V6", "V7"])
 def test_every_predecessor_still_refuses(version: str) -> None:
     """Permanent. If any of these passes, an old contract was rewritten."""
     assert check_contract(REPO, version)["CONTRACT_SATISFIED"] == "FAIL"
 
 
+@pytest.mark.isaac_host
 def test_v7_refuses_for_the_seam_repair_specifically() -> None:
     drift = [d["field"] for d in check_contract(REPO, "V7")["drift"]]
     assert "scientific_code.collect_sha256" in drift
@@ -144,6 +166,7 @@ def test_attempt_001_observed_facts_match_what_ran(attempt: dict[str, Any]) -> N
     assert observed["refusal"]["escaped_exception"] is True
 
 
+@pytest.mark.archive
 def test_attempt_001_pre_capture_is_preserved_byte_for_byte(
     attempt: dict[str, Any],
 ) -> None:
@@ -151,7 +174,8 @@ def test_attempt_001_pre_capture_is_preserved_byte_for_byte(
     pre = attempt["ATTEMPT_001_PRE_CAPTURE"]
     assert pre["PRESERVED"] is True
     assert pre["path"] == ATTEMPT_001_PRE
-    on_disk = hashlib.sha256((REPO / ATTEMPT_001_PRE).read_bytes()).hexdigest()
+    archive_root = Path(os.environ.get("NAVFM_ARCHIVE_ROOT", str(REPO)))
+    on_disk = hashlib.sha256((archive_root / ATTEMPT_001_PRE).read_bytes()).hexdigest()
     assert on_disk == pre["sha256"]
     assert pre["label"] == "PRE_ARM_A"
     assert pre["capture_validation"] == "PASS"
@@ -254,9 +278,18 @@ def test_v8_freezes_no_execution_manifest(amendment: dict[str, Any]) -> None:
 
 # --- refusal controls --------------------------------------------------------
 
-def test_regeneration_on_an_unchanged_tree_is_idempotent() -> None:
+@pytest.mark.archive
+def test_regeneration_on_an_unchanged_tree_is_idempotent(amendment: dict[str, Any]) -> None:
+    """Rebuild archived canonical payload without writing or measuring today's host."""
     before = _sha()
-    assert v8mod.freeze()["V8_AMENDMENT"] == "FROZEN"
+    archived = Path(os.environ.get("NAVFM_ARCHIVE_ROOT", str(REPO))) / ATTEMPT_001_PRE
+    assert hashlib.sha256(archived.read_bytes()).hexdigest() == amendment["ARM_A_ATTEMPT_001"]["pre_capture"]["sha256"]
+    seam = v8mod.verify_seam()
+    assert seam["ok"], seam["reasons"]
+    attempt = {"record": json.loads((REPO / ATTEMPT_REL).read_text())}
+    rebuilt = v8mod.build_payload(amendment["amended_at_utc"], seam, attempt,
+                                 amendment["EXECUTION_ENVIRONMENT_IDENTITY_V8"]["frozen_contract_values"])
+    assert v8mod.diff_paths(v8mod.strip_volatile(rebuilt), v8mod.strip_volatile(amendment)) == []
     assert _sha() == before
 
 
@@ -309,3 +342,10 @@ def test_v7_is_still_readable_from_history() -> None:
         capture_output=True, check=False)
     assert proc.returncode == 0
     assert hashlib.sha256(proc.stdout).hexdigest() == V7_AMENDMENT_SHA256
+
+
+@pytest.mark.isaac_host
+def test_current_candidate_is_refused_by_historical_v8() -> None:
+    result = check_contract(REPO, "V8")
+    assert result["CONTRACT_SATISFIED"] == "FAIL"
+    assert "scientific_code.collect_sha256" in {d["field"] for d in result["drift"]}

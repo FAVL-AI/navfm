@@ -53,7 +53,7 @@ jobs:
 
       - name: Unit tests (hermetic population)
         run: |
-          python -m pytest -q -m "not torch and not upstream and not plot and not go_stanford" \
+          python -m pytest -q -m "not torch and not upstream and not plot and not go_stanford and not isaac_host and not archive and not alternate_python" \
             --cov=navfm --cov-report=term-missing \
             --population-report="population/hermetic-${{ matrix.python-version }}.json"
 
@@ -151,7 +151,7 @@ jobs:
           MPLBACKEND: Agg
           WANDB_MODE: disabled
         run: |
-          python -m pytest -q -m "not go_stanford" --population-report=population/owner.json
+          python -m pytest -q -m "not go_stanford and not isaac_host and not archive and not alternate_python" --population-report=population/owner.json
 
       - name: Population ownership gate
         if: always()
@@ -275,7 +275,7 @@ jobs:
       # and are deselected here, which is what this job declares.
       - name: Owned tests (hermetic population plus the corpus node)
         run: |
-          python -m pytest -q -m "not torch and not upstream and not plot" \
+          python -m pytest -q -m "not torch and not upstream and not plot and not isaac_host and not archive and not alternate_python" \
             --population-report=population/corpus.json
 
       - name: Population ownership gate
@@ -293,3 +293,88 @@ jobs:
           name: population-go-stanford-corpus
           path: population/
           if-no-files-found: error
+
+  resource-approval:
+    # Explicit operator approval of the exact revision, before any workstation queue.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Require reviewed exact revision and protected environment
+        env:
+          APPROVED: ${{ vars.NAVFM_APPROVED_RESOURCE_SHA }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          test "$APPROVED" = "$CANDIDATE"
+          python scripts/resource_ci.py security
+
+  resource-validation:
+    needs: resource-approval
+    environment: navfm-resource-validation
+    runs-on: [self-hosted, linux, x64, navfm-resource-approved]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read-only resource preflight
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          mkdir -p "$RUNNER_TEMP/navfm-resource-evidence"
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py preflight --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - name: Execute owned population
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" -m pytest -q -m "not torch and not upstream and not plot and not go_stanford" --population-report="$RUNNER_TEMP/navfm-resource-evidence/owner.json"
+      - name: Fail-closed owner evidence bundle
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py bundle --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: navfm-resource-validation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/navfm-resource-evidence/
+          if-no-files-found: error
+
+  resource-contract:
+    needs: [resource-approval, resource-validation]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Require this run's successful exact-HEAD resource owner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+          OWNER_RESULT: ${{ needs.resource-validation.result }}
+        run: |
+          test "$OWNER_RESULT" = success
+          python scripts/resource_ci.py current --head "$CANDIDATE"

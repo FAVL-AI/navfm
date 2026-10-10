@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +47,7 @@ from navfm.target_selection import (
 )
 
 REPO = Path(__file__).resolve().parents[1]
-MANIFEST_V1 = REPO / "runs/bo10/intervention/execution_manifest.json"
+MANIFEST_V1 = Path(os.environ.get("NAVFM_ARCHIVE_ROOT", str(REPO))) / "runs/bo10/intervention/execution_manifest.json"
 
 _SPEC = importlib.util.spec_from_file_location(
     "run_intervention", REPO / "scripts" / "run_terminal_approach_intervention.py")
@@ -318,12 +319,12 @@ def test_validate_only_refuses_an_unknown_arm(manifest_file: Path) -> None:
     assert "unknown arm" in report["reason"]
 
 
+@pytest.mark.archive
 def test_manifest_v1_is_now_stale_and_refused() -> None:
     """V1 bound an earlier HEAD. It must refuse rather than run against a tree
     it never described -- which is exactly what stopped the first Arm-A
     authorisation, and must keep working."""
-    if not MANIFEST_V1.is_file():
-        pytest.skip("the historical V1 manifest is runtime evidence and is absent here")
+    assert MANIFEST_V1.is_file(), "required immutable V1 archive is absent"
     report = validate_only(MANIFEST_V1, "ARM_A_CONTROL", REPO)
     assert report["VALIDATE_ONLY"] == "REFUSED"
     assert "did not validate" in report["reason"]

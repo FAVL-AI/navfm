@@ -63,6 +63,7 @@ def amendment() -> dict[str, Any]:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.isaac_host
 def test_current_tree_still_fails_against_v2() -> None:
     """The load-bearing control. If this ever passes, V2 was rewritten.
 
@@ -93,6 +94,7 @@ def test_v3_accepted_the_tree_at_its_own_freeze_commit() -> None:
         control_at_freeze.stdout).hexdigest()
 
 
+@pytest.mark.isaac_host
 def test_current_tree_now_refuses_against_v3_because_the_treatment_landed() -> None:
     """Expected, and the reason is reported rather than assumed: the treatment
     was implemented in the seam module V3 pins, after V3 froze."""
@@ -102,6 +104,7 @@ def test_current_tree_now_refuses_against_v3_because_the_treatment_landed() -> N
         d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 def test_v2_and_v3_refuse_for_different_reasons() -> None:
     """Both refuse, which is correct, but not for the same thing. V2 names the
     controller the seam edited; V3 does not, because V3 froze after it."""
@@ -125,6 +128,7 @@ def test_v2_field_set_is_not_mutated_by_v3() -> None:
         V3_ADDITIONAL_CRITICAL_FIELDS)
 
 
+@pytest.mark.isaac_host
 def test_the_guard_does_not_fall_back_between_versions() -> None:
     """A barrier that tried one contract and fell back to another would accept a
     tree the authoritative one rejects.

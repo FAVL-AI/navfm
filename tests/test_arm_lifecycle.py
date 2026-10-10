@@ -63,10 +63,19 @@ def manifest(tmp_path: Path) -> Path:
     return target
 
 
+def fixture_capture(label: str, path: Path) -> dict[str, Any]:
+    """Synthetic boundary record, not measured host or production evidence."""
+    payload = {"label": label, "fixture": True, "CAPTURE_VALIDATION": "PASS"}
+    path.write_text(json.dumps(payload))
+    return {"label": label, "path": str(path), "sha256": "fixture-only",
+            "CAPTURE_VALIDATION": "PASS", "critical_digest": "fixture-only"}
+
+
 def rehearse(manifest: Path, arm: str, tmp: Path, **kw: Any) -> Any:
     runtime = RehearsalRuntimeAdapter(fail_at=kw.pop("fail_at", None))
     return execute_arm(manifest, arm, REPO, runtime=runtime, mode="REHEARSAL",
-                       output_root=tmp / f"rh_{arm}_{kw.pop('tag', 'base')}", **kw)
+                       output_root=tmp / f"rh_{arm}_{kw.pop('tag', 'base')}",
+                       environment_capture=kw.pop("environment_capture", fixture_capture), **kw)
 
 
 def kinds(outcome: Any) -> set[str]:
@@ -218,6 +227,7 @@ def test_an_unreadable_manifest_is_refused_at_the_first_stage(tmp_path: Path) ->
 # document is a fact about that document.
 
 
+@pytest.mark.isaac_host
 def test_v3_readiness_is_measured_against_the_manifest_it_describes(
     tmp_path: Path,
 ) -> None:
@@ -233,7 +243,7 @@ def test_v3_readiness_is_measured_against_the_manifest_it_describes(
     claimed = built["executability"]
     for arm, key in (("ARM_A_CONTROL", "arm_a_rehearsal"),
                      ("ARM_B_TREATMENT", "arm_b_rehearsal")):
-        observed = rehearse(target, arm, tmp_path, tag="claimcheck")
+        observed = rehearse(target, arm, tmp_path, tag="claimcheck", environment_capture=None)
         assert claimed[key] is (observed.status == "VALID"), (
             f"{key}={claimed[key]} but rehearsing the manifest gives "
             f"{observed.status}")
@@ -252,3 +262,21 @@ def test_the_lifecycle_refuses_a_manifest_version_it_has_no_validator_for(
     assert outcome.status == "REFUSED"
     assert outcome.refusal is not None
     assert "EXECUTION_MANIFEST_V9" in outcome.refusal["reason"]
+
+
+def test_rehearsal_capture_rejection_remains_fail_closed(manifest: Path, tmp_path: Path) -> None:
+    def rejected(label: str, path: Path) -> dict[str, Any]:
+        return {**fixture_capture(label, path), "CAPTURE_VALIDATION": "FAIL"}
+    outcome = rehearse(manifest, "ARM_A_CONTROL", tmp_path, environment_capture=rejected)
+    assert outcome.status == "REFUSED"
+    assert outcome.refusal["stage"] == Stage.PRE_ENV_CAPTURED.value
+    assert "runtime" not in outcome.outputs
+
+
+def test_real_mode_refuses_fixture_before_creating_outputs(manifest: Path, tmp_path: Path) -> None:
+    target = tmp_path / "must-not-exist"
+    outcome = execute_arm(manifest, "ARM_A_CONTROL", REPO,
+                          runtime=RehearsalRuntimeAdapter(), mode="REAL", output_root=target,
+                          environment_capture=fixture_capture)
+    assert outcome.status == "REFUSED"
+    assert not target.exists()

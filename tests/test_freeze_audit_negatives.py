@@ -22,6 +22,7 @@ from __future__ import annotations
 import importlib.util
 import inspect
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -118,6 +119,7 @@ class TestIdentityCheckCanFail:
         assert "FAIL" in _identity_line(result)
         assert "not the one the protocol froze" in result.stdout
 
+    @pytest.mark.alternate_python
     def test_perturbed_executable_identity_fails(self) -> None:
         """A different interpreter is a different instrument, however similar.
 
@@ -127,9 +129,9 @@ class TestIdentityCheckCanFail:
         python version, prefix and distribution set all differ from the
         canonical 3.11 one.
         """
-        other = REPO / ".venv-m1" / "bin" / "python"
+        other = Path(os.environ.get("NAVFM_ALTERNATE_PYTHON", str(REPO / ".venv-m1" / "bin" / "python")))
         if not other.is_file():
-            pytest.skip("no second interpreter available to contrast with")
+            pytest.fail("required alternate interpreter resource is absent")
         result = subprocess.run(
             [
                 str(other),

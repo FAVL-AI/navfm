@@ -255,7 +255,7 @@ def _sets_manifest(**overrides: Any) -> dict[str, Any]:
         "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
         "upstream_path": "third_party/visualnav-transformer",
         "open_evidence_gaps": [],
-        "job_ownership": {"upstream": "owner", "torch": "owner", "plot": "owner", "go_stanford": None},
+        "job_ownership": {"upstream": "owner", "torch": "owner", "plot": "owner", "go_stanford": None, "isaac_host": None, "archive": None, "alternate_python": None},
     }
     manifest.update(overrides)
     return manifest
@@ -420,6 +420,7 @@ def _corpus_manifest(owner: str | None = None, **overrides: Any) -> dict[str, An
         "torch": "owner",
         "plot": "owner",
         "go_stanford": owner,
+        "isaac_host": None, "archive": None, "alternate_python": None,
     }
     return manifest
 
@@ -511,6 +512,7 @@ class TestCorpusOwnership:
             "torch": "owner",
             "plot": "owner",
             "go_stanford": None,
+            "isaac_host": None, "archive": None, "alternate_python": None,
         }
         failures = "\n".join(cps.check(report, manifest, cps.ORDINARY, VERSIONS))
         assert CORPUS_NODE in failures

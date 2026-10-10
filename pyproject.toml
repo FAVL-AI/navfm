@@ -86,6 +86,9 @@ where = ["src"]
 testpaths = ["tests"]
 addopts = "-q --strict-markers"
 markers = [
+  "isaac_host: requires the measured historical Isaac/GPU workstation contract",
+  "archive: requires immutable historical runtime evidence",
+  "alternate_python: requires a distinct provisioned interpreter identity",
   "isaac: requires an Isaac Sim installation",
   "torch: requires PyTorch",
   "upstream: requires the reference visualnav-transformer package",

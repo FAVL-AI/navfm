@@ -1,0 +1,70 @@
+name: resource-validation
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Exact reviewed candidate commit, approved before workstation execution
+        required: true
+permissions:
+  contents: read
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify configured independent approval and branch restrictions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/resource_ci.py security
+      - name: Reject absent or different workstation security approval
+        env:
+          REVISION: ${{ inputs.revision }}
+          APPROVED: ${{ vars.NAVFM_APPROVED_RESOURCE_SHA }}
+          WORKFLOW_HEAD: ${{ github.sha }}
+        run: |
+          [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]]
+          test "$APPROVED" = "$REVISION"
+          test "$WORKFLOW_HEAD" = "$REVISION"
+  validate:
+    needs: approve
+    environment: navfm-resource-validation
+    runs-on: [self-hosted, linux, x64, navfm-resource-approved]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.revision }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Resource preflight (no simulator or model inference)
+        env:
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          mkdir -p "$RUNNER_TEMP/navfm-resource-evidence"
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py preflight --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - name: Execute measured resource owner and hermetic controls
+        env:
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" -m pytest -q -m "not torch and not upstream and not plot and not go_stanford" --population-report="$RUNNER_TEMP/navfm-resource-evidence/owner.json"
+      - name: Population ownership and fail-closed evidence bundle
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py bundle --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: navfm-resource-validation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/navfm-resource-evidence/
+          if-no-files-found: error

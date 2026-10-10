@@ -83,6 +83,7 @@ def manifest(tmp_path: Path) -> dict[str, Any]:
 # --------------------------------------------------------------------------
 
 
+@pytest.mark.isaac_host
 def test_v5_remains_reachable_after_being_superseded() -> None:
     """Which version is authoritative is asserted by that version's own suite.
     What this checks is that V5 still answers for itself."""
@@ -116,6 +117,7 @@ def test_v5_accepted_the_tree_at_its_own_freeze_commit() -> None:
         assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest(), field
 
 
+@pytest.mark.isaac_host
 def test_v5_now_refuses_the_lifecycle_tree() -> None:
     """Expected: the arm execution body was added after V5 froze.
 
@@ -126,12 +128,14 @@ def test_v5_now_refuses_the_lifecycle_tree() -> None:
     assert "scientific_code.arm_runner_sha256" in [d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 @pytest.mark.parametrize("version", ["V2", "V3", "V4"])
 def test_every_predecessor_still_refuses(version: str) -> None:
     """Permanent. If any of these passes, an old contract was rewritten."""
     assert check_contract(REPO, version)["CONTRACT_SATISFIED"] == "FAIL"
 
 
+@pytest.mark.isaac_host
 def test_v4_refuses_for_the_wiring_transition() -> None:
     drift = [d["field"] for d in check_contract(REPO, "V4")["drift"]]
     assert "scientific_code.collect_sha256" in drift

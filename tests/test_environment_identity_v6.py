@@ -72,6 +72,7 @@ def amendment() -> dict[str, Any]:
 V6_FREEZE_COMMIT = "356ef56cee20e2d82e5275e8316d9d3158fbd665"
 
 
+@pytest.mark.isaac_host
 def test_v6_remains_reachable_after_being_superseded() -> None:
     """Which version is authoritative is asserted by that version's own suite.
     What this checks is that V6 still answers for itself."""
@@ -95,6 +96,7 @@ def test_v6_accepted_the_tree_at_its_own_freeze_commit() -> None:
         assert frozen[field] == hashlib.sha256(at_freeze.stdout).hexdigest(), field
 
 
+@pytest.mark.isaac_host
 def test_v6_now_refuses_the_real_mode_tree() -> None:
     """Expected: the runner gained the entry point that builds the real adapter.
 
@@ -105,18 +107,21 @@ def test_v6_now_refuses_the_real_mode_tree() -> None:
     assert "scientific_code.arm_runner_sha256" in [d["field"] for d in result["drift"]]
 
 
+@pytest.mark.isaac_host
 @pytest.mark.parametrize("version", ["V2", "V3", "V4", "V5"])
 def test_every_predecessor_still_refuses(version: str) -> None:
     """Permanent. If any of these passes, an old contract was rewritten."""
     assert check_contract(REPO, version)["CONTRACT_SATISFIED"] == "FAIL"
 
 
+@pytest.mark.isaac_host
 def test_v5_refuses_for_the_lifecycle_transition_specifically() -> None:
     """Not merely 'invalid' -- it must name the field that moved."""
     drift = [d["field"] for d in check_contract(REPO, "V5")["drift"]]
     assert "scientific_code.arm_runner_sha256" in drift
 
 
+@pytest.mark.isaac_host
 def test_each_predecessor_refuses_for_its_own_reason() -> None:
     reasons = {v: tuple(sorted(d["field"] for d in check_contract(REPO, v)["drift"]))
                for v in ("V2", "V3", "V5")}

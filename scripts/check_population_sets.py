@@ -62,6 +62,9 @@ MARKER_VERSIONS = {
     "torch": ("torch",),
     "plot": ("matplotlib",),
     "go_stanford": ("go_stanford_sha256",),
+    "isaac_host": ("isaac_host_capture_sha256",),
+    "archive": ("archive_inventory_sha256",),
+    "alternate_python": ("alternate_python_identity",),
 }
 RESOURCE_MARKERS = tuple(MARKER_VERSIONS)
 
@@ -141,6 +144,8 @@ def sets_from(population: dict[str, list[str]]) -> dict[str, set[str]]:
         "upstream": {n for n, m in population.items() if "upstream" in m},
         "torch": {n for n, m in population.items() if "torch" in m},
         "plot": {n for n, m in population.items() if "plot" in m},
+        **{marker: {n for n, m in population.items() if marker in m}
+           for marker in RESOURCE_MARKERS if marker not in {"upstream", "torch", "plot", "go_stanford"}},
         "go_stanford": {n for n, m in population.items() if "go_stanford" in m},
     }
 

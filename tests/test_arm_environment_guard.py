@@ -475,7 +475,7 @@ def test_missing_preflight_file_reports_absence_not_success(tmp_path: Path) -> N
 # --------------------------------------------------------------------------
 
 
-@requires_frozen_host
+@pytest.mark.isaac_host
 def test_nvidia_hold_guard_passes_on_this_machine() -> None:
     state = nvidia_hold_state()
     assert state["HOLD_GUARD"] == "PASS", state["reasons"]
@@ -494,7 +494,7 @@ def test_nvidia_hold_guard_can_fail(monkeypatch: pytest.MonkeyPatch) -> None:
     assert any("loaded kernel module" in r for r in state["reasons"])
 
 
-@requires_frozen_host
+@pytest.mark.isaac_host
 def test_hold_list_is_not_a_substitute_for_the_loaded_stack(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

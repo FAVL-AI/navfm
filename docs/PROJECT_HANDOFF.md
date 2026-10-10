@@ -1,3 +1,15 @@
+# Current milestone: explicit CI resource contract
+
+The integration candidate separates synthetic rehearsal capture fixtures from actual measured environment captures; REAL mode rejects injection before output creation. Every prior test node remains, with measured-host/archive/alternate-interpreter nodes owned by an approval-gated workstation job. Hosted approval fails before workstation queue if exact SHA approval or required environment protections are absent; hosted resource-contract requires this run's successful exact-source owner evidence, without a workflow bootstrap/circular-success dependency. No runner is installed or registered.
+
+Authentic Attempt001 pre-capture was recovered and matches its original recorded hash. V1 manifest recovery has independently corroborated bound head, with a newly observed whole-file hash and no earlier whole-file pin. Archival V8 checks validate original source blobs/recorded host inputs; a separate real control requires current candidate V8 refusal. Previous failed attempts and freeze bytes remain immutable.
+
+Preparation results: 98 focused controls PASS; full admitted-upstream make verify has 2,809 PASS/zero collection errors, followed by three new passing source-identity controls. Final population is 2,812 nodes (all prior 2,791 retained). Preliminary actual-resource owner run passes every one of its 2,725 nodes, including all 49 resource-specific nodes, but occurred on a dirty candidate. Final clean-source owner validation/bundle is next and reported externally without another doc/HEAD change. Details, exact commands, 49-row purpose/owner/result table and limitations: `docs/CI_RESOURCE_CONTRACT.md`.
+
+Root publishes only the engineering branch and coordinates required GitHub checks. Normal merge/main publication remains conditional on meaningful required checks and permissions; local owner proof is not GitHub attestation. No simulator, recovery/efficacy collection, new learned-policy inference or robot command is authorised by this CI milestone. Held-out geometry sealed, illumination paused.
+
+## Preserved integration history
+
 # Project handoff: arrival component comparison v2 (development)
 
 Updated 2026-10-10 after the fixed offline CUDA numerical diagnostic.
