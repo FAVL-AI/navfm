@@ -1,10 +1,22 @@
 # Project handoff: arrival component comparison v2 (development)
 
-Updated 2026-10-10 after the bounded initialization/history diagnostic.
+Updated 2026-10-10 after the first actual learned-policy replay validation attempt.
 Start from the current milestone below; prior stage 3 results
 remain audited and preserved. Verify statements against files; files win.
 
-## Current milestone: initialization/history diagnostic
+## Current milestone: first learned-policy validation reference HALTED
+
+First-pair executable freeze `d74927f7f2e88dd75e20f13646dc22f8e05c5671` is preserved. Only `A-s_bend_run_0000-R2_recover-r1-reference` ran: 114 render calls, 42 captures and seven scripted pre-kidnap CUDA learned-policy invocations. The frozen acquisition guard rejected an event with null active-call index alongside two boundary-call events. Saved RGB matches the last boundary event; stale pixels are not proved. Structured FAIL correctly halted despite process exit 0, without timeout/retry. Replay and all efficacy runs are NOT RUN; learned-policy handover remains unvalidated.
+
+- Result/external hashes: `docs/REPLAY_RECOVERY_VALIDATION_V1_RESULT.md`.
+- Frozen actual state/history/reset contract: `docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` and `configs/eval/replay_recovery_validation_v1.json`.
+- One bounded executable review: `gates/redteam/replay-recovery-contracts-review-20261010.md`.
+- External evidence: `/home/favl/navfm-runtime-evidence/replay-recovery-validation-v1-20261010-01`.
+- Checks: 59 focused PASS; final full verify ruff/mypy89 PASS and exactly three preserved environment-identity failures.
+
+No retry, repaired probe or further launch is authorised by this result. A future separately reviewed event-window contract/new freeze is the next decision; preserve this failed attempt and require initialization/actual learned-state gates before efficacy. The prior two-case proxy diagnostic below remains separate evidence.
+
+## Preserved milestone: initialization/history diagnostic
 
 Version 2 freeze `0393d46e814c80f2cc53ff9570af2c4015da2e7a` completed all eight fixed technical processes without retries, timeouts or provenance drift. **VERIFIED ON TWO SCRIPTED TECHNICAL CASES:** fresh-process command replay passes physical/controller, live six-buffer history and cross-repetition guards. Direct root reset fails; direct full observable-state restore passes physical/image bounds but fails temporal/index history equivalence. The recommendation requires fixed bootstrap, three eligible live frames, identical conditioning and 36-command replay with its own live history. No learned model or learned-policy handover was tested.
 
@@ -27,7 +39,7 @@ remain external.
 
 Commit `7b7590061a338848fca9f3c1f54cca2cb831647a` was published on the engineering branch. Draft PR submission is handled separately; no merge is authorised. The durable authored description is `docs/ENGINEERING_DRAFT_PR.md`.
 
-`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires metadata attestation of new experimental starts, intended-start initialization matching and actual learned-policy handover validation before efficacy. The timestamped post-kidnap boundary, actual arm-state/reset schema and finite first-pair launch contract are now implemented in separate files and undergoing one bounded executable review. Only after named freeze may the first R2 reference/replay validation pair run, then it must stop even if matched. No model/probe/recovery invocation has occurred at this checkpoint. Metadata-only comparison of 283 numeric tuple records establishes new experimental starts in that inventory, not research novelty. Full cross-repeat/cross-arm gates and efficacy remain blocked; do not resume the halted pilot automatically.
+`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires metadata attestation of new experimental starts, intended-start initialization matching and actual learned-policy handover validation before efficacy. The timestamped post-kidnap boundary, actual arm-state/reset schema and finite first-pair launch contract were reviewed and frozen. The first reference failed integrity and halted, as recorded above; replay and efficacy did not run. Metadata-only comparison of 283 numeric tuple records establishes new experimental starts in that inventory, not research novelty. Full cross-repeat/cross-arm gates and efficacy remain blocked; do not resume the halted pilot automatically.
 
 ## Preserved milestone: prospective recovery pilot
 
