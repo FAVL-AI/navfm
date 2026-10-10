@@ -6,11 +6,11 @@ remain audited and preserved. Verify statements against files; files win.
 
 ## Current milestone: PR 2 integration CI repairs; merge BLOCKED
 
-Normal PR 2 merge/main publication is authorised after meaningful checks. This milestone runs no experiment. All five original CI checks failed; genuine fixes fetch full history, repin all 2,791 nodes without losing any prior node/owner, and route the Torch-dependent constructor test to its existing owner. Full admitted-upstream verification retains three meaningful V8 failures. Clean no-Torch 3.11 reproduction confirms exact hermetic membership but ownership still rejects missing archived-manifest evidence; hosted CPU jobs also lack the frozen GPU/hold-stack resource. Python 3.10 has two real UTC alias compatibility errors, authorised for an isolated integration candidate preserving original freeze bytes.
+Normal PR 2 merge/main publication is authorised after meaningful checks. This milestone runs no experiment. All five original CI checks failed; genuine fixes fetch full history, repin all 2,791 nodes without losing any prior node/owner, and route the Torch-dependent constructor test to its existing owner. Full admitted-upstream verification retains three meaningful V8 failures. Clean no-Torch 3.11 reproduction confirms exact hermetic membership but ownership still rejects missing archived-manifest evidence; hosted CPU jobs also lack the frozen GPU/hold-stack resource. Python 3.10 UTC aliases are fixed in isolated integration candidate `680a631c2d5b5c97930d1362aa5969680fb00393`; all three supported Python typechecks pass, and candidate full verification still has the same three V8 failures. Candidate source identity changes are explicit; original engineering worktree `aa51007` and experiment freeze bytes/assets remain preserved. No experimental launch occurs on the changed candidate.
 
 - Diagnosis/commands/counts/evidence: `docs/INTEGRATION_PR2_CI_REPORT.md`.
 - Current durable PR text: `docs/ENGINEERING_DRAFT_PR.md`.
-- Root handles publication/remote check review; no merge or main push with unvalidated meaningful checks, no bypass/force/history rewrite.
+- Publication/remote check review must precede integration; no merge or main push with unvalidated meaningful checks, no bypass/force/history rewrite.
 - Other worktrees and all prior experimental evidence are preserved. Held-out geometry sealed, illumination paused, robot actuation unauthorised.
 
 ## Preserved milestone: saved-input numerical mismatch reproduced offline

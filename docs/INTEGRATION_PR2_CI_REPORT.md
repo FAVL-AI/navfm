@@ -18,7 +18,7 @@ All three checkout steps now fetch full history (`fetch-depth: 0`) because tests
 
 The constructor-validation test is marked Torch because construction imports Torch/torchvision before validating its arguments. Its assertions are unchanged, and its existing resource owner executes it. No host/evidence test is exempted, no population gap added, no check disabled and no evidence fabricated.
 
-Python 3.10 compatibility repair is authorised for a separate integration worktree/candidate: replace the two UTC aliases with equivalent `datetime.timezone.utc`. The original engineering freeze bytes/commits remain preserved. That candidate will have a new software source identity; no prior experiment is reclassified or relaunched. This first CI repair checkpoint does not claim the source fix has already been validated.
+Python 3.10 compatibility is repaired in isolated candidate commit `680a631c2d5b5c97930d1362aa5969680fb00393`: two `_dt.UTC` uses become equivalent `_dt.timezone.utc` in execution_environment.py and execution_manifest_v2.py. The candidate branch is `agent/pr2-ci-integration` at `/home/favl/projects/navfm-pr2-ci-integration`. Original engineering checkpoint `aa51007db39db67a9d35e970a9c576f128909d7b` remains clean in its separate worktree, and its historical freeze source/assets still verify. Candidate software source identity differs; old freeze launch guards are not asserted valid on this changed candidate. No previous experiment is reclassified or relaunched.
 
 ## Local verification and remaining blockers
 
@@ -26,6 +26,9 @@ Python 3.10 compatibility repair is authorised for a separate integration worktr
 - Documented `PATH=.venv/bin:$PATH NAVFM_UPSTREAM=/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream make verify`: ruff/mypy89 PASS, exactly three existing V8 failures below.
 - Clean no-Torch Python 3.11 hermetic CI selector: 2,710 PASS, three FAIL, two skips, zero collection errors, exactly 2,715 executed node IDs. Membership now matches; the ownership gate still correctly FAILS the unexpected archived-manifest skip. The other skip is the already-declared historical open gap.
 - Admitted-upstream resource selector (`torch or upstream or plot`): all 75 union nodes PASS, zero collection errors.
+- Candidate typecheck: all 89 source files PASS on actual Python 3.10.12, 3.11.15 and 3.12.13. No target version is overridden.
+- Candidate Python 3.10 no-Torch hermetic suite: 2,710 PASS, the same three V8 FAIL, two skips and zero collection errors. No additional UTC-script runtime failure appeared. Timestamp/manifest controls (48 tests) also PASS on 3.11 and 3.12.
+- Candidate documented admitted-upstream `make verify`: ruff/mypy89 PASS, exactly the same three V8 failures. No source identity pin or readiness gate was altered to accept the changed candidate.
 - Manifest-only owner-completeness PASS is ownership coverage, not successful execution or environmental attestation.
 
 Meaningful V8 failures remain:
@@ -51,3 +54,19 @@ New hosted outcomes are pending publication; none are called green. Merge/main p
 | `/home/favl/navfm-runtime-evidence/pr2-integration-make-verify-20261010.log` | `0b21e8bc2d19c5ed9e079cab1cc37590283324a2ab8bf16be796d6bfe794952b` |
 | `/home/favl/navfm-runtime-evidence/pr2-ci-hermetic-20261010-02/population.json` | `3c4cae1f0f3618c3d25525b283d110030f49a68145115d32f1a1c30f52b21153` |
 | `/home/favl/navfm-runtime-evidence/pr2-integration-resource-population-20261010.json` | `90c15941846a02e8d8fb1144782bd9bcd19f3570e28200aaa6e8fc8cfcff9522` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/type310.log` | `14c86ee194cc9406b4f38866ce2eb1ba7e54c55437faf1ccc89f0195c485674d` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/type311.log` | `14c86ee194cc9406b4f38866ce2eb1ba7e54c55437faf1ccc89f0195c485674d` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/type312.log` | `14c86ee194cc9406b4f38866ce2eb1ba7e54c55437faf1ccc89f0195c485674d` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/target311.log` | `6dd786dc72d45e02d32f9a2c96fbee7f0ea69261b610e86a41d1a671dd0186ef` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/target312.log` | `6dd786dc72d45e02d32f9a2c96fbee7f0ea69261b610e86a41d1a671dd0186ef` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/population310.json` | `3c4cae1f0f3618c3d25525b283d110030f49a68145115d32f1a1c30f52b21153` |
+| `/home/favl/navfm-runtime-evidence/pr2-ci-compatibility-20261010/make-verify.log` | `2daefb9a19c7bdee5036eaa5b5b4066f5611fe792b0497c3d35470b38818c582` |
+
+## Explicit software source identity transition
+
+The historical source is retained in the original engineering worktree and Git history; the equivalent timestamp repair has new SHA256 identities. Runtime assets and scientific experiment sources other than these two integration files are unchanged.
+
+| File | Original aa51007 SHA256 | Candidate 680a631 SHA256 |
+|---|---|---|
+| `src/navfm/execution_environment.py` | `6ef80e460625c47fffd8c47035fa85f59f4f045dcfe6b304beff1667e643633d` | `44d3d6c596b36a878bd61141aad6cf79d15e95344103cae0c26cd370ed5bf148` |
+| `src/navfm/execution_manifest_v2.py` | `d02238a1e451d4f33559874c2192f5c9663f8baae2b0586c9db77b2e9696717e` | `f4dc972621d17d2dff2fbec6b9718448b0fd41f23fc92ff1fadb97589b6ecde9` |
