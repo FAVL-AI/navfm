@@ -790,10 +790,17 @@ def main():
                     start_xy, start_yaw, teacher_points = perturbed_start(points, perturbation)
                 manifest["start_perturbation"] = perturbation.to_dict()
                 manifest["start_pose"] = [float(start_xy[0]), float(start_xy[1]), float(start_yaw)]
+                settling_contact_start = len(contacts)
                 robot.teleport(start_xy, start_yaw)
                 drive([0.0, 0.0, 0.0])
                 for _ in range(8):
                     step()
+                settled_xy, settled_yaw = robot.pose()
+                manifest["start_settling"] = {
+                    "steps": 8,
+                    "contacts": list(contacts[settling_contact_start:]),
+                    "pose": [*settled_xy.tolist(), settled_yaw],
+                }
                 Image.fromarray(robot.rgb()).save(episode / "start.png")
                 requested = {
                     "sim": dataclasses.replace(cfg, seed=route["seed"]).to_dict(),
@@ -950,6 +957,27 @@ def main():
                             "start_lost": bool(getattr(policy.state, "lost", False)),
                         }
                     history = [robot.rgb().copy() for _ in range(6)]
+                    manifest["initial_history_sha256"] = [
+                        hashlib.sha256(im.tobytes()).hexdigest() for im in history
+                    ]
+                    if args.variant:
+                        manifest["initial_policy_state"] = {
+                            k: getattr(policy.state, k, None)
+                            for k in (
+                                "closest_node",
+                                "lost",
+                                "_far",
+                                "_pending",
+                                "attempts",
+                                "_scan",
+                            )
+                        }
+                        manifest["initial_policy_counters"] = {
+                            "stop_count": policy.stop_count,
+                            "stopped": policy.stopped,
+                            "verified_count": policy.verified_count,
+                            "chain_reached_decisions": policy.chain_reached_decisions,
+                        }
                 inference = []
                 stop_frame = None
                 abstain_frame = abstain_reason = None
@@ -1040,6 +1068,8 @@ def main():
                                 time.perf_counter() - frame_available_wall
                             ) * 1000
                             prediction["frame"] = i
+                            prediction["predecision_pose"] = pose_before
+                            prediction["predecision_sim_time"] = before
                             prediction["sensor_time"] = float(
                                 cam.get_current_frame()["rendering_time"]
                             )
