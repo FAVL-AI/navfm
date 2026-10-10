@@ -23,6 +23,12 @@ No force push, history rewrite or merge. Held-out geometry stays sealed,
 illumination paused, and real robot actuation unauthorised. Runtime artifacts
 remain external.
 
+## Next proposal and publication
+
+Commit `7b7590061a338848fca9f3c1f54cca2cb831647a` was published on the engineering branch. Draft PR submission is handled separately; no merge is authorised. The durable authored description is `docs/ENGINEERING_DRAFT_PR.md`.
+
+`docs/PROSPECTIVE_R2_REPLAY_PROTOCOL_V1.md` is a preparation-only draft for four new proposed recovery pairs. It requires novelty attestation, intended-start initialization matching and actual learned-policy handover validation before efficacy. Exact post-kidnap history/state schemas and a finite executable launch manifest remain freeze blockers. No new probe/model/recovery run occurred. Do not execute this proposal or resume the halted pilot automatically.
+
 ## Preserved milestone: prospective recovery pilot
 
 The narrow R2 versus B1x prospective protocol was independently reviewed and
