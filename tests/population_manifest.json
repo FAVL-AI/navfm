@@ -3356,7 +3356,22 @@
     ],
     "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[-inf]": [
       "parametrize"
-    ]
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[wrong_member]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[altered_source]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_all_loaded_rejections_preserved": [],
+    "tests/test_targeted_diagnostics_v4.py::test_initialization_only_preserves_predicates_before_guard": [],
+    "tests/test_targeted_diagnostics_v4.py::test_partial_initialization_state_is_saved_before_rejection": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3430,6 +3445,12 @@
     "prior_nodes": 2871,
     "new_hermetic_nodes": 12,
     "total_nodes": 2883,
+    "all_prior_retained": true
+  },
+  "targeted_diagnostics_v4_update": {
+    "prior_nodes": 2883,
+    "new_hermetic_nodes": 7,
+    "total_nodes": 2890,
     "all_prior_retained": true
   }
 }
