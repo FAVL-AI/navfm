@@ -60,12 +60,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3009,
-      "sha256": "af6412561afe3801d5ae13fcf48d6c28e2f198b3f38c94ebb26fa8c0091cc9ff"
+      "count": 3017,
+      "sha256": "90fbf15dcc1f8cf2e5fc8bf70f99876fbc6034a2f392eb43c6b445173ef52083"
     },
     "hermetic": {
-      "count": 2806,
-      "sha256": "0f2d9e9ebc1421204f80beee3ce5e6d465a07cf4a0eed92fba11d512d1d279b5"
+      "count": 2814,
+      "sha256": "6ebd88bf9661b299329344b416c7f634f7bea86184a77d8e284cdb211dad2a9a"
     },
     "resource_union": {
       "count": 203,
@@ -3561,7 +3561,15 @@
     "tests/test_prospective_data_v1.py::test_raw_prediction_retained_without_changing_metric_inputs": [],
     "tests/test_prospective_data_v1.py::test_native_reference_time_and_held_interval": [],
     "tests/test_prospective_data_v1.py::test_float32_offset_and_reverse_qualification_coverage": [],
-    "tests/test_prospective_data_v1.py::test_failed_camera_candidate_fields_are_jsonsafe_before_guard": []
+    "tests/test_prospective_data_v1.py::test_failed_camera_candidate_fields_are_jsonsafe_before_guard": [],
+    "tests/test_prospective_finalization_v2.py::test_capsule_is_atomic_before_nonreturning_context_exit": [],
+    "tests/test_prospective_finalization_v2.py::test_snapshot_failure_cannot_admit_completed_frames": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[1-False-True]": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-True-True]": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-False-False]": [],
+    "tests/test_prospective_finalization_v2.py::test_original_source_transform_only_inserts_snapshot_call": [],
+    "tests/test_prospective_finalization_v2.py::test_capsule_wrong_source_or_unverified_exit_zero_rejected": [],
+    "tests/test_prospective_finalization_v2.py::test_explicit_post_shutdown_failure_never_admits_exit_zero": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3711,5 +3719,11 @@
     "added": 7,
     "total": 3009,
     "collection_scoring": "NOT_RUN"
+  },
+  "prospective_finalization_v2_update": {
+    "prior_retained": 3009,
+    "added": 8,
+    "total": 3017,
+    "qualification": "NOT_RUN"
   }
 }
