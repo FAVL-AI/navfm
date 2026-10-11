@@ -60,12 +60,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2975,
-      "sha256": "9c470573df45b96af95fd69de7ed533459ee15b399b641ed479b258218bbe6f7"
+      "count": 2980,
+      "sha256": "731d13075738b1bf97434ecbafc86610566f4b6e8f5d80f4480f45e54bcbf0e1"
     },
     "hermetic": {
-      "count": 2777,
-      "sha256": "cb0ccc96ba896698e734a8b399050e6356b379cfe15236ed14092215d9888754"
+      "count": 2782,
+      "sha256": "74bdc2201518841d3fb9c924d9cff3eec4c6b5d268849d948cad4dfbd99b0739"
     },
     "resource_union": {
       "count": 198,
@@ -3517,7 +3517,12 @@
     ],
     "tests/test_native_adaptation_smoke_v1.py::test_independent_second_smoke_uses_shared_integrity_not_model_outcome[PASS]": [
       "parametrize"
-    ]
+    ],
+    "tests/test_native_dependency_closure_v2.py::test_duplicate_module_file_hash_once": [],
+    "tests/test_native_dependency_closure_v2.py::test_exact_generated_remote_identity_and_tamper": [],
+    "tests/test_native_dependency_closure_v2.py::test_foreign_origin_and_tamper_rejected": [],
+    "tests/test_native_dependency_closure_v2.py::test_preflight_contract_binds_runtime_and_data": [],
+    "tests/test_native_dependency_closure_v2.py::test_unique_package_traversal_and_fresh_rehash": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3636,5 +3641,12 @@
     "all_prior_retained": true,
     "focused_passed": 16,
     "execution_scope": "CPU controls only; no model smoke yet"
+  },
+  "native_dependency_v2_update": {
+    "prior_total": 2975,
+    "added_nodes": 5,
+    "total": 2980,
+    "all_prior_retained": true,
+    "focused_tests": "5 CPU controls passed; no whole-population execution claim"
   }
 }
