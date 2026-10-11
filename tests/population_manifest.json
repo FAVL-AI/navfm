@@ -59,12 +59,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2812,
-      "sha256": "f4e444887bd8383192d2edd2c55a47a5b814afd4d0fc8d51bbaa4c13cdbeb3f2"
+      "count": 2815,
+      "sha256": "ac5108fdc543ce6190c406a31b5cf38ef623e7c90b2ac65fc915396b27245816"
     },
     "hermetic": {
-      "count": 2687,
-      "sha256": "4af0459ee1048bf15d1186457c55391c3e654b0b672d157860cd85bf11bc2f9d"
+      "count": 2690,
+      "sha256": "1d3b095bb5e3ad53a1ce3bf30f59c66fe9d4c33b71fc1d206fcf924460131f9a"
     },
     "resource_union": {
       "count": 125,
@@ -3203,7 +3203,10 @@
     "tests/test_yaw_rate_tracker.py::test_feedback_recovers_weak_plant[1.0]": [],
     "tests/test_yaw_rate_tracker.py::test_negative_control_open_loop_does_not_recover": [],
     "tests/test_yaw_rate_tracker.py::test_rejects_bad_inputs": [],
-    "tests/test_yaw_rate_tracker.py::test_zero_command_clears_integral_and_output_is_bounded": []
+    "tests/test_yaw_rate_tracker.py::test_zero_command_clears_integral_and_output_is_bounded": [],
+    "tests/test_resource_ci.py::test_sole_maintainer_requires_explicit_mode_and_retains_branch_guard": [],
+    "tests/test_resource_ci.py::test_approval_mode_rejects_unknown_and_misrepresented_review": [],
+    "tests/test_resource_ci.py::test_security_environment_reads_explicit_mode_and_reports_reduced_assurance": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3246,5 +3249,13 @@
     "new_node_count": 21,
     "resource_owner": "resource-validation",
     "scope": "Explicit measured-host/archive/alternate ownership; orchestration fixtures synthetic and REAL injection refused; archival V8 scope separated from live candidate refusal."
+  },
+  "sole_maintainer_proposal_update": {
+    "date": "2026-10-11",
+    "previous_nodes_preserved": 2812,
+    "added_nodes": 3,
+    "total_count": 2815,
+    "owner": "hermetic ordinary and resource-validation legs",
+    "status": "Approved amendment; focused validation only, no complete owner execution claim."
   }
 }

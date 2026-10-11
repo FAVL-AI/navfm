@@ -310,6 +310,7 @@ jobs:
           CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          NAVFM_RESOURCE_APPROVAL_MODE: ${{ vars.NAVFM_RESOURCE_APPROVAL_MODE }}
         run: |
           test "$APPROVED" = "$CANDIDATE"
           python scripts/resource_ci.py security

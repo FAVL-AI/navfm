@@ -106,3 +106,38 @@ def test_matching_head_with_different_tracked_bytes_is_refused() -> None:
     item["source_identity"]["tracked_sha256"] = "different"
     with pytest.raises(ValueError, match="actual tracked source bytes"):
         resource.validate_evidence(item, "a" * 40, "b" * 64)
+
+
+def test_sole_maintainer_requires_explicit_mode_and_retains_branch_guard() -> None:
+    environment = {"protection_rules": [], "deployment_branch_policy": {"custom_branch_policies": True}}
+    with pytest.raises(ValueError, match="independent approval"):
+        resource.validate_security_environment(environment)
+    resource.validate_security_environment(environment, "sole-maintainer")
+    environment["deployment_branch_policy"] = None
+    with pytest.raises(ValueError, match="branch restrictions"):
+        resource.validate_security_environment(environment, "sole-maintainer")
+
+
+def test_approval_mode_rejects_unknown_and_misrepresented_review() -> None:
+    environment = {"protection_rules": [], "deployment_branch_policy": {"custom_branch_policies": True}}
+    for mode in ("", "self-review", "SOLE-MAINTAINER"):
+        with pytest.raises(ValueError, match="unknown"):
+            resource.validate_security_environment(environment, mode)
+    environment["protection_rules"] = [{"type": "required_reviewers", "reviewers": [], "prevent_self_review": False}]
+    with pytest.raises(ValueError, match="must not represent"):
+        resource.validate_security_environment(environment, "sole-maintainer")
+
+
+def test_security_environment_reads_explicit_mode_and_reports_reduced_assurance(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    import json
+    monkeypatch.setenv("GITHUB_REPOSITORY", "FAVL-AI/navfm")
+    monkeypatch.setenv("NAVFM_RESOURCE_APPROVAL_MODE", "sole-maintainer")
+    environment = {"protection_rules": [], "deployment_branch_policy": {"custom_branch_policies": True}}
+    monkeypatch.setattr(resource.subprocess, "check_output", lambda *a, **kw: json.dumps(environment).encode())
+    resource.security_environment()
+    assert "not independent human review" in capsys.readouterr().out
+    monkeypatch.delenv("NAVFM_RESOURCE_APPROVAL_MODE")
+    with pytest.raises(ValueError, match="independent approval"):
+        resource.security_environment()

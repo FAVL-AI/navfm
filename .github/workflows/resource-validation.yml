@@ -14,10 +14,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Verify configured independent approval and branch restrictions
+      - name: Verify declared approval mode and branch restrictions
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          NAVFM_RESOURCE_APPROVAL_MODE: ${{ vars.NAVFM_RESOURCE_APPROVAL_MODE }}
         run: python scripts/resource_ci.py security
       - name: Reject absent or different workstation security approval
         env:

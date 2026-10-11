@@ -52,10 +52,16 @@ def validate_evidence(evidence: dict, expected_head: str, manifest_sha: str) -> 
         raise ValueError("; ".join(problems))
 
 
-def validate_security_environment(environment: dict) -> None:
+def validate_security_environment(environment: dict, approval_mode: str = "independent") -> None:
     reviews = [r for r in environment.get("protection_rules", []) if r.get("type") == "required_reviewers"]
-    if len(reviews) != 1 or not reviews[0].get("reviewers") or not reviews[0].get("prevent_self_review"):
-        raise ValueError("workstation environment lacks required independent approval")
+    if approval_mode == "independent":
+        if len(reviews) != 1 or not reviews[0].get("reviewers") or not reviews[0].get("prevent_self_review"):
+            raise ValueError("workstation environment lacks required independent approval")
+    elif approval_mode == "sole-maintainer":
+        if reviews:
+            raise ValueError("sole-maintainer mode must not represent a reviewer rule as independent approval")
+    else:
+        raise ValueError("unknown workstation approval mode")
     policy = environment.get("deployment_branch_policy")
     if not policy or not (policy.get("protected_branches") or policy.get("custom_branch_policies")):
         raise ValueError("workstation environment lacks branch restrictions")
@@ -65,7 +71,11 @@ def security_environment() -> None:
     repository = os.environ["GITHUB_REPOSITORY"]
     environment = json.loads(subprocess.check_output([
         "gh", "api", f"repos/{repository}/environments/navfm-resource-validation"]))
-    validate_security_environment(environment)
+    approval_mode = os.environ.get("NAVFM_RESOURCE_APPROVAL_MODE") or "independent"
+    validate_security_environment(environment, approval_mode)
+    print(f"workstation approval mode: {approval_mode}")
+    if approval_mode == "sole-maintainer":
+        print("Reduced assurance: maintainer exact-SHA approval is not independent human review.")
 
 
 def github_evidence(expected_head: str) -> None:
