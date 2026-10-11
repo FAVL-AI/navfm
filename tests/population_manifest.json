@@ -60,24 +60,24 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2980,
-      "sha256": "731d13075738b1bf97434ecbafc86610566f4b6e8f5d80f4480f45e54bcbf0e1"
+      "count": 2985,
+      "sha256": "7073803dd3e6fbc702d3e26d5f82f9bf024283fb128298df8d4185f383922772"
     },
     "hermetic": {
       "count": 2782,
       "sha256": "74bdc2201518841d3fb9c924d9cff3eec4c6b5d268849d948cad4dfbd99b0739"
     },
     "resource_union": {
-      "count": 198,
-      "sha256": "7e9c266e0ab2db4b507b16e4599ce8de57d600b0168e19024f078dbc80dfb480"
+      "count": 203,
+      "sha256": "02b43e53b3af5a03ba71c5e31e66d0f6a6c533c3a6ad3e25ce8cdcef5c159157"
     },
     "upstream": {
       "count": 43,
       "sha256": "5fcde8eca510886de122c5afee080b5fbc3bf5f2afa5ef2ee7bb483bcf498736"
     },
     "torch": {
-      "count": 63,
-      "sha256": "f1975ee13504f639d9cb53df019d54f5f05fe0b07b353af7022a24f0616677df"
+      "count": 68,
+      "sha256": "0daaff4e48b8873ab00ff54faca5f2b07e788ecafbd3a7068a2d0fef8a0748e7"
     },
     "plot": {
       "count": 1,
@@ -3522,7 +3522,22 @@
     "tests/test_native_dependency_closure_v2.py::test_exact_generated_remote_identity_and_tamper": [],
     "tests/test_native_dependency_closure_v2.py::test_foreign_origin_and_tamper_rejected": [],
     "tests/test_native_dependency_closure_v2.py::test_preflight_contract_binds_runtime_and_data": [],
-    "tests/test_native_dependency_closure_v2.py::test_unique_package_traversal_and_fresh_rehash": []
+    "tests/test_native_dependency_closure_v2.py::test_unique_package_traversal_and_fresh_rehash": [],
+    "tests/test_native_ema_integration_v3.py::test_native_shadow_counter_and_serialized_next_update": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_only_two_lookup_nodes_change": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_source_hash_tamper_rejected": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_loaded_api_code_tamper_rejected": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_loaded_native_math_tamper_rejected": [
+      "torch"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3648,5 +3663,11 @@
     "total": 2980,
     "all_prior_retained": true,
     "focused_tests": "5 CPU controls passed; no whole-population execution claim"
+  },
+  "native_ema_v3_update": {
+    "prior_population_retained": 2980,
+    "added_nodes": 5,
+    "total": 2985,
+    "validation": "Five focused controls pass; full CPU closure and actual native EMA control PASS. No GPU outcome yet."
   }
 }
