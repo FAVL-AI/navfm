@@ -1,0 +1,46 @@
+{
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream",
+  "scope": "REVIEWED SOURCE FREEZE runtime NOTRUN grounded then floating gravity-disabled airborne; 960ticks and120seconds each; no navigation admission",
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+      "sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+      "size": 11625
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/xform_prim.py",
+      "sha256": "df60f2fa629a5876dca529b46609f56c743612ea6f018fd2c4c2cafdbd5f8fd2"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "65901a45bd1852c0e126581ed2bb75105b6e221128e24f2202d138c822b119a5"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/extscache/omni.physx-107.3.26+107.3.3.lx64.r.cp311.u353/omni/physx/bindings/_physx.pyi",
+      "sha256": "ff13abb83480dcc707ac2ad60062306aef7a33f885d32ed4c8ee6dfea2008e79"
+    }
+  ],
+  "upstream_files": [],
+  "diagnostic_source_sha256": {
+    "scripts/actuator_contact_diagnostic_v1.py": "1c942ef7c3f80650dafe9ddb986a7c8f420355aa6ded595e2afcb86922b857b7",
+    "scripts/prepare_actuator_contact_diagnostic_v1.py": "8c0293bb1186e8d0e2da8d97145d7f96bfca483d96906ddbdb6fa4c275178650",
+    "scripts/run_actuator_contact_diagnostic_v1.py": "41ecf2ce02e8b02ff04deb60748ee368fcd6541a7353c0e18412847022e30e74",
+    "scripts/controller_telemetry_v1.py": "ec7b2d8f74e326bb65d8ab1472321979f28326468b8e5defef2d05c6020338e8",
+    "scripts/imu_coverage_base_v2.py": "182f216f941ab22b13b4ae8c135b4871a16013372760b62244e8f8874cc6ba9f",
+    "scripts/qualify_imu_coverage_v2.py": "cdd8b0419f2e95eb99570b621dbb0ba953d9b6c681117110c03e1bf03b5ca976",
+    "scripts/imu_lifecycle_v6.py": "041ae50294bb2fd889bc991af7fb4f502e7f1d17cbcf814a0c36432818fa1823",
+    "scripts/imu_lifecycle_v3.py": "7919fb5a8348689d62bba74a141578b3f56aa0f5761d527f6166b350d10bdf0d",
+    "scripts/imu_lifecycle_v2.py": "de3a4c251785469e52d04a608412c08710c5eea72bec2dcc0e19c285152e7d8e",
+    "scripts/imu_controller_boundary_v1.py": "abeff97638cb1c91863a716b42951db6dc05b34590f37bdf2aed62673624d57e",
+    "scripts/qualify_articulated_control.py": "baba268c9685f23996f1898e60b38deb1286a517c7f63289be154e30270fe341",
+    "src/navfm/isaac/robot.py": "7fb07f94f4dd817ba5fdec1caf893fcc20b7e60d6d573392e0d96867d402fb7f",
+    "src/navfm/collection/yaw_rate_tracker.py": "a06373e7d5bf3f91b31032cfd2648bb927dbca7e5ba2b78a648d9000475f6378",
+    "scripts/matched_navigation_contracts_v2.py": "df7c071d89577b481c18d8d0d063983591c7c6104decf393f75e3b16407d2cfe"
+  }
+}

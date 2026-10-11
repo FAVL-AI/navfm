@@ -3466,7 +3466,13 @@
     "tests/test_solver_position_candidate_v1.py::test_single_property_write_and_clamp_rejection": [],
     "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.play()]": [],
     "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.initialize_physics()\\nsim.initialize_physics()]": [],
-    "tests/test_solver_position_candidate_v1.py::test_helper_import_bound_inside_separate_setup_exec": []
+    "tests/test_solver_position_candidate_v1.py::test_helper_import_bound_inside_separate_setup_exec": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_fixed_schedule": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_actual_setup_namespace": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_nested_pose_clearance": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_contact_empty_and_actual_vector_impulse": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_transform_compiles_actual_source": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_unapplied_gravity_authored_explicitly": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3570,6 +3576,12 @@
     "prior_nodes": 2903,
     "new_hermetic_nodes": 16,
     "total_nodes": 2919,
+    "all_prior_retained": true
+  },
+  "actuator_contact_diagnostic_v1_update": {
+    "prior_nodes": 2953,
+    "new_hermetic_nodes": 6,
+    "total_nodes": 2959,
     "all_prior_retained": true
   }
 }
