@@ -60,12 +60,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2985,
-      "sha256": "7073803dd3e6fbc702d3e26d5f82f9bf024283fb128298df8d4185f383922772"
+      "count": 2992,
+      "sha256": "a42b52e3aa689966c0bba12a02be147ac64429f6b0beb03be513a04ca658b838"
     },
     "hermetic": {
-      "count": 2782,
-      "sha256": "74bdc2201518841d3fb9c924d9cff3eec4c6b5d268849d948cad4dfbd99b0739"
+      "count": 2789,
+      "sha256": "6976b0426432043bd87dfa90620b24d5b62f74ca802f1f2cd5106a0482e5c7f4"
     },
     "resource_union": {
       "count": 203,
@@ -3537,7 +3537,14 @@
     ],
     "tests/test_native_ema_integration_v3.py::test_loaded_native_math_tamper_rejected": [
       "torch"
-    ]
+    ],
+    "tests/test_native_multiseed_v1.py::test_ceiling_no_extension_and_exact_run_population": [],
+    "tests/test_native_multiseed_v1.py::test_catalog_full_anchors_and_negative_partition_fence": [],
+    "tests/test_native_multiseed_v1.py::test_sampler_cycles_and_resume_identity_without_native_rng": [],
+    "tests/test_native_multiseed_v1.py::test_selection_uses_development_not_train_latest_tie": [],
+    "tests/test_native_multiseed_v1.py::test_failed_reservation_consumed_and_shared_failure_blocks": [],
+    "tests/test_native_multiseed_v1.py::test_checkpoint_cuda_shadow_continuation_and_device_rejection": [],
+    "tests/test_native_multiseed_v1.py::test_completed_transaction_durable_before_checkpoint_failure": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3669,5 +3676,11 @@
     "added_nodes": 5,
     "total": 2985,
     "validation": "Five focused controls pass; full CPU closure and actual native EMA control PASS. No GPU outcome yet."
+  },
+  "native_multiseed_v1_update": {
+    "prior_retained": 2985,
+    "added": 7,
+    "total": 2992,
+    "execution": "NOT_RUN"
   }
 }
