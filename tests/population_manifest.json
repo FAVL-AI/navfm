@@ -3579,7 +3579,16 @@
     "tests/test_prospective_collection_v1.py::test_capsule_wrong_source_or_unverified_exit_zero_rejected": [],
     "tests/test_prospective_collection_v1.py::test_explicit_post_shutdown_failure_never_admits_exit_zero": [],
     "tests/test_prospective_collection_v1.py::test_collection_population_tamper_rejected": [],
-    "tests/test_prospective_collection_v1.py::test_wrong_qualification_identity_rejected": []
+    "tests/test_prospective_collection_v1.py::test_wrong_qualification_identity_rejected": [],
+    "tests/test_prospective_timing_v1.py::test_actual_transform_reverses_to_unchanged_capture": [],
+    "tests/test_prospective_timing_v1.py::test_native_call_executes_once_and_failure_event_survives": [],
+    "tests/test_prospective_timing_v1.py::test_shutdown_nonreturn_retains_close_entry": [],
+    "tests/test_prospective_timing_v1.py::test_append_order_and_clock_anchors": [],
+    "tests/test_prospective_timing_v1.py::test_source_drift_rejected": [],
+    "tests/test_prospective_timing_v1.py::test_launcher_is_known_only_and_never_admits_dataset": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[LAUNCH_RETURN]": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[POLL_RETURN]": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[SIGKILL_REQUEST]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3741,5 +3750,11 @@
     "added": 10,
     "total": 3027,
     "collection": "NOT_RUN"
+  },
+  "prospective_timing_v1_update": {
+    "prior_retained": 3027,
+    "added": 9,
+    "total": 3036,
+    "diagnostic": "NOT_RUN"
   }
 }
