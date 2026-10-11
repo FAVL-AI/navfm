@@ -3206,7 +3206,85 @@
     "tests/test_yaw_rate_tracker.py::test_zero_command_clears_integral_and_output_is_bounded": [],
     "tests/test_resource_ci.py::test_sole_maintainer_requires_explicit_mode_and_retains_branch_guard": [],
     "tests/test_resource_ci.py::test_approval_mode_rejects_unknown_and_misrepresented_review": [],
-    "tests/test_resource_ci.py::test_security_environment_reads_explicit_mode_and_reports_reduced_assurance": []
+    "tests/test_resource_ci.py::test_security_environment_reads_explicit_mode_and_reports_reduced_assurance": [],
+    "tests/test_development_qualification_v1.py::test_first_declared_launch": [],
+    "tests/test_development_qualification_v1.py::test_wrong_first_launch[compat-vint-adapted]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_wrong_first_launch[unknown]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_failed_previous_halts[FAIL]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_failed_previous_halts[TIMEOUT]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_incomplete_previous_halts": [],
+    "tests/test_development_qualification_v1.py::test_duplicate_launch_rejected": [],
+    "tests/test_development_qualification_v1.py::test_valid_initial_pair": [],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[pose-value0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[pose-value1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[history_length-5]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[counters-value3]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_rgb_mismatch_halts[2.5001]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_rgb_mismatch_halts[nan]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_nonfinite_pose_rejected[pose0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_nonfinite_pose_rejected[pose1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_unknown_ledger_record_rejected": [],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change2]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_freeze_mismatch": [],
+    "tests/test_development_qualification_v1.py::test_changed_chain_bytes_refused": [],
+    "tests/test_development_qualification_v1.py::test_cuda_absence_refused_before_collector": [],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[nan-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1.0-inf]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[True-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1.03-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure2]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_unadmitted_controller_blocks_pair_before_output": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3257,5 +3335,11 @@
     "total_count": 2815,
     "owner": "hermetic ordinary and resource-validation legs",
     "status": "Approved amendment; focused validation only, no complete owner execution claim."
+  },
+  "development_qualification_v1_update": {
+    "prior_nodes": 2815,
+    "new_hermetic_nodes": 32,
+    "total_nodes": 2847,
+    "all_prior_retained": true
   }
 }
