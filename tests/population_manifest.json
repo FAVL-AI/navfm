@@ -3452,7 +3452,16 @@
     "tests/test_controller_plant_diagnostic_v1.py::test_finite_balanced_schedule_and_conditioning": [],
     "tests/test_controller_plant_diagnostic_v1.py::test_transform_native_read_and_shared_conditioning": [],
     "tests/test_controller_plant_diagnostic_v1.py::test_drift_failclosed": [],
-    "tests/test_controller_plant_diagnostic_v1.py::test_reset_only_at_target_and_observed_before_after": []
+    "tests/test_controller_plant_diagnostic_v1.py::test_reset_only_at_target_and_observed_before_after": [],
+    "tests/test_controller_plant_reduction_v1.py::test_metadata_separately_validated_numeric_payload_preserved": [],
+    "tests/test_controller_plant_reduction_v1.py::test_nonfinite_numeric_not_rescued_by_metadata_separation": [],
+    "tests/test_controller_plant_reduction_v1.py::test_metadata_and_command_tampering_rejected": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_saved_nested_schema_reduces_without_reclassifying": [],
+    "tests/test_controller_plant_reduction_v1.py::test_typed_metadata_rejects_bool_integer_alias": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[clock]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[order]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[freeze]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[missing_artifact]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
