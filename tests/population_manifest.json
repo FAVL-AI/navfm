@@ -3432,7 +3432,18 @@
     "tests/test_matched_navigation_v2.py::test_native_startup_order_and_no_live_teleport": [],
     "tests/test_matched_navigation_v2.py::test_zero_command_reads_native_sensor_once_without_pi_update": [],
     "tests/test_matched_navigation_v2.py::test_first_decision_stop_does_not_receive_tail_goal_visit_or_tracking": [],
-    "tests/test_matched_navigation_v2.py::test_prior_png_gate_artifact_mutation_rejected": []
+    "tests/test_matched_navigation_v2.py::test_prior_png_gate_artifact_mutation_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_exact_and_rounding_join": [],
+    "tests/test_controller_alignment_v1.py::test_no_lag_search": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_native_retained": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_evaluation_retained": [],
+    "tests/test_controller_alignment_v1.py::test_unmatched_retained": [],
+    "tests/test_controller_alignment_v1.py::test_units_signed_integrals": [],
+    "tests/test_controller_alignment_v1.py::test_nonfinite_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_cross_boundary_acquisition_not_consumption": [],
+    "tests/test_controller_alignment_v1.py::test_wrong_frame_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_groups_and_ambiguous_evaluation": [],
+    "tests/test_controller_alignment_v1.py::test_partial_matched_window_statistics": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
