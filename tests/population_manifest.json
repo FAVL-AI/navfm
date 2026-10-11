@@ -3448,7 +3448,11 @@
     "tests/test_controller_telemetry_v1.py::test_boundary_drift_rejected": [],
     "tests/test_controller_telemetry_v1.py::test_schema_and_nonfinite_rejected": [],
     "tests/test_controller_telemetry_v1.py::test_derived_flags_not_state_mutation": [],
-    "tests/test_controller_telemetry_v1.py::test_partial_failure_artifacts_bound": []
+    "tests/test_controller_telemetry_v1.py::test_partial_failure_artifacts_bound": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_finite_balanced_schedule_and_conditioning": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_transform_native_read_and_shared_conditioning": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_drift_failclosed": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_reset_only_at_target_and_observed_before_after": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",

@@ -1,0 +1,138 @@
+{
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream",
+  "telemetry_source_sha256": {
+    "scripts/controller_telemetry_v1.py": "ec7b2d8f74e326bb65d8ab1472321979f28326468b8e5defef2d05c6020338e8",
+    "scripts/prepare_controller_telemetry_v1.py": "85387a1382eea74b8895c739d34df73e85f161ee69b266ba3691065d99404843",
+    "scripts/run_controller_telemetry_v1.py": "092f76e8be4375c691798b906c7c1108a70b617e9538a9d859c87e7bcd488174",
+    "scripts/imu_coverage_base_v2.py": "182f216f941ab22b13b4ae8c135b4871a16013372760b62244e8f8874cc6ba9f",
+    "scripts/qualify_imu_coverage_v2.py": "cdd8b0419f2e95eb99570b621dbb0ba953d9b6c681117110c03e1bf03b5ca976",
+    "src/navfm/collection/yaw_rate_tracker.py": "a06373e7d5bf3f91b31032cfd2648bb927dbca7e5ba2b78a648d9000475f6378",
+    "scripts/controller_plant_diagnostic_v1.py": "d798da2115f26b3c49f7644eac494a934df0b56579789074f9bd991a65fbdcc8",
+    "scripts/qualify_controller_plant_diagnostic_v1.py": "b53815d009735a21366678e5a69df60d9034a32899baadb7af5033b303c71df7",
+    "scripts/run_controller_plant_diagnostic_v1.py": "baa4bd6ad29a93ffdf1af1c16b3821d98d6d0fbe0f72eed4c30c92b80525c5a5"
+  },
+  "scope": "one controller/plant diagnostic; NEVER navigation admission",
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+      "sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+      "size": 11625
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/xform_prim.py",
+      "sha256": "df60f2fa629a5876dca529b46609f56c743612ea6f018fd2c4c2cafdbd5f8fd2"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "65901a45bd1852c0e126581ed2bb75105b6e221128e24f2202d138c822b119a5"
+    }
+  ],
+  "upstream_files": [],
+  "ticks": 3120,
+  "wall_cap_s": 120,
+  "trials": [
+    {
+      "id": "plant-v1-00",
+      "mode": "reset",
+      "target": [
+        0.05,
+        0.005
+      ]
+    },
+    {
+      "id": "plant-v1-01",
+      "mode": "carry",
+      "target": [
+        0.0,
+        -0.4
+      ]
+    },
+    {
+      "id": "plant-v1-02",
+      "mode": "direct",
+      "target": [
+        0.05,
+        -0.005
+      ]
+    },
+    {
+      "id": "plant-v1-03",
+      "mode": "reset",
+      "target": [
+        0.0,
+        0.4
+      ]
+    },
+    {
+      "id": "plant-v1-04",
+      "mode": "carry",
+      "target": [
+        0.05,
+        -0.005
+      ]
+    },
+    {
+      "id": "plant-v1-05",
+      "mode": "direct",
+      "target": [
+        0.0,
+        0.4
+      ]
+    },
+    {
+      "id": "plant-v1-06",
+      "mode": "reset",
+      "target": [
+        0.05,
+        -0.005
+      ]
+    },
+    {
+      "id": "plant-v1-07",
+      "mode": "carry",
+      "target": [
+        0.0,
+        0.4
+      ]
+    },
+    {
+      "id": "plant-v1-08",
+      "mode": "direct",
+      "target": [
+        0.05,
+        0.005
+      ]
+    },
+    {
+      "id": "plant-v1-09",
+      "mode": "reset",
+      "target": [
+        0.0,
+        -0.4
+      ]
+    },
+    {
+      "id": "plant-v1-10",
+      "mode": "carry",
+      "target": [
+        0.05,
+        0.005
+      ]
+    },
+    {
+      "id": "plant-v1-11",
+      "mode": "direct",
+      "target": [
+        0.0,
+        -0.4
+      ]
+    }
+  ],
+  "antecedents": "reset/carry opposite-sign.4 PIconditioning; direct extra60zero-wheelrest"
+}
