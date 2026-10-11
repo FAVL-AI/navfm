@@ -1,0 +1,56 @@
+{
+  "status": "REVIEWED_FREEZE_NOT_RUN",
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "wall_seconds": 120,
+  "physics_ticks": 1200,
+  "sensor_period": 0.008333333333333333,
+  "startup_ticks": 120,
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+      "sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+      "size": 11625
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/hospital-runtime-smoke-20261007-09/runtime_manifest.json",
+      "sha256": "ecbb93599c808aaa77a0b687367bfe757a9d5de0b1a120b3a8c9af5974ae3bf3"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/v3-static-repair-evidence.json",
+      "sha256": "07b4af58452ec19f02172a476a0d5bf4571f04ab2fdd5c2a700212d9bb83c7f1"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/tests/test_imu_sensor.py",
+      "sha256": "ced3e4040a841392b104edd06bdea10f56c389cdced1fa7c65a7686ee8fee4c8"
+    }
+  ],
+  "upstream_files": [],
+  "cleanup_must_be_absent": [
+    "/var/lib/navfm-ci",
+    "/var/lib/navfm-ci-control",
+    "/usr/local/libexec/navfm-ci"
+  ],
+  "tracking": {
+    "v_absolute": 0.05,
+    "w_absolute_floor": 0.03,
+    "w_relative": 0.25,
+    "stop_distance": 0.05,
+    "residual_v": 0.01,
+    "residual_w": 0.03
+  },
+  "continuation": "STOP after single probe even PASS; live navigation remains disabled in compatibility freeze",
+  "launch_environment": {
+    "OMNICLIENT_HUB_MODE": "disabled"
+  },
+  "precedent": "/home/favl/navfm-runtime-evidence/hospital-runtime-smoke-20261007-09/runtime_manifest.json",
+  "v3_static_evidence": "Creation/enable before restart PLAY after initial placement; or confirmed torch compiled_autograd alias."
+}

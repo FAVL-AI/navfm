@@ -3324,7 +3324,39 @@
     "tests/test_targeted_qualification_repairs_v2.py::test_lifecycle_transformation_preserves_physics": [],
     "tests/test_targeted_qualification_repairs_v2.py::test_stage_markers_exact_boundary": [],
     "tests/test_targeted_qualification_repairs_v2.py::test_loaded_dependency_origin_is_authenticated": [],
-    "tests/test_targeted_qualification_repairs_v2.py::test_embedded_torch_module_requires_exact_authenticated_parent_identity": []
+    "tests/test_targeted_qualification_repairs_v2.py::test_embedded_torch_module_requires_exact_authenticated_parent_identity": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_initialization_order_and_preserved_commands": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_changed_initialization_boundary_is_refused": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[foreign_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[wrong_object]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[early_invalid]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[boundary_invalid]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[boundary_stale]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[nan]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[inf]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[-inf]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3392,6 +3424,12 @@
     "prior_nodes": 2862,
     "new_hermetic_nodes": 9,
     "total_nodes": 2871,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v3_update": {
+    "prior_nodes": 2871,
+    "new_hermetic_nodes": 12,
+    "total_nodes": 2883,
     "all_prior_retained": true
   }
 }
