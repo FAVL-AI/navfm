@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "status": "BLOCKED_DECODER_UNAVAILABLE",
+  "source": {
+    "path": "/home/favl/navfm-runtime-evidence/m3pro-loaded-plant-source-audit-v1-01/ROSMASTER-M3Pro.x_t.complete",
+    "bytes": 189763420,
+    "sha256": "e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee",
+    "manufacturer_checksum": null,
+    "variant_validated": false
+  },
+  "proposed_tool": {
+    "product": "CAD Exchanger Lab",
+    "capability_sources": [
+      "https://cadexchanger.com/convert-x-t/",
+      "https://cadexchanger.com/products/gui/"
+    ],
+    "installed_version": null,
+    "license_available": null,
+    "executed": false
+  },
+  "planned_export": {
+    "format": "STEP assembly with exact boundary representation",
+    "retain_components_and_transforms": true,
+    "units": "read from import and explicitly record; do not assume",
+    "healing_or_simplification": "none unless unavoidable and explicitly recorded",
+    "output_path": "external evidence directory only"
+  },
+  "actual_export": {
+    "path": null,
+    "sha256": null,
+    "units": null,
+    "component_count": null,
+    "tool_version": null,
+    "settings": null
+  },
+  "required_validation": [
+    "exact M3 Pro variant and load configuration",
+    "declared units and nominal 80 mm wheel-envelope scale",
+    "four wheel identities, hub centers and spin axes in a declared robot frame",
+    "roller count, shape, axes, placements and handedness for every wheel",
+    "rear-pendulum component topology and pivot geometry",
+    "source-to-export component mapping and transforms; missing mechanics marked UNKNOWN"
+  ],
+  "core_geometry_validated": false,
+  "candidate_ready": false,
+  "simulation_executed": false
+}

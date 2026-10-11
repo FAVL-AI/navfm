@@ -1,0 +1,24 @@
+# M3 Pro CAD conversion packet v1
+
+Status: BLOCKED DECODER UNAVAILABLE; conversion NOT RUN; core geometry NOT VALIDATED. This packet follows the [loaded-plant specification](M3PRO_LOADED_PLANT_SPEC_V1.md) and [measurement checklist](M3PRO_MEASUREMENT_CHECKLIST_V1.md). The [machine-readable manifest](../configs/robots/m3pro_cad_conversion_packet_v1.json) separates proposed settings from actual results; null export/version/hash fields mean unknown, not successful extraction.
+
+## Concrete conversion route
+
+Use an authorized local installation of **CAD Exchanger Lab** to import the preserved Parasolid file and export an assembly STEP. The publisher explicitly lists [Parasolid .x_t to STEP conversion](https://cadexchanger.com/convert-x-t/) and [assembly structure inspection and STEP export](https://cadexchanger.com/products/gui/). These are product capability statements, not proof that this particular file converts correctly. The publisher discusses licensing on the product page; license entitlement and a usable installed version are not established here. No installation, purchase, trial activation, cloud upload or vendor contact was performed. FreeCAD/CadQuery are not assumed to decode Parasolid.
+
+Targeted command checks found no CAD Exchanger, HOOPS Exchange or FreeCAD executable in PATH; targeted /opt and /usr/local/bin inventory did not identify a configured converter. This is not an exhaustive disk or license inventory. No decoder/version is recorded as executed.
+
+1. On an authorized workstation with the converter available, verify `ROSMASTER-M3Pro.x_t.complete`: 189,763,420 bytes; SHA256 `e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee`. Preserve this source and original intake failures. Record executable/version, operating environment and license capability without recording credentials.
+2. Import locally. Preserve the import report, declared units, component names/count, assembly transforms and any unsupported entities. Do not scale by guessing. Identify the exact M3 Pro revision/load configuration; check nominal wheel envelope diameter against 80 mm. A filename or this scale check alone does not authenticate the complete variant.
+3. Export exact boundary-representation STEP with component hierarchy/transforms retained where present. Record actual STEP schema, units, precision, healing/simplification options and warnings; these settings are planned, not known available in a particular version. Avoid merging bodies or flattening assemblies. If the source has only solids and no hierarchy, preserve that limitation rather than inventing an assembly. Keep source-to-export component mapping and source/export hashes externally.
+4. Reopen the export and compare body/component counts, transforms, wheel-envelope dimensions and geometry bounds against the imported source. Reject unexplained loss, changed scale or altered geometry. Extract four hub centers/spin axes/order, every roller's count/profile/axis/placement/handedness, and rear-pendulum component topology/pivot geometry into an inspectable units/frame ledger. Preserve all unresolved mechanics as UNKNOWN. CAD solids do not prove passive joint constraints, travel limits, damping, mass, material or friction.
+
+No raw STEP, mesh or CAD belongs in Git. Store conversion reports and geometry under a new external evidence directory, with an authored hash manifest. This packet does not admit a simulation candidate. Only validated core geometry plus explicit unfitted assumptions can support a separately frozen exploratory representation change; original motion qualification and fresh reproduction/admission remain required before matched ViNT navigation.
+
+## Ready manufacturer request — not sent
+
+Please provide an assembly STEP export of the same M3 Pro CAD revision distributed as `ROSMASTER-M3Pro.x_t` (header date 2025-08-07), and identify the exact chassis/hardware variant and included load configuration. Please include explicit length units, separate named components, assembly transforms, four wheel/hub identities and roller component identities/axes, and rear-pendulum components/pivots. Where STEP cannot encode joints or mobility, please provide the corresponding assembly/joint drawing or table, including passive relationships and travel limits. Please state any omitted parts or geometry simplification. Material, mass/inertia and contact/drive specifications may be supplied separately; unknown values will not be inferred from visual solids.
+
+The request is prepared text only. No message was sent. Manufacturer-provided STEP would still require provenance, units, variant and component validation rather than automatic acceptance.
+
+Validation: source bytes/hash rechecked; JSON planned/actual separation and null unexecuted fields checked; relative links and diff checked. No simulator, model or robot process ran.
