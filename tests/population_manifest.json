@@ -3461,7 +3461,12 @@
     "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[clock]": [],
     "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[order]": [],
     "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[freeze]": [],
-    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[missing_artifact]": []
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[missing_artifact]": [],
+    "tests/test_solver_position_candidate_v1.py::test_single_preinitialize_factor_no_schedule_change": [],
+    "tests/test_solver_position_candidate_v1.py::test_single_property_write_and_clamp_rejection": [],
+    "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.play()]": [],
+    "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.initialize_physics()\\nsim.initialize_physics()]": [],
+    "tests/test_solver_position_candidate_v1.py::test_helper_import_bound_inside_separate_setup_exec": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
