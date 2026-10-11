@@ -3284,7 +3284,38 @@
     "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure2]": [
       "parametrize"
     ],
-    "tests/test_development_qualification_v1.py::test_unadmitted_controller_blocks_pair_before_output": []
+    "tests/test_development_qualification_v1.py::test_unadmitted_controller_blocks_pair_before_output": [],
+    "tests/test_imu_controller_boundary_v1.py::test_valid_local_gyro": [],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value0-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value1-1.0-/wrong/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value2-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value3-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value4-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value5-inf-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_duplicate_time_refused": [],
+    "tests/test_imu_controller_boundary_v1.py::test_collector_replaces_only_controller_measurement": [],
+    "tests/test_imu_controller_boundary_v1.py::test_probe_finite_fixed_schedule_and_setup": [],
+    "tests/test_imu_controller_boundary_v1.py::test_launcher_supplies_cwd_and_preserves_failure": [],
+    "tests/test_imu_controller_boundary_v1.py::test_callback_latches_stops_and_raises_outside_native_boundary": [],
+    "tests/test_imu_controller_boundary_v1.py::test_probe_stopped_tail_has_zero_wheels_not_active_braking": [],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_evaluation_outside_scoring_window_is_refused[0]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_evaluation_outside_scoring_window_is_refused[1199]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3340,6 +3371,12 @@
     "prior_nodes": 2815,
     "new_hermetic_nodes": 32,
     "total_nodes": 2847,
+    "all_prior_retained": true
+  },
+  "imu_controller_v1_update": {
+    "prior_nodes": 2847,
+    "new_hermetic_nodes": 15,
+    "total_nodes": 2862,
     "all_prior_retained": true
   }
 }

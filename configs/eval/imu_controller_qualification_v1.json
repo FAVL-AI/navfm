@@ -1,0 +1,35 @@
+{
+  "status": "REVIEWED_SINGLE_CONTROLLER_PROBE_FREEZE_NOT_RUN",
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "wall_seconds": 120,
+  "physics_ticks": 1200,
+  "sensor_period": 0.008333333333333333,
+  "startup_ticks": 120,
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+      "sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+      "size": 11625
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    }
+  ],
+  "upstream_files": [],
+  "cleanup_must_be_absent": [
+    "/var/lib/navfm-ci",
+    "/var/lib/navfm-ci-control",
+    "/usr/local/libexec/navfm-ci"
+  ],
+  "tracking": {
+    "v_absolute": 0.05,
+    "w_absolute_floor": 0.03,
+    "w_relative": 0.25,
+    "stop_distance": 0.05,
+    "residual_v": 0.01,
+    "residual_w": 0.03
+  },
+  "continuation": "STOP after single probe even PASS; live navigation remains disabled in compatibility freeze"
+}
