@@ -137,7 +137,10 @@ class TrajectoryWriter:
 
         pos = np.asarray(position_xy, dtype=np.float64).reshape(-1)
         if pos.shape[0] == 3:
-            pos = pos[:2]
+            # numpy's stubs type a slice as variadic-rank while reshape(-1) is typed
+            # rank-1; the array is 1-D either way. Re-narrowing here keeps the real
+            # invariant expressed in the type, without a cast, ignore or version pin.
+            pos = pos[:2].reshape(-1)
         if pos.shape[0] != 2:
             raise TrajectorySchemaError(
                 f"position must be 2-D (x, y) or 3-D (x, y, z), got shape {np.shape(position_xy)}"

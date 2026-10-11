@@ -1,0 +1,121 @@
+{
+  "check": "ARM_A_COLLECTOR_WIRING_REGRESSION",
+  "artifact_semantics": "OFFLINE_REGRESSION_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T07:00:52.360494+00:00",
+  "repository_head": "73653c26178cff36d50904ccb73a56314bccb94c",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "what_is_new_since_the_seam_proof": "the collector now resolves a declared selector and passes it into the tracker. That is new code on the path every arm takes, so Arm A's behaviour is re-established through the wired construction rather than inherited from the earlier seam proof",
+  "pre_seam_reference": {
+    "commit": "437ebfc63f828fb1200df1f01df56bc339209349",
+    "path": "src/navfm/control.py",
+    "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074"
+  },
+  "implementations_compared": [
+    "PRE_SEAM (tracker read from git before the seam existed)",
+    "LEGACY_DIRECT (post-seam default)",
+    "LEGACY_INJECTED (post-seam explicit selector)",
+    "WIRED_ARM_A (collector declaration 'PATH_VERTEX')",
+    "WIRED_DEFAULT (collector declaration absent)"
+  ],
+  "selector_wiring_controls": {
+    "A_arm_a_reaches_legacy": true,
+    "B_arm_b_reaches_interpolated": true,
+    "C_absent_declaration_is_never_treatment": true,
+    "C_absent_declaration_is_legacy": true,
+    "D_unknown_declaration_refused": true,
+    "D_reason": "unknown target selector 'SOMETHING_ELSE'; declared selectors are ['ARC_LENGTH_INTERPOLATED', 'PATH_VERTEX']",
+    "F_override_surface": [
+      "target"
+    ],
+    "F_selector_surfaces": {
+      "legacy": [
+        "select_target"
+      ],
+      "treatment": [
+        "select_target"
+      ]
+    },
+    "F_surface_is_one_method": true,
+    "PASS": true
+  },
+  "regression": {
+    "verdict": "PASS",
+    "traces": {
+      "frozen_route_polyline": {
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:PRE_SEAM_vs_WIRED_ARM_A": "PASS",
+          "command:PRE_SEAM_vs_WIRED_DEFAULT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_WIRED_ARM_A": "PASS",
+          "target:PRE_SEAM_vs_WIRED_DEFAULT": "PASS"
+        },
+        "max_numerical_difference": 0.0
+      },
+      "frozen_route_resampled_0m25": {
+        "steps_evaluated": 1200,
+        "verdict": "PASS",
+        "mismatches_by_channel": {
+          "vx": 0,
+          "vy": 0,
+          "wz": 0,
+          "done": 0,
+          "index_after": 0,
+          "finished_after": 0,
+          "target_x": 0,
+          "target_y": 0,
+          "target_distance": 0,
+          "target_bearing": 0,
+          "heading_error": 0
+        },
+        "comparisons": {
+          "command:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "command:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "command:PRE_SEAM_vs_WIRED_ARM_A": "PASS",
+          "command:PRE_SEAM_vs_WIRED_DEFAULT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_DIRECT": "PASS",
+          "target:PRE_SEAM_vs_LEGACY_INJECTED": "PASS",
+          "target:PRE_SEAM_vs_WIRED_ARM_A": "PASS",
+          "target:PRE_SEAM_vs_WIRED_DEFAULT": "PASS"
+        },
+        "max_numerical_difference": 0.0
+      }
+    }
+  },
+  "collector_identity": {
+    "path": "src/navfm/isaac/collect.py",
+    "sha256": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0"
+  },
+  "selector_module_identity": {
+    "path": "src/navfm/target_selection.py",
+    "sha256": "c3d93f8c70e3f14e9d2fb6554d75c5ab2465eab3cac167075419840d1d451cf8"
+  },
+  "controller_identity": {
+    "path": "src/navfm/control.py",
+    "sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+    "unchanged_by_this_tranche": true
+  },
+  "claim_boundary": "this extends the evidence chain; it does not replace the earlier seam proof. It establishes that collector propagation left Arm A unchanged over the frozen regression domain, and says nothing about runtime behaviour in Isaac",
+  "ARM_A_COLLECTOR_WIRING_REGRESSION": "PASS",
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

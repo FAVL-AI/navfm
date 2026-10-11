@@ -1,0 +1,88 @@
+{
+  "check": "CORRECTED_MAP_BASELINE_V1_RESULT",
+  "artifact_semantics": "FROZEN_EXPERIMENTAL_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-09T00:00:00+00:00",
+  "git_head_at_freeze": "78fc06f5d0488d24c1995f1c003cddb4f46d0461",
+  "preregistration": "gates/BO10/corrected_map_baseline_v1_20260909.json",
+  "preregistration_sha256": "2ff9961ef1d3026004a0d736f36837d299d4be9a019812c8d0bd5b2a29ad915a",
+  "source_artefact": "gates/BO10/hospital_corrected_map_baseline_20260909.json",
+  "source_artefact_sha256": "deabbef404a34eb49cefdb03932b26ef42e5ef67db6fcb4de4d76560ebd5a388",
+  "ROUTE_ADMISSION": "NO_ROUTE_SATISFIES_FROZEN_CONTRACT",
+  "single_variable_changed": "occupancy decode: (buf == OCCUPIED) -> (buf != UNOCCUPIED)",
+  "everything_else_identical": "generator, smoothing, seed 0, budget 96, ordering, gates, all six G10 thresholds",
+  "predeclared_outcome_met": {
+    "criterion": "if_zero_turn_fraction_falls_sharply -> the map was the dominant cause",
+    "verdict": "MET",
+    "zero_turn_candidates": {
+      "old_map": "73/96 (76%)",
+      "corrected_map": "24/96 (25%)"
+    },
+    "turn_distribution": {
+      "old_map": {
+        "0": 73,
+        "1": 6,
+        "2": 10,
+        "3": 2,
+        "4": 3,
+        "5": 2
+      },
+      "corrected_map": {
+        "0": 24,
+        "1": 34,
+        "2": 27,
+        "3": 11
+      }
+    },
+    "candidates_meeting_full_long_horizon": {
+      "old_map": 7,
+      "corrected_map": 10
+    }
+  },
+  "what_this_establishes": "The obstacle map, not string-pulling, was the dominant cause of straight routes. With walls and furniture largely absent from the map the scene looked like open space, and a shortest-path planner in open space produces straight lines. Representing the previously-unclassified 54% of cells cut the zero-turn fraction from 76% to 25%.",
+  "the_binding_constraint_has_moved": {
+    "from": "G10 heading changes",
+    "to": "G5 obstacle clearance",
+    "evidence": "10 of 96 candidates now satisfy the FULL long-horizon requirement and pass G3, G4 and G6. All 10 fail G5.",
+    "clearance_range_m": [
+      7e-05,
+      0.00453
+    ],
+    "required_m": 0.24,
+    "obstacles_struck": [
+      "Geo_M1_TrimInsideSide",
+      "Geo_W_WallBase10",
+      "Geo_M2_TrimTwoCorner",
+      "SM_SupplyCart_03a",
+      "SM_Chart_Rack_01d",
+      "SM_ReceptionDesk_01a"
+    ],
+    "probe_heights_m": [
+      0.05,
+      0.12,
+      0.28
+    ],
+    "reading": "every long-horizon-adequate route runs into geometry. The planner is still blind to obstacles the gate can see -- see F-G5-2."
+  },
+  "consequence_for_turning_route_population_v1": {
+    "decision": "NOT PREREGISTERED, and not justified as the next step",
+    "why": "It was proposed to fix straight routes. That problem is now largely explained by the map, and a turning population cannot help with what actually blocks admission: every route that already turns enough collides. Preregistering it now would target a constraint that is no longer binding.",
+    "what_is_binding": "a trustworthy obstacle map (F-G5-2)",
+    "if_it_is_wanted_later": "it remains a legitimate experiment, to be preregistered on its own terms once routes can be planned around real geometry"
+  },
+  "production_collection_status": "BLOCKED. No admissible route exists in any scene, and the planner's obstacle map is known to omit solid geometry.",
+  "claim_boundary": [
+    "This does not overwrite HOSPITAL_BO10_FROZEN_ROUTESET or OFFICE_BO10_FROZEN_ROUTESET.",
+    "Those remain valid measurements of what the pipeline produced under the old decode.",
+    "This is a separate measurement under a repaired decode, and it is not a turning-route experiment.",
+    "e2_eligible = false."
+  ],
+  "instrument_controls_all_pass": true,
+  "controls": {
+    "support_fails_off_scene": true,
+    "clearance_is_unobstructed_off_scene": true,
+    "budget_fully_enumerated": true,
+    "probes_queried_where_a_geometry_gate_was_evaluated": true,
+    "control_probes_are_not_counted_as_candidate_probes": true
+  }
+}

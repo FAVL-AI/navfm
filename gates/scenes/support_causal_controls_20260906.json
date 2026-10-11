@@ -1,0 +1,192 @@
+{
+  "check": "SUPPORT_CAUSAL_CONTROLS",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "timestamp_utc": "2026-09-06T22:20:41.483183+00:00",
+  "production_policy_digest": "c6534203825fa13d",
+  "support_start_height_m": 0.5,
+  "historical_defect_reproduced_as_mechanism": {
+    "signature": "12 x 5.9 m",
+    "reading": "twelve probes each returning 5.9 m, not a 12 m by 5.9 m room; a count times a value",
+    "source_commit": "acd53d0",
+    "source_path": "gates/scenes/office_collision_coverage_audit.json",
+    "mechanism": "twelve distinct declared door targets all answered by one collider, /World/Scene/SM_Wall_6m24_269/SM_Wall_6m/SM_Wall_6m, at one distance",
+    "class": "SHARED_COLLIDER_ALIASING",
+    "note": "geometry here reproduces the mechanism; it is not tuned to yield 5.9"
+  },
+  "claim_boundary": "Establishes what each candidate observable can and cannot detect on synthetic geometry. Says nothing about Hospital, and selects no metric.",
+  "cases": {
+    "CORRECT_TARGET": {
+      "declared_target": "/World/T",
+      "origin": [
+        0.0,
+        0.0,
+        1.7
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.5000000596046448,
+      "residual_m": 5.960464477539063e-08,
+      "hit": true,
+      "returned_collider": "/World/T",
+      "identity_match": true
+    },
+    "TARGET_REMOVED": {
+      "declared_target": "/World/T",
+      "origin": [
+        0.0,
+        0.0,
+        1.7
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "expected_distance_m": 0.5,
+      "observed_distance_m": null,
+      "residual_m": null,
+      "hit": false,
+      "returned_collider": null,
+      "identity_match": false
+    },
+    "WRONG_COLLIDER": {
+      "declared_target": "/World/T",
+      "origin": [
+        0.0,
+        0.0,
+        1.7
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "expected_distance_m": 0.5,
+      "observed_distance_m": 0.22499999403953552,
+      "residual_m": -0.2750000059604645,
+      "hit": true,
+      "returned_collider": "/World/Interloper",
+      "identity_match": false
+    },
+    "SHARED_OWNER": {
+      "probes": [
+        {
+          "declared_target": "/World/S0",
+          "origin": [
+            -1.0,
+            0.0,
+            1.7
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "expected_distance_m": 0.5,
+          "observed_distance_m": 1.0500000715255737,
+          "residual_m": 0.5500000715255737,
+          "hit": true,
+          "returned_collider": "/World/SharedSlab",
+          "identity_match": false
+        },
+        {
+          "declared_target": "/World/S1",
+          "origin": [
+            0.0,
+            0.0,
+            1.7
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "expected_distance_m": 0.5,
+          "observed_distance_m": 1.0500000715255737,
+          "residual_m": 0.5500000715255737,
+          "hit": true,
+          "returned_collider": "/World/SharedSlab",
+          "identity_match": false
+        },
+        {
+          "declared_target": "/World/S2",
+          "origin": [
+            1.0,
+            0.0,
+            1.7
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "expected_distance_m": 0.5,
+          "observed_distance_m": 1.0500000715255737,
+          "residual_m": 0.5500000715255737,
+          "hit": true,
+          "returned_collider": "/World/SharedSlab",
+          "identity_match": false
+        }
+      ],
+      "distinct_declared_targets": 3,
+      "distinct_returned_colliders": 1,
+      "distinct_observed_distances": 1,
+      "any_identity_match": false
+    },
+    "UNRELATED_GEOMETRY": {
+      "declared_target": "/World/T",
+      "origin": [
+        0.0,
+        0.0,
+        1.7
+      ],
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "expected_distance_m": 0.5,
+      "observed_distance_m": null,
+      "residual_m": null,
+      "hit": false,
+      "returned_collider": null,
+      "identity_match": false
+    }
+  },
+  "per_case_observable_response": {
+    "CORRECT_TARGET": {
+      "old_invariant_applicable": "NOT_IDENTIFIABLE",
+      "geometric_residual": "PASS",
+      "identity_causal": "PASS",
+      "observed_distance_m": 0.5000000596046448
+    },
+    "TARGET_REMOVED": {
+      "old_invariant_applicable": "NOT_IDENTIFIABLE",
+      "geometric_residual": "NO_HIT",
+      "identity_causal": "FAIL",
+      "observed_distance_m": null
+    },
+    "WRONG_COLLIDER": {
+      "old_invariant_applicable": "NOT_IDENTIFIABLE",
+      "geometric_residual": "FAIL",
+      "identity_causal": "FAIL",
+      "observed_distance_m": 0.22499999403953552
+    },
+    "UNRELATED_GEOMETRY": {
+      "old_invariant_applicable": "NOT_IDENTIFIABLE",
+      "geometric_residual": "NO_HIT",
+      "identity_causal": "FAIL",
+      "observed_distance_m": null
+    },
+    "SHARED_OWNER": {
+      "old_invariant_applicable": "FIRES",
+      "geometric_residual": "FAIL",
+      "identity_causal": "FAIL",
+      "note": "this is the historical 12x5.9 mechanism"
+    }
+  }
+}

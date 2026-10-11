@@ -1,0 +1,105 @@
+{
+  "check": "OFFICE_BO10_COLLECTION_REGION_DECLARATION",
+  "version": "OFFICE_REGION_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_ANY_OFFICE_CANDIDATE_ENUMERATED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-09T00:00:00+00:00",
+  "git_head_at_freeze": "6d70e82c53b32bf0b301b9ba2e7518d01fb2c651",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Office/office.usd",
+  "why_a_declaration_is_required": {
+    "finding": "gates/failures/F-BOUNDS-1.md",
+    "statement": "Office has no intrinsic geometric boundary. Two rules for deriving one are refuted by measurement: the skyline buildings carry colliders, and they stand on a ground plane that reports floor in 723,135 of 723,135 coarse cells. Neither collidable geometry nor 'where the robot can stand' separates interior from exterior.",
+    "consequence": "the collection region is DECLARED and recorded, not derived, and it is frozen before any candidate is enumerated"
+  },
+  "region_centre": {
+    "value": [
+      -8.95,
+      13.1
+    ],
+    "basis": "centroid of the union of the two office ceiling slabs, measured from the scene",
+    "measured_prims": [
+      {
+        "path": "/World/Scene/Cube37/Cube/Cube",
+        "z": [
+          3.2,
+          3.2
+        ],
+        "xy_min": [
+          -24.0,
+          10.5
+        ],
+        "xy_max": [
+          6.1,
+          60.1
+        ],
+        "area_m2": 1492.1
+      },
+      {
+        "path": "/World/Scene/Cube18/Cube/Cube",
+        "z": [
+          3.29,
+          3.31
+        ],
+        "xy_min": [
+          -15.0,
+          -33.9
+        ],
+        "xy_max": [
+          6.1,
+          24.1
+        ],
+        "area_m2": 1220.0
+      }
+    ],
+    "union_xy": [
+      [
+        -24.0,
+        -33.9
+      ],
+      [
+        6.1,
+        60.1
+      ]
+    ],
+    "why_the_ceiling": "the ceiling slabs sit directly above the office floor, so their footprint is a measurable proxy for the building interior. The floor itself is not usable for this: it is continuous with the exterior ground plane across the whole stage.",
+    "not_chosen_by": "route outcomes; no Office candidate has been enumerated at the time of freezing"
+  },
+  "window": {
+    "half_width_m": 40.24,
+    "derivation": "max_path_m (40.0, frozen in CollectConfig) + footprint_radius (0.24, frozen in M3PRO)",
+    "bounds_min": [
+      -49.19,
+      -27.14
+    ],
+    "bounds_max": [
+      31.29,
+      53.34
+    ],
+    "guarantee": "Euclidean displacement cannot exceed path length, so every point of any route no longer than max_path_m from a start inside this window lies inside it. The window cannot exclude a route the frozen contract would admit from such a start.",
+    "grid_cells_at_0.10m": 647703,
+    "compare_stage_bound_cells": 72017937
+  },
+  "what_this_restricts": {
+    "statement": "starts and goals are sampled from within the window, so the Office candidate population is routes lying within the declared region rather than anywhere on the stage.",
+    "honest_consequence": "the office ceiling union spans 94 m in y while the window spans 80.5 m, so part of the building's y-extent is outside the sampling region. This narrows the candidate population and is declared rather than hidden.",
+    "not_a_claim": "this does not assert that the excluded area is untraversable, only that it is outside the declared BO-10 collection region"
+  },
+  "hospital_unaffected": {
+    "statement": "the occupancy window is OPT-IN and build_occupancy's default is unchanged.",
+    "why_it_must_be": "Hospital's frozen result was produced under the stage bound at 420 x 768. A window would give a different grid, and a different grid means different sampling, so the frozen result would no longer be re-derivable.",
+    "hospital_result_status": "HOSPITAL_BO10_FROZEN_ROUTESET = NO_ADMISSIBLE_ROUTE, unchanged"
+  },
+  "frozen_contract_unchanged": {
+    "thresholds": "all six long-horizon thresholds unchanged",
+    "gates": "G2-G10 unchanged",
+    "search": "seed 0, budget 96, sample_episode_pair -- same as Hospital",
+    "min_clearance_m": 0.35,
+    "e2_eligible": false
+  },
+  "non_claims": [
+    "No route is admitted by this declaration.",
+    "No data is collected.",
+    "No physical-hardware claim.",
+    "Office data, if collected, is a collection-pipeline and loader-compatibility proof and is never relabelled as Hospital data."
+  ]
+}

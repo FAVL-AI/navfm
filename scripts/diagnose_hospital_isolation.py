@@ -43,6 +43,7 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from navfm.candidate_policy import Aabb, Role, generate_candidates, policy_digest  # noqa: E402
 from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
 
 OUT = REPO / "gates" / "scenes"
@@ -53,10 +54,12 @@ HYPOTHESES_DIGEST = "12e4359e2a7e03004635dabe7083c284"
 SCENE = ("https://omniverse-content-production.s3-us-west-2.amazonaws.com/"
          "Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd")
 
-#: Short, so a local probe cannot wander into unrelated geometry and answer a
-#: question about some other object.
-LOCAL_STANDOFF = 0.30
-LOCAL_MARGIN = 0.15
+#: The intervention is the contract's, not this script's. Before migration the
+#: four faces were built here from a local standoff and margin that happened to
+#: equal the policy's -- and happening to equal is not the same as being the
+#: same, which is precisely the finding Sprint 2A recorded. The numbers now come
+#: from navfm.candidate_policy, so a change there reaches this diagnostic
+#: instead of silently diverging from it.
 
 
 def main() -> int:
@@ -163,35 +166,44 @@ def main() -> int:
             if r.IsEmpty():
                 return {"bounds": "EMPTY", "directions": []}
             mn, mx = r.GetMin(), r.GetMax()
-            c = [(mn[i] + mx[i]) / 2 for i in range(3)]
-            span = [mx[i] - mn[i] for i in range(3)]
+            cset = generate_candidates(
+                path, Role.BLOCKER,
+                Aabb((mn[0], mn[1], mn[2]), (mx[0], mx[1], mx[2])))
             out = []
-            for label, axis, sign in (("+X", 0, -1), ("-X", 0, +1),
-                                      ("+Y", 1, -1), ("-Y", 1, +1)):
-                origin = list(c)
-                face = mn[axis] if sign < 0 else mx[axis]
-                origin[axis] = face + sign * -LOCAL_STANDOFF if sign < 0 else face + LOCAL_STANDOFF
-                origin[axis] = (mn[axis] - LOCAL_STANDOFF if sign < 0
-                                else mx[axis] + LOCAL_STANDOFF)
-                direction = [0.0, 0.0, 0.0]
-                direction[axis] = 1.0 if sign < 0 else -1.0
-                reach = LOCAL_STANDOFF + span[axis] + LOCAL_MARGIN
-                res = q.raycast_closest(origin, direction, reach)
+            for cand in cset.candidates:
+                if not cand.valid:
+                    # A degenerate axis is recorded, never quietly dropped: the
+                    # logical population stays four so the set digest remains
+                    # comparable across targets.
+                    out.append({
+                        "direction": cand.face, "candidate_id": cand.candidate_id,
+                        "fired": False, "invalid_reason": cand.invalid_reason,
+                        "origin": None, "ray": None, "range": None,
+                        "hit": None, "actual_collider": None, "distance": None,
+                        "relation_to_target": "NOT_FIRED_INVALID_GEOMETRY",
+                    })
+                    continue
+                origin, direction = list(cand.origin), list(cand.direction)
+                res = q.raycast_closest(origin, direction, cand.max_range)
                 hit = bool(res and res.get("hit"))
                 actual = str(res.get("collision", "")) if hit else None
                 out.append({
-                    "direction": label,
+                    "direction": cand.face,
+                    "candidate_id": cand.candidate_id,
                     "origin": [round(v, 3) for v in origin],
-                    "ray": direction, "range": round(reach, 3),
+                    "ray": direction, "range": round(cand.max_range, 3),
+                    "fired": True,
                     "hit": hit, "actual_collider": actual,
                     "distance": round(float(res["distance"]), 4) if hit else None,
                     "relation_to_target": relation(path, actual),
                 })
             return {"bounds": [[round(v, 3) for v in mn], [round(v, 3) for v in mx]],
+                    "candidate_policy_digest": policy_digest(),
+                    "candidate_set_digest": cset.digest,
                     "directions": out}
 
         def classify(path: str, lp: dict[str, Any], own: dict[str, Any]) -> str:
-            dirs = lp.get("directions", [])
+            dirs = [d for d in lp.get("directions", []) if d.get("fired")]
             if not dirs:
                 return "UNRESOLVED"
             rels = [d["relation_to_target"] for d in dirs]

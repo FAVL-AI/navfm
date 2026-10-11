@@ -1,0 +1,133 @@
+{
+  "check": "PREREG_CANONICAL_PAYLOAD_GUARD",
+  "artifact_semantics": "GUARD_VALIDATION_WITH_NEGATIVE_CONTROLS",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-11T09:24:44.321043+00:00",
+  "subject": {
+    "emitter": "scripts/preregister_terminal_approach_intervention.py",
+    "emitter_sha256": "776df048adcaf334002db594f6e0c660430a3df1d6839c1494835ba2b61212fa",
+    "frozen_preregistration": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+    "frozen_preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+    "prereg_version": "V1"
+  },
+  "required_behaviour": [
+    "regenerate the canonical payload rather than returning the existing file",
+    "preserve the original freeze timestamp",
+    "compare every non-timestamp field against the frozen artefact",
+    "identical -> same digest",
+    "different -> refuse, do not overwrite, and require a new version"
+  ],
+  "defect_this_replaces": {
+    "what_it_was": "the first emitter preserved the timestamp but then overwrote the artefact with the regenerated payload unconditionally",
+    "why_it_mattered": "a changed design would have replaced a cited preregistration in place, with a changed hash as the only signal and no refusal. That is worse than returning a stale file, because the record that gets cited would quietly stop describing the frozen experiment",
+    "found_by": "supervisor review before execution, not by this harness"
+  },
+  "controls": [
+    {
+      "control": "A_unchanged_design_reproduces_digest",
+      "expectation": "the emitter regenerates identical bytes and does not refuse",
+      "refused": false,
+      "regenerated_digest": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "frozen_digest": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "digest_matches": true,
+      "PASS": true,
+      "message": ""
+    },
+    {
+      "control": "B_refuses_drift::design_carried_forward_unchanged.primary_outcome",
+      "mutation_kind": "scalar string, nested two deep",
+      "field": "design_carried_forward_unchanged.primary_outcome",
+      "frozen_value": "entry into the 0.20 m goal region before max_steps",
+      "mutated_value": "entry into the 0.50 m goal region before max_steps",
+      "expectation": "the emitter refuses, does not overwrite, and names the field",
+      "refused": true,
+      "artefact_left_untouched": true,
+      "would_have_silently_restored": false,
+      "refusal_names_the_field": true,
+      "PASS": true,
+      "refusal_message_head": "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED"
+    },
+    {
+      "control": "B_refuses_drift::power_and_claim_limit.sample_count_per_arm",
+      "mutation_kind": "integer",
+      "field": "power_and_claim_limit.sample_count_per_arm",
+      "frozen_value": 1,
+      "mutated_value": 3,
+      "expectation": "the emitter refuses, does not overwrite, and names the field",
+      "refused": true,
+      "artefact_left_untouched": true,
+      "would_have_silently_restored": false,
+      "refusal_names_the_field": true,
+      "PASS": true,
+      "refusal_message_head": "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED"
+    },
+    {
+      "control": "B_refuses_drift::secondary_outcome_cross_track_error.is_primary",
+      "mutation_kind": "boolean that the design depends on",
+      "field": "secondary_outcome_cross_track_error.is_primary",
+      "frozen_value": false,
+      "mutated_value": true,
+      "expectation": "the emitter refuses, does not overwrite, and names the field",
+      "refused": true,
+      "artefact_left_untouched": true,
+      "would_have_silently_restored": false,
+      "refusal_names_the_field": true,
+      "PASS": true,
+      "refusal_message_head": "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED"
+    },
+    {
+      "control": "B_refuses_drift::secondary_outcome_lookahead_domain.lookahead_radius_m",
+      "mutation_kind": "float inside a pinned parameter",
+      "field": "secondary_outcome_lookahead_domain.lookahead_radius_m",
+      "frozen_value": 0.45,
+      "mutated_value": 0.9,
+      "expectation": "the emitter refuses, does not overwrite, and names the field",
+      "refused": true,
+      "artefact_left_untouched": true,
+      "would_have_silently_restored": false,
+      "refusal_names_the_field": true,
+      "PASS": true,
+      "refusal_message_head": "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED"
+    },
+    {
+      "control": "B_refuses_drift::secondary_outcome_cross_track_error.statistics_to_report_per_arm_per_window",
+      "mutation_kind": "list membership",
+      "field": "secondary_outcome_cross_track_error.statistics_to_report_per_arm_per_window",
+      "frozen_value": [
+        "mean_absolute_cross_track_m",
+        "median_absolute_cross_track_m",
+        "rmse_cross_track_m",
+        "max_absolute_cross_track_m",
+        "p90_absolute_cross_track_m",
+        "p95_absolute_cross_track_m"
+      ],
+      "mutated_value": [
+        "mean_absolute_cross_track_m"
+      ],
+      "expectation": "the emitter refuses, does not overwrite, and names the field",
+      "refused": true,
+      "artefact_left_untouched": true,
+      "would_have_silently_restored": false,
+      "refusal_names_the_field": true,
+      "PASS": true,
+      "refusal_message_head": "PREREG_CANONICAL_PAYLOAD_GUARD = REFUSED"
+    },
+    {
+      "control": "B_exit_status_is_non_zero",
+      "expectation": "a refusal that printed but exited 0 would let a caller proceed, so the status is part of the guard rather than decoration",
+      "exit_code": 1,
+      "PASS": true
+    },
+    {
+      "control": "C_real_artefact_untouched",
+      "expectation": "every control ran against a temporary copy",
+      "digest_before": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "digest_after": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "PASS": true
+    }
+  ],
+  "controls_total": 8,
+  "controls_passed": 8,
+  "PREREG_CANONICAL_PAYLOAD_GUARD": "PASS",
+  "execution_gate": "Isaac execution of TERMINAL_APPROACH_INTERVENTION_V1 may proceed"
+}

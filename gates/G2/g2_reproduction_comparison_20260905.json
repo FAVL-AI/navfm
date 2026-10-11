@@ -1,0 +1,305 @@
+{
+  "check": "G2_REPRODUCTION_COMPARISON",
+  "artifact_semantics": "APPEND_ONLY_RESULT",
+  "created_utc": "2026-09-05T22:58:33.931628+00:00",
+  "purpose": "Establish whether the 2026-09-05 execution reproduces the certified 2026-09-04 G2 outcome. This corroborates determinism of the instrument; it does not replace, supersede or re-certify the run of record.",
+  "certified_run": {
+    "role": "EVIDENCE_OF_RECORD",
+    "date": "2026-09-04",
+    "executed_head": "98ae8d0856d86cb9d5e560da7dc03139c5ad61db",
+    "archive": "/home/favl/navfm-runtime-evidence/g2-20260904",
+    "manifest_sha256": "42e49d7ee83dcee333817b528bbd80b38bc2e1442fa461e5de1f1e30c14ae24e",
+    "referenced_by": "gates/G2/sprint_2d_certification_result_20260904.json",
+    "certification_artifact_sha256": "71142cbc2e2037f7ebf7df1b37dd70f697dde150d4cd4eca33909b78a6e8d899",
+    "provenance_completeness": "HEAD and worktree recorded; hostname, Isaac Sim version and interpreter NOT recorded as fields (audit gap G-1)"
+  },
+  "reproduction_run": {
+    "role": "CORROBORATING_REPRODUCTION",
+    "date": "2026-09-05",
+    "executed_head": "52f3bec0be2a0be792af0fd35954ca807abbcb48",
+    "archive": "/home/favl/navfm-runtime-evidence/g2-20260905",
+    "manifest_sha256": "f30b0c4bce3f7f06d5a4cb80f1e188ff1adba37d6b14957712df3971250def7e",
+    "isaac_runtime_identity": {
+      "hostname": "favl",
+      "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "python_version": "3.11.15",
+      "isaacsim_package_path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim",
+      "isaacsim_version": "5.1.0.0",
+      "isaacsim_distributions": [
+        [
+          "isaacsim",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-app",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-asset",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-benchmark",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-code-editor",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-core",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-cortex",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-example",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-extscache-kit",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-extscache-kit-sdk",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-extscache-physics",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-gui",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-kernel",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-replicator",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-rl",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-robot",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-robot-motion",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-robot-setup",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-ros1",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-ros2",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-sensor",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-storage",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-template",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-test",
+          "5.1.0.0"
+        ],
+        [
+          "isaacsim-utils",
+          "5.1.0.0"
+        ]
+      ],
+      "isaacsim_distribution_count": 25,
+      "gpu_csv": "NVIDIA GeForce RTX 4080 SUPER, 580.173.02, 16376 MiB",
+      "os": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35"
+    },
+    "provenance_completeness": "COMPLETE \u2014 fingerprint emitted before execution"
+  },
+  "head_relationship": {
+    "certified_head": "98ae8d0856d86cb9d5e560da7dc03139c5ad61db",
+    "reproduction_head": "52f3bec0be2a0be792af0fd35954ca807abbcb48",
+    "diff_paths": [
+      "gates/G2/sprint_2d_certification_result_20260904.json"
+    ],
+    "scientific_harness_code_changed": false,
+    "note": "The only path differing between the two executed HEADs is the Sprint 2D certification artefact itself. No harness, policy or expectation file differs, so the two runs execute the same scientific implementation."
+  },
+  "compared_files": [
+    "collision_probe_regression_results.json",
+    "dense_targetability_regression_results.json",
+    "physx_fixture_results.json",
+    "dense_targetability_evidence/DENSE_LOCAL_RAY_TARGETABLE.json",
+    "dense_targetability_evidence/DENSE_LONG_RAY_NOT_TARGETABLE.json",
+    "dense_targetability_evidence/DENSE_NONISOLATABLE_TARGET.json",
+    "dense_targetability_evidence/DENSE_TARGET_REMOVED_COUNTERFACTUAL.json",
+    "dense_targetability_evidence/DENSE_UNRELATED_NOT_ACCEPTED.json"
+  ],
+  "verdict_comparison": {
+    "causality": {
+      "certified_verdicts": {
+        "CAUSAL_MUTATION_PRESENT": "PASS",
+        "CAUSAL_MUTATION_REMOVED": "PASS",
+        "WRONG_CAUSE_BAD_PROBE": "PASS",
+        "WRONG_CAUSE_GOOD_PROBE": "PASS",
+        "SUPPORT_STARVATION": "PASS",
+        "OCCLUDED_TARGET": "PASS",
+        "REACHABLE_TARGET": "PASS",
+        "PHYSICAL_OWNER_IDENTITY": "PASS",
+        "DISTANCE_DIVERSITY": "PASS"
+      },
+      "reproduction_verdicts": {
+        "CAUSAL_MUTATION_PRESENT": "PASS",
+        "CAUSAL_MUTATION_REMOVED": "PASS",
+        "WRONG_CAUSE_BAD_PROBE": "PASS",
+        "WRONG_CAUSE_GOOD_PROBE": "PASS",
+        "SUPPORT_STARVATION": "PASS",
+        "OCCLUDED_TARGET": "PASS",
+        "REACHABLE_TARGET": "PASS",
+        "PHYSICAL_OWNER_IDENTITY": "PASS",
+        "DISTANCE_DIVERSITY": "PASS"
+      },
+      "verdicts_equal": true,
+      "count": 9,
+      "all_pass_certified": true,
+      "all_pass_reproduction": true
+    },
+    "dense_targetability": {
+      "certified_verdicts": {
+        "DENSE_LONG_RAY_NOT_TARGETABLE": "PASS",
+        "DENSE_LOCAL_RAY_TARGETABLE": "PASS",
+        "DENSE_UNRELATED_NOT_ACCEPTED": "PASS",
+        "DENSE_NONISOLATABLE_TARGET": "PASS",
+        "DENSE_TARGET_REMOVED_COUNTERFACTUAL": "PASS"
+      },
+      "reproduction_verdicts": {
+        "DENSE_LONG_RAY_NOT_TARGETABLE": "PASS",
+        "DENSE_LOCAL_RAY_TARGETABLE": "PASS",
+        "DENSE_UNRELATED_NOT_ACCEPTED": "PASS",
+        "DENSE_NONISOLATABLE_TARGET": "PASS",
+        "DENSE_TARGET_REMOVED_COUNTERFACTUAL": "PASS"
+      },
+      "verdicts_equal": true,
+      "count": 5,
+      "all_pass_certified": true,
+      "all_pass_reproduction": true
+    },
+    "physx_footprint": {
+      "certified_verdicts": {
+        "NO_FLOOR": "PASS",
+        "OPEN_FLOOR": "PASS",
+        "BLOCKED_POSE": "PASS",
+        "NARROW_GAP": "PASS",
+        "WIDE_GAP": "PASS",
+        "WALL_HIT": "PASS",
+        "WALL_BEYOND_CAP": "PASS",
+        "ROTATED_BOX": "PASS",
+        "FILTERING": "PASS"
+      },
+      "reproduction_verdicts": {
+        "NO_FLOOR": "PASS",
+        "OPEN_FLOOR": "PASS",
+        "BLOCKED_POSE": "PASS",
+        "NARROW_GAP": "PASS",
+        "WIDE_GAP": "PASS",
+        "WALL_HIT": "PASS",
+        "WALL_BEYOND_CAP": "PASS",
+        "ROTATED_BOX": "PASS",
+        "FILTERING": "PASS"
+      },
+      "verdicts_equal": true,
+      "count": 9,
+      "all_pass_certified": true,
+      "all_pass_reproduction": true
+    }
+  },
+  "fields_that_differ": [
+    {
+      "field": "collision_probe_regression_results.json/timestamp_utc",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:39:59.876490+00:00",
+      "reproduction": "2026-09-05T22:48:54.646416+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_regression_results.json/fixtures/DENSE_LOCAL_RAY_TARGETABLE/targetability_decided_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:40.056849+00:00",
+      "reproduction": "2026-09-05T22:49:02.179253+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_regression_results.json/fixtures/DENSE_LONG_RAY_NOT_TARGETABLE/observed_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:39.746530+00:00",
+      "reproduction": "2026-09-05T22:49:01.854423+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_regression_results.json/fixtures/DENSE_LONG_RAY_NOT_TARGETABLE/targetability_decided_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:39.746339+00:00",
+      "reproduction": "2026-09-05T22:49:01.854337+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_regression_results.json/timestamp_utc",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:39.543562+00:00",
+      "reproduction": "2026-09-05T22:49:01.623226+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "physx_fixture_results.json/timestamp_utc",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:51:42.955064+00:00",
+      "reproduction": "2026-09-05T22:49:12.663997+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_evidence/DENSE_LOCAL_RAY_TARGETABLE.json/targetability_decided_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:40.056849+00:00",
+      "reproduction": "2026-09-05T22:49:02.179253+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_evidence/DENSE_LONG_RAY_NOT_TARGETABLE.json/observed_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:39.746530+00:00",
+      "reproduction": "2026-09-05T22:49:01.854423+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    },
+    {
+      "field": "dense_targetability_evidence/DENSE_LONG_RAY_NOT_TARGETABLE.json/targetability_decided_at",
+      "kind": "VALUE",
+      "certified": "2026-09-04T03:48:39.746339+00:00",
+      "reproduction": "2026-09-05T22:49:01.854337+00:00",
+      "classification": "NON_SCIENTIFIC_CLOCK"
+    }
+  ],
+  "fields_differing_count": 9,
+  "scientific_differences": [],
+  "scientific_differences_count": 0,
+  "non_scientific_clock_differences_count": 9,
+  "classification_rule": "A difference is NON_SCIENTIFIC_CLOCK only if its leaf key is a recorded wall-clock instant. Every other difference is SCIENTIFIC by default, so a genuine change cannot be hidden by this rule.",
+  "reproduction_verdict": "REPRODUCED \u2014 identical scientific outputs",
+  "claim_boundary": "Establishes determinism of the G2 instrument across two archived executions. Does NOT establish that any Isaac scene is suitable, that Hospital is resolved, or anything about GNM/ViNT/NoMaD behaviour."
+}

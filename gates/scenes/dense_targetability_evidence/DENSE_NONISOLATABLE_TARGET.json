@@ -5,15 +5,23 @@
     "causal_targetability": "TARGET_NOT_ISOLATABLE",
     "reason": "no candidate isolates the target; nearest failure: intervention begins inside competing geometry: /World/shell_0",
     "probative": false,
-    "candidates_considered": 2,
-    "candidate_digest": "00fc176c727f1aa5",
+    "candidates_considered": 4,
+    "candidate_digest": "073887b1f210fbb0",
     "per_candidate": [
       {
-        "digest": "b0f16834084c21aa",
+        "digest": "7f64f9cf67bc8808",
         "state": "TARGET_OCCLUDED"
       },
       {
-        "digest": "4266e5285b98c7a3",
+        "digest": "aacddb3084e0eb81",
+        "state": "TARGET_OCCLUDED"
+      },
+      {
+        "digest": "c9f05d8e3ab1e348",
+        "state": "TARGET_OCCLUDED"
+      },
+      {
+        "digest": "6c006f933c25f49a",
         "state": "TARGET_OCCLUDED"
       }
     ],

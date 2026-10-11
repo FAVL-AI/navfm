@@ -1,0 +1,144 @@
+{
+  "check": "G7_CAMERA_HARD_GATE",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "timestamp_utc": "2026-09-09T12:22:06.480615+00:00",
+  "provenance": {
+    "hostname": "favl",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "isaac_sim_version": "5.1.0.0",
+    "git_head": "838720c4f24c456e657f1d488ddf056e565172d2",
+    "worktree_dirty": true,
+    "harness_sha256": "a59485ef1226a643a45baa7ecc416efef333a8a4fda960b3604d2dca4ff7d4cf",
+    "amendment_digest_pinned": "a0c08324e7cc79963c6bf131177205f8f7c21874378ae0f0aa8097b6e3839303",
+    "robot_asset": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "robot_asset_sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER, 580.173.02"
+  },
+  "judged": "GEOMETRICALLY, never from the prim name",
+  "tolerances": {
+    "forward_deg": 15.0,
+    "attach_drift_m": 0.001,
+    "min_robot_motion_m": 0.5
+  },
+  "claim_boundary": "Concerns camera identity, attachment and orientation only. No image quality, no calibration, no physical-hardware claim.",
+  "production_camera_path": "/World/Robot/base_link/Camera_front",
+  "camera_config": {
+    "height_m": 0.28,
+    "x_offset_m": 0.16,
+    "y_offset_m": 0.0,
+    "resolution": [
+      640,
+      480
+    ]
+  },
+  "camera_prim": "/World/Robot/base_link/Camera_front",
+  "camera_exists": true,
+  "camera_parent": "/World/Robot/base_link",
+  "camera_world_translation": [
+    0.16028720468981097,
+    3.246539971266294e-05,
+    0.31995500556296325
+  ],
+  "camera_optical_axis_world": [
+    0.9999998804759116,
+    -2.9607689162901617e-06,
+    -0.0004889165534854502
+  ],
+  "focal_length": 50.0,
+  "horizontal_aperture": 20.954999923706055,
+  "positive": {
+    "exists": true,
+    "checks": {
+      "camera_exists": true,
+      "attached_to_robot": true,
+      "moves_with_robot": true,
+      "faces_robot_forward": true,
+      "not_world_fixed": true,
+      "not_coincident_with_base": true
+    },
+    "relative_drift_m": 0.0001747020462065583,
+    "camera_world_moved_m": 2.251312902811113,
+    "robot_world_moved_m": 2.236033905452565,
+    "robot_ground_truth_moved_m": 2.2360139844141558,
+    "usd_readback_is_live": true,
+    "forward_angle_deg_before": 0.0,
+    "forward_angle_deg_after": 0.0,
+    "verdict": "PASS",
+    "failed": []
+  },
+  "negative_controls": {
+    "rotated_180": {
+      "exists": true,
+      "checks": {
+        "camera_exists": true,
+        "attached_to_robot": true,
+        "moves_with_robot": true,
+        "faces_robot_forward": false,
+        "not_world_fixed": true,
+        "not_coincident_with_base": false
+      },
+      "relative_drift_m": 0.0,
+      "camera_world_moved_m": 2.236071707614354,
+      "robot_world_moved_m": 2.236071707614354,
+      "robot_ground_truth_moved_m": 2.2360740257302716,
+      "usd_readback_is_live": true,
+      "forward_angle_deg_before": 7.068812704108755e-05,
+      "forward_angle_deg_after": 179.9969437805952,
+      "verdict": "FAIL",
+      "failed": [
+        "faces_robot_forward",
+        "not_coincident_with_base"
+      ]
+    },
+    "detached_world_fixed": {
+      "exists": true,
+      "checks": {
+        "camera_exists": true,
+        "attached_to_robot": false,
+        "moves_with_robot": false,
+        "faces_robot_forward": false,
+        "not_world_fixed": false,
+        "not_coincident_with_base": true
+      },
+      "relative_drift_m": 2.236038348226418,
+      "camera_world_moved_m": 0.0,
+      "robot_world_moved_m": 2.236039901291103,
+      "robot_ground_truth_moved_m": 2.236023231175321,
+      "usd_readback_is_live": true,
+      "forward_angle_deg_before": null,
+      "forward_angle_deg_after": null,
+      "verdict": "FAIL",
+      "failed": [
+        "attached_to_robot",
+        "moves_with_robot",
+        "faces_robot_forward",
+        "not_world_fixed"
+      ]
+    },
+    "wrong_prim": {
+      "exists": true,
+      "checks": {
+        "camera_exists": true,
+        "attached_to_robot": true,
+        "moves_with_robot": true,
+        "faces_robot_forward": false,
+        "not_world_fixed": true,
+        "not_coincident_with_base": true
+      },
+      "relative_drift_m": 8.1728497432664e-06,
+      "camera_world_moved_m": 2.2360652045340657,
+      "robot_world_moved_m": 2.236072719581149,
+      "robot_ground_truth_moved_m": 2.23607553299821,
+      "usd_readback_is_live": true,
+      "forward_angle_deg_before": 179.99999494900698,
+      "forward_angle_deg_after": 0.0012561317228919275,
+      "verdict": "FAIL",
+      "failed": [
+        "faces_robot_forward"
+      ]
+    }
+  },
+  "negative_controls_all_rejected": true,
+  "G7_CAMERA": "PASS",
+  "g7_reason": "camera is attached, moves with the robot and faces forward"
+}

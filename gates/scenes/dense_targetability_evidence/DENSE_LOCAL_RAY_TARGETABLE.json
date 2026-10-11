@@ -5,15 +5,23 @@
     "causal_targetability": "TARGET_ISOLATABLE",
     "reason": "no structurally distinct body is expected to respond before the target",
     "probative": true,
-    "candidates_considered": 2,
-    "candidate_digest": "a71356c6f9f05dbb",
+    "candidates_considered": 4,
+    "candidate_digest": "bea2a934da1cf3f9",
     "per_candidate": [
       {
-        "digest": "91301245f9b5a4bf",
+        "digest": "0b8e2f2f814c7144",
         "state": "TARGET_ISOLATABLE"
       },
       {
-        "digest": "db4cf18079042f87",
+        "digest": "5b52d525ceda27bd",
+        "state": "TARGET_ISOLATABLE"
+      },
+      {
+        "digest": "64766c728fa71c7c",
+        "state": "TARGET_ISOLATABLE"
+      },
+      {
+        "digest": "987d384019bb2264",
         "state": "TARGET_ISOLATABLE"
       }
     ],
@@ -54,9 +62,9 @@
     "violations": [],
     "note": "asserted before any query; without it this becomes an identity test"
   },
-  "candidate_digest_before": "a71356c6f9f05dbb",
-  "candidate_digest_after": "a71356c6f9f05dbb",
-  "targetability_decided_at": "2026-08-14T05:53:35.368062+00:00",
+  "candidate_digest_before": "bea2a934da1cf3f9",
+  "candidate_digest_after": "bea2a934da1cf3f9",
+  "targetability_decided_at": "2026-09-05T22:49:02.179253+00:00",
   "observation": {
     "query_fired": true,
     "generic_hit": true,

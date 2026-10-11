@@ -164,6 +164,37 @@ def test_writer_rejects_bad_pose(tmp_path):
         w.abort()
 
 
+def test_writer_accepts_xyz_and_emits_only_the_planar_pair(tmp_path):
+    # The (x, y, z) branch truncates to the planar pair the GNM format stores.
+    # Never executed by the suite before: run #60's coverage lists writer.py:140
+    # as missing, so the slice it repairs had no behavioural witness.
+    n = 3
+    frames = make_frames(n)
+    xyz = np.array([[0.5, 1.5, 9.0], [0.6, 1.4, -3.0], [0.7, 1.3, 0.25]])
+
+    with TrajectoryWriter(tmp_path / "t") as w:
+        for i in range(n):
+            w.append(frames[i], xyz[i], 0.0)
+
+    with open(tmp_path / "t" / "traj_data.pkl", "rb") as fh:
+        position = pickle.load(fh)["position"]
+
+    assert position.shape == (n, 2)
+    assert position[0].shape == (2,)  # each emitted pose stays one-dimensional
+    assert position.dtype == np.float64
+    np.testing.assert_allclose(position, xyz[:, :2], atol=0.0)
+
+
+@pytest.mark.parametrize("position_xy", [[], [1.0], [1.0, 2.0, 3.0, 4.0], 5.0])
+def test_writer_rejects_a_position_that_is_not_two_or_three_wide(tmp_path, position_xy):
+    from navfm.schema import TrajectorySchemaError
+
+    with TrajectoryWriter(tmp_path / "t") as w:
+        with pytest.raises(TrajectorySchemaError, match="position must be 2-D"):
+            w.append(make_frames(1)[0], position_xy, 0.0)
+        w.abort()
+
+
 def test_center_crop_to_aspect_is_idempotent_and_correct():
     wide = Image.new("RGB", (1920, 1080))
     cropped = center_crop_to_aspect(wide)

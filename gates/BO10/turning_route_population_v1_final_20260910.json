@@ -1,0 +1,110 @@
+{
+  "check": "TURNING_ROUTE_POPULATION_V1_FINAL_FREEZE",
+  "artifact_semantics": "COMPLETES_AND_CORRECTS_THE_PRIOR_ARTEFACT_WITHOUT_REPLACING_IT",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "e321139d795d68f7e2429a5c0d746aca6e3192a7",
+  "prior_artefact": {
+    "path": "gates/BO10/turning_route_population_v1_20260910.json",
+    "hash_algorithm": "SHA-256",
+    "sha256": "90cadfb5e4d2e81f0c74c31389897f70f4ae4b915b15a488b56bc0d3757b1859",
+    "introduced_in_commit": "e321139",
+    "note": "that digest is the SHA-256 of the FILE CONTENT. It is not a Git object name -- `git cat-file -t` rejects it. Recorded explicitly because a bare 64-hex string is easily mistaken for a commit.",
+    "status": "preserved unchanged; this artefact completes and corrects it"
+  },
+  "CORRECTION_parameter_provenance": {
+    "why": "the prior artefact described every generator parameter as derived from the frozen contract. Two of them are design choices ANCHORED to it, which is a weaker and more honest claim. A reviewer asking where the factor 3 or the 135 degrees came from must not find them described as deductions.",
+    "min_anchor_turn_deg": {
+      "value": 30.0,
+      "status": "INHERITED",
+      "justification": "directly the frozen G10 qualifying-turn magnitude; not a new choice"
+    },
+    "min_anchor_separation_m": {
+      "value": 3.0,
+      "status": "NEW PREREGISTERED DESIGN CHOICE",
+      "anchored_to": "the already-frozen 1.0 m realised-turn separator",
+      "justification": "expressed as 3 x that separator so a separator run has room to be entered and left. The factor 3 is a choice, not a deduction: 2x would leave a separator with no margin either side, and larger factors reduce how many routes a scene can supply. It is declared before evaluation and is not adjusted from any outcome.",
+      "NOT_mathematically_forced_by_G10": true
+    },
+    "max_anchor_separation_m": {
+      "value": 9.0,
+      "status": "NEW PREREGISTERED DESIGN CHOICE",
+      "justification": "4 legs at up to 9 m sum to 36 m, inside the frozen max_path_m of 40 m with margin for per-leg planning to depart from straight lines. The bound is set by the frozen route-length ceiling; the specific value is a choice within it.",
+      "NOT_mathematically_forced_by_G10": true
+    },
+    "max_anchor_turn_deg": {
+      "value": 135.0,
+      "status": "NEW PREREGISTERED ANTI-REVERSAL CONSTRAINT",
+      "justification": "justified by the independent corridor/reversal control, which showed the generator emitting 3 m out and 3 m back -- a 180 degree bend that is a reversal along the same corridor, not a region transition. 135 degrees admits an acute corner between corridors and excludes a reversal. The specific value is a choice; the NEED for an upper bound is a control finding.",
+      "NOT_mathematically_forced_by_G10": true
+    }
+  },
+  "FROZEN_seed": {
+    "value": 0,
+    "rationale": "matches the earlier Hospital route populations, so results are comparable",
+    "controls_all_stochastic_generation": true,
+    "rng_sources": {
+      "numpy": "np.random.default_rng(seed) -- the only RNG the generator consumes",
+      "python_random": "not used by the generator",
+      "framework_rng": "not used; generation is pre-simulation and consumes no Isaac RNG"
+    },
+    "reproducibility_control": "same seed + same scene/map/config yields identical candidate descriptors (test G)"
+  },
+  "FROZEN_candidate_budget": {
+    "value": 96,
+    "rationale": "direct comparability with the earlier Hospital populations, which were 96",
+    "all_evaluated": true,
+    "forbidden": [
+      "increasing the budget after seeing failures",
+      "stopping at the first pass"
+    ]
+  },
+  "FROZEN_candidate_ordering": {
+    "rule": "seeded generation order; candidate i is the i-th route the frozen generator emits",
+    "reproducible_from": [
+      "seed",
+      "generator version",
+      "scene",
+      "obstacle map",
+      "eligibility rules"
+    ],
+    "persisted_per_candidate": [
+      "ordering index",
+      "candidate id",
+      "start pose",
+      "anchors",
+      "goal"
+    ],
+    "forbidden_reorderings": [
+      "path length",
+      "number of turns",
+      "clearance",
+      "visual appearance",
+      "controller performance",
+      "downstream model behaviour"
+    ]
+  },
+  "FROZEN_start_goal_eligibility": {
+    "inherited_from_bo10_scene_admissibility": true,
+    "requirements": [
+      "pose free on the inflated occupancy grid (footprint does not overlap blocking geometry)",
+      "clearance >= min_clearance_m = 0.35 on the clearance transform",
+      "supported ground under the full footprint (G3 for the start, G6 for the goal)",
+      "start-goal separation >= 5.0 m, the frozen G10 threshold",
+      "a route reachable under the declared per-leg planner",
+      "connected navigable structure sufficient for the full anchor sequence"
+    ],
+    "kept_separate": {
+      "START_GOAL_ELIGIBLE": "the pose pair satisfies the above",
+      "MULTI_LEG_ROUTE_GENERATION_SUCCESS": "the generator placed all anchors under spacing and bend rules",
+      "G10_PLAN_PASS": "the resulting route contains >= 3 qualifying plan turn events"
+    },
+    "why_separate": "collapsing them would make a generation failure indistinguishable from an ineligible pose or a plan that simply lacks turns",
+    "forbidden": "choosing a start/goal pair because a previewed route passes G10"
+  },
+  "production_selection_rule": "first candidate in frozen ordering satisfying every pre-motion gate",
+  "no_optional_stopping": true,
+  "after_this_point": "no generator parameter changes from controller-fixture results. The controller fixtures that follow are NON-PRODUCTION and cannot feed back into the generator.",
+  "hospital_authorisation": "NOT YET -- conditional on the controller-interface positive control",
+  "e2_eligible": false
+}

@@ -1,0 +1,229 @@
+{
+  "check": "DIGITAL_TWIN_PROGRAMME",
+  "artifact_semantics": "PROGRAMME_DECLARATION_NO_IMPLEMENTATION",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T21:30:46.546673+00:00",
+  "repository_head": "45164499f1ebd7c4b15cb4736d6a8c8f9a306065",
+  "MANDATORY": true,
+  "independent_of": "the current BO-10 Arm-A attempt",
+  "levels": {
+    "DT_LEVEL_1_FUNCTIONAL": {
+      "requires": [
+        "production robot USD loads from a clean environment",
+        "link hierarchy and joints valid",
+        "mecanum base geometry valid",
+        "6-DOF arm represented",
+        "arm-mounted RGB-D camera represented",
+        "navigation arm pose explicitly frozen",
+        "RGB observation and goal-image pipelines work",
+        "runtime interface works",
+        "GNM, ViNT and NoMaD adapters work through one contract",
+        "closed-loop episodes run",
+        "stopping behaviour measurable",
+        "evidence artefacts produced",
+        "seeds, configuration, checkpoints and assets pinned",
+        "reproducible from a clean clone"
+      ],
+      "may_use_provisional_values": true,
+      "provisional_values_must_be_labelled": true
+    },
+    "DT_LEVEL_2_CALIBRATED": {
+      "additionally_requires": [
+        "authoritative Yahboom source reconciled",
+        "chassis and wheel dimensions validated",
+        "arm kinematics validated",
+        "physical navigation arm pose measured",
+        "camera mount extrinsic measured",
+        "RGB optical frame identity established",
+        "camera intrinsics frozen",
+        "simulated-versus-physical discrepancies recorded",
+        "every remaining provisional value resolved or retained with a justified limitation"
+      ]
+    }
+  },
+  "INVARIANT": "FUNCTIONAL is not CALIBRATED. A twin that runs is not a twin that matches the robot",
+  "gates": [
+    {
+      "id": "DT0",
+      "name": "ROBOT_ASSET_LOAD",
+      "requires": "loads from a clean clone with no host-local paths"
+    },
+    {
+      "id": "DT1",
+      "name": "KINEMATIC_STRUCTURE",
+      "requires": "links, joints, axes, transforms, collision primitives"
+    },
+    {
+      "id": "DT2",
+      "name": "ARM_AND_CAMERA_CONFIGURATION",
+      "requires": "base_link -> arm_base -> q1..q6 -> mount -> optical frame, arm pose frozen"
+    },
+    {
+      "id": "DT3",
+      "name": "SENSOR_PIPELINE",
+      "requires": "what the model receives: dimensions, FOV, rate, colour order, normalisation, context frames, goal image, timestamps"
+    },
+    {
+      "id": "DT4",
+      "name": "ROS2_BRIDGE",
+      "requires": "runtime interface"
+    },
+    {
+      "id": "DT5",
+      "name": "MODEL_ADAPTERS",
+      "requires": "one contract, three adapters"
+    },
+    {
+      "id": "DT6",
+      "name": "CLOSED_LOOP_NAVIGATION",
+      "requires": "episodes execute end to end"
+    },
+    {
+      "id": "DT7",
+      "name": "STOPPING_BEHAVIOUR",
+      "requires": "measurable, not incidental"
+    },
+    {
+      "id": "DT8",
+      "name": "SAFETY_LAYER",
+      "requires": "shield present and exercised"
+    },
+    {
+      "id": "DT9",
+      "name": "RESET_REPRODUCIBILITY",
+      "requires": "same inputs, same initial state"
+    },
+    {
+      "id": "DT10",
+      "name": "MULTI_MODEL_EVALUATION",
+      "requires": "GNM, ViNT and NoMaD on one task"
+    },
+    {
+      "id": "DT11",
+      "name": "EVIDENCE_PROVENANCE",
+      "requires": "one schema regardless of model"
+    },
+    {
+      "id": "DT12",
+      "name": "PHYSICAL_CALIBRATION",
+      "requires": "the only gate that can support an as-built claim"
+    }
+  ],
+  "model_interface": {
+    "contract": "one NavigationPolicy / ModelAdapter: reset, act, stop_score",
+    "adapters": [
+      "GNM",
+      "ViNT",
+      "NoMaD"
+    ],
+    "prohibited": "three separate simulator pipelines"
+  },
+  "canonical_runner": {
+    "entry_point": "run_digital_twin_eval",
+    "model_selection": [
+      "--model gnm",
+      "--model vint",
+      "--model nomad"
+    ],
+    "frozen": [
+      "robot asset",
+      "scene",
+      "seed",
+      "start pose",
+      "goal",
+      "camera configuration",
+      "arm configuration",
+      "checkpoint",
+      "preprocessing",
+      "controller interface",
+      "metrics"
+    ],
+    "clean_clone_requirement": "reproducible from documented dependencies with no reliance on host-local assets"
+  },
+  "reproducibility_claim_boundary": "where simulator or GPU nondeterminism prevents bitwise equality, declare tolerance-based reproducibility rather than asserting exact equality",
+  "prior_prototype": {
+    "exists": true,
+    "dated": "2026-08-13",
+    "members": [
+      {
+        "path": "gates/digital_twin/twin_acceptance.json",
+        "sha256": "f03e1a75ba2208a01f5a7398bfda81ed2cebef5c03fef5e3af048e43370ab146",
+        "present": true,
+        "admission_status": "NOT_ADMITTED",
+        "claim_status": "ENGINEERING_EVIDENCE_ONLY",
+        "robot_usd_sha256": null,
+        "camera_mount": null
+      },
+      {
+        "path": "gates/digital_twin/three_model_loader_compatibility.json",
+        "sha256": "b0cb283f83119a6f64cc86589dc23ea4ee71ddd8e25bd72b0d83adb1c78a4ee1",
+        "present": true,
+        "admission_status": "NOT_ADMITTED",
+        "claim_status": null,
+        "robot_usd_sha256": null,
+        "camera_mount": "yahboom_top_arm"
+      },
+      {
+        "path": "gates/digital_twin/closed_loop_collection.json",
+        "sha256": "29b29bde8a1aade85311afb3e14cd24dcfeaa0491d4d2e4b0f435c319ac09955",
+        "present": true,
+        "admission_status": "NOT_ADMITTED",
+        "claim_status": "ENGINEERING_EVIDENCE_ONLY",
+        "robot_usd_sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+        "camera_mount": null
+      },
+      {
+        "path": "gates/digital_twin/yahboom_digital_twin_provenance.json",
+        "sha256": "f8f6aef556f7535ff27b9a0435f1d9e5b38eeb4d5e8eecd73518d7c98af44b19",
+        "present": true,
+        "admission_status": null,
+        "claim_status": null,
+        "robot_usd_sha256": null,
+        "camera_mount": null
+      },
+      {
+        "path": "gates/digital_twin/yahboom_sim_to_real_calibration_ledger.json",
+        "sha256": "bd2c2720b89ba632b92aae2b3cb7ab7d36ece672d1519e5517fa2f0e69faefbb",
+        "present": true,
+        "admission_status": null,
+        "claim_status": null,
+        "robot_usd_sha256": null,
+        "camera_mount": null
+      }
+    ],
+    "already_demonstrated": [
+      "robot asset loads in Isaac",
+      "kinematic structure inspected",
+      "all three model loaders pass (GNM, ViNT, NoMaD)",
+      "closed loop run with a released ViNT policy",
+      "motion trace and frames emitted",
+      "a sim-to-real calibration ledger exists"
+    ],
+    "why_it_does_not_carry_forward": {
+      "defective_asset": {
+        "artefacts": [
+          "gates/digital_twin/closed_loop_collection.json"
+        ],
+        "usd_sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+        "detail": "bound to the USD whose box collider extents F-TWIN-1 measured as the squares of the source values"
+      },
+      "withdrawn_camera_model": {
+        "artefacts": [
+          "gates/digital_twin/three_model_loader_compatibility.json"
+        ],
+        "detail": "recorded a chassis mast mount. The physical camera is carried by the 6-DOF manipulator, so the transform is configuration-dependent"
+      },
+      "census_not_measurement": "twin_acceptance recorded verdict PASS on a physics census that counted rigid bodies, colliders and joints. That is why the squared colliders passed: a collider of the wrong size is still one collider",
+      "host_local_paths": "at least one artefact references an absolute path outside the repository, which DT0 forbids",
+      "provisional_values": "wheel radius carried as PROVISIONAL_SIMULATION_VALUE"
+    },
+    "status": "SUPERSEDED_PROTOTYPE_EVIDENCE",
+    "retained_because": "it is honest engineering history and it shows the shape of the work. It is not admissible and no claim may cite it"
+  },
+  "SEQUENCING": "implementation does not start until the authorised robot-asset tranche reaches its source and asset milestone. The production USD is a prerequisite of DT0, not only of Attempt 003",
+  "IMPLEMENTATION_STARTED": false,
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

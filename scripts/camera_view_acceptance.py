@@ -43,7 +43,6 @@ claim depends on them.
 from __future__ import annotations
 
 import argparse
-import json
 import math
 import sys
 from datetime import datetime, timezone
@@ -51,6 +50,10 @@ from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+from navfm.evidence import emit_evidence  # noqa: E402
+
 OUT = REPO / "gates" / "scenes"
 ROBOT_USD = REPO / "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd"
 
@@ -340,8 +343,10 @@ def main() -> int:
     record["verdict"] = verdict(agg)
 
     out = Path(args.out) if args.out else OUT / f"camera_view_{args.scene_id}.json"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(record, indent=2) + "\n")
+    # Routed through emit_evidence rather than written directly: a bare write
+    # lands bytes but proves nothing about them, and this harness owns an Isaac
+    # runtime whose shutdown can terminate the process (FL-019).
+    digest = emit_evidence(out, record, required_keys=("check", "scene_id", "verdict"))
 
     print(f"\n  scene      {args.scene_id}")
     print(f"  camera     {cam_h:.3f} m, {hfov:.1f}x{vfov:.1f} deg")
@@ -355,7 +360,7 @@ def main() -> int:
     print(f"  VERDICT    {record['verdict']['result']}")
     for f_ in record["verdict"]["failures"]:
         print(f"    - {f_}")
-    print(f"  record -> {out.relative_to(REPO)}")
+    print(f"  record -> {out.relative_to(REPO)} sha256={digest}")
 
     app.close()
     return 0

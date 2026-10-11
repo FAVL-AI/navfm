@@ -1,0 +1,218 @@
+{
+  "check": "TERMINAL_APPROACH_INTERVENTION_V1_ENVIRONMENT_V7",
+  "artifact_semantics": "AMENDMENT_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "amendment_id": "TAI-V1-A7-ENV",
+  "amendment_version": "V7",
+  "amended_at_utc": "2026-09-17T05:20:16.648603+00:00",
+  "STATUS": "FROZEN",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "authorisation": "NOT AUTHORISED. Neither arm may run under this amendment.",
+  "authoritative_intervention_contract": "V7",
+  "amends": {
+    "predecessor": {
+      "path": "gates/BO10/environment_identity_v6_20260912.json",
+      "sha256": "b17d3c9372034efc4fdda0953fc726ef93673b8bab0cc99ed4736ae0331358fb",
+      "version": "V6"
+    },
+    "original_preregistration": {
+      "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "version": "V1"
+    },
+    "append_only": true,
+    "v1_to_v6_rewritten": false,
+    "reason": "V6 pinned a tree whose rehearsal passed end to end and whose real path did not exist: the adapter was named in the manifest and constructed nowhere. V7 pins the first tree where the authorised entry point builds it and enters mode=REAL",
+    "this_does_not_repair_v6": "V6 remains correct about the tree it froze and must continue to refuse this one",
+    "the_intervention_design_is_unchanged": true,
+    "manipulated_factor": "target selection only"
+  },
+  "REAL_MODE_UNREACHABLE_FROM_ENTRYPOINT": {
+    "classification": "REAL_MODE_UNREACHABLE_FROM_ENTRYPOINT",
+    "observed_at": "356ef56cee20e2d82e5275e8316d9d3158fbd665",
+    "observed": {
+      "manifest_declared_real_adapter": true,
+      "adapter_class_implemented": true,
+      "adapter_ever_constructed": false,
+      "mode_real_passed_anywhere": false,
+      "canonical_arm_a_invocation_exit_code": 2
+    },
+    "why_the_gate_missed_it": "every readiness level was measured through the rehearsal adapter, because the tranche that built the instrument was forbidden from starting Isaac. Nothing asked whether REAL had an entry point",
+    "readiness_hierarchy": [
+      "COMPONENT_RESOLUTION does not imply ENTRYPOINT_REACHABILITY",
+      "rehearsal reachability does not imply REAL-mode reachability",
+      "REAL-mode reachability does not imply RUNTIME_EXECUTION"
+    ],
+    "attempted_arm_a_authorisation": "AUTHORISED_BUT_NOT_STARTED",
+    "explicitly_not": "ARM_A_FAILED",
+    "evidence": {
+      "pre_arm_a_created": false,
+      "post_arm_a_created": false,
+      "isaac_started": false,
+      "traceback": false,
+      "partial_scientific_artefacts": false
+    }
+  },
+  "REAL_MODE_REACHABILITY_EVIDENCE": {
+    "artefact": {
+      "path": "gates/BO10/real_mode_reachability_20260917.json",
+      "sha256": "8a645c34d23bad3fcb2fb33629ae6f91841e30288e7f43a68c60582ce9363373"
+    },
+    "verdict": "PASS",
+    "READINESS_LEVEL": "LEVEL_4_5_REAL_MODE_ENTRYPOINT_REACHABILITY",
+    "entry_point": "scripts/run_terminal_approach_intervention.py:run_real_arm",
+    "real_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+    "mode_entered": "REAL",
+    "real_adapter_instantiated": true,
+    "refused_at_stage": "MANIFEST_VALIDATED",
+    "production_labels_present": [],
+    "negative_controls": {
+      "a_correct_probe_is_accepted": true,
+      "mode_was_not_real": true,
+      "adapter_never_constructed": true,
+      "adapter_constructed_twice": true,
+      "a_different_adapter_was_built": true,
+      "lifecycle_never_began": true,
+      "stages_ran_before_the_refusal": true,
+      "production_label_leaked": true,
+      "the_runner_at_the_v6_freeze_has_no_real_entry_point": true,
+      "real_path_using_the_rehearsal_adapter": true
+    },
+    "CLAIM": "the authorised entry point constructs the real adapter and enters the real lifecycle",
+    "CLAIM_BOUNDARY": "this does NOT establish that the PRE capture succeeds, that Isaac launches, that Hospital loads, that the render loop runs or that the collector completes. Those are LEVEL 5 and only a real attempt reaches them"
+  },
+  "VERSION_CHAIN": [
+    {
+      "node": "ENVIRONMENT_V6",
+      "path": "gates/BO10/environment_identity_v6_20260912.json",
+      "sha256": "b17d3c9372034efc4fdda0953fc726ef93673b8bab0cc99ed4736ae0331358fb",
+      "predecessor": "ENVIRONMENT_V5",
+      "reason": "pinned the tree whose arm lifecycle is walked in rehearsal"
+    },
+    {
+      "node": "REAL_MODE_UNREACHABLE_FROM_ENTRYPOINT",
+      "predecessor": "ENVIRONMENT_V6",
+      "reason": "the real adapter was declared and never constructed, so the canonical Arm-A invocation could only refuse"
+    },
+    {
+      "node": "REAL_MODE_REACHABILITY_EVIDENCE",
+      "path": "gates/BO10/real_mode_reachability_20260917.json",
+      "sha256": "8a645c34d23bad3fcb2fb33629ae6f91841e30288e7f43a68c60582ce9363373",
+      "predecessor": "REAL_MODE_UNREACHABLE_FROM_ENTRYPOINT",
+      "reason": "the entry point now builds the adapter and enters mode=REAL"
+    },
+    {
+      "node": "ENVIRONMENT_V7",
+      "predecessor": "REAL_MODE_REACHABILITY_EVIDENCE",
+      "reason": "pins the first tree where the real path is reachable"
+    }
+  ],
+  "SOURCE_IDENTITY_TRANSITIONS_V6_TO_V7": {
+    "measured_not_prescribed": true,
+    "changed": {
+      "scientific_code.intervention_runner_sha256": {
+        "V6": "687a39105b415e0fa0fdb4cc2b8c98c1500f65a84f38404743de570fa0bed403",
+        "V7": "906691640e89469b47ddd87b5cef63f0787fc16f6806056c2008b864739653f2"
+      },
+      "scientific_code.arm_runner_sha256": {
+        "V6": "4c368a9edb94d91a4ad8fb673b9c66cb44086dd47969176598c13e20287a6e8a",
+        "V7": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05"
+      },
+      "scientific_code.arm_lifecycle_sha256": {
+        "V6": "8b03b285dafc3cc7a2cb6058c59b5cd5c9d4fbeecc9703a2bd3d43162365aa2a",
+        "V7": "9ed00ead506a550a90072762ef95b234cb3ea3afcdf3780ecf3b5168bf5c0569"
+      }
+    },
+    "added": {},
+    "unchanged_field_count": 46,
+    "expected_change": {
+      "scientific_code.arm_runner_sha256": "the runner gained run_real_arm, the entry point that constructs IsaacRuntimeAdapter and enters mode=REAL. This is the defect V7 exists to close",
+      "scientific_code.intervention_runner_sha256": "the manifest-version dispatch table gained EXECUTION_MANIFEST_V4, and the set of versions whose validators assert readiness facts is now named once rather than compared against a literal in two places",
+      "scientific_code.arm_lifecycle_sha256": "_validate_manifest reads that set instead of testing for V3 by name. The literal was already missed once when V3 arrived, which made the lifecycle refuse the very manifest whose readiness it had measured"
+    },
+    "what_did_not_change": "the controller, the selectors, the collector and the preregistration. The manipulated factor is untouched by this tranche"
+  },
+  "EXECUTION_ENVIRONMENT_IDENTITY_V7": {
+    "contract_version": "EXECUTION_ENVIRONMENT_IDENTITY_V2",
+    "supersedes": "V6",
+    "implementation": "src/navfm/execution_environment.py",
+    "frozen_contract_values": {
+      "host.kernel_release": "6.8.0-138-generic",
+      "host.architecture": "x86_64",
+      "gpu.model": "NVIDIA GeForce RTX 4080 SUPER",
+      "gpu.uuid": "GPU-58834766-9fcc-9520-d400-d170f527c040",
+      "gpu.pci_bus_id": "00000000:01:00.0",
+      "gpu.driver_version": "580.178.04",
+      "gpu.kernel_module_version": "580.178.04",
+      "python.executable": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "python.version": "3.11.15",
+      "python.environment_path": "/home/favl/miniforge3/envs/isaac",
+      "python.torch_version": "2.7.0+cu128",
+      "python.torch_cuda_build": "12.8",
+      "python.cuda_available": true,
+      "python.visible_device_count": 1,
+      "isaac.isaacsim_version": "5.1.0.0",
+      "isaac.isaacsim_core_version": "5.1.0.0",
+      "isaac.interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "repository.path": "/home/favl/projects/navfm",
+      "repository.worktree_policy": "CLEAN_REQUIRED_AT_PRE_ARM_CAPTURE",
+      "scientific_code.control_sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+      "scientific_code.interpolated_target_sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290",
+      "scientific_code.route_projection_sha256": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a",
+      "scientific_code.kinematic_drive_sha256": "c947a68669d0ebaec1a050f2e62c6e1795ed437eabd2b765749c5f8f9e58c647",
+      "scientific_code.collect_sha256": "99715ba8921456b32698ff6c5a2a0e9b69234cafdb929c460d7b2176b04ed165",
+      "scientific_code.app_sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "scientific_code.planning_sha256": "b785e67a8d048e515f68da069313951ffed1e60746718cf3312362bba61e79de",
+      "scientific_code.kinematics_sha256": "160e3a5ebe7e2cd2eabbbc2fe4aab8134603ed2ed2e8739f3f816e9aa2d0dec3",
+      "scientific_code.measurement_instrument_sha256": "b0449acfc1fe2903fe84add7b85eacedce1acad24af063c7d5e78b7eaac112dd",
+      "scientific_code.preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "scientific_code.route_population_sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+      "scientific_code.route_polyline_sha256": "07cb85711380a71f88aa626804f57d48435335288783bec4e82122939b86c0d8",
+      "scene.scene_id": "hospital_bo10",
+      "scene.scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+      "runtime_contract.physics_dt": 0.08333333333333333,
+      "runtime_contract.rendering_dt": 0.08333333333333333,
+      "runtime_contract.control_dt": 0.08333333333333333,
+      "runtime_contract.control_hz": 12.0,
+      "runtime_contract.max_steps": 1200,
+      "runtime_contract.lookahead_m": 0.45,
+      "runtime_contract.goal_tol_m": 0.2,
+      "runtime_contract.cruise_v": 0.35,
+      "runtime_contract.max_v": 0.45,
+      "runtime_contract.max_vy": 0.35,
+      "runtime_contract.max_w": 1.2,
+      "runtime_contract.seed": 0,
+      "scientific_code.target_selection_sha256": "c3d93f8c70e3f14e9d2fb6554d75c5ab2465eab3cac167075419840d1d451cf8",
+      "scientific_code.intervention_runner_sha256": "906691640e89469b47ddd87b5cef63f0787fc16f6806056c2008b864739653f2",
+      "scientific_code.arm_runner_sha256": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05",
+      "scientific_code.arm_lifecycle_sha256": "9ed00ead506a550a90072762ef95b234cb3ea3afcdf3780ecf3b5168bf5c0569"
+    },
+    "field_count": 49,
+    "contract_digest": "d93a7e2704312b06a19504785e380e99c9490dd97995a2ce41008c4acd5a55c0",
+    "runner": {
+      "path": "scripts/run_terminal_approach_intervention.py",
+      "sha256": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05"
+    }
+  },
+  "HISTORICAL_CONTRACTS_REMAIN_FROZEN": {
+    "v1_to_v6_rewritten": false,
+    "required_control": {
+      "current_tree_against_V6": "REFUSE",
+      "current_tree_against_V7": "PASS"
+    }
+  },
+  "READINESS_MODEL": {
+    "LEVEL_1_COMPONENT_RESOLUTION": "established",
+    "LEVEL_2_ENTRYPOINT_REACHABILITY": "established",
+    "LEVEL_3_NON_ISAAC_LIFECYCLE_REHEARSAL": "established",
+    "LEVEL_4_CURRENT_PREFLIGHT_AND_ENVIRONMENT": "established at manifest freeze",
+    "LEVEL_4_5_REAL_MODE_ENTRYPOINT_REACHABILITY": "established by V7",
+    "LEVEL_5_REAL_RUNTIME_ATTEMPT": "NOT established, and not establishable here",
+    "why_level_4_5_exists": "three authorisations were spent discovering that rehearsal reachability is not real reachability. The rung is checkable without starting Isaac, and its absence is what let a gate report READY for a path that did not exist"
+  },
+  "EXECUTION_ENVIRONMENT_CLAIM_BOUNDARY": "the authorised entry point constructs the real adapter and enters the real lifecycle. It does not establish that the PRE capture succeeds, that Isaac launches, that the Hospital scene loads, that the render loop runs, or that the collector completes. The first arm execution is what would establish runtime execution evidence",
+  "EXECUTION_MANIFEST": "NOT_FROZEN_BY_THIS_AMENDMENT",
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

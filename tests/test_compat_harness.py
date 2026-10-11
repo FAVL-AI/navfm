@@ -60,6 +60,7 @@ def _result(report, name: str) -> bool:
 class TestAValidFixturePasses:
     """The control. Without it, the negatives below could pass vacuously."""
 
+    @pytest.mark.upstream
     def test_compliant_trajectory_passes_every_data_check(self, tmp_path: Path) -> None:
         report = _run(_write(tmp_path / "t0"))
         for name in (

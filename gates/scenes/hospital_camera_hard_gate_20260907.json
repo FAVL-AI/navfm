@@ -1,0 +1,27 @@
+{
+  "check": "G7_CAMERA_HARD_GATE",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "timestamp_utc": "2026-09-07T20:57:58.026571+00:00",
+  "provenance": {
+    "hostname": "favl",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "isaac_sim_version": "5.1.0.0",
+    "git_head": "6ce98933c116d81b32cbddbf08259ed72cc7c09a",
+    "worktree_dirty": true,
+    "harness_sha256": "d3b74a33acb0e02fead40ae3499e7b8b959ae05c96529d53b56f8251e23514c3",
+    "amendment_digest_pinned": "a0c08324e7cc79963c6bf131177205f8f7c21874378ae0f0aa8097b6e3839303",
+    "robot_asset": "assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+    "robot_asset_sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+    "gpu": "NVIDIA GeForce RTX 4080 SUPER, 580.173.02"
+  },
+  "judged": "GEOMETRICALLY, never from the prim name",
+  "tolerances": {
+    "forward_deg": 15.0,
+    "attach_drift_m": 0.001,
+    "min_robot_motion_m": 0.5
+  },
+  "claim_boundary": "Concerns camera identity, attachment and orientation only. No image quality, no calibration, no physical-hardware claim.",
+  "error": "ValueError: operands could not be broadcast together with remapped shapes [original->remapped]: (1,6)  and requested shape (1,3)",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/favl/projects/navfm/scripts/validate_camera_hard_gate.py\", line 130, in main\n    robot.spawn()\n  File \"/home/favl/projects/navfm/src/navfm/isaac/robot.py\", line 154, in spawn\n    self.teleport(position, yaw)\n  File \"/home/favl/projects/navfm/src/navfm/isaac/robot.py\", line 262, in teleport\n    self.set_body_velocity(0.0, 0.0, 0.0)\n  File \"/home/favl/projects/navfm/src/navfm/isaac/robot.py\", line 271, in set_body_velocity\n    self._articulation.set_velocities(np.concatenate([world, angular], axis=1))\n  File \"/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.experimental.prims/isaacsim/core/experimental/prims/impl/articulation.py\", line 2320, in set_velocities\n    linear_velocities = ops_utils.broadcast_to(\n                        ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.experimental.utils/isaacsim/core/experimental/utils/impl/ops.py\", line 308, in broadcast_to\n    x = np.broadcast_to(x, shape=shape)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/numpy/lib/stride_tricks.py\", line 413, in broadcast_to\n    return _broadcast_to(array, shape, subok=subok, readonly=True)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/numpy/lib/stride_tricks.py\", line 349, in _broadcast_to\n    it = np.nditer(\n         ^^^^^^^^^^\nValueError: operands could not be broadcast together with remapped shapes [original->remapped]: (1,6)  and requested shape (1,3)\n",
+  "G7_CAMERA": "INCONCLUSIVE"
+}

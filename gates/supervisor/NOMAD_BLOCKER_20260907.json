@@ -1,0 +1,56 @@
+{
+  "check": "NOMAD_REPRODUCTION_BLOCKER",
+  "artifact_semantics": "APPEND_ONLY_RESULT",
+  "model": "NoMaD",
+  "paper": "Sridhar et al., NoMaD",
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "navfm_head": "8ed90e8d49b9192f137de37fec7368980c5290f7",
+  "checkpoint": {
+    "path": "checkpoints/nomad.pth",
+    "sha256": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+    "state": "PRESENT \u2014 the asset is held; this is not a missing-asset blocker"
+  },
+  "config_present": {
+    "path": "train/config/nomad.yaml",
+    "model_type": "nomad",
+    "num_diffusion_iters": 10,
+    "vision_encoder": "nomad_vint",
+    "context_size": 3,
+    "len_traj_pred": 8,
+    "note": "context_size 3 differs from GNM/ViNT's 5, so NoMaD would also need its own sample population"
+  },
+  "execution_attempts": [
+    {
+      "level": "CLI",
+      "command": "python -m navfm.eval.offline --model nomad ...",
+      "exit_code": 2,
+      "outcome": "argparse rejected: \"argument --model: invalid choice: 'nomad' (choose from 'vint', 'gnm')\"",
+      "sufficient_as_evidence": false,
+      "why_not": "an argparse rejection is earlier than the evaluation boundary and proves only that the CLI does not expose the model"
+    },
+    {
+      "level": "API",
+      "command": "navfm.upstream.build_model('nomad', model_config('nomad'))",
+      "outcome": "NotImplementedError",
+      "raised_at": "src/navfm/upstream.py:218 in build_model()",
+      "message": "model_type 'nomad' is not wired here. NoMaD needs a diffusion sampling loop for evaluation (train_utils._compute_losses_nomad), which is a separate entrypoint -- see docs/EXPERIMENTS.md E1.3.",
+      "sufficient_as_evidence": true,
+      "why": "reaches the actual point at which the released model cannot be constructed for evaluation"
+    }
+  ],
+  "release_inspection": {
+    "upstream_has_compute_losses_nomad": true,
+    "location": "train/vint_train/training/train_utils.py:447",
+    "upstream_standalone_evaluation_entrypoints": [
+      "vint_train/training/train_eval_loop.py"
+    ],
+    "only_driver": "train.py, which calls train_eval_loop",
+    "finding": "the release computes NoMaD's diffusion losses INSIDE the training loop. It ships no standalone evaluation entrypoint for NoMaD, so there is no official evaluation path to execute in the way ViNT and GNM were evaluated."
+  },
+  "blocker_class": "BLOCKED_MISSING_RELEASED_EVALUATION_ENTRYPOINT",
+  "why_not_missing_asset": "the checkpoint and config are both held and digest-verified. Calling this a missing asset would misstate where the gap is.",
+  "why_not_missing_sampling_implementation": "upstream does implement the sampling loss; what is absent is a standalone evaluation entrypoint that invokes it outside the training loop.",
+  "not_patched_here": "no evaluator was implemented to make the row runnable. Building one would be new work, not reproduction of a released path.",
+  "published_result_reproduction_status": "NOT_ATTEMPTABLE_FROM_RELEASED_EVALUATION_PATH",
+  "claim_boundary": "Establishes, by execution, where and why NoMaD reproduction stops. Establishes nothing about NoMaD's performance."
+}

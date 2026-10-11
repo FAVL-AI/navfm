@@ -1,0 +1,134 @@
+{
+  "name": "component_comparison_v1",
+  "status": "FROZEN 2026-10-09 after red-team (DO-NOT-FREEZE as written; F1-F10 applied: F1-F3 in code with failing-first tests, the rest here); changes need a new version",
+  "question": "does bounded localisation prevent the s_bend jump failures, and does independent final-goal verification reject chain-end declarations that are not at the requested goal without losing correct stops?",
+  "checkpoint": {
+    "name": "ft-seed0",
+    "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
+    "reason": "held fixed across variants; the stronger checkpoint on the previous comparison"
+  },
+  "variants": {
+    "A_baseline": {
+      "bounded": null,
+      "verify_threshold": null,
+      "verify_persistence": 2
+    },
+    "B_bounded": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2
+    },
+    "C_verify": {
+      "bounded": null,
+      "verify_threshold": 7.745,
+      "verify_persistence": 2
+    },
+    "D_both": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": 7.745,
+      "verify_persistence": 2
+    }
+  },
+  "conditions": {
+    "true_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+      "chain_json_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+      "tests": "route following and correct stopping; consistent-chain look-alikes (the two point-symmetric s_bend bends; mid-route views) occur naturally"
+    },
+    "truncated_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-truncated60-12f-20261009-01",
+      "chain_json_sha256": "e29d555ced8c9cafa2d928586745d0759e62e5bd31c0a2fa2cfe081fbdb21339",
+      "tests": "same-scene mismatch: chain ends 0.75-0.96 m short of the requested goal; a chain-only arrival rule declares arrival at the wrong place; verification should withhold it and steer to the requested goal"
+    },
+    "wrong_chain_swap": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-wrongchain-12f-20261009-01",
+      "chain_json_sha256": "3e161168aebd1ea5cbdbf608018a1eae7b951806ec65adf39583a4b343bca6ea",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "tests": "gross cross-scene mismatch (junction_0 chain in the s_bend scene), one route"
+    }
+  },
+  "routes": [
+    "s_bend_run_0000",
+    "s_bend_run_0001",
+    "junction_run_0000",
+    "junction_run_0001"
+  ],
+  "episodes": "4 variants x (4 + 4 + 1 + 2) = 44 attempts; failed or refused attempts are counted in denominators and archived",
+  "runtime": {
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+    "radius": 4,
+    "close_threshold": 3.0,
+    "decision_hz": 2.0,
+    "max_v": 0.1,
+    "controller": "reference PD dt 0.5 s + 120 Hz yaw PI (qualification articulated-control-20261009-10)",
+    "budget_frames": 600,
+    "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json",
+    "yaw_feedback": true,
+    "enforced_by": "collect_option1.py refuses any --variant run whose radius, close threshold, max_v, decision rate, budget, checkpoint, goal root, qualification, yaw feedback, condition root or chain.json hash differ"
+  },
+  "calibration": {
+    "file": "/home/favl/navfm-runtime-evidence/component-calibration-20261009-02.json",
+    "sha256": "2d229edead8fd8e554dd0cc32e8cc96053aa37a0662961806900c664534adbb9",
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+    "chain_root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+    "lost_data": "only arrival-tm-ft-seed0-20261009-02 (163 correctly localised decisions; the 95th percentile rests on about 8 tail points)",
+    "verify_data": "tm-ft-seed0-02, wc-ft-seed0-02, closedloop-yawfb-ft-seed0-02",
+    "in_sample_caveat": "calibration uses the same development routes, goals and chains as the evaluation (different episodes); thresholds are development-calibrated, not validated out of sample",
+    "lost_rule": "enter 6.752 (95th pct of on-route window minimum), exit 2.215 (median), patience 3",
+    "verify_rule": "learned threshold 7.745: false accept 1.9% pooled over far frames; by band 0.75-1.0 m 4.4% (113 frames), 1.0-1.5 m 2.2%, >1.5 m 0%; true accept 0.40 per frame",
+    "pixel_control": "NCC 0.893: band 0.75-1.0 m false accept 9.7%; true accept 0.24; offline only, never controls the robot"
+  },
+  "lost_and_pause_accounting": "lost decisions and verification-pending decisions count against the same 600-frame budget; neither can produce a stop; an episode ending lost or pending is a timeout",
+  "measures": {
+    "outcomes": "configs/eval/arrival_measures_v1.json over all attempted episodes; navigation success is labelled goal-region visit (no goal-blind row; pending steering can pass through the region)",
+    "localisation_primary": "decisions whose current or followed node is more than one node from the pose-true nearest node (evaluation only), plus route departure",
+    "localisation_secondary": "jump count (lower for B partly by construction)",
+    "verification": "delay in decisions and seconds from the first chain-goal decision to the stop, for C and D only (A and B: NOT_APPLICABLE); pending decisions; lost decisions"
+  },
+  "reporting": "development evidence; counts per variant x condition with route denominators; paired per-route tables; no significance claims",
+  "known_limitations": [
+    "one checkpoint, four routes, two scenes, one seed",
+    "small-command tracking limitation of the yaw loop applies to all variants",
+    "calibration and evaluation share routes and scenes (development only); held-out sealed"
+  ],
+  "repeats": {
+    "routes": [
+      "s_bend_run_0000",
+      "s_bend_run_0001"
+    ],
+    "condition": "true_chain",
+    "attempts": 2,
+    "reason": "only s_bend exercises bend aliasing; repeats also measure run-to-run determinism, which is reported"
+  },
+  "run_order": "for each variant in A, B, C, D: true_chain (4 routes), truncated_chain (4), wrong_chain_swap (1), true_chain repeat (2 s_bend); one Isaac process per collection; source pinned by commit",
+  "answer_rules": {
+    "B_prevents_jumps": "answered by mechanism trace: aliased proposals withheld vs followed; if A does not show bend aliasing on an s_bend attempt, that comparison is NOT TESTED, never 'no effect'",
+    "C_rejects_wrong_arrival": "truncated and swap conditions: chain-end declarations away from the requested goal under A vs under C; plus correct stops lost on the true chain",
+    "no_claims": "four routes, one checkpoint, one seed: descriptive development evidence only"
+  },
+  "pre_registered_failure_modes": [
+    "C/D pending can oscillate when the chain argmin falls back from the goal node (verified_count resets); oscillations are logged via pending decisions and reported",
+    "D truncated: steering past the chain end may trigger lost, which clears reached_goal and drags the robot back toward chain nodes",
+    "lost episodes are expected to time out rather than recover (lost_exit 2.215 with global-argmin following)",
+    "whether a requested goal 0.75-0.96 m away is within the checkpoint's usable goal range is UNKNOWN"
+  ],
+  "scope_limits": [
+    "released checkpoint not evaluated",
+    "pixel verifier offline only",
+    "yaw-loop small-command tracking limitation applies to all variants"
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "checkpoint": {
+    "name": "ft-seed0",
+    "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
+    "reason": "held fixed across variants; the stronger checkpoint on the previous comparison"
+  },
+  "runtime": {
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+    "radius": 4,
+    "close_threshold": 3.0,
+    "decision_hz": 2.0,
+    "max_v": 0.1,
+    "controller": "reference PD dt 0.5 s + 120 Hz yaw PI (qualification articulated-control-20261009-10)",
+    "budget_frames": 600,
+    "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json",
+    "yaw_feedback": true
+  },
+  "name": "prospective_r2_recovery_v1",
+  "status": "FROZEN 2026-10-10 after independent bounded review; execution has not begun",
+  "scope": "Development R2_recover versus B1x_exit only",
+  "conditions": {
+    "true_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+      "chain_json_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+      "tests": "route following and correct stopping; consistent-chain look-alikes (the two point-symmetric s_bend bends; mid-route views) occur naturally"
+    }
+  },
+  "variants": {
+    "R2_recover": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "confirmation": null,
+      "recovery": {
+        "exit": 5.880692958831787,
+        "persistence": 2,
+        "scan_budget": 36,
+        "max_attempts": 2
+      },
+      "scan_rate": 0.4,
+      "role": "B1 entry and bounded progression unchanged; lost behaviour replaced by the in-place scan, the 36-decision scan budget and 2-entry limit with terminal halt, non-arrival relocalisation, and exit 5.881 (shared with B1x). bounded.lost_exit (2.215) is unused by R2"
+    },
+    "B1x_exit": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 5.880692958831787,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "role": "control for R2: B1's lost behaviour (follow the global argmin while moving, stay lost until relocalised or the episode budget) with R2's exit threshold 5.881. R2 differs from B1x by the in-place scan, the scan budget and lost-entry limit with a terminal halt, and non-arrival relocalisation decisions; a difference is attributable to that bundle, not to the scan alone"
+    }
+  },
+  "trials": {
+    "prospective_r2_a": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "R2_recover",
+        "B1x_exit"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.23,
+        0.1,
+        45.0
+      ],
+      "rear_facing": false
+    },
+    "prospective_r2_b": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.43,
+        -0.1,
+        -45.0
+      ],
+      "rear_facing": false
+    },
+    "prospective_r2_c": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "R2_recover",
+        "B1x_exit"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.57,
+        0.1,
+        135.0
+      ],
+      "rear_facing": true
+    },
+    "prospective_r2_d": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.77,
+        -0.1,
+        -135.0
+      ],
+      "rear_facing": true
+    }
+  },
+  "design": {
+    "paired_starts": 16,
+    "planned_arm_attempts": 32,
+    "selection": "All four routes crossed with all four declared new numeric perturbations, without image inspection or model evaluation; no exclusions based on outcomes",
+    "primary": "Exact at first declaration in indices0..35, with ten observed preterminal tracking decisions and no reentry",
+    "secondary": "First lost-entry +/-1-node durable recovery",
+    "durability_decisions": 10,
+    "first_entry_horizon_decisions": 36,
+    "stages": [
+      [
+        "prospective_r2_a"
+      ],
+      [
+        "prospective_r2_b",
+        "prospective_r2_c",
+        "prospective_r2_d"
+      ]
+    ],
+    "retry": "One infrastructure-only retry per planned route when collection episode status is not PASS. Never retry a valid PASS episode for model outcome. Original attempt stays in denominator as failure; retry sensitivity reported separately.",
+    "matching_tolerances": {
+      "position_m": 0.02,
+      "yaw_deg": 2.0,
+      "image_mean_abs_grey": 2.5,
+      "basis": "Predeclared conservative instrumentation guards, reused from existing fidelity contract. Not validated on these uninspected poses; drift fails integrity rather than excludes a pair."
+    },
+    "gate_contact_window": "first terminal frame plus24, or full budget if no terminal; extra captured tail and settling reported separately"
+  }
+}

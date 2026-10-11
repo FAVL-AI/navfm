@@ -1,0 +1,585 @@
+{
+  "name": "component_comparison_v2",
+  "status": "FROZEN 2026-10-10 as v2.1: v2 frozen at f663882 after three reviews; amended before any counted trial (replay-to-handover matched state, image-level fidelity) and frozen after a fourth, narrow review of the amendment; changes need a new version",
+  "supersedes": "none; component_comparison_v1 is retained unchanged as the comparator",
+  "question": "does the revised logic recognise arrival at the requested goal, and recover from localisation ambiguity, rather than only suppressing declarations?",
+  "checkpoint": {
+    "name": "ft-seed0",
+    "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
+    "reason": "held fixed across variants; the stronger checkpoint on the previous comparison"
+  },
+  "runtime": {
+    "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+    "radius": 4,
+    "close_threshold": 3.0,
+    "decision_hz": 2.0,
+    "max_v": 0.1,
+    "controller": "reference PD dt 0.5 s + 120 Hz yaw PI (qualification articulated-control-20261009-10)",
+    "budget_frames": 600,
+    "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json",
+    "yaw_feedback": true
+  },
+  "conditions": {
+    "true_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+      "chain_json_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+      "tests": "route following and correct stopping; consistent-chain look-alikes (the two point-symmetric s_bend bends; mid-route views) occur naturally"
+    },
+    "truncated_chain": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-truncated60-12f-20261009-01",
+      "chain_json_sha256": "e29d555ced8c9cafa2d928586745d0759e62e5bd31c0a2fa2cfe081fbdb21339",
+      "tests": "same-scene mismatch: chain ends 0.75-0.96 m short of the requested goal; a chain-only arrival rule declares arrival at the wrong place; verification should withhold it and steer to the requested goal"
+    },
+    "wrong_chain_swap": {
+      "root": "/home/favl/navfm-runtime-evidence/topomap-wrongchain-12f-20261009-01",
+      "chain_json_sha256": "3e161168aebd1ea5cbdbf608018a1eae7b951806ec65adf39583a4b343bca6ea",
+      "tests": "gross cross-scene mismatch (junction_0 chain in the s_bend scene), one route"
+    }
+  },
+  "variants": {
+    "A_baseline": {
+      "bounded": null,
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "role": "v1 comparator, unchanged code path"
+    },
+    "B1_bounded": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "role": "v1 comparator: bounded progression + v1 lost state"
+    },
+    "C1_verify": {
+      "bounded": null,
+      "verify_threshold": 7.745,
+      "verify_persistence": 2,
+      "role": "v1 comparator: v1 requested-goal check"
+    },
+    "B1x_exit": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 5.880692958831787,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "role": "control for R2: B1's lost behaviour (follow the global argmin while moving, stay lost until relocalised or the episode budget) with R2's exit threshold 5.881. R2 differs from B1x by the in-place scan, the scan budget and lost-entry limit with a terminal halt, and non-arrival relocalisation decisions; a difference is attributable to that bundle, not to the scan alone"
+    },
+    "R2_recover": {
+      "bounded": {
+        "max_jump": 2,
+        "persistence": 2,
+        "lost_enter": 6.752,
+        "lost_exit": 2.215,
+        "lost_patience": 3
+      },
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "confirmation": null,
+      "recovery": {
+        "exit": 5.880692958831787,
+        "persistence": 2,
+        "scan_budget": 36,
+        "max_attempts": 2
+      },
+      "scan_rate": 0.4,
+      "role": "B1 entry and bounded progression unchanged; lost behaviour replaced by the in-place scan, the 36-decision scan budget and 2-entry limit with terminal halt, non-arrival relocalisation, and exit 5.881 (shared with B1x). bounded.lost_exit (2.215) is unused by R2"
+    },
+    "V2a_confirm": {
+      "bounded": null,
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "confirmation": {
+        "threshold": 7.745,
+        "votes": 2,
+        "window": 4,
+        "approach_budget": 40
+      },
+      "approach_steering": false,
+      "recovery": null,
+      "role": "changes only C1's arrival logic: latched eligibility, 2-of-4 evidence, abstention budget; steering as C1 (requested-goal waypoint only on chain-end decisions)"
+    },
+    "V2b_confirm_steer": {
+      "bounded": null,
+      "verify_threshold": null,
+      "verify_persistence": 2,
+      "confirmation": {
+        "threshold": 7.745,
+        "votes": 2,
+        "window": 4,
+        "approach_budget": 40
+      },
+      "approach_steering": true,
+      "recovery": null,
+      "role": "V2a plus steering by the requested goal throughout the approach phase. V2b's result is attributable to confirmation plus steering; steering without confirmation is not tested"
+    }
+  },
+  "component_definitions": {
+    "confirmation": "src/navfm/collection/arrival_confirmation.py: approach latches at the first chain-end decision and never unlatches; each approach decision votes requested-goal distance <= 7.745; votes expire after 4 decisions; confirmed when >= 2 of the last 4 vote; V2a steers as C1 (requested-goal waypoint on chain-end decisions only); V2b steers by the requested-goal waypoint throughout the approach; a lost pause clears votes and does not consume the approach budget; 40 approach decisions without confirmation = ABSTAINED (terminal non-arrival halt)",
+    "recovery": "src/navfm/collection/topomap.py RecoveringTopomapState: entry unchanged (window minimum > 6.752 on 3 decisions); while lost the robot does not translate and rotates in place at 0.4 rad/s; every node scored; relocalise when the global argmin distance <= 5.881 on 2 consecutive decisions at the same node (+/-1); a relocalisation decision is never an arrival; 36 scan decisions without relocalising, or a third lost entry, = recovery_failed (terminal non-arrival halt)",
+    "terminals": "ARRIVED (policy_stop_frame) is the only arrival. ABSTAINED (policy_abstain_frame, reason confirmation_budget or recovery_failed) is a non-arrival halt. The episode budget is separate (timeout). Under arrival_measures_v1 an abstention has no stop decision (timeout field true); it is reported separately as abstention, never as a correct or wrong stop. For an abstention the task end under arrival_measures_v1 is the last recorded frame (abstention + 24 stationary frames), as for a timeout; contacts in that tail count",
+    "ground_truth": "pose is used only for evaluation, calibration and to place the robot at trial starts; it never enters a decision",
+    "matched_state_start": "replay to handover: the robot starts at the recorded episode's start pose; the recorded commands of decisions 0..K-1 are applied, decision by decision, through the same drive path and yaw loop; the 6-image history fills with live frames; the variant takes over at decision K with the recorded current node at K-1 (a policy output, not ground truth) and fresh internal counters. Pose is used only to report replay fidelity (handover position and yaw error against the recorded pose). The effective initial node and lost state are recorded per episode; the resumed episode's checkpoint must equal this checkpoint. The collector refuses a source episode that stopped or abstained before the handover. Measures spanning the whole recording (contact before task end, elapsed and exposure time, path length) include the replay frames 0..6K-1; the replay is identical for every variant (deterministic physics, same commands), and a contact before the handover is an integrity failure. Route following after the start is measured from the handover frame"
+  },
+  "calibration": {
+    "confirmation_threshold": {
+      "value": 7.745,
+      "file": "/home/favl/navfm-runtime-evidence/component-calibration-20261009-02.json",
+      "sha256": "2d229edead8fd8e554dd0cc32e8cc96053aa37a0662961806900c664534adbb9",
+      "data": "tm-ft-seed0-02, wc-ft-seed0-02, closedloop-yawfb-ft-seed0-02 (v1 calibration; unchanged so the v2 difference is logic only)"
+    },
+    "recovery_exit": {
+      "value": 5.880692958831787,
+      "file": "/home/favl/navfm-runtime-evidence/recovery-calibration-v2-20261010-01.json",
+      "sha256": "bdfe57dba3c9d5b2d3d13e5b7ab6d92d9f91d872714ecc0f8b37dbcd305fe4b4",
+      "rule": "scripts/calibrate_recovery_v2.py: 90th percentile of the LOCAL window minimum on correctly localised on-route forward-view decisions (151 decisions, one recording, about 15 tail points). Relocalisation thresholds the GLOBAL minimum over all nodes, where aliasing lives, and scan views are absent from the data; '0/71 off-route at or below' is therefore not a bound on spurious global relocalisation. Spurious global matches are measured in stage 2 (lost_false_global_matches)"
+    },
+    "fixed_a_priori_not_fitted": "votes 2, window 4, approach budget 40 decisions (20 s), scan rate 0.4 rad/s (the qualified in-place command: steady 0.38-0.39 rad/s with 0.031-0.034 m/s translation creep), scan budget 36 decisions (one revolution at 0.38 rad/s is 33), max 2 lost entries. All v2 parameters were chosen after reading the 44 v1 episodes",
+    "route_overlap": "every calibration recording, the stage-1 replay set (the 44 v1 comparison episodes) and every v2 trial use the same four development routes, two scenes and the same chains and goals. v2 trials are fresh episodes, so they test development repeatability of a frozen rule, not generalisation"
+  },
+  "stages": {
+    "1_logic_replay": {
+      "input": "the 44 v1 comparison episodes (cmp-*-20261009-01): recorded chain flags, requested-goal distances and lost flags, decisions up to and including the recorded stop; open loop (v2 steering is not replayed). Distances scored at frame f-1 (the image the decision saw); D's lost flags enter as pauses, which V2 (unbounded) would not have",
+      "criteria": {
+        "S1a_no_false_confirmation": "replayed V2 logic never confirms at a decision > 0.5 m from the goal (the arrival radius). Vacuous on the 22 A/B sequences that end at their first chain-end decision; reported with the number of sequences where confirmation was possible",
+        "S1b_alternation": "on the C1 truncated junction sequences, replayed V2 confirms inside the goal region (<= 0.5 m)",
+        "S1c_true_chain_retained": "on every true-chain or repeat sequence of C_verify or D_both (the variants whose recorded runs continued past the chain end) that ended in a v1 correct stop, replayed V2 confirms at <= 0.5 m within 2 decisions of the first chain-end decision. A and B sequences end at their own chain-end stop and cannot show this. Near-tautological: V2's rule is weaker than C1's after the latch, so it confirms where C1 accepted; it checks only that nothing breaks"
+      },
+      "gate": "S1a and S1c pass for V2a/V2b to enter stage 2; S1b reported",
+      "code": "scripts/replay_confirmation_v2.py",
+      "label": "IN-SAMPLE CONSISTENCY CHECK, not evidence: the v2 parameters were set after reading these 44 episodes, and S1b's pattern is the design target"
+    },
+    "2_targeted": {
+      "ambiguity": "trials ambiguity_*: A vs B1 from 5 matched states (A's recorded decisions 13, 14, 20, 21, 22 on s_bend_run_0000), each from two v1 episodes (true, rep) that are within about 0.01 m at these decisions: replicates of one start, not independent starts. Decisions 13-14 precede A's wrong backward step at decision 14; 20-22 precede and contain the decision-22 look-alike. Starts at 20-22 place B1 on A's diverged path, a state B1 did not reach in closed loop",
+      "recovery": "trials kidnapped_*: B1, B1x and R2 started lost at 16 perturbed mid-route poses (4 routes x 4 perturbations); kidnapped_c and kidnapped_d face away from the route (yaw 180 and 90 degrees), so the first view is uninformative and the scan is needed",
+      "arrival": "trial arrival_truncated: A, C1, V2a, V2b on the 4 truncated chains (requested goal 0.75-0.96 m beyond the chain end)",
+      "premature": "trials premature_*: A, C1, V2a, V2b from A's decision-22 matched state on the true s_bend_run_0000 chain (two replicates)"
+    },
+    "3_complete": "trials complete_*: only components that pass their stage-2 gate, each with its v1 counterpart and A, fresh episodes on true, truncated and swap chains (9 per variant)"
+  },
+  "definitions": {
+    "encounter": "a decision whose argmin node is >= 3 nodes from the pose-true nearest node while the policy's previous current node is within 1 of it; lost-state decisions count (a lost policy following the aliased node is following it); only decisions up to the task end (stop or abstention decision) count",
+    "correction": "an encounter after which the followed node that decision and the current node for the next 10 decisions stay within 1 node of the pose-true node; needs 10 decisions before the task end, else NOT_EVALUABLE",
+    "followed": "an encounter whose followed node that decision is > 1 node from the pose-true node",
+    "avoidance": "a trial with no encounter (the mechanism is then NOT TESTED in that trial)",
+    "route_following_after": "route departure (> 0.5 m lateral) and maximum lateral deviation after the first encounter (or after the start if none), and terminal outcome",
+    "recovery_success": "a lost episode ending in relocalisation to a node within 1 of the pose-true node, with no lost re-entry in the next 10 decisions; reported per lost entry and per trial; B1 counts its v1 'recovered' event the same way; the heading rotated between entry and relocalisation is logged (evaluation only); trial success = the first lost entry (the kidnapped start) succeeds",
+    "added_stopping_delay": "decisions and seconds from the first chain-end decision (chain reached flag first true) to the stop, for correct stops",
+    "contact_incidence": "arrival_measures_v1 collision_before_task_end per attempt (the task ends at the stop, the abstention or the budget)",
+    "withheld_then_lost_track": "an encounter not followed that decision, after which the current node leaves the pose-true node by more than 1 within 10 decisions",
+    "backward_step": "a non-lost decision whose upstream proposal (argmin node, +1 if within the close threshold) is below the previous current node; reported per trial with whether it was accepted and whether the proposal was closer to the pose-true node (descriptive, no gate; v1 offline: 36 of 57 withheld backward proposals favoured the proposal)",
+    "premature_latch": "the confirmation approach phase latched while the robot is more than 0.5 m (the arrival radius) from the goal, scored at frame f-1 (evaluation only); v1 risk: requested-goal votes 0.59-0.84 m from the goal on s_bend_run_0000 decisions 26-36",
+    "lost_false_global_matches": "lost decisions whose global argmin distance is <= the variant's exit threshold at a node more than 1 from the pose-true node",
+    "contact_exposure": "contacts are reported with path length and exposure time; the per-exposure comparison uses contacts per metre (exposure time includes stationary tails); halting variants travel less, so raw comparisons are non-regression guards only"
+  },
+  "outcomes": [
+    "correct stops",
+    "wrong stops",
+    "contact incidence",
+    "recovery success",
+    "added stopping delay",
+    "abstentions (reported separately)",
+    "timeouts"
+  ],
+  "gates_to_stage_3": {
+    "all": "a gate is INCOMPLETE unless it has zero integrity failures, identical non-repo influencing files across all attempts and every planned attempt present (retry rule)",
+    "B1_bounded (look-alike)": "NOT_TESTED if A follows the look-alike in no ambiguity trial (the starts did not reproduce the failure) or B1 has no evaluable encounter; otherwise PASS iff every evaluable B1 encounter is corrected AND B1 contacts <= A contacts",
+    "R2_recover": "PASS iff on the 8 uninformative-view trials R2 first-entry successes >= 6 AND > B1x's; over all 16 R2 successes >= B1x's; R2 wrong stops <= B1x's; R2 contacts <= B1x's both raw and per metre",
+    "V2a_confirm and V2b_confirm_steer (each)": "PASS iff on arrival_truncated: correct stops >= 3 of 4, wrong stops 0, contacts <= A's, correct stops > C1's; AND on premature_*: wrong stops 0. The V2b minus V2a difference (correct, wrong, contacts) is reported descriptively",
+    "note": "each component advances separately; a failed gate is reported as a result, not repaired within v2"
+  },
+  "reporting": "all attempts per variant x trial, including failed, refused and excluded attempts, with reasons; counts only; paired per start; no significance claims; integrity as in v1 (scripts/analyse_component_comparison.py extended to v2)",
+  "known_limitations": [
+    "one checkpoint, four routes, two scenes, one seed; the look-alike exists on one route",
+    "ambiguity starts: 5 distinct states, each replicated from two near-identical v1 episodes; starts at 20-22 put B1 on A's diverged path",
+    "runs are not bit-deterministic (start poses differ by about 2e-5 m); paired trials are not counterfactual replicas",
+    "the recovery exit rests on about 15 tail points from one recording of local forward-view minima; global and scan-view behaviour are measured, not calibrated",
+    "in-place scanning creeps about 0.03 m/s (a circle of radius about 0.09 m); contacts during scans count",
+    "abstention and scan halts reduce exposure; raw contact comparisons are non-regression guards only",
+    "pause semantics of the confirmation state are unit-tested only: V2a/V2b have no lost state",
+    "V2 with R2 together is not tested",
+    "v2 reruns of A, B1 and C1 run new source blobs; their behaviour equivalence to v1 is shown by a recorded-decision regression test, not by identical source",
+    "the v1-equivalence regression covers the A and B state machines (incl. lost entry, not the v1 'recovered' path); the C1 verification path and the policy step are covered by unit tests, not by recorded decisions",
+    "the recovery exit threshold is calibrated on local window minima and applied to global minima (documented; measured as lost_false_global_matches)",
+    "replayed commands are open loop; replay is not bit-deterministic, so the handover state matches the recording only within the fidelity bound",
+    "fresh internal counters at handover: A has no state beyond its node, so A's handover state is exact; B1 starts with no pending proposal, so it cannot accept a multi-node jump on the handover decision itself, whereas a B1 run from the route start along A's path might have held one (for example node 4 pending at decision 20); a native B1 state on A's path is counterfactual",
+    "the A-rep resume source has not been exercised under replay before freeze; its fidelity is checked per attempt"
+  ],
+  "held_out": "sealed; not used",
+  "trials": {
+    "arrival_truncated": {
+      "stage": 2,
+      "question": "arrival recognition",
+      "variants": [
+        "A_baseline",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer"
+      ],
+      "condition": "truncated_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ]
+    },
+    "complete_true_chain": {
+      "stage": 3,
+      "question": "complete episodes (only components that pass their stage-2 gate, with their v1 counterparts and A)",
+      "variants": [
+        "A_baseline",
+        "B1_bounded",
+        "B1x_exit",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ]
+    },
+    "complete_truncated_chain": {
+      "stage": 3,
+      "question": "complete episodes (only components that pass their stage-2 gate, with their v1 counterparts and A)",
+      "variants": [
+        "A_baseline",
+        "B1_bounded",
+        "B1x_exit",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer",
+        "R2_recover"
+      ],
+      "condition": "truncated_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ]
+    },
+    "complete_wrong_chain_swap": {
+      "stage": 3,
+      "question": "complete episodes (only components that pass their stage-2 gate, with their v1 counterparts and A)",
+      "variants": [
+        "A_baseline",
+        "B1_bounded",
+        "B1x_exit",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer",
+        "R2_recover"
+      ],
+      "condition": "wrong_chain_swap",
+      "routes": [
+        "s_bend_run_0000"
+      ]
+    },
+    "ambiguity_true_d13": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 13
+    },
+    "ambiguity_true_d14": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 14
+    },
+    "ambiguity_true_d20": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 20
+    },
+    "ambiguity_true_d21": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 21
+    },
+    "ambiguity_true_d22": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 22
+    },
+    "ambiguity_rep_d13": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 13
+    },
+    "ambiguity_rep_d14": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 14
+    },
+    "ambiguity_rep_d20": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 20
+    },
+    "ambiguity_rep_d21": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 21
+    },
+    "ambiguity_rep_d22": {
+      "stage": 2,
+      "question": "look-alike",
+      "variants": [
+        "A_baseline",
+        "B1_bounded"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 22
+    },
+    "kidnapped_a": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1_bounded",
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.35,
+        0.2,
+        20.0
+      ],
+      "uninformative_view": false
+    },
+    "kidnapped_b": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1_bounded",
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.65,
+        -0.2,
+        -20.0
+      ],
+      "uninformative_view": false
+    },
+    "kidnapped_c": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1_bounded",
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.5,
+        0.0,
+        180.0
+      ],
+      "uninformative_view": true
+    },
+    "kidnapped_d": {
+      "stage": 2,
+      "question": "recovery",
+      "variants": [
+        "B1_bounded",
+        "B1x_exit",
+        "R2_recover"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000",
+        "s_bend_run_0001",
+        "junction_run_0000",
+        "junction_run_0001"
+      ],
+      "start_lost": true,
+      "perturbation": [
+        0.35,
+        0.2,
+        90.0
+      ],
+      "uninformative_view": true
+    },
+    "premature_true_d22": {
+      "stage": 2,
+      "question": "premature confirmation",
+      "variants": [
+        "A_baseline",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-true-20261009-01/s_bend_run_0000",
+      "resume_decision": 22,
+      "why": "v1: after A's decision-22 look-alike jump the chain reaches node 13 by decision 29 while requested-goal votes occur 0.59-0.84 m from the goal; an unbounded V2 that latches there can confirm a wrong stop"
+    },
+    "premature_rep_d22": {
+      "stage": 2,
+      "question": "premature confirmation",
+      "variants": [
+        "A_baseline",
+        "C1_verify",
+        "V2a_confirm",
+        "V2b_confirm_steer"
+      ],
+      "condition": "true_chain",
+      "routes": [
+        "s_bend_run_0000"
+      ],
+      "resume_from": "/home/favl/navfm-runtime-evidence/cmp-A_baseline-rep-20261009-01/s_bend_run_0000",
+      "resume_decision": 22,
+      "why": "v1: after A's decision-22 look-alike jump the chain reaches node 13 by decision 29 while requested-goal votes occur 0.59-0.84 m from the goal; an unbounded V2 that latches there can confirm a wrong stop"
+    }
+  },
+  "stage_3_criteria": {
+    "design": "fresh complete episodes on true (4), truncated (4) and swap (1) chains for each passing component, A and its counterpart: V2a/V2b: C1; R2: B1x (decisive) and B1 (reported only); B1: A",
+    "retain": "no contact regression against the counterpart and A (raw count and contacts per metre) AND the primary outcome no worse than the counterpart on every condition: V2a/V2b: correct stops >= C1, wrong stops <= C1, and zero wrong stops on true chains; R2: recovery successes >= B1x when either arm has a lost entry, else only wrong stops <= B1x; B1: correct stops >= A",
+    "revise": "a contact regression, or a primary outcome worse than the counterpart on any condition",
+    "reporting": "counts per variant x condition over all attempts; no significance claims",
+    "admission": "only components whose stage-2 gate is PASS run stage 3, with A and their counterparts",
+    "code": "scripts/analyse_component_comparison_v2.py stage3_decisions",
+    "not_tested": "recorded, not counted as evidence: R2 recovery on the swap chain (no pose-true node on a swapped chain); recovery with no lost entries in either arm; comparisons where both arms have no stops (V2) or no correct stops (B1)",
+    "incomplete": "INCOMPLETE, not REVISE, when any required attempt is missing, any integrity check fails, or non-repo files differ"
+  },
+  "retry_rule": "each planned attempt may be rerun once, under a new collection tag, only after an infrastructure failure; every route a collection planned is an attempt (its episode status, or CRASHED if no episode was recorded); a PASS is never rerun; only a route's first two attempts can count; the counted attempt is the first PASS among them; a third attempt or an attempt after a PASS is a violation and leaves the route without a counted attempt, which makes its gate INCOMPLETE; every collection found (v2-<trial>-<variant>-*) and every attempt are listed; the collector refuses any other output name",
+  "trial_identity": "the collector records component_variant.trial and .stage in every manifest; the analysis checks them. Stage-2 gates use every declared trial of a question (never a subset) and are INCOMPLETE unless all were analysed. The stage-2 gate record is committed to the repository (gates/v2/); stage-3 analysis reads it from that commit, checks its freeze commit, config hash, negative-control flag and trial coverage, recomputes its gates from its recorded attempts, and requires stage-3 collections to be launched after that commit. Stage 3 runs exactly: components whose stage-2 gate is PASS, A, and their counterparts (and B1 for R2, reported)",
+  "version": "2.1",
+  "amendment_v2_1": {
+    "finding": "engineering smoke check (3 single-route collections under smoke-v2-20261010/, not counted, never scored): at A's recorded pose the at-rest render differed from the recorded frame by about 12 grey levels mean absolute (two closed-loop v1 runs 0.0003-0.0064 m apart at frames 60-131: 0.6-2.4; identical poses under replay: 0.35-0.42; goal photographs across collections: 0.0), the floor horizon shifted, and the first decision's distances differed by up to 10.3, with argmin node 5 instead of A's node 10. Cause (inference): a moving robot's camera sits at a different pitch than a robot at rest; pose records only x, y, yaw",
+    "change": "matched-state starts now replay the recorded episode from its own start: the recorded commands for decisions 0..K-1 are applied through the same drive path, the image history fills with live frames, and the variant takes over at decision K from the recorded node at K-1. Resumed trials use the standard 600-frame budget counted from the route start",
+    "disclosure": "four smoke collections ran before freeze, all under smoke-v2-20261010/ (not counted, never scored, invisible to the analysis): (1) B1 on ambiguity_true_d22 with the old at-rest start: no look-alike encountered; (2) R2 on kidnapped_c junction_run_0000: scanned 11 decisions, relocalised, stopped at frame 204; (3) V2b on arrival_truncated junction_run_0000: approach latched at decision 15, stopped at frame 228; (4) A on ambiguity_true_d22 with the replay start (final mechanism): poses identical to the recording, the decision-22 look-alike reproduced and followed, timeout at 600 frames with EndWall contact from frame 476. Smokes 2 and 3 ran on the same route and conditions as counted cells, so they preview those cells. After the smokes, nothing changed except the replay start, the image-level fidelity checks, the replay-applied and pre-handover-contact checks and the stop guard required by the amendment review. A fifth smoke (A on ambiguity_true_d22, replay start, after the fidelity checks were added) was run only to confirm the collector records the fidelity fields in Isaac: position 0.0 m, yaw 0.0 deg, image 0.62 grey, window match, distance difference 0.19; its outcome was not inspected",
+    "unchanged": "variants, thresholds, other trials, gates, definitions and stage-3 criteria"
+  },
+  "replay_fidelity": {
+    "position_m": 0.02,
+    "yaw_deg": 2.0,
+    "image_mean_abs_grey": 2.5,
+    "max_distance_diff": 1.0,
+    "basis": "position and yaw catch a changed physics or drive path (replay error 0.0 by construction); the image and decision-K distance bounds catch the view defect that motivated the amendment and renderer drift: replay smoke 0.39 grey and 0.068, at-rest start 11.3 grey and 10.28. The handover window must equal the recorded one. An attempt outside any bound is an integrity failure (not a valid matched state)"
+  }
+}

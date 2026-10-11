@@ -1,0 +1,617 @@
+{
+  "check": "BO10_EXECUTION_COMPLETION_DIAGNOSTIC_V1_Q2",
+  "artifact_semantics": "OFFLINE_EXECUTION_EFFICIENCY_ANALYSIS_NOT_A_CONTROLLER_DIAGNOSIS",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-11T02:34:32.690616+00:00",
+  "question": "given that Q1 established completion was feasible within the frozen budget, where did the realised execution consume the available margin?",
+  "no_simulator_rerun": true,
+  "no_collection": true,
+  "no_controller_change": true,
+  "no_route_change": true,
+  "max_steps_unchanged": true,
+  "run_00001_unmodified": true,
+  "skill_retrieval_preflight": {
+    "SKILL_RETRIEVAL_PREFLIGHT": "BLOCKED",
+    "server": "skill-retrieval",
+    "error": "CONNECT_TIMEOUT: MCP server connection timed out after 30000ms",
+    "retry_count": 2,
+    "timestamp_utc": "2026-09-11T02:34:32.690616+00:00",
+    "diagnosis": "launched directly, the server loads 89267 skills and then a SentenceTransformer embedding model onto CUDA with HuggingFace revalidation round trips, and was still initialising at 20 s. This is cold-start latency exceeding the 30 s connect timeout, not an import or configuration failure. The binary and configuration are present and correct",
+    "policy_reading": "the global skill-retrieval policy requires the search to be attempted and its outcome recorded, and provides explicitly for continuing on repository evidence when nothing relevant is retrieved. It sets no precondition that retrieval must succeed. Work therefore continued with this failure recorded rather than silently",
+    "skills_that_influenced_this_work": "NONE -- retrieval unavailable",
+    "authority_used_instead": [
+      "gates/BO10/bo10_execution_completion_diagnostic_v1_20260911.json",
+      "the repository standing-instructions file, rule 9",
+      "the repository project router"
+    ]
+  },
+  "inputs": {
+    "trajectory": {
+      "path": "runs/bo10/hospital_bo10_run_00001/traj_data.pkl",
+      "sha256": "40b9890d96973b3b910e218cfd0e64fd5453e881822ebcce62bd7da99b30ef09",
+      "frames": 1200
+    },
+    "route_population": {
+      "path": "gates/BO10/hospital_turning_route_population_20260910.json",
+      "sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc"
+    },
+    "collection_evidence": {
+      "path": "gates/BO10/bo10_production_collection_run00001_20260910.json",
+      "sha256": "601ca1ec326330cf04724ee588caeaf4d9c67fbb7cc5c9b2c4b362ce64254146"
+    },
+    "q1_result": {
+      "path": "gates/BO10/q1_budget_feasibility_20260911.json",
+      "sha256": "1a529c0f51a2b19ea3ab15d65bd159157d837c043cae70c176cd2de8f23f57b3"
+    },
+    "preregistration": {
+      "path": "gates/BO10/bo10_execution_completion_diagnostic_v1_20260911.json",
+      "sha256": "42cae3843bb25841c5f7dbf7e5d6087f1d425c75acbfaa509934647714b888c9"
+    },
+    "frozen_parameters": {
+      "control_hz": 12.0,
+      "control_dt_s": 0.08333333333333333,
+      "cruise_v_m_s": 0.35,
+      "max_v_m_s": 0.45,
+      "max_w_rad_s": 1.2,
+      "lookahead_m": 0.45,
+      "goal_tol_m": 0.2,
+      "max_steps": 1200,
+      "cruise_step_distance_m": 0.029166666666666664
+    }
+  },
+  "missing_data_declared": {
+    "recorded_command_channel": "traj_data.pkl stores position, yaw and sim_time only. Commanded vx/vy/wz were never written to disk during collection",
+    "recovered_how": "NOT by forward replay, which was run as a control and failed. Reconstructed from the recorded pre-command poses and validated by three independent checks",
+    "per_step_collision_guard_outcomes": "only the aggregate is recorded: steps_applied=1200, steps_rejected=0, so no step was refused",
+    "wheel_level_and_contact_state": "NOT_EVALUATED by the kinematic drive"
+  },
+  "planned_path_recovery": {
+    "why_recovery_is_needed": "no artefact persists the planned polyline; the population artefact stores the anchors rounded to 4 decimals, which is not precise enough to project realised poses onto the route",
+    "method": "A* returns grid lattice points, so every interior vertex lies on the 0.10 m lattice through the recorded start pose. Searching that lattice within +/-2 cells of each recorded anchor yields exactly one polyline whose length matches the stored path_length_m",
+    "uniqueness_is_the_proof": true,
+    "candidates_searched": 15625,
+    "matches_found": 1,
+    "target_path_length_m": 23.251685475651524,
+    "recovered_path_length_m": 23.25168547565152,
+    "length_residual_m": 3.552713678800501e-15,
+    "interior_vertex_deviation_from_recorded_anchor_m": [
+      0.0612,
+      0.0215,
+      0.0299
+    ],
+    "max_deviation_m": 0.0612,
+    "half_cell_diagonal_m": 0.0707,
+    "deviation_within_half_cell_diagonal": true,
+    "recovered_polyline": [
+      [
+        -21.827251126595453,
+        32.52519214859307
+      ],
+      [
+        -18.22725112659545,
+        28.125192148593072
+      ],
+      [
+        -14.927251126595452,
+        28.125192148593072
+      ],
+      [
+        -11.727251126595451,
+        22.92519214859307
+      ],
+      [
+        -5.1272511265954535,
+        27.725192148593067
+      ]
+    ]
+  },
+  "replay_control": {
+    "purpose": "test whether the command channel can be obtained by forward replay, since traj_data.pkl stores poses and not commands",
+    "method": "replay the frozen PurePursuit tracker and integrate_se2 forward from the recorded start pose under the KinematicDriveConfig clamps, then compare against the recorded poses",
+    "collision_guard_omitted_because": "steps_rejected=0, so the guard never altered a pose and its omission cannot change the replay",
+    "steps_replayed": 1200,
+    "max_position_error_m": 0.22939886626662576,
+    "error_growth_profile_m": {
+      "0": 2.288398202423529e-05,
+      "10": 3.1265244142853964e-05,
+      "100": 0.0011880638092108967,
+      "300": 0.010620465627165798,
+      "600": 0.012993812079323753,
+      "900": 0.06653113532148193,
+      "1199": 0.22939886626662576
+    },
+    "tolerance_m": 1e-06,
+    "OPEN_LOOP_REPLAY_REPRODUCES_RECORDING": false,
+    "interpretation": "the error starts at 2.3e-05 m on the very first step and grows monotonically. That is a per-step pose read-back quantisation amplified around a closed loop, not a wrong motion model: the collector teleports to the candidate pose and reads the pose back through PhysX, and that round trip does not return the value it was given. The recorded per-step rotation reaches 0.0999946 rad against a commanded 0.1000000, the same order of discrepancy",
+    "consequence": "open-loop replay cannot supply the command channel. Commands are instead reconstructed from the recorded pre-command poses below",
+    "this_is_a_negative_control_that_fired": true
+  },
+  "command_reconstruction": {
+    "method": "evaluate the frozen tracker on the RECORDED pre-command poses. The tracker is a pure function of pose and path, so this reproduces the issued commands without integrating anything forward",
+    "validation_1_speed_law_inversion": {
+      "statement": "the frozen law vx = cruise * max(0.15, cos(heading_err)) is invertible, so arccos(step_distance / cruise_step) recovers the same heading error that geometry gives, by an independent route",
+      "tracking_steps_compared": 1180,
+      "max_disagreement_deg": 0.139908,
+      "mean_disagreement_deg": 0.00784,
+      "residual_explained_by": "d(arccos)/df diverges as f approaches 1, so the inversion is ill-conditioned at small heading error. The largest disagreements sit exactly there, which is the signature of a correct model rather than a wrong one"
+    },
+    "validation_2_regime_boundary": {
+      "statement": "the law switches to turn-in-place above 75 degrees. If the reconstruction were wrong, the regimes measured from distance and the regimes measured from geometry would disagree somewhere",
+      "turn_in_place_steps": 20,
+      "tracking_steps": 1180,
+      "min_geometric_heading_error_on_turn_in_place_steps_deg": 75.031,
+      "max_geometric_heading_error_on_tracking_steps_deg": 71.903,
+      "threshold_deg": 75.0,
+      "misclassified_steps": 0,
+      "BOUNDARY_SEPARATES_PERFECTLY": true
+    },
+    "validation_3_bimodality": {
+      "statement": "the law admits no speed factor between 0.05 and cos(75 deg)=0.2588; any step in that gap would falsify the reconstruction",
+      "steps_in_forbidden_gap": 0,
+      "BIMODALITY_HOLDS": true,
+      "observed_factor_min": 0.04985,
+      "observed_factor_max": 0.99964
+    },
+    "COMMAND_CHANNEL": "RECONSTRUCTED_AND_VALIDATED"
+  },
+  "analysis_parameters": {
+    "turn_zone_half_width_m": 1.0,
+    "turn_zone_anchored_to": "G10_TURN_SEMANTICS_V2 min_separator_distance_m = 1.0 m. ANCHORED TO, not derived from: choosing one separator length as the zone half-width is a design decision",
+    "terminal_region_m": 2.0,
+    "terminal_region_anchored_to": "10x the frozen 0.20 m goal tolerance. ANCHORED TO, not derived",
+    "near_zero_fraction_of_cruise_step": 0.1,
+    "dominance_threshold": 0.6,
+    "phase_assignment": "a step belongs to the phase of the pose it ended at"
+  },
+  "headline_quantities": {
+    "planned_route_length_m": 23.251685,
+    "realised_path_length_artefact_m": 25.707419674775522,
+    "excess_distance_artefact_m": 2.455734,
+    "excess_distance_artefact_pct": 10.5615,
+    "realised_path_length_over_1200_steps_m": 25.708901,
+    "excess_distance_over_1200_steps_m": 2.457215,
+    "q1_margin_steps": 402,
+    "note": "the artefact figures reproduce Q1 exactly. The 1200-step figures add the first step from the unrecorded start pose and are what the per-step accounting below uses"
+  },
+  "step_budget_accounting": {
+    "identity": "max_steps = ideal_steps_for_planned_route + path_overhead + sub_cruise",
+    "max_steps": 1200,
+    "ideal_steps_for_planned_route": 797.2,
+    "path_overhead_steps": 84.25,
+    "sub_cruise_steps": 318.55,
+    "sum_check": 1200.0,
+    "residual_steps": 0.0,
+    "exact_by_construction": true,
+    "q1_margin_steps": 402,
+    "q1_requirement_unrounded_steps": 797.2,
+    "q1_requirement_as_reported_steps": 798,
+    "rounding_note": "Q1 reported 798, the ceiling of 797.20. The accounting here uses the unrounded requirement, so the two differ by 0.80 of a step. That difference is a reporting convention, not a physical quantity",
+    "margin_consumed_by_path_overhead_steps": 84.25,
+    "margin_consumed_by_sub_cruise_steps": 318.55,
+    "margin_accounted_steps": 402.8,
+    "margin_unexplained_steps": -0.8,
+    "share_path_overhead": 0.2092,
+    "share_sub_cruise": 0.7908
+  },
+  "sub_cruise_by_control_regime": {
+    "total_sub_cruise_steps_lost": 318.55,
+    "turn_in_place": {
+      "steps": 20,
+      "commanded_vx_m_s": 0.0175,
+      "steps_lost": 19.0,
+      "share_of_sub_cruise": 0.0596
+    },
+    "heading_throttled_tracking": {
+      "steps": 1180,
+      "law": "vx = cruise_v * cos(heading_err) while |heading_err| <= 75 deg",
+      "mean_abs_heading_error_to_target_deg": 37.249,
+      "max_abs_heading_error_to_target_deg": 71.903,
+      "mean_speed_factor": 0.7461,
+      "steps_lost": 299.55,
+      "share_of_sub_cruise": 0.9404
+    },
+    "reading": "the sub-cruise term is not a stopping or stalling phenomenon. It is a sustained throttle: the base held a mean heading error of about 37 degrees to its current target vertex across 98 percent of the run, and the frozen speed law converts that directly into a speed multiplier. Turn-in-place accounts for 6 percent of the loss",
+    "causal_limit": "this is accounted for by the control law acting on a measured heading error. Why the heading error stayed large is not established here"
+  },
+  "initial_alignment_and_correction_rate": {
+    "start_yaw_rad": -3.03774645687452,
+    "initial_bearing_to_first_target_rad": -0.88506681588861,
+    "initial_heading_error_deg": 123.339,
+    "start_pose_faces_away_from_first_leg": true,
+    "turn_in_place_steps_at_episode_start": 9,
+    "heading_error_at_release_deg": 71.903,
+    "release_threshold_deg": 75.0,
+    "steps_lost_in_the_opening_turn": 8.55,
+    "correction_rate_after_release": {
+      "window_steps": [
+        9,
+        88
+      ],
+      "mean_heading_error_decay_deg_per_step": 0.1023,
+      "mean_distance_to_target_vertex_m": 5.545,
+      "frozen_law": "wz = curvature * vx, curvature = 2 * lateral_offset / dist^2",
+      "consequence_of_the_law": "angular rate falls with the square of the distance to the target vertex, so with a target several metres away the measured heading error decayed slowly while the cosine throttle held speed down. This is the law evaluated on measured quantities, not an inference about intent"
+    },
+    "mean_distance_to_target_vertex_over_run_m": 4.438,
+    "max_distance_to_target_vertex_m": 7.852,
+    "causal_limit": "the opening turn is a property of the start pose recorded in the frozen route, not a controller decision. Q2 records it and stops there"
+  },
+  "distance_accounting": {
+    "identity": "travelled = route_progress_gained + travel_not_converted_to_progress",
+    "travelled_over_1200_steps_m": 25.708901,
+    "travelled_between_recorded_frames_m": 25.70742,
+    "path_length_recorded_in_collection_artefact_m": 25.707419674775522,
+    "reconciliation": "the collection artefact sums the 1199 displacements between recorded frames. This analysis adds the first step, from the unrecorded start pose to frame 0, because there were 1200 steps and 1200 displacements. The difference is 0.001481 m, that first step, which was a turn-in-place step",
+    "planned_route_length_m": 23.251685,
+    "route_progress_gained_m": 22.3198,
+    "route_progress_remaining_m": 0.9319,
+    "travel_not_converted_to_route_progress_m": 3.3891,
+    "backtracking_m": 0.0047,
+    "mean_abs_cross_track_m": 1.1663,
+    "max_abs_cross_track_m": 2.5888,
+    "final_abs_cross_track_m": 1.3962,
+    "interpretation_limit": "travel not converted to route progress aggregates cross-track excursion, backtracking and rotation-dominated motion. It is a measured total, not an attribution among those three"
+  },
+  "non_progress": {
+    "near_zero_motion_steps": 20,
+    "near_zero_threshold_m": 0.002917,
+    "steps_with_non_positive_route_progress": 18,
+    "backtracking_distance_m": 0.0047,
+    "steps_lost_in_near_zero_motion": 19.0,
+    "share_of_sub_cruise": 0.0596,
+    "steps_lost_in_non_positive_progress": 16.17,
+    "episode_end_reason": "max_steps",
+    "stall_detector_never_fired": true,
+    "note": "no step was refused by the collision guard and the stall detector never fired, so non-progress is a tracking phenomenon here, not a blocked or halted base"
+  },
+  "phase_decomposition": [
+    {
+      "phase": "leg_1",
+      "arclength_window_m": [
+        0.0,
+        4.685
+      ],
+      "planned_distance_m": 4.685,
+      "steps": 325,
+      "realised_distance_m": 5.742,
+      "excess_distance_m": 1.057,
+      "route_progress_m": 4.675,
+      "mean_speed_m_s": 0.212,
+      "mean_route_progress_speed_m_s": 0.1726,
+      "steps_lost_vs_cruise": 128.14,
+      "share_of_sub_cruise_loss": 0.4023,
+      "mean_abs_heading_error_to_target_deg": 51.1,
+      "turn_in_place_steps": 9,
+      "mean_abs_cross_track_m": 1.309,
+      "max_abs_cross_track_m": 2.0802,
+      "mean_abs_heading_error_to_route_deg": 37.51
+    },
+    {
+      "phase": "turn_1",
+      "arclength_window_m": [
+        4.685,
+        6.685
+      ],
+      "planned_distance_m": 2.0,
+      "steps": 97,
+      "realised_distance_m": 2.779,
+      "excess_distance_m": 0.779,
+      "route_progress_m": 1.988,
+      "mean_speed_m_s": 0.3438,
+      "mean_route_progress_speed_m_s": 0.2459,
+      "steps_lost_vs_cruise": 1.71,
+      "share_of_sub_cruise_loss": 0.0054,
+      "mean_abs_heading_error_to_target_deg": 10.38,
+      "turn_in_place_steps": 0,
+      "mean_abs_cross_track_m": 0.521,
+      "max_abs_cross_track_m": 1.4411,
+      "mean_abs_heading_error_to_route_deg": 37.52
+    },
+    {
+      "phase": "leg_2",
+      "arclength_window_m": [
+        6.685,
+        7.985
+      ],
+      "planned_distance_m": 1.3,
+      "steps": 45,
+      "realised_distance_m": 1.306,
+      "excess_distance_m": 0.006,
+      "route_progress_m": 1.305,
+      "mean_speed_m_s": 0.3484,
+      "mean_route_progress_speed_m_s": 0.348,
+      "steps_lost_vs_cruise": 0.21,
+      "share_of_sub_cruise_loss": 0.0007,
+      "mean_abs_heading_error_to_target_deg": 5.43,
+      "turn_in_place_steps": 0,
+      "mean_abs_cross_track_m": 0.1251,
+      "max_abs_cross_track_m": 0.134,
+      "mean_abs_heading_error_to_route_deg": 2.16
+    },
+    {
+      "phase": "turn_2",
+      "arclength_window_m": [
+        7.985,
+        9.985
+      ],
+      "planned_distance_m": 2.0,
+      "steps": 99,
+      "realised_distance_m": 2.271,
+      "excess_distance_m": 0.271,
+      "route_progress_m": 2.016,
+      "mean_speed_m_s": 0.2753,
+      "mean_route_progress_speed_m_s": 0.2443,
+      "steps_lost_vs_cruise": 21.13,
+      "share_of_sub_cruise_loss": 0.0663,
+      "mean_abs_heading_error_to_target_deg": 34.63,
+      "turn_in_place_steps": 0,
+      "mean_abs_cross_track_m": 0.2506,
+      "max_abs_cross_track_m": 0.7424,
+      "mean_abs_heading_error_to_route_deg": 25.0
+    },
+    {
+      "phase": "leg_3",
+      "arclength_window_m": [
+        9.985,
+        14.091
+      ],
+      "planned_distance_m": 4.106,
+      "steps": 161,
+      "realised_distance_m": 4.268,
+      "excess_distance_m": 0.162,
+      "route_progress_m": 4.094,
+      "mean_speed_m_s": 0.3181,
+      "mean_route_progress_speed_m_s": 0.3052,
+      "steps_lost_vs_cruise": 14.67,
+      "share_of_sub_cruise_loss": 0.046,
+      "mean_abs_heading_error_to_target_deg": 23.32,
+      "turn_in_place_steps": 0,
+      "mean_abs_cross_track_m": 1.0965,
+      "max_abs_cross_track_m": 1.2735,
+      "mean_abs_heading_error_to_route_deg": 14.37
+    },
+    {
+      "phase": "turn_3",
+      "arclength_window_m": [
+        14.091,
+        16.091
+      ],
+      "planned_distance_m": 2.0,
+      "steps": 156,
+      "realised_distance_m": 2.298,
+      "excess_distance_m": 0.298,
+      "route_progress_m": 2.01,
+      "mean_speed_m_s": 0.1768,
+      "mean_route_progress_speed_m_s": 0.1546,
+      "steps_lost_vs_cruise": 77.2,
+      "share_of_sub_cruise_loss": 0.2423,
+      "mean_abs_heading_error_to_target_deg": 56.56,
+      "turn_in_place_steps": 11,
+      "mean_abs_cross_track_m": 0.4198,
+      "max_abs_cross_track_m": 0.9833,
+      "mean_abs_heading_error_to_route_deg": 60.17
+    },
+    {
+      "phase": "leg_4_final",
+      "arclength_window_m": [
+        16.091,
+        23.252
+      ],
+      "planned_distance_m": 7.161,
+      "steps": 317,
+      "realised_distance_m": 7.044,
+      "excess_distance_m": -0.117,
+      "route_progress_m": 6.232,
+      "mean_speed_m_s": 0.2666,
+      "mean_route_progress_speed_m_s": 0.2359,
+      "steps_lost_vs_cruise": 75.5,
+      "share_of_sub_cruise_loss": 0.237,
+      "mean_abs_heading_error_to_target_deg": 38.27,
+      "turn_in_place_steps": 0,
+      "mean_abs_cross_track_m": 2.0577,
+      "max_abs_cross_track_m": 2.5888,
+      "mean_abs_heading_error_to_route_deg": 25.53
+    }
+  ],
+  "phases_ranked_by_margin_consumed": [
+    {
+      "phase": "leg_1",
+      "steps_lost_vs_cruise": 128.14,
+      "share": 0.4023,
+      "mean_speed_m_s": 0.212
+    },
+    {
+      "phase": "turn_3",
+      "steps_lost_vs_cruise": 77.2,
+      "share": 0.2423,
+      "mean_speed_m_s": 0.1768
+    },
+    {
+      "phase": "leg_4_final",
+      "steps_lost_vs_cruise": 75.5,
+      "share": 0.237,
+      "mean_speed_m_s": 0.2666
+    },
+    {
+      "phase": "turn_2",
+      "steps_lost_vs_cruise": 21.13,
+      "share": 0.0663,
+      "mean_speed_m_s": 0.2753
+    },
+    {
+      "phase": "leg_3",
+      "steps_lost_vs_cruise": 14.67,
+      "share": 0.046,
+      "mean_speed_m_s": 0.3181
+    },
+    {
+      "phase": "turn_1",
+      "steps_lost_vs_cruise": 1.71,
+      "share": 0.0054,
+      "mean_speed_m_s": 0.3438
+    },
+    {
+      "phase": "leg_2",
+      "steps_lost_vs_cruise": 0.21,
+      "share": 0.0007,
+      "mean_speed_m_s": 0.3484
+    }
+  ],
+  "turn_local": [
+    {
+      "turn": 1,
+      "vertex_arclength_m": 5.685,
+      "planned_turn_deg": 50.71,
+      "realised_turn_event_deg": 131.2653,
+      "zone_half_width_m": 1.0,
+      "steps_in_zone": 97,
+      "planned_distance_through_zone_m": 2.0,
+      "realised_distance_in_zone_m": 2.779,
+      "route_progress_in_zone_m": 1.988,
+      "mean_speed_m_s": 0.3438,
+      "steps_lost_vs_cruise": 1.71,
+      "share_of_sub_cruise_loss": 0.0054,
+      "turn_in_place_steps_in_zone": 0,
+      "max_abs_cross_track_m": 1.4411,
+      "mean_abs_heading_error_to_target_deg": 10.38,
+      "magnitude_note": "planned and realised magnitudes are reported as recorded. Their difference is an observation carried forward from the collection artefact; Q2 attributes it to no cause"
+    },
+    {
+      "turn": 2,
+      "vertex_arclength_m": 8.985,
+      "planned_turn_deg": -58.39,
+      "realised_turn_event_deg": -101.9151,
+      "zone_half_width_m": 1.0,
+      "steps_in_zone": 99,
+      "planned_distance_through_zone_m": 2.0,
+      "realised_distance_in_zone_m": 2.271,
+      "route_progress_in_zone_m": 2.016,
+      "mean_speed_m_s": 0.2753,
+      "steps_lost_vs_cruise": 21.13,
+      "share_of_sub_cruise_loss": 0.0663,
+      "turn_in_place_steps_in_zone": 0,
+      "max_abs_cross_track_m": 0.7424,
+      "mean_abs_heading_error_to_target_deg": 34.63,
+      "magnitude_note": "planned and realised magnitudes are reported as recorded. Their difference is an observation carried forward from the collection artefact; Q2 attributes it to no cause"
+    },
+    {
+      "turn": 3,
+      "vertex_arclength_m": 15.091,
+      "planned_turn_deg": 94.42,
+      "realised_turn_event_deg": 166.316,
+      "zone_half_width_m": 1.0,
+      "steps_in_zone": 156,
+      "planned_distance_through_zone_m": 2.0,
+      "realised_distance_in_zone_m": 2.298,
+      "route_progress_in_zone_m": 2.01,
+      "mean_speed_m_s": 0.1768,
+      "steps_lost_vs_cruise": 77.2,
+      "share_of_sub_cruise_loss": 0.2423,
+      "turn_in_place_steps_in_zone": 11,
+      "max_abs_cross_track_m": 0.9833,
+      "mean_abs_heading_error_to_target_deg": 56.56,
+      "magnitude_note": "planned and realised magnitudes are reported as recorded. Their difference is an observation carried forward from the collection artefact; Q2 attributes it to no cause"
+    }
+  ],
+  "tracker_target_behaviour": {
+    "semantics": "PurePursuit.target returns a PATH VERTEX, not an interpolated look-ahead point. The look-ahead radius is only the distance within which the tracker advances to the next vertex. With 5 vertices the tracker therefore steers at points up to 8.16 m away",
+    "path_vertices": 5,
+    "lookahead_m": 0.45,
+    "steps_spent_targeting_each_vertex": {
+      "1": 373,
+      "2": 114,
+      "3": 269,
+      "4": 444
+    },
+    "closest_approach_to_each_vertex_m": [
+      0.0,
+      0.0426,
+      0.0106,
+      0.3903,
+      1.7066
+    ],
+    "final_target_vertex": 4,
+    "vertices_never_entered_lookahead_radius": [
+      4
+    ],
+    "claim_limit": "these are measurements of tracker state reconstructed from recorded poses and validated above. Q2 does not claim they caused the outcome"
+  },
+  "final_approach": {
+    "status": "DESCRIPTIVE ONLY -- classification of terminal/stop behaviour is Q3",
+    "final_leg_first_step": 883,
+    "route_distance_remaining_at_final_leg_start_m": 7.155,
+    "goal_distance_at_final_leg_start_m": 7.2238,
+    "steps_remaining_at_final_leg_start": 317,
+    "terminal_region_threshold_m": 2.0,
+    "first_step_within_terminal_region": 1188,
+    "steps_spent_within_terminal_region": 12,
+    "min_goal_distance_achieved_m": 1.6787,
+    "min_goal_distance_at_step": 1199,
+    "final_goal_distance_m": 1.6787,
+    "goal_tolerance_m": 0.2,
+    "goal_region_never_entered": true,
+    "closed_then_reopened": false,
+    "reopening_m": 0.0,
+    "last_60_steps": {
+      "mean_speed_m_s": 0.3333,
+      "mean_route_progress_per_step_m": 0.02315,
+      "net_route_progress_m": 1.3892,
+      "net_goal_distance_change_m": -1.5618,
+      "mean_abs_heading_error_to_target_deg": 17.49,
+      "turn_in_place_steps": 0,
+      "still_making_useful_route_progress": true
+    },
+    "q3_question_left_open": "was terminal approach or stop behaviour responsible for failing to enter the 0.20 m goal region before max_steps?"
+  },
+  "classification": {
+    "Q2_CLASSIFICATION": "Q2_SUBCRUISE_PROGRESS_DOMINANT",
+    "decision_rule": "each candidate label owns a measured share of the consumed margin; a label is selected when its share reaches 0.6. The threshold was fixed before any number was read. Every label in the vocabulary is scored, including the ones that did not win, so the selection can be checked rather than taken on trust",
+    "measured_shares": {
+      "Q2_PATH_LENGTH_OVERHEAD_DOMINANT": 0.2092,
+      "Q2_SUBCRUISE_PROGRESS_DOMINANT": 0.7908,
+      "Q2_TURN_TRACKING_DOMINANT": 0.314,
+      "Q2_NONPROGRESS_DOMINANT": 0.0596
+    },
+    "labels_passing_threshold": [
+      "Q2_SUBCRUISE_PROGRESS_DOMINANT"
+    ],
+    "secondary_contributors": {
+      "within_sub_cruise_heading_throttled_tracking": 0.9404,
+      "within_sub_cruise_turn_in_place": 0.0596,
+      "turn_zones_share_of_sub_cruise_loss": 0.314,
+      "straight_legs_share_of_sub_cruise_loss": 0.686
+    },
+    "explicitly_not_selected": {
+      "Q2_TURN_TRACKING_DOMINANT": "turn zones account for 0.314 of the sub-cruise loss. Most of the loss sits on straight legs, not in turns",
+      "Q2_NONPROGRESS_DOMINANT": "near-zero motion accounts for 0.0596; the base was moving almost continuously"
+    },
+    "chosen_from": "quantitative contribution evidence, not intuition"
+  },
+  "q2_authority_limits": {
+    "q2_may_establish": "where steps, time and distance were lost",
+    "q2_may_not_establish": [
+      "why the controller chose the behaviour it did",
+      "that turn amplification caused the failure",
+      "that terminal or stop logic was wrong",
+      "that any controller or route parameter should change"
+    ],
+    "causal_language_rule": "findings are stated as associated with / concentrated in / accounted for by, never as caused by, because no intervention was performed and a single trajectory supports no counterfactual",
+    "single_trajectory": true,
+    "standing_rule": "the standing-instructions file, rule 9: causal order for a failed execution"
+  },
+  "q3_authorisation": {
+    "rule": "Q3 is authorised if execution reached the terminal region or retained meaningful progress history such that terminal behaviour remains an unresolved contributor",
+    "reached_terminal_region": true,
+    "still_progressing_at_max_steps": true,
+    "closed_then_reopened": false,
+    "steps_available_on_final_leg": 317,
+    "Q3_AUTHORISED": true,
+    "executed_in_this_tranche": false
+  },
+  "milestone_unaffected": {
+    "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
+    "BO-10_PIPELINE_COLLECTION": "COMPLETE",
+    "BO-10_HOSPITAL_COLLECTION": "COMPLETE_FOR_COMPATIBILITY_PURPOSE",
+    "note": "run_00001 remains valid compatibility evidence irrespective of Q2. Q2 explains a recorded execution failure; it revises no claim"
+  }
+}

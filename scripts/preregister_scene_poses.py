@@ -46,6 +46,10 @@ from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+from navfm.evidence import emit_evidence  # noqa: E402
+
 OUT = REPO / "gates" / "scenes"
 
 ROLES = ("CORRIDOR_START", "ROOM_ENTRANCE", "JUNCTION_OR_TURN", "GOAL_STYLE")
@@ -347,9 +351,11 @@ def main() -> int:
             "dated amendment stating why, with the replacement chosen without inspecting "
             "its scores.")
 
-        OUT.mkdir(parents=True, exist_ok=True)
         p = OUT / f"{args.scene_id}_pose_preregistration.json"
-        p.write_text(json.dumps(rec, indent=2) + "\n")
+        # emit_evidence, not write_text: this harness owns an Isaac runtime, and
+        # a write it cannot prove landed is the FL-019 shape.
+        digest = emit_evidence(p, rec, required_keys=("check", "scene_id", "poses",
+                                                      "pose_set_digest"))
         print(f"  scene {args.scene_id}: {topo['mesh_count']} meshes, grid {topo['shape']}, "
               f"usable floor {topo['usable_fraction']:.1%}")
         for q in poses:
@@ -359,7 +365,7 @@ def main() -> int:
             print(f"    ROLES NOT SATISFIED: {missing}")
         print(f"  digest {rec['pose_set_digest'][:32]}")
         print(f"  frozen {rec['pose_set_frozen_at']}")
-        print(f"  -> {p.relative_to(REPO)}")
+        print(f"  -> {p.relative_to(REPO)} sha256={digest}")
         app.close()
         return 0 if not missing else 1
     except Exception as exc:

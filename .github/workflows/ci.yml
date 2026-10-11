@@ -7,6 +7,16 @@ on:
 
 jobs:
   test:
+    # Hermetic legs. These are explicitly NOT the owner of the resource-dependent
+    # population: they deselect it by marker and then prove, by node-id set and
+    # digest, that exactly the pinned hermetic population executed.
+    #
+    # Deselection here is declared ownership recorded in tests/population_manifest.json,
+    # not a skip, and it cannot drift: a resource-dependent test that lost its marker
+    # lands in this population and breaks the set. That is the only way ownership
+    # drift is visible from inside a job that cannot import the resource at all --
+    # a module that fails to import appears in no key of the population report, so
+    # a count would never notice it. See gates/failures/F-M2-1.md.
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -14,6 +24,9 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
+        # Provenance tests read pinned historical commits, not only PR HEAD.
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -25,50 +38,344 @@ jobs:
           python -m pip install -U pip
           pip install -e ".[dev]"
 
+      - name: Record resource versions
+        run: |
+          mkdir -p population
+          python -c "import json, sys, numpy; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}, indent=2))" \
+            > "population/versions-hermetic-${{ matrix.python-version }}.json"
+          cat "population/versions-hermetic-${{ matrix.python-version }}.json"
+
       - name: Lint
         run: ruff check src tests scripts
 
       - name: Typecheck
         run: mypy
 
-      - name: Unit tests
-        run: python -m pytest -q --cov=navfm --cov-report=term-missing
+      - name: Unit tests (hermetic population)
+        run: |
+          python -m pytest -q -m "not torch and not upstream and not plot and not go_stanford and not isaac_host and not archive and not alternate_python" \
+            --cov=navfm --cov-report=term-missing \
+            --population-report="population/hermetic-${{ matrix.python-version }}.json"
+
+      # Runs even when pytest fails, so a contracted population is still reported.
+      # It can only add a failure, never remove one: GitHub keeps the job failed
+      # once any step has failed, and no step here uses continue-on-error.
+      - name: Population ownership gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py \
+            "population/hermetic-${{ matrix.python-version }}.json" \
+            --mode ordinary-hermetic \
+            --versions "population/versions-hermetic-${{ matrix.python-version }}.json"
+
+      - name: Upload population evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: population-hermetic-${{ matrix.python-version }}
+          path: population/
+          if-no-files-found: error
 
   upstream-compat:
-    # The claim that generated data loads through the reference ViNT_Dataset is
-    # the central claim of this repo, so it is tested against the real thing,
-    # not a mock. This job runs every `upstream`-marked test, which now also
-    # covers the model geometry and the loss/metric definitions -- each of those
-    # is a place where our reading of upstream could be wrong, so each is
-    # settled against upstream rather than against our own tests.
+    # Unchanged external identity, widened role. This job is now the declared
+    # owner of every torch / upstream / plot marked node id and executes the
+    # complete pinned population; its former marker-selected proof (`-m upstream`)
+    # is a strict subset of what the ownership gate checks here.
+    #
+    # The job key and check name are deliberately left as `upstream-compat`.
+    # Documentation, historical run evidence and any future branch-protection
+    # rule address this job by that name, and a check name is an external
+    # identifier: widening what a job proves is not a reason to rename it.
+    #
+    # It does NOT own the go_stanford corpus. That resource has its own owner,
+    # the go-stanford-corpus job below, so the node is deselected here rather
+    # than quietly absorbed by a job already provisioned for other resources.
+    # Ownership is per resource, not per job that happens to be big enough.
+    #
+    # The clone is checked out at the commit tests/population_manifest.json pins
+    # and then patched by scripts/patch_upstream.py (Repair 4). Both halves are
+    # load-bearing. Following the reference repo's default branch would silently
+    # remeasure against whatever it points at today, and the patch script edits
+    # exact source text, so it is only meaningful against the pinned revision.
+    # Without the patch, tests/test_rng_domains.py cannot collect at all and the
+    # ownership gate names exactly seven missing node ids -- those seven are the
+    # proof that goal sampling no longer draws from the global numpy stream.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        # Provenance tests read pinned historical commits, not only PR HEAD.
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      - name: Clone the reference implementation
+      - name: Clone the reference implementation at the pinned commit
         run: |
-          git clone --depth 1 https://github.com/robodhruv/visualnav-transformer.git \
+          PIN="$(python -c "import json; print(json.load(open('tests/population_manifest.json'))['upstream_commit'])")"
+          echo "manifest pins $PIN"
+          git clone --filter=blob:none --no-checkout \
+            https://github.com/robodhruv/visualnav-transformer.git \
             third_party/visualnav-transformer
+          git -C third_party/visualnav-transformer checkout -q "$PIN"
+          git -C third_party/visualnav-transformer rev-parse HEAD
+
+      # Never edit upstream files directly; the patch script is the only route,
+      # it is idempotent, and --revert undoes it. Each edit is a recorded finding.
+      - name: Patch the reference implementation
+        run: python scripts/patch_upstream.py third_party/visualnav-transformer
 
       - name: Install
         run: |
           python -m pip install -U pip
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -e ".[dev]" lmdb tqdm
-          # vint_train.training.train_utils -- the loss oracle -- imports the
-          # whole visualisation stack transitively. headless opencv per
-          # docs/REPRODUCTION.md (the pinned 4.6.0.66 has no wheels past 3.10).
-          pip install efficientnet_pytorch wandb prettytable matplotlib diffusers \
-                      opencv-python-headless
+          pip install -e ".[dev,plot]" lmdb tqdm
+          # vint_train.training.train_utils -- the loss oracle -- imports the whole
+          # visualisation stack transitively. headless opencv per docs/REPRODUCTION.md
+          # (the pinned 4.6.0.66 has no wheels past 3.10).
+          pip install efficientnet_pytorch wandb prettytable diffusers opencv-python-headless
 
-      - name: Compatibility proof
+      - name: Record resource versions and upstream pin
+        run: |
+          mkdir -p population
+          UPSTREAM_SHA="$(git -C third_party/visualnav-transformer rev-parse HEAD)"
+          python -c "import json, sys, numpy, torch, matplotlib; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__, 'torch': torch.__version__, 'matplotlib': matplotlib.__version__, 'upstream_commit': '$UPSTREAM_SHA'}, indent=2))" \
+            > population/versions-owner.json
+          cat population/versions-owner.json
+
+      - name: Unit tests (complete population)
         env:
           NAVFM_UPSTREAM: third_party/visualnav-transformer
           MPLBACKEND: Agg
           WANDB_MODE: disabled
-        run: python -m pytest -m upstream -q
+        run: |
+          python -m pytest -q -m "not go_stanford and not isaac_host and not archive and not alternate_python" --population-report=population/owner.json
+
+      - name: Population ownership gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py population/owner.json \
+            --mode provisioned-owner \
+            --job-id upstream-compat \
+            --versions population/versions-owner.json \
+            --upstream-path third_party/visualnav-transformer
+
+      # Separate from the ownership gate above, and deliberately not suppressible
+      # by open_evidence_gaps: a resource whose marker names no owner job has node
+      # ids that execute nowhere, and recording that truthfully is not the same as
+      # having the evidence. It is a manifest-only question, so any job may ask it.
+      - name: Owner completeness gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py population/owner.json \
+            --mode owner-completeness
+
+      - name: Upload population evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: population-upstream-compat
+          path: population/
+          if-no-files-found: error
+
+  go-stanford-corpus:
+    # Declared owner of the go_stanford marker (Repair 6).
+    #
+    # The node it owns carries the one empirical claim no fixture can witness:
+    # that the RELEASED bytes convert under navfm.trajio. A fixture in the F13
+    # object-dtype shape proves the conversion mechanics; only the corpus proves
+    # that the shape was read off the corpus correctly. Before this job existed
+    # the node was a class-level skipif -- absent corpus, silent pass, nothing
+    # asserted. It now raises instead of skipping, so this job is the difference
+    # between having that evidence and merely having claimed it.
+    #
+    # The corpus is a single 781,698,396-byte archive; the host offers no partial
+    # download. But the owned node never opens an image -- it reads traj_data.pkl
+    # and nothing else -- so the job keeps only those 3,696 members, 15.9 MB, and
+    # caches them under the archive's own sha256. The first run pays the download
+    # once; later runs restore 16 MB. A corpus that changed would change the key
+    # rather than silently reuse evidence measured against different bytes.
+    #
+    # Corpus bytes are never committed: CC BY-NC-SA 3.0 is incompatible with this
+    # repository's MIT licence. Fetching at test time is use, not redistribution.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        # Provenance tests read pinned historical commits, not only PR HEAD.
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      # The manifest is the single source of the corpus identity, so the archive
+      # this job measures and the digest the gate records cannot drift apart.
+      - name: Read the pinned corpus identity
+        id: corpus
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          c = json.load(open("tests/population_manifest.json"))["required_owners"]["go_stanford"]
+          print(f"sha256={c['corpus_digest']}")
+          print(f"url={c['source_url']}")
+          PY
+
+      - name: Restore the extracted trajectory records
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ~/navfm-data/go_stanford
+          key: go-stanford-pkl-${{ steps.corpus.outputs.sha256 }}
+
+      - name: Provision the corpus
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          curl -fL --retry 3 --retry-all-errors -o "$RUNNER_TEMP/go_stanford.zip" \
+            "${{ steps.corpus.outputs.url }}"
+          ACTUAL="$(sha256sum "$RUNNER_TEMP/go_stanford.zip" | cut -d' ' -f1)"
+          if [ "$ACTUAL" != "${{ steps.corpus.outputs.sha256 }}" ]; then
+            echo "::error::corpus digest mismatch." >&2
+            echo "  manifest pins ${{ steps.corpus.outputs.sha256 }}" >&2
+            echo "  downloaded    $ACTUAL" >&2
+            echo "The released corpus is not the one this measurement is pinned to." >&2
+            echo "Re-pin required_owners.go_stanford deliberately; do not edit to match." >&2
+            exit 1
+          fi
+          mkdir -p ~/navfm-data/go_stanford
+          unzip -q "$RUNNER_TEMP/go_stanford.zip" '*/traj_data.pkl' -d ~/navfm-data/go_stanford
+          rm -f "$RUNNER_TEMP/go_stanford.zip"
+
+      # The owned node fails rather than skips on an absent corpus, but a count
+      # here says which of the two states we are in before pytest runs at all.
+      - name: Confirm the corpus is present
+        run: |
+          FOUND="$(find ~/navfm-data/go_stanford -name traj_data.pkl | wc -l)"
+          echo "traj_data.pkl records available: $FOUND"
+          test "$FOUND" -eq 3696
+
+      - name: Install
+        run: |
+          python -m pip install -U pip
+          pip install -e ".[dev]"
+
+      # The corpus digest is this job's torch: the same node id read against
+      # different bytes is a different measurement, and the gate demands it.
+      - name: Record resource versions
+        run: |
+          mkdir -p population
+          python -c "import json, sys, numpy; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__, 'go_stanford_sha256': '${{ steps.corpus.outputs.sha256 }}'}, indent=2))" \
+            > population/versions-corpus.json
+          cat population/versions-corpus.json
+
+      # Owns go_stanford only. torch / upstream / plot belong to upstream-compat
+      # and are deselected here, which is what this job declares.
+      - name: Owned tests (hermetic population plus the corpus node)
+        run: |
+          python -m pytest -q -m "not torch and not upstream and not plot and not isaac_host and not archive and not alternate_python" \
+            --population-report=population/corpus.json
+
+      - name: Population ownership gate
+        if: always()
+        run: |
+          python scripts/check_population_sets.py population/corpus.json \
+            --mode provisioned-owner \
+            --job-id go-stanford-corpus \
+            --versions population/versions-corpus.json
+
+      - name: Upload population evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: population-go-stanford-corpus
+          path: population/
+          if-no-files-found: error
+
+  resource-approval:
+    # Explicit operator approval of the exact revision, before any workstation queue.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Require reviewed exact revision and protected environment
+        env:
+          APPROVED: ${{ vars.NAVFM_APPROVED_RESOURCE_SHA }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          NAVFM_RESOURCE_APPROVAL_MODE: ${{ vars.NAVFM_RESOURCE_APPROVAL_MODE }}
+        run: |
+          test "$APPROVED" = "$CANDIDATE"
+          python scripts/resource_ci.py security
+
+  resource-validation:
+    needs: resource-approval
+    environment: navfm-resource-validation
+    runs-on: [self-hosted, linux, x64, navfm-resource-approved]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read-only resource preflight
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          mkdir -p "$RUNNER_TEMP/navfm-resource-evidence"
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py preflight --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - name: Execute owned population
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          NAVFM_ARCHIVE_ROOT: ${{ vars.NAVFM_ARCHIVE_ROOT }}
+          NAVFM_ALTERNATE_PYTHON: ${{ vars.NAVFM_ALTERNATE_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" -m pytest -q -m "not torch and not upstream and not plot and not go_stanford" --population-report="$RUNNER_TEMP/navfm-resource-evidence/owner.json"
+      - name: Fail-closed owner evidence bundle
+        env:
+          NAVFM_RESOURCE_TEST_PYTHON: ${{ vars.NAVFM_RESOURCE_TEST_PYTHON }}
+          PYTHONPATH: src
+        run: |
+          "$NAVFM_RESOURCE_TEST_PYTHON" scripts/resource_ci.py bundle --output "$RUNNER_TEMP/navfm-resource-evidence"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: navfm-resource-validation-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/navfm-resource-evidence/
+          if-no-files-found: error
+
+  resource-contract:
+    needs: [resource-approval, resource-validation]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Require this run's successful exact-HEAD resource owner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          CANDIDATE: ${{ github.event.pull_request.head.sha || github.sha }}
+          OWNER_RESULT: ${{ needs.resource-validation.result }}
+        run: |
+          test "$OWNER_RESULT" = success
+          python scripts/resource_ci.py current --head "$CANDIDATE"

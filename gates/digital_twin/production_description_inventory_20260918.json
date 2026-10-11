@@ -1,0 +1,1503 @@
+{
+  "check": "PRODUCTION_DESCRIPTION_INVENTORY_AND_SENSOR_GRAPHS",
+  "artifact_semantics": "SOURCE_CHARACTERISATION_NOTHING_ADOPTED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-18T01:16:19.915687+00:00",
+  "repository_head": "eb5810183d0c0d3db21dbe7ff33b0f40df1e8888",
+  "worktree_clean_at_measurement": true,
+  "other_dirty_entries": [],
+  "workspaces": [
+    {
+      "label": "M3Pro_ws-0.0.1",
+      "staging_root": "/home/favl/Downloads/yahboom/extracted/M3Pro_ws-0.0.1_f08db69b/m3pro_ws",
+      "HOST_LOCAL": true
+    },
+    {
+      "label": "yahboomcar_ws",
+      "staging_root": "/home/favl/Downloads/yahboom/extracted/yahboomcar_ws_8da310fb/yahboomcar_ws",
+      "HOST_LOCAL": true
+    }
+  ],
+  "resolver_sha256": "1269709fc9dcd9c198bfe5e26cdc86ce220c3d56352cd10a738b23fff3892285",
+  "xacro_analysis_sha256": "e77895221103bcad56b5894a017f5f1e79d98fabc2f8077b1bb7619a1098efb7",
+  "INVENTORY": {
+    "counts_by_workspace": {
+      "M3Pro_ws-0.0.1": {
+        "urdf": 5,
+        "xacro": 0,
+        "srdf": 0,
+        "mesh": 20,
+        "launch": 65,
+        "config": 50
+      },
+      "yahboomcar_ws": {
+        "urdf": 2,
+        "xacro": 6,
+        "srdf": 3,
+        "mesh": 20,
+        "launch": 28,
+        "config": 53
+      }
+    },
+    "description_sources": [
+      {
+        "workspace": "M3Pro_ws-0.0.1",
+        "package": "M3Pro",
+        "relative_path": "src/M3Pro/urdf/M3Pro.urdf",
+        "file_type": "urdf",
+        "sha256": "8046676e826b02f7764d1db5cbf24ea3d82202d22837ae824f8b6a8ddd82b6aa",
+        "byte_size": 31442,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [
+          "src/M3Pro/launch/display.launch.py"
+        ],
+        "PRODUCT_ROLE": "PRODUCTION_COMPONENT"
+      },
+      {
+        "workspace": "M3Pro_ws-0.0.1",
+        "package": "M3Pro",
+        "relative_path": "src/M3Pro/urdf/M3Pro_fixd.urdf",
+        "file_type": "urdf",
+        "sha256": "b3caa36116c191d4390fbef69cb32e728534ed348dc7f800aece0d8bfbdc9cc9",
+        "byte_size": 31431,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "UNREFERENCED"
+      },
+      {
+        "workspace": "M3Pro_ws-0.0.1",
+        "package": "M3Pro",
+        "relative_path": "src/M3Pro/urdf/M3Pro_robot1.urdf",
+        "file_type": "urdf",
+        "sha256": "0b82a6f6a3f18d58f71c560b18c9b4a059ce4f883b1dae5d6388427d5642f01a",
+        "byte_size": 28612,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [
+          "src/M3Pro/launch/display_robot1.launch.py"
+        ],
+        "PRODUCT_ROLE": "PRODUCTION_COMPONENT"
+      },
+      {
+        "workspace": "M3Pro_ws-0.0.1",
+        "package": "M3Pro",
+        "relative_path": "src/M3Pro/urdf/M3Pro_robot2.urdf",
+        "file_type": "urdf",
+        "sha256": "c1e6db42e6af44fc652b323fba3a8f0c53bf22d26c5ddc5b300c9ff9578c1b40",
+        "byte_size": 28612,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [
+          "src/M3Pro/launch/display_robot2.launch.py"
+        ],
+        "PRODUCT_ROLE": "PRODUCTION_COMPONENT"
+      },
+      {
+        "workspace": "M3Pro_ws-0.0.1",
+        "package": "M3Pro",
+        "relative_path": "src/M3Pro/urdf/m3pro.urdf",
+        "file_type": "urdf",
+        "sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+        "byte_size": 24836,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [
+          "src/m3pro_bringup/launch/car_base.launch.py"
+        ],
+        "PRODUCT_ROLE": "PRODUCTION_M3PRO_ROOT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "yahboom_M3Pro_description",
+        "relative_path": "src/yahboom_M3Pro_description/urdf/.ipynb_checkpoints/M3Pro-checkpoint.urdf",
+        "file_type": "urdf",
+        "sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6",
+        "byte_size": 27279,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "yahboom_M3Pro_description",
+        "relative_path": "src/yahboom_M3Pro_description/urdf/M3Pro.urdf",
+        "file_type": "urdf",
+        "sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6",
+        "byte_size": 27279,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [
+          "src/M3Pro/launch/display.launch.py"
+        ],
+        "PRODUCT_ROLE": "MOVEIT_COMPONENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "M3Pro_config",
+        "relative_path": "src/M3Pro_config/config/M3Pro.ros2_control.xacro",
+        "file_type": "xacro",
+        "sha256": "79c6ce2a6b560ed4cfbb54093c331727c13a777b124adcb86841f278bccd2c5a",
+        "byte_size": 2621,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "MOVEIT_COMPONENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "M3Pro_config",
+        "relative_path": "src/M3Pro_config/config/M3Pro.urdf.xacro",
+        "file_type": "xacro",
+        "sha256": "1635f0d9858effedf7dc7b81204f74c556739404e3c2643a11eb069d90f4c0c8",
+        "byte_size": 498,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "MOVEIT_COMPONENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_config",
+        "relative_path": "src/test_config/config/dofbot_pro_descripton.ros2_control.xacro",
+        "file_type": "xacro",
+        "sha256": "59a3fbe60dacdc3c46ac651948039ad090a715fee91025f149fc740681163d3a",
+        "byte_size": 2637,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_config",
+        "relative_path": "src/test_config/config/dofbot_pro_descripton.urdf.xacro",
+        "file_type": "xacro",
+        "sha256": "0ed032a2eb3b58a988809bb6bee4a729ee399fd3a267e5ab0130e305c0d75afa",
+        "byte_size": 563,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_moveit_config",
+        "relative_path": "src/test_moveit_config/config/M3Pro.ros2_control.xacro",
+        "file_type": "xacro",
+        "sha256": "79c6ce2a6b560ed4cfbb54093c331727c13a777b124adcb86841f278bccd2c5a",
+        "byte_size": 2621,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_moveit_config",
+        "relative_path": "src/test_moveit_config/config/M3Pro.urdf.xacro",
+        "file_type": "xacro",
+        "sha256": "1635f0d9858effedf7dc7b81204f74c556739404e3c2643a11eb069d90f4c0c8",
+        "byte_size": 498,
+        "content_duplicated_in_tree": true,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "M3Pro_config",
+        "relative_path": "src/M3Pro_config/config/M3Pro.srdf",
+        "file_type": "srdf",
+        "sha256": "770c7df6680f2bfb379019223f52f80162423e1e6dc392c35dae46650b853d59",
+        "byte_size": 12191,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "MOVEIT_COMPONENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_config",
+        "relative_path": "src/test_config/config/dofbot_pro_descripton.srdf",
+        "file_type": "srdf",
+        "sha256": "7e24e7c9a5acc9e56d0f9b86e02eefd766a46efdb548f8c7a6c6a3d815ee9483",
+        "byte_size": 10881,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      },
+      {
+        "workspace": "yahboomcar_ws",
+        "package": "test_moveit_config",
+        "relative_path": "src/test_moveit_config/config/M3Pro.srdf",
+        "file_type": "srdf",
+        "sha256": "a7e0559cb2c342d33bd575e1aa84d742587ba2f6ee95646a06a1444f119ff084",
+        "byte_size": 10957,
+        "content_duplicated_in_tree": false,
+        "referenced_by": [],
+        "PRODUCT_ROLE": "LEGACY_CONTENT"
+      }
+    ],
+    "urdf_count": 7,
+    "xacro_count": 6,
+    "srdf_count": 3,
+    "distinct_urdf_contents": 6,
+    "method": "counted from the filesystem; no expected count is asserted"
+  },
+  "STRICT_PARSE": [
+    {
+      "relative_path": "src/M3Pro/urdf/M3Pro.urdf",
+      "sha256": "8046676e826b02f7764d1db5cbf24ea3d82202d22837ae824f8b6a8ddd82b6aa",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 24,
+      "joint_count": 23,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 7,
+        "revolute": 11
+      },
+      "actuated_joint_count": 16,
+      "fixed_joint_count": 7,
+      "visual_geometry": {
+        "box": 1,
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "20/20 resolved",
+      "resource_resolution_complete": true,
+      "unresolved": [],
+      "GEOMETRY_VALIDITY": "TOOLING_LIMITATION",
+      "geometry_note": "mesh collision geometry is valid URDF. This repository's geometry oracle measures primitives only, so it cannot admit the source -- a limitation of the tooling, not a defect in the vendor file",
+      "geometry_refusal": {
+        "category": "UNSUPPORTED_COLLISION_PRIMITIVE",
+        "detail": "base_link/collision[0] is a mesh. This module states and checks primitive dimensions; a mesh collider cannot be validated that way and must not be admitted on a check that does not"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "954579b3875479d32af1ca753d4c8674d0d001ae905d77e789d4de3f4472ef84",
+      "closure_member_count": 41,
+      "workspace": "M3Pro_ws-0.0.1"
+    },
+    {
+      "relative_path": "src/M3Pro/urdf/M3Pro_fixd.urdf",
+      "sha256": "b3caa36116c191d4390fbef69cb32e728534ed348dc7f800aece0d8bfbdc9cc9",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 24,
+      "joint_count": 23,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 11,
+        "revolute": 7
+      },
+      "actuated_joint_count": 12,
+      "fixed_joint_count": 11,
+      "visual_geometry": {
+        "box": 1,
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "20/20 resolved",
+      "resource_resolution_complete": true,
+      "unresolved": [],
+      "GEOMETRY_VALIDITY": "TOOLING_LIMITATION",
+      "geometry_note": "mesh collision geometry is valid URDF. This repository's geometry oracle measures primitives only, so it cannot admit the source -- a limitation of the tooling, not a defect in the vendor file",
+      "geometry_refusal": {
+        "category": "UNSUPPORTED_COLLISION_PRIMITIVE",
+        "detail": "base_link/collision[0] is a mesh. This module states and checks primitive dimensions; a mesh collider cannot be validated that way and must not be admitted on a check that does not"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "38fab7a89859c5f1a5fbc0c94af57e0813c54be7f98a0a71fe26747d48e938e0",
+      "closure_member_count": 41,
+      "workspace": "M3Pro_ws-0.0.1"
+    },
+    {
+      "relative_path": "src/M3Pro/urdf/M3Pro_robot1.urdf",
+      "sha256": "0b82a6f6a3f18d58f71c560b18c9b4a059ce4f883b1dae5d6388427d5642f01a",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 21,
+      "joint_count": 20,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 4,
+        "revolute": 11
+      },
+      "actuated_joint_count": 16,
+      "fixed_joint_count": 4,
+      "visual_geometry": {
+        "box": 1,
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "19/20 resolved",
+      "resource_resolution_complete": false,
+      "unresolved": [
+        {
+          "uri": "package://M3Pro/meshes/arM3Pro.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "diagnosis": {
+            "DIAGNOSIS_ONLY": true,
+            "not_used_for_resolution": "a basename found elsewhere is not the requested resource. This is recorded so a vendor typo is legible, never so it is silently fixed",
+            "requested_package": "M3Pro",
+            "requested_basename": "arM3Pro.STL",
+            "same_basename_elsewhere": [],
+            "similarly_named": [],
+            "reading": "nothing of this name or a near name exists in the admitted roots"
+          }
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "2 of 40 package:// reference(s) do not resolve under the declared roots; first: package://M3Pro/meshes/arM3Pro.STL -> UNRESOLVED_RESOURCE (package 'M3Pro' resolves, but it contains"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "workspace": "M3Pro_ws-0.0.1"
+    },
+    {
+      "relative_path": "src/M3Pro/urdf/M3Pro_robot2.urdf",
+      "sha256": "c1e6db42e6af44fc652b323fba3a8f0c53bf22d26c5ddc5b300c9ff9578c1b40",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 21,
+      "joint_count": 20,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 4,
+        "revolute": 11
+      },
+      "actuated_joint_count": 16,
+      "fixed_joint_count": 4,
+      "visual_geometry": {
+        "box": 1,
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "19/20 resolved",
+      "resource_resolution_complete": false,
+      "unresolved": [
+        {
+          "uri": "package://M3Pro/meshes/arM3Pro.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "diagnosis": {
+            "DIAGNOSIS_ONLY": true,
+            "not_used_for_resolution": "a basename found elsewhere is not the requested resource. This is recorded so a vendor typo is legible, never so it is silently fixed",
+            "requested_package": "M3Pro",
+            "requested_basename": "arM3Pro.STL",
+            "same_basename_elsewhere": [],
+            "similarly_named": [],
+            "reading": "nothing of this name or a near name exists in the admitted roots"
+          }
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "2 of 40 package:// reference(s) do not resolve under the declared roots; first: package://M3Pro/meshes/arM3Pro.STL -> UNRESOLVED_RESOURCE (package 'M3Pro' resolves, but it contains"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "workspace": "M3Pro_ws-0.0.1"
+    },
+    {
+      "relative_path": "src/M3Pro/urdf/m3pro.urdf",
+      "sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "m3pro",
+      "link_count": 18,
+      "joint_count": 17,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 6,
+        "revolute": 6
+      },
+      "actuated_joint_count": 11,
+      "fixed_joint_count": 6,
+      "visual_geometry": {
+        "mesh": 18
+      },
+      "collision_geometry": {
+        "mesh": 18
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 18,
+      "package_reference_unique_count": 18,
+      "package_reference_occurrence_count": 36,
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "18/18 resolved",
+      "resource_resolution_complete": true,
+      "unresolved": [],
+      "GEOMETRY_VALIDITY": "TOOLING_LIMITATION",
+      "geometry_note": "mesh collision geometry is valid URDF. This repository's geometry oracle measures primitives only, so it cannot admit the source -- a limitation of the tooling, not a defect in the vendor file",
+      "geometry_refusal": {
+        "category": "UNSUPPORTED_COLLISION_PRIMITIVE",
+        "detail": "base_link/collision[0] is a mesh. This module states and checks primitive dimensions; a mesh collider cannot be validated that way and must not be admitted on a check that does not"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "c06fe457252e9e7be7067f3499051fb4bf07bfca62e546f857e834f63d66424f",
+      "closure_member_count": 37,
+      "workspace": "M3Pro_ws-0.0.1"
+    },
+    {
+      "relative_path": "src/yahboom_M3Pro_description/urdf/.ipynb_checkpoints/M3Pro-checkpoint.urdf",
+      "sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 20,
+      "joint_count": 19,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 3,
+        "revolute": 11
+      },
+      "actuated_joint_count": 16,
+      "fixed_joint_count": 3,
+      "visual_geometry": {
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "FAIL",
+      "RESOURCE_RESOLUTION": "19/20 resolved",
+      "resource_resolution_complete": false,
+      "unresolved": [
+        {
+          "uri": "package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL",
+          "status": "UNRESOLVED_PACKAGE",
+          "diagnosis": {
+            "DIAGNOSIS_ONLY": true,
+            "not_used_for_resolution": "a basename found elsewhere is not the requested resource. This is recorded so a vendor typo is legible, never so it is silently fixed",
+            "requested_package": "dofbot_M3Pro_descripton",
+            "requested_basename": "arm_base_Link.STL",
+            "same_basename_elsewhere": [
+              "M3Pro/meshes/arm_base_Link.STL",
+              "yahboom_M3Pro_description/meshes/arm_base_Link.STL"
+            ],
+            "similarly_named": [],
+            "reading": "the file exists under this exact name in another package"
+          }
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "2 of 40 package:// reference(s) do not resolve under the declared roots; first: package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL -> UNRESOLVED_PACKAGE (package not declar"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "workspace": "yahboomcar_ws"
+    },
+    {
+      "relative_path": "src/yahboom_M3Pro_description/urdf/M3Pro.urdf",
+      "sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6",
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "M3Pro",
+      "link_count": 20,
+      "joint_count": 19,
+      "joint_types": {
+        "continuous": 5,
+        "fixed": 3,
+        "revolute": 11
+      },
+      "actuated_joint_count": 16,
+      "fixed_joint_count": 3,
+      "visual_geometry": {
+        "mesh": 20
+      },
+      "collision_geometry": {
+        "mesh": 20
+      },
+      "primitive_collision_count": 0,
+      "mesh_collision_count": 20,
+      "package_reference_unique_count": 20,
+      "package_reference_occurrence_count": 40,
+      "PACKAGE_RESOLUTION": "FAIL",
+      "RESOURCE_RESOLUTION": "19/20 resolved",
+      "resource_resolution_complete": false,
+      "unresolved": [
+        {
+          "uri": "package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL",
+          "status": "UNRESOLVED_PACKAGE",
+          "diagnosis": {
+            "DIAGNOSIS_ONLY": true,
+            "not_used_for_resolution": "a basename found elsewhere is not the requested resource. This is recorded so a vendor typo is legible, never so it is silently fixed",
+            "requested_package": "dofbot_M3Pro_descripton",
+            "requested_basename": "arm_base_Link.STL",
+            "same_basename_elsewhere": [
+              "M3Pro/meshes/arm_base_Link.STL",
+              "yahboom_M3Pro_description/meshes/arm_base_Link.STL"
+            ],
+            "similarly_named": [],
+            "reading": "the file exists under this exact name in another package"
+          }
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "2 of 40 package:// reference(s) do not resolve under the declared roots; first: package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL -> UNRESOLVED_PACKAGE (package not declar"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "workspace": "yahboomcar_ws"
+    }
+  ],
+  "VENDOR_REFERENCE_DEFECTS": {
+    "defect_count": 4,
+    "defects": [
+      {
+        "source": "src/M3Pro/urdf/M3Pro_robot1.urdf",
+        "broken_reference": "package://M3Pro/meshes/arM3Pro.STL",
+        "status": "UNRESOLVED_RESOURCE",
+        "basename_substitution": {
+          "from": "arM3Pro.STL",
+          "to": "arm3.STL",
+          "changed_the_name": true,
+          "result_exists_at": [
+            "src/M3Pro/meshes/arm3.STL",
+            "src/yahboom_M3Pro_description/meshes/arm3.STL"
+          ]
+        },
+        "package_substitution": {
+          "from": "M3Pro",
+          "to": "M3Pro",
+          "changed_the_name": false,
+          "result_is_a_declared_package": false
+        },
+        "sibling_sequence": [
+          "arm1.STL",
+          "arm2.STL",
+          "arm3.STL",
+          "arm4.STL",
+          "arm5.STL"
+        ],
+        "EXPLANATION": "GLOBAL_FIND_AND_REPLACE_OF_THE_PRODUCT_NAME",
+        "explanation_class": "INFERENCE",
+        "EXPLANATION_VERDICT": "SUPPORTED",
+        "explanation_detail": "substituting M3Pro back to m3 turns arM3Pro.STL into arm3.STL, which exists, and the sibling sequence ['arm1.STL', 'arm2.STL', 'arm3.STL', 'arm4.STL', 'arm5.STL'] has exactly that member missing from the references"
+      },
+      {
+        "source": "src/M3Pro/urdf/M3Pro_robot2.urdf",
+        "broken_reference": "package://M3Pro/meshes/arM3Pro.STL",
+        "status": "UNRESOLVED_RESOURCE",
+        "basename_substitution": {
+          "from": "arM3Pro.STL",
+          "to": "arm3.STL",
+          "changed_the_name": true,
+          "result_exists_at": [
+            "src/M3Pro/meshes/arm3.STL",
+            "src/yahboom_M3Pro_description/meshes/arm3.STL"
+          ]
+        },
+        "package_substitution": {
+          "from": "M3Pro",
+          "to": "M3Pro",
+          "changed_the_name": false,
+          "result_is_a_declared_package": false
+        },
+        "sibling_sequence": [
+          "arm1.STL",
+          "arm2.STL",
+          "arm3.STL",
+          "arm4.STL",
+          "arm5.STL"
+        ],
+        "EXPLANATION": "GLOBAL_FIND_AND_REPLACE_OF_THE_PRODUCT_NAME",
+        "explanation_class": "INFERENCE",
+        "EXPLANATION_VERDICT": "SUPPORTED",
+        "explanation_detail": "substituting M3Pro back to m3 turns arM3Pro.STL into arm3.STL, which exists, and the sibling sequence ['arm1.STL', 'arm2.STL', 'arm3.STL', 'arm4.STL', 'arm5.STL'] has exactly that member missing from the references"
+      },
+      {
+        "source": "src/yahboom_M3Pro_description/urdf/.ipynb_checkpoints/M3Pro-checkpoint.urdf",
+        "broken_reference": "package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL",
+        "status": "UNRESOLVED_PACKAGE",
+        "basename_substitution": {
+          "from": "arm_base_Link.STL",
+          "to": "arm_base_Link.STL",
+          "changed_the_name": false,
+          "result_exists_at": []
+        },
+        "package_substitution": {
+          "from": "dofbot_M3Pro_descripton",
+          "to": "dofbot_pro_descripton",
+          "changed_the_name": true,
+          "result_is_a_declared_package": false
+        },
+        "sibling_sequence": [],
+        "EXPLANATION": "GLOBAL_FIND_AND_REPLACE_OF_THE_PRODUCT_NAME",
+        "explanation_class": "INFERENCE",
+        "EXPLANATION_VERDICT": "PARTIALLY_SUPPORTED",
+        "explanation_detail": "the package name dofbot_M3Pro_descripton carries the substitution pattern, but dofbot_pro_descripton is not declared in either workspace either, so the reference was already broken before the rename or points outside the archive"
+      },
+      {
+        "source": "src/yahboom_M3Pro_description/urdf/M3Pro.urdf",
+        "broken_reference": "package://dofbot_M3Pro_descripton/meshes/arm_base_Link.STL",
+        "status": "UNRESOLVED_PACKAGE",
+        "basename_substitution": {
+          "from": "arm_base_Link.STL",
+          "to": "arm_base_Link.STL",
+          "changed_the_name": false,
+          "result_exists_at": []
+        },
+        "package_substitution": {
+          "from": "dofbot_M3Pro_descripton",
+          "to": "dofbot_pro_descripton",
+          "changed_the_name": true,
+          "result_is_a_declared_package": false
+        },
+        "sibling_sequence": [],
+        "EXPLANATION": "GLOBAL_FIND_AND_REPLACE_OF_THE_PRODUCT_NAME",
+        "explanation_class": "INFERENCE",
+        "EXPLANATION_VERDICT": "PARTIALLY_SUPPORTED",
+        "explanation_detail": "the package name dofbot_M3Pro_descripton carries the substitution pattern, but dofbot_pro_descripton is not declared in either workspace either, so the reference was already broken before the rename or points outside the archive"
+      }
+    ],
+    "explanation_verdicts": {
+      "PARTIALLY_SUPPORTED": 2,
+      "SUPPORTED": 2
+    },
+    "CONSEQUENCE": "these references are broken in the vendor sources as shipped. A resolver matching by basename, by nearest name or case-insensitively would have reported every file complete and hidden all of them",
+    "NOT_REPAIRED": "no reference is rewritten. The finding is that the vendor sources contain them, and repairing them here would destroy the finding"
+  },
+  "XACRO_ANALYSIS": [
+    {
+      "path": "src/M3Pro_config/config/M3Pro.ros2_control.xacro",
+      "sha256": "79c6ce2a6b560ed4cfbb54093c331727c13a777b124adcb86841f278bccd2c5a",
+      "byte_size": 2621,
+      "declares_xacro_namespace": true,
+      "robot_name": null,
+      "includes": [],
+      "macros": [
+        "M3Pro_ros2_control"
+      ],
+      "properties": [
+        "initial_positions"
+      ],
+      "args": [],
+      "conditionals": [],
+      "substitutions": [],
+      "expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']",
+        "name",
+        "initial_positions['arm1_Joint']",
+        "initial_positions['arm2_Joint']",
+        "initial_positions['arm3_Joint']",
+        "initial_positions['arm4_Joiint']",
+        "initial_positions['arm5_Joint']",
+        "initial_positions['rlink1_Joint']"
+      ],
+      "package_references": [],
+      "file_reading_expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']"
+      ],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "e6900737e08c37d54700b288f3bc84ef67292ce1aea377c1ede53fd5e46bb555",
+      "include_closure_members": [
+        "M3Pro.ros2_control.xacro"
+      ],
+      "include_unresolved": [],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": true,
+        "reasons_refused": [],
+        "notes": [
+          "1 expression(s) read a file during expansion; the closure must cover what they read",
+          "expansion evaluates the file's ${...} expressions, so it executes vendor-authored code by design"
+        ],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    },
+    {
+      "path": "src/M3Pro_config/config/M3Pro.urdf.xacro",
+      "sha256": "1635f0d9858effedf7dc7b81204f74c556739404e3c2643a11eb069d90f4c0c8",
+      "byte_size": 498,
+      "declares_xacro_namespace": true,
+      "robot_name": "M3Pro",
+      "includes": [
+        "$(find yahboom_M3Pro_description)/urdf/M3Pro.urdf",
+        "M3Pro.ros2_control.xacro"
+      ],
+      "macros": [],
+      "properties": [],
+      "args": [
+        {
+          "name": "initial_positions_file",
+          "default": "initial_positions.yaml"
+        }
+      ],
+      "conditionals": [],
+      "substitutions": [
+        {
+          "kind": "find",
+          "text": "$(find yahboom_M3Pro_description)",
+          "argument": "yahboom_M3Pro_description"
+        },
+        {
+          "kind": "arg",
+          "text": "$(arg initial_positions_file)",
+          "argument": "initial_positions_file"
+        }
+      ],
+      "expressions": [],
+      "package_references": [
+        "yahboom_M3Pro_description"
+      ],
+      "file_reading_expressions": [],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "001478c986d3daa90748915277bcf0edc51d329cb3b310d1228046c469c3455f",
+      "include_closure_members": [
+        "M3Pro.urdf.xacro",
+        "M3Pro.urdf",
+        "M3Pro.ros2_control.xacro"
+      ],
+      "include_unresolved": [],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": true,
+        "reasons_refused": [],
+        "notes": [],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    },
+    {
+      "path": "src/test_config/config/dofbot_pro_descripton.ros2_control.xacro",
+      "sha256": "59a3fbe60dacdc3c46ac651948039ad090a715fee91025f149fc740681163d3a",
+      "byte_size": 2637,
+      "declares_xacro_namespace": true,
+      "robot_name": null,
+      "includes": [],
+      "macros": [
+        "dofbot_pro_descripton_ros2_control"
+      ],
+      "properties": [
+        "initial_positions"
+      ],
+      "args": [],
+      "conditionals": [],
+      "substitutions": [],
+      "expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']",
+        "name",
+        "initial_positions['arm1_Joint']",
+        "initial_positions['arm2_Joint']",
+        "initial_positions['arm3_Joint']",
+        "initial_positions['arm4_Joiint']",
+        "initial_positions['arm5_Joint']",
+        "initial_positions['rlink1_Joint']"
+      ],
+      "package_references": [],
+      "file_reading_expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']"
+      ],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "5d68144c9d0b17feb078e586dd86d74a644e1e1ce765bdd73c72aa0a72b9a721",
+      "include_closure_members": [
+        "dofbot_pro_descripton.ros2_control.xacro"
+      ],
+      "include_unresolved": [],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": true,
+        "reasons_refused": [],
+        "notes": [
+          "1 expression(s) read a file during expansion; the closure must cover what they read",
+          "expansion evaluates the file's ${...} expressions, so it executes vendor-authored code by design"
+        ],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    },
+    {
+      "path": "src/test_config/config/dofbot_pro_descripton.urdf.xacro",
+      "sha256": "0ed032a2eb3b58a988809bb6bee4a729ee399fd3a267e5ab0130e305c0d75afa",
+      "byte_size": 563,
+      "declares_xacro_namespace": true,
+      "robot_name": "dofbot_pro_descripton",
+      "includes": [
+        "$(find dofbot_pro_descripton)/urdf/X5PLUS_V12.urdf",
+        "dofbot_pro_descripton.ros2_control.xacro"
+      ],
+      "macros": [],
+      "properties": [],
+      "args": [
+        {
+          "name": "initial_positions_file",
+          "default": "initial_positions.yaml"
+        }
+      ],
+      "conditionals": [],
+      "substitutions": [
+        {
+          "kind": "find",
+          "text": "$(find dofbot_pro_descripton)",
+          "argument": "dofbot_pro_descripton"
+        },
+        {
+          "kind": "arg",
+          "text": "$(arg initial_positions_file)",
+          "argument": "initial_positions_file"
+        }
+      ],
+      "expressions": [],
+      "package_references": [
+        "dofbot_pro_descripton"
+      ],
+      "file_reading_expressions": [],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "23d566dda3a892192b0a653f7aa05697ef1d7fc5b4db34d3f7cb31fc55159c99",
+      "include_closure_members": [
+        "dofbot_pro_descripton.urdf.xacro",
+        "dofbot_pro_descripton.ros2_control.xacro"
+      ],
+      "include_unresolved": [
+        {
+          "include": "$(find dofbot_pro_descripton)/urdf/X5PLUS_V12.urdf",
+          "category": "UNRESOLVED_PACKAGE",
+          "reason": "$(find dofbot_pro_descripton) does not resolve under the declared roots (UNRESOLVED_PACKAGE)"
+        }
+      ],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": false,
+        "reasons_refused": [
+          "1 include(s) do not resolve inside the declared closure"
+        ],
+        "notes": [],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    },
+    {
+      "path": "src/test_moveit_config/config/M3Pro.ros2_control.xacro",
+      "sha256": "79c6ce2a6b560ed4cfbb54093c331727c13a777b124adcb86841f278bccd2c5a",
+      "byte_size": 2621,
+      "declares_xacro_namespace": true,
+      "robot_name": null,
+      "includes": [],
+      "macros": [
+        "M3Pro_ros2_control"
+      ],
+      "properties": [
+        "initial_positions"
+      ],
+      "args": [],
+      "conditionals": [],
+      "substitutions": [],
+      "expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']",
+        "name",
+        "initial_positions['arm1_Joint']",
+        "initial_positions['arm2_Joint']",
+        "initial_positions['arm3_Joint']",
+        "initial_positions['arm4_Joiint']",
+        "initial_positions['arm5_Joint']",
+        "initial_positions['rlink1_Joint']"
+      ],
+      "package_references": [],
+      "file_reading_expressions": [
+        "load_yaml(initial_positions_file)['initial_positions']"
+      ],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "e6900737e08c37d54700b288f3bc84ef67292ce1aea377c1ede53fd5e46bb555",
+      "include_closure_members": [
+        "M3Pro.ros2_control.xacro"
+      ],
+      "include_unresolved": [],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": true,
+        "reasons_refused": [],
+        "notes": [
+          "1 expression(s) read a file during expansion; the closure must cover what they read",
+          "expansion evaluates the file's ${...} expressions, so it executes vendor-authored code by design"
+        ],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    },
+    {
+      "path": "src/test_moveit_config/config/M3Pro.urdf.xacro",
+      "sha256": "1635f0d9858effedf7dc7b81204f74c556739404e3c2643a11eb069d90f4c0c8",
+      "byte_size": 498,
+      "declares_xacro_namespace": true,
+      "robot_name": "M3Pro",
+      "includes": [
+        "$(find yahboom_M3Pro_description)/urdf/M3Pro.urdf",
+        "M3Pro.ros2_control.xacro"
+      ],
+      "macros": [],
+      "properties": [],
+      "args": [
+        {
+          "name": "initial_positions_file",
+          "default": "initial_positions.yaml"
+        }
+      ],
+      "conditionals": [],
+      "substitutions": [
+        {
+          "kind": "find",
+          "text": "$(find yahboom_M3Pro_description)",
+          "argument": "yahboom_M3Pro_description"
+        },
+        {
+          "kind": "arg",
+          "text": "$(arg initial_positions_file)",
+          "argument": "initial_positions_file"
+        }
+      ],
+      "expressions": [],
+      "package_references": [
+        "yahboom_M3Pro_description"
+      ],
+      "file_reading_expressions": [],
+      "unsafe_substitutions": [],
+      "workspace": "yahboomcar_ws",
+      "include_closure_digest": "001478c986d3daa90748915277bcf0edc51d329cb3b310d1228046c469c3455f",
+      "include_closure_members": [
+        "M3Pro.urdf.xacro",
+        "M3Pro.urdf",
+        "M3Pro.ros2_control.xacro"
+      ],
+      "include_unresolved": [],
+      "ADMISSIBILITY": {
+        "ADMISSIBLE_FOR_EXPANSION": true,
+        "reasons_refused": [],
+        "notes": [],
+        "contract": [
+          "every include lands inside the declared workspace closure",
+          "package roots are explicit",
+          "arguments are supplied or have source-defined defaults",
+          "no command substitution and no environment lookup without a default"
+        ]
+      },
+      "EXPANSION_PERFORMED": false,
+      "expansion_note": "not expanded. xacro is importable on this host only through a ROS installation on PYTHONPATH and is absent under the repository's clean-environment practice, so any expansion would be a measurement of the host rather than of the vendor source. The include closure above is computed by repository-owned code and needs no xacro"
+    }
+  ],
+  "XACRO_EXPANSION": {
+    "PERFORMED": false,
+    "reason": "xacro resolves on this host only through a ROS tree on PYTHONPATH and is absent under the repository's clean-environment practice. An expansion produced that way would measure the host, not the vendor source",
+    "substitute": "repository-owned include-closure resolution, which is deterministic and needs no xacro",
+    "STATUS": "LIMITATION_RECORDED"
+  },
+  "PRODUCTION_CHAIN_VERIFICATION": {
+    "historical": {
+      "artefact": "gates/digital_twin/production_description_chain_20260918.json",
+      "entry_point": "src/m3pro_bringup/launch/car_base.launch.py",
+      "package": "M3Pro",
+      "description": "src/M3Pro/urdf/m3pro.urdf",
+      "description_sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+      "consumer": "robot_state_publisher"
+    },
+    "edges_verified": [
+      {
+        "edge": "launch -> description file",
+        "source": "src/m3pro_bringup/launch/car_base.launch.py",
+        "line": 31,
+        "statement": "model=os.path.join(get_package_share_directory('M3Pro'),'urdf','m3pro.urdf')",
+        "resolution_method": "read from the launch file"
+      },
+      {
+        "edge": "description file -> robot_description (via xacro)",
+        "source": "src/m3pro_bringup/launch/car_base.launch.py",
+        "line": 32,
+        "statement": "robot_description = ParameterValue(Command(['xacro ', model]),value_type=str)",
+        "resolution_method": "read from the launch file"
+      },
+      {
+        "edge": "robot_description -> robot_state_publisher",
+        "source": "src/m3pro_bringup/launch/car_base.launch.py",
+        "line": 37,
+        "statement": "parameters=[{'robot_description': robot_description}]",
+        "resolution_method": "read from the launch file"
+      }
+    ],
+    "production_description_sha256": "cb092310636677ab4bc9846efd30c39cbf4d953ae4fc140a411d8b4c2e56ae6e",
+    "hash_matches_historical": true,
+    "CONTRADICTIONS": [],
+    "VERDICT": "VERIFIED"
+  },
+  "MOVEIT_GRAPH": {
+    "root_launch": "src/M3Pro_config/launch/demo.launch.py",
+    "package": "M3Pro_config",
+    "robot_description_source": {
+      "xacro": "src/M3Pro_config/config/M3Pro.urdf.xacro",
+      "sha256": "1635f0d9858effedf7dc7b81204f74c556739404e3c2643a11eb069d90f4c0c8",
+      "includes": [
+        "$(find yahboom_M3Pro_description)/urdf/M3Pro.urdf",
+        "M3Pro.ros2_control.xacro"
+      ],
+      "resolved_description": "src/yahboom_M3Pro_description/urdf/M3Pro.urdf",
+      "resolved_description_sha256": "5a96608cf2c621c6dd8d976cc05a115a59c1a4170a5d0cb08d6cf3c8fd04fda6"
+    },
+    "robot_description_semantic": {
+      "srdf": "src/M3Pro_config/config/M3Pro.srdf",
+      "sha256": "770c7df6680f2bfb379019223f52f80162423e1e6dc392c35dae46650b853d59"
+    },
+    "groups": [
+      {
+        "name": "arm_group",
+        "base_link": null,
+        "tip_link": null,
+        "joint_count": 5
+      },
+      {
+        "name": "grip_group",
+        "base_link": null,
+        "tip_link": null,
+        "joint_count": 0
+      }
+    ],
+    "configs": {
+      "kinematics.yaml": {
+        "relative_path": "src/M3Pro_config/config/kinematics.yaml",
+        "sha256": "0e172adbd88cfb3bdaab3a6ef6a2b4d152d133e45e102c0b81f5ffce544b5001"
+      },
+      "joint_limits.yaml": {
+        "relative_path": "src/M3Pro_config/config/joint_limits.yaml",
+        "sha256": "955eb8b6434c51d502c591e1340d0f99977ef87a04195c67fd227ce9751081eb"
+      },
+      "moveit_controllers.yaml": {
+        "relative_path": "src/M3Pro_config/config/moveit_controllers.yaml",
+        "sha256": "2d8e65fde9ac2373d2784d5a763950b101f4f2a5a59e2af891ce438a2cab45e0"
+      },
+      "ros2_controllers.yaml": {
+        "relative_path": "src/M3Pro_config/config/ros2_controllers.yaml",
+        "sha256": "3b2e0afd33a8a0ce9bcc9f1dd0dc59ceaf8be6226bacb7cea65bf7ea6a1fef86"
+      },
+      "initial_positions.yaml": {
+        "relative_path": "src/M3Pro_config/config/initial_positions.yaml",
+        "sha256": "b8f963fd4d81da74b7a11d065bb4b4d4a354864aef88e343de5c1e58940651e1"
+      },
+      "pilz_cartesian_limits.yaml": {
+        "relative_path": "src/M3Pro_config/config/pilz_cartesian_limits.yaml",
+        "sha256": "fed80b213b77f13fb7b913d703609a66caa72ccb0617b41e83d3057e31749047"
+      }
+    },
+    "VERDICT": "B_SEPARATE_DESCRIPTION",
+    "finding": "MoveIt does not load the description the robot boots with. Bringup loads src/M3Pro/urdf/m3pro.urdf (cb0923106366) from workspace M3Pro_ws; MoveIt loads src/yahboom_M3Pro_description/urdf/M3Pro.urdf (5a96608cf2c6) from workspace yahboomcar_ws. Two descriptions of one robot, in two workspaces, differing in content",
+    "cross_workspace": true
+  },
+  "ARM_KINEMATIC_CHAIN": {
+    "joints": [
+      {
+        "joint": "arm1_Joint",
+        "type": "revolute",
+        "parent": "base_link",
+        "child": "arm1",
+        "xyz": "0.033617 -1.2421E-05 0.185",
+        "rpy": "0 0 1.5708",
+        "axis": "0 0 -1",
+        "lower": "0",
+        "upper": "3.1416",
+        "effort": "100",
+        "velocity": "1",
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      },
+      {
+        "joint": "arm2_Joint",
+        "type": "revolute",
+        "parent": "arm1",
+        "child": "arm2",
+        "xyz": "-0.0021522 6.1185E-05 0.033",
+        "rpy": "0 1.5708 0",
+        "axis": "0 -1 -6.3725E-05",
+        "lower": "-0.2618",
+        "upper": "3.1416",
+        "effort": "100",
+        "velocity": "1",
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      },
+      {
+        "joint": "arm3_Joint",
+        "type": "revolute",
+        "parent": "arm2",
+        "child": "arm3",
+        "xyz": "0 0 0.08285",
+        "rpy": "0 1.5708 0",
+        "axis": "0 -1 0",
+        "lower": "-0.2618",
+        "upper": "3.7525",
+        "effort": "100",
+        "velocity": "1",
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      },
+      {
+        "joint": "arm4_Joint",
+        "type": "revolute",
+        "parent": "arm3",
+        "child": "arm4",
+        "xyz": "0 0 0.08285",
+        "rpy": "0 1.5708 0",
+        "axis": "0 -1 0",
+        "lower": "-0.2618",
+        "upper": "3.4907",
+        "effort": "100",
+        "velocity": "1",
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      },
+      {
+        "joint": "arm5_Joint",
+        "type": "revolute",
+        "parent": "arm4",
+        "child": "arm5",
+        "xyz": "0.00057305 0 0.074815",
+        "rpy": "0 0 -1.5708",
+        "axis": "0 0 1",
+        "lower": "0",
+        "upper": "3.1416",
+        "effort": "100",
+        "velocity": "1",
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      },
+      {
+        "joint": "Gripping_Joint",
+        "type": "fixed",
+        "parent": "arm5",
+        "child": "Gripping",
+        "xyz": "-0.00062499 0.00023987 0.093235",
+        "rpy": "-0.041648 -1.5708 0.041619",
+        "axis": "0 0 0",
+        "lower": null,
+        "upper": null,
+        "effort": null,
+        "velocity": null,
+        "authority_class": "VENDOR_SOFTWARE_VALUE"
+      }
+    ],
+    "joint_count": 6,
+    "authority_class": "VENDOR_SOFTWARE_VALUE",
+    "not_physical_calibration": "these are the numbers the vendor's description contains. None has been compared against the robot",
+    "STATUS": "SOURCE_CHARACTERIZED"
+  },
+  "CAMERA_GRAPH": {
+    "CAMERA_PARENTAGE": "VENDOR_SOURCE_CONFIRMED",
+    "CAMERA_EXTRINSIC": "VENDOR_SOFTWARE_VALUE",
+    "PHYSICAL_CAMERA_EXTRINSIC": "NOT_MEASURED",
+    "mount_joint": {
+      "joint": "DCW2_Joint",
+      "type": "fixed",
+      "parent_link": "arm4",
+      "child_link": "camera_link",
+      "xyz": "-0.0483883323542816 0.00245180097510241 0.0671900000306381",
+      "rpy": "1.84287098025439 -1.57079631189374 -1.81447538896515",
+      "source_file": "src/M3Pro/urdf/m3pro.urdf"
+    },
+    "frame_semantics": {
+      "mechanical_camera_link": "REPRESENTED_IN_SOURCE",
+      "housing_frame": "NOT_REPRESENTED_IN_SOURCE",
+      "rgb_frame": "NOT_REPRESENTED_IN_SOURCE",
+      "rgb_optical_frame": "NOT_REPRESENTED_IN_SOURCE",
+      "depth_frame": "NOT_REPRESENTED_IN_SOURCE",
+      "depth_optical_frame": "NOT_REPRESENTED_IN_SOURCE",
+      "point_cloud_frame": "NOT_REPRESENTED_IN_SOURCE"
+    },
+    "frame_note": "only the mechanical mount link exists in the description. The RGB, depth and optical frames are published by the driver at runtime, so they are NOT_REPRESENTED_IN_SOURCE rather than identity transforms. Treating an absent frame as a zero transform is how an uncalibrated optical offset becomes invisible",
+    "urdf_links": [
+      "Gripping",
+      "arm1",
+      "arm2",
+      "arm3",
+      "arm4",
+      "arm5",
+      "base_link",
+      "camera_link",
+      "llink1",
+      "llink2",
+      "llink3",
+      "lwheel1",
+      "lwheel2",
+      "rlink1",
+      "rlink2",
+      "rlink3",
+      "rwheel1",
+      "rwheel2"
+    ]
+  },
+  "ORBBEC_CONFIGURATION": {
+    "driver_package_declared": "orbbec_camera",
+    "driver_node": {
+      "construct": "ComposableNode",
+      "line": 107,
+      "package": "orbbec_camera",
+      "plugin": "orbbec_camera::OBCameraNodeDriver",
+      "namespace": ""
+    },
+    "launch_file": "src/m3pro_bringup/launch/dabai_dcw2.launch.py",
+    "launch_sha256": "55780663c6ab0ae338d070db435ebee66053a91059f72b651fa614a6bd8000d1",
+    "OrbbecSDK_ROS2_directory_present": true,
+    "OrbbecSDK_ROS2_ships_files": false,
+    "DRIVER_SOURCE_STATUS": "RUNTIME_SOURCE_NOT_IDENTIFIED",
+    "driver_source_finding": "the workspace contains an OrbbecSDK_ROS2 directory that ships zero files, and no package declaring orbbec_camera exists in either workspace. The camera is fully configured and its driver source is not in the vendor archive",
+    "CONFIGURED_DEVICE": {
+      "vendor_id": "0x2bc5",
+      "product_id": "(any)",
+      "serial_number": "(any)",
+      "device_num": "1",
+      "camera_name": "camera"
+    },
+    "CONFIGURED_RESOLUTION": {
+      "color": "640x480",
+      "depth": "640x400",
+      "ir": "640x400"
+    },
+    "CONFIGURED_FPS": {
+      "color": "30",
+      "depth": "10",
+      "ir": "10"
+    },
+    "CONFIGURED_FORMAT": {
+      "color": "MJPG",
+      "depth": "Y11",
+      "ir": "Y10"
+    },
+    "CONFIGURED_TOPIC_NAMESPACE": "camera",
+    "CONFIGURED_TOPICS_NOTE": "the launch file sets a namespace and the driver names the topics. Topic names are therefore a property of the driver source, which is absent, so no CONFIGURED_TOPIC is recorded rather than a plausible one being written down",
+    "depth_registration": "false",
+    "align_mode": "HW",
+    "enable_point_cloud": "true",
+    "enable_colored_point_cloud": "true",
+    "cloud_frame_id": "(driver default)",
+    "publish_tf": "true",
+    "tf_publish_rate": "0.0",
+    "enable_publish_extrinsic": "false",
+    "color_info_url": "(none)",
+    "ir_info_url": "(none)",
+    "intrinsics_source": "no calibration URL is configured, so intrinsics come from the device's own factory calibration at runtime. Nothing in the source pins them",
+    "argument_count": 68,
+    "non_literal_defaults": [],
+    "CLAIM_CLASS": "CONFIGURED_NOT_OBSERVED"
+  },
+  "TOF_CONFIGURATION": {
+    "MODELLED_AS": "TWO_INDEPENDENT_SENSORS_MERGED_INTO_ONE_SYNTHETIC_SCAN",
+    "merger": {
+      "package": "ira_laser_tools",
+      "executable": "laserscan_multi_merger",
+      "config": "src/m3pro_bringup/config/laserscan_merge.yaml",
+      "config_sha256": "87dea4965ba38547a5c8a6cf515c2ab45ab961f9d5a666c39cee6c71c6acacbb"
+    },
+    "CONFIGURED_INPUT_TOPICS": [
+      "/scan0",
+      "/scan1"
+    ],
+    "CONFIGURED_OUTPUT_SCAN_TOPIC": "/scan_multi",
+    "CONFIGURED_OUTPUT_CLOUD_TOPIC": "/merged_cloud",
+    "CONFIGURED_DESTINATION_FRAME": "base_link",
+    "CONFIGURED_ANGLE_MIN": "-3.14",
+    "CONFIGURED_ANGLE_MAX": "3.14",
+    "CONFIGURED_ANGLE_INCREMENT": "0.017453",
+    "CONFIGURED_RANGE_MIN": "0.05",
+    "CONFIGURED_RANGE_MAX": "4.0",
+    "message_type": "sensor_msgs/msg/LaserScan (ira_laser_tools contract)",
+    "sensor_frames": [
+      {
+        "line": 16,
+        "xyz": [
+          "-0.11617",
+          "0.09156",
+          "0.1253"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_link",
+        "child_frame": "laser0_frame",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      },
+      {
+        "line": 25,
+        "xyz": [
+          "0.10766",
+          "-0.09078",
+          "0.1253"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_link",
+        "child_frame": "laser1_frame",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      }
+    ],
+    "all_static_transforms": [
+      {
+        "line": 7,
+        "xyz": [
+          "0.06",
+          "0.0",
+          "0.080"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_link",
+        "child_frame": "imu_frame",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      },
+      {
+        "line": 16,
+        "xyz": [
+          "-0.11617",
+          "0.09156",
+          "0.1253"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_link",
+        "child_frame": "laser0_frame",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      },
+      {
+        "line": 25,
+        "xyz": [
+          "0.10766",
+          "-0.09078",
+          "0.1253"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_link",
+        "child_frame": "laser1_frame",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      },
+      {
+        "line": 34,
+        "xyz": [
+          "0.0",
+          "0.0",
+          "0.02"
+        ],
+        "rpy": [
+          "0.0",
+          "0.0",
+          "0.0"
+        ],
+        "parent_frame": "base_footprint",
+        "child_frame": "base_link",
+        "authority_class": "VENDOR_SOFTWARE_VALUE",
+        "is_a_measurement": false
+      }
+    ],
+    "static_tf_source": "src/m3pro_bringup/launch/static_tf.launch.py",
+    "static_tf_sha256": "72df833f8886a2a75983b4bd5871d87ff38cf5e6e27bd8cca76ee21242981276",
+    "downstream_filter": {
+      "package": "yahboom_laser_filter",
+      "executable": "laser_filter_node",
+      "configured_angle_min": "-180.0",
+      "configured_angle_max": "180.0"
+    },
+    "NEGATIVE_SPACE": {
+      "frames_in_description": [],
+      "VERDICT_FRAMES": "SOFTWARE_SENSOR_PRESENT_FRAME_NOT_REPRESENTED_IN_DESCRIPTION",
+      "frames_detail": "laser0_frame and laser1_frame are published as static transforms from base_link at launch and are not links in m3pro.urdf, so the description alone does not describe where the ranging sensors are",
+      "producer_files_found": [
+        "src/M3Pro_core/ira_laser_tools/config/laserscan_merge.yaml",
+        "src/M3Pro_core/ira_laser_tools/config/laserscan_merge_Multi_robot1.yaml",
+        "src/M3Pro_core/ira_laser_tools/config/laserscan_merge_Multi_robot2.yaml",
+        "src/m3pro_bringup/config/laserscan_merge.yaml"
+      ],
+      "VERDICT_DRIVERS": "RUNTIME_SOURCE_NOT_IDENTIFIED",
+      "drivers_detail": "no node in either workspace is configured to publish the two input scans the merger consumes. The consumer, the merge parameters and the frames are all present; the drivers are not"
+    },
+    "COVERAGE_NOTE": "the merge is configured over a full turn, which is a configured angular span and not a measurement of what the two sensors can see. Coverage is a runtime and geometric question this tranche does not answer",
+    "CLAIM_CLASS": "CONFIGURED_NOT_OBSERVED"
+  },
+  "MUTO_PRODUCTION_REFERENCE_CHECK": {
+    "muto_files_referenced_by_a_production_launch": 0,
+    "MUTO_PRODUCT_ROLE": "TUTORIAL_CONTENT",
+    "contradiction": false
+  },
+  "PRODUCTION_COLLISION_SOURCE": "MESH_BASED",
+  "DECISION_B": "UNRESOLVED_AND_NOT_TOUCHED",
+  "decision_b_candidates_not_selected": [
+    "vendor-provided dimensions",
+    "source mesh-derived dimensions",
+    "Parasolid ROSMASTER-M3Pro.x_t",
+    "physical measurement"
+  ],
+  "CLAIM_BOUNDARY": "every sensor value here is configured, not observed. Nothing was launched, no topic was subscribed, and no transform was compared against the robot",
+  "RUNTIME_SEPARATION": [
+    "configured",
+    "reachable",
+    "launched",
+    "publishing",
+    "physically correct"
+  ],
+  "PRODUCTION_DESCRIPTION_IDENTIFIED": true,
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "AWAITING_REVIEW",
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "DIGITAL_TWIN_REQUALIFICATION": "NOT_STARTED",
+  "VENDOR_REDISTRIBUTION": "NOT_AUTHORISED_PENDING_CLARIFICATION",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0
+}

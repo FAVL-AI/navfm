@@ -1,10 +1,12 @@
 {
   "check": "DENSE_TARGETABILITY_REGRESSION",
-  "timestamp_utc": "2026-08-14T05:53:34.809095+00:00",
+  "timestamp_utc": "2026-09-05T22:49:01.623226+00:00",
   "parent_contract_digest": "480d9f07770eaf2a95446793639e9aad",
   "dense_expectations_digest": "49c5418859e3d6b5850e0018f718eb4a",
   "amendment_digest": "6451a1f5cc799d6faebba002b70b5d87",
   "effective_expectations_digest": "03ebdbc0f1c89d87c1b2813de157d1b7",
+  "candidate_policy_digest": "c6534203825fa13d",
+  "candidate_policy_note": "candidates come from navfm.candidate_policy; the naive fixture requests the retired shared-origin construction as a declared control variant with its own digest",
   "no_hospital_content": "No Hospital path, prim, distance or observed answer is used. Hospital supplied the mechanism; these fixtures reproduce it from first principles. wrong_1 is evidence for nothing here.",
   "fixtures": {
     "DENSE_LONG_RAY_NOT_TARGETABLE": {
@@ -57,7 +59,7 @@
         "chosen_origin": null,
         "chosen_direction": null
       },
-      "targetability_decided_at": "2026-08-14T05:53:35.008884+00:00",
+      "targetability_decided_at": "2026-09-05T22:49:01.854337+00:00",
       "candidate_digest_before": "7130657d348e85ce",
       "candidate_digest_after": "7130657d348e85ce",
       "observation": {
@@ -67,7 +69,7 @@
         "distance": 1.8,
         "identity_match": false
       },
-      "observed_at": "2026-08-14T05:53:35.008973+00:00",
+      "observed_at": "2026-09-05T22:49:01.854423+00:00",
       "interpretation": "non-probative: the intervention never isolated B, so the hit on A is not evidence against B"
     },
     "DENSE_LOCAL_RAY_TARGETABLE": {
@@ -77,15 +79,23 @@
         "causal_targetability": "TARGET_ISOLATABLE",
         "reason": "no structurally distinct body is expected to respond before the target",
         "probative": true,
-        "candidates_considered": 2,
-        "candidate_digest": "a71356c6f9f05dbb",
+        "candidates_considered": 4,
+        "candidate_digest": "bea2a934da1cf3f9",
         "per_candidate": [
           {
-            "digest": "91301245f9b5a4bf",
+            "digest": "0b8e2f2f814c7144",
             "state": "TARGET_ISOLATABLE"
           },
           {
-            "digest": "db4cf18079042f87",
+            "digest": "5b52d525ceda27bd",
+            "state": "TARGET_ISOLATABLE"
+          },
+          {
+            "digest": "64766c728fa71c7c",
+            "state": "TARGET_ISOLATABLE"
+          },
+          {
+            "digest": "987d384019bb2264",
             "state": "TARGET_ISOLATABLE"
           }
         ],
@@ -126,9 +136,9 @@
         "violations": [],
         "note": "asserted before any query; without it this becomes an identity test"
       },
-      "candidate_digest_before": "a71356c6f9f05dbb",
-      "candidate_digest_after": "a71356c6f9f05dbb",
-      "targetability_decided_at": "2026-08-14T05:53:35.368062+00:00",
+      "candidate_digest_before": "bea2a934da1cf3f9",
+      "candidate_digest_after": "bea2a934da1cf3f9",
+      "targetability_decided_at": "2026-09-05T22:49:02.179253+00:00",
       "observation": {
         "query_fired": true,
         "generic_hit": true,
@@ -171,15 +181,23 @@
         "causal_targetability": "TARGET_NOT_ISOLATABLE",
         "reason": "no candidate isolates the target; nearest failure: intervention begins inside competing geometry: /World/shell_0",
         "probative": false,
-        "candidates_considered": 2,
-        "candidate_digest": "00fc176c727f1aa5",
+        "candidates_considered": 4,
+        "candidate_digest": "073887b1f210fbb0",
         "per_candidate": [
           {
-            "digest": "b0f16834084c21aa",
+            "digest": "7f64f9cf67bc8808",
             "state": "TARGET_OCCLUDED"
           },
           {
-            "digest": "4266e5285b98c7a3",
+            "digest": "aacddb3084e0eb81",
+            "state": "TARGET_OCCLUDED"
+          },
+          {
+            "digest": "c9f05d8e3ab1e348",
+            "state": "TARGET_OCCLUDED"
+          },
+          {
+            "digest": "6c006f933c25f49a",
             "state": "TARGET_OCCLUDED"
           }
         ],
@@ -192,7 +210,7 @@
     "DENSE_TARGET_REMOVED_COUNTERFACTUAL": {
       "B_present": {
         "targetability": "TARGET_ISOLATABLE",
-        "candidate_digest": "a71356c6f9f05dbb",
+        "candidate_digest": "bea2a934da1cf3f9",
         "observation": {
           "query_fired": true,
           "generic_hit": true,
@@ -203,7 +221,7 @@
       },
       "B_disabled": {
         "targetability": "TARGET_ISOLATABLE",
-        "candidate_digest": "a71356c6f9f05dbb",
+        "candidate_digest": "bea2a934da1cf3f9",
         "observation": {
           "query_fired": true,
           "generic_hit": false,

@@ -36,7 +36,17 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from navfm.candidate_policy import (  # noqa: E402
+    DEFAULT_POLICY,
+    Aabb,
+    Role,
+    causality_control,
+    generate_candidates,
+    policy_digest,
+    shared_origin_control,
+)
 from navfm.measurement import Liveness, MeasurementEnvelope  # noqa: E402
+from navfm.probe_adjudication import identity_matches  # noqa: E402
 
 OUT = REPO / "gates" / "scenes"
 EXPECTED = OUT / "collision_probe_regression_expected_answers.json"
@@ -128,57 +138,95 @@ def main() -> int:
         return cache.ComputeWorldBound(
             stage_utils.get_current_stage().GetPrimAtPath(path)).ComputeAlignedRange()
 
+    def entry_along(box: Any, origin: tuple[float, float, float],
+                    direction: tuple[float, float, float]) -> float | None:
+        """Distance at which an axis-aligned ray enters this body, or None if it misses.
+
+        Generalised from the X-only test the probe used before migration: the
+        contract's set includes +-Y faces, which the old comparison could not
+        describe at all.
+        """
+        if box.IsEmpty():
+            return None
+        mn, mx = box.GetMin(), box.GetMax()
+        axis = next(i for i in range(3) if direction[i] != 0.0)
+        for other in (i for i in range(3) if i != axis):
+            if not (mn[other] <= origin[other] <= mx[other]):
+                return None
+        o = origin[axis]
+        lo, hi = ((mn[axis] - o, mx[axis] - o) if direction[axis] > 0
+                  else (o - mx[axis], o - mn[axis]))
+        return max(0.0, lo) if hi > 0 else None
+
     def probe(q: Any, target: str, owners: list[str], others: list[str],
               *, from_origin: bool = False, standoff: float | None = None) -> dict[str, Any]:
-        """One target-specific probe, with reachability decided before the verdict."""
+        """One target-specific probe, with reachability decided before the verdict.
+
+        The intervention is the contract's. ``from_origin`` and ``standoff`` no
+        longer rebuild geometry here; they name a declared policy variant, so a
+        control is a control by construction rather than by comment, and carries
+        its own digest. The adaptive ``max(0.5, span * 0.5)`` standoff is gone:
+        it made this harness certify a probe that production never ran, which is
+        the defect Sprint 2A recorded.
+        """
         r = bounds(target)
         if r.IsEmpty():
             return {"target": target, "reachability": "INVALID_GEOMETRY",
                     "verdict": "NO_EVIDENCE"}
         mn, mx = r.GetMin(), r.GetMax()
-        cy, cz = (mn[1] + mx[1]) / 2, (mn[2] + mx[2]) / 2
         if from_origin:
-            # The retired construction, kept only to demonstrate what it does.
-            origin, reach = [0.0, cy, cz], 40.0
+            policy = shared_origin_control(40.0)
+        elif standoff is not None:
+            policy = causality_control(standoff)
         else:
-            span = mx[0] - mn[0]
-            # Standoff is the only thing that can vary the reported distance,
-            # since the origin is placed relative to the target's own near face.
-            back = standoff if standoff is not None else max(0.5, span * 0.5)
-            origin = [mn[0] - back, cy, cz]
-            reach = back + span + 0.2
+            policy = DEFAULT_POLICY
+        cset = generate_candidates(
+            target, Role.BLOCKER,
+            Aabb((mn[0], mn[1], mn[2]), (mx[0], mx[1], mx[2])), policy=policy)
 
-        occluders = []
-        for o in others:
-            if o == target:
+        first_occluders: list[str] = []
+        for cand in cset.candidates:
+            if not cand.valid:
                 continue
-            orr = bounds(o)
-            if orr.IsEmpty():
+            t_entry = entry_along(r, cand.origin, cand.direction)
+            occluders = []
+            for o in others:
+                if o == target:
+                    continue
+                o_entry = entry_along(bounds(o), cand.origin, cand.direction)
+                if o_entry is not None and (t_entry is None or o_entry < t_entry):
+                    occluders.append(o)
+            if occluders:
+                first_occluders = first_occluders or occluders
                 continue
-            omn, omx = orr.GetMin(), orr.GetMax()
-            if (omn[1] <= cy <= omx[1] and omn[2] <= cz <= omx[2]
-                    and omn[0] < mn[0] and omx[0] > origin[0]):
-                occluders.append(o)
-        if occluders:
-            # Probe incapability, not target defect. The object is not blamed for
-            # an experiment that could never reach it.
-            return {"target": target, "reachability": "OCCLUDED", "occluders": occluders,
-                    "verdict": "NON_PROBATIVE_OCCLUDED"}
 
-        res = q.raycast_closest(origin, [1.0, 0.0, 0.0], reach)
-        hit = bool(res and res.get("hit"))
-        actual = str(res.get("collision", "")) if hit else None
-        match = bool(actual and any(actual == o or actual.startswith(o) or o.startswith(actual)
-                                    for o in [target, *owners]))
-        return {
-            "target": target, "reachability": "REACHABLE",
-            "origin": [round(v, 3) for v in origin], "max_distance": round(reach, 3),
-            "generic_hit": hit, "actual_collider": actual,
-            "distance": round(float(res["distance"]), 4) if hit else None,
-            "identity_match": match,
-            "verdict": ("PASS_CORRECT_CAUSE" if match
-                        else "FAIL_WRONG_CAUSE" if hit else "FAIL_NO_HIT"),
-        }
+            res = q.raycast_closest(list(cand.origin), list(cand.direction), cand.max_range)
+            hit = bool(res and res.get("hit"))
+            actual = str(res.get("collision", "")) if hit else None
+            # One canonical relation, shared with every other identity consumer.
+            match = identity_matches(actual, target, tuple(owners))
+            return {
+                "target": target, "reachability": "REACHABLE",
+                "candidate_id": cand.candidate_id, "face": cand.face,
+                "origin": [round(v, 3) for v in cand.origin],
+                "max_distance": round(cand.max_range, 3),
+                "generic_hit": hit, "actual_collider": actual,
+                "distance": round(float(res["distance"]), 4) if hit else None,
+                "identity_match": match,
+                "candidate_policy_digest": policy.digest(),
+                "candidate_set_digest": cset.digest,
+                "verdict": ("PASS_CORRECT_CAUSE" if match
+                            else "FAIL_WRONG_CAUSE" if hit else "FAIL_NO_HIT"),
+            }
+
+        # No candidate in the finite set could interrogate the target. Probe
+        # incapability, not target defect: the object is not blamed for an
+        # experiment that could never reach it.
+        return {"target": target, "reachability": "OCCLUDED",
+                "occluders": first_occluders,
+                "candidate_policy_digest": policy.digest(),
+                "candidate_set_digest": cset.digest,
+                "verdict": "NON_PROBATIVE_OCCLUDED"}
 
     # ---- 1/2. CAUSAL_MUTATION: the pass must depend on B existing -----------
     for state, b_collides in (("PRESENT", True), ("REMOVED", False)):
@@ -327,6 +375,11 @@ def main() -> int:
         "amendment_digest": amd.get("amendment_digest"),
         "effective_expectation_digest": eff.get("effective_expectation_digest"),
         "digests_verified_before_execution": True,
+        # Which physical question was asked, alongside which contract judged it.
+        "candidate_policy_digest": policy_digest(),
+        "candidate_policy_note": ("production probes use the default policy; from_origin and "
+                                  "explicit standoffs are declared control variants, each "
+                                  "recording its own digest on the probe row"),
         "results": results, "verdicts": verdicts,
         "measurements": [e.to_json() for e in envelopes],
         "all_pass": all_pass,

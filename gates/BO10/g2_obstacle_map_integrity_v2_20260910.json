@@ -1,0 +1,178 @@
+{
+  "check": "G2_OBSTACLE_MAP_INTEGRITY_V2",
+  "artifact_semantics": "NEW_VERSIONED_INSTRUMENT_REGRESSION_NOT_AN_UPDATE",
+  "supersedes_nothing": "gates/scenes/hospital_g2_obstacle_map_integrity_20260907.json is preserved unchanged; its planner-visibility labels were produced under the legacy builder and are not reused",
+  "scene_id": "hospital",
+  "timestamp_utc": "2026-09-10T01:18:07.964217+00:00",
+  "estimand": "can collision-capable geometry relevant to the simulated robot be invisible to the planner's occupancy map?",
+  "referent": "SIMULATED_ROBOT_COLLISION_MODEL",
+  "PHYSICAL_M3_PRO_GROUND_CLEARANCE": "NOT_MEASURED",
+  "robot_collision_band_m": [
+    0.0,
+    0.2803
+  ],
+  "planner_slab_m": [
+    0.1,
+    0.6
+  ],
+  "resolution_m": 0.1,
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    }
+  },
+  "backends": {
+    "legacy": {
+      "grid_shape": [
+        420,
+        768
+      ],
+      "occupied_cells": 204237,
+      "free_cells": 118323,
+      "occupied_fraction": 0.633175,
+      "query_failures": 0,
+      "backend_recorded_by_collector": "legacy"
+    },
+    "physx_cell_overlap_v1": {
+      "grid_shape": [
+        420,
+        767
+      ],
+      "occupied_cells": 28255,
+      "free_cells": 293885,
+      "occupied_fraction": 0.08771,
+      "query_failures": 0,
+      "backend_recorded_by_collector": "physx_cell_overlap_v1"
+    }
+  },
+  "changed_cells_vs_legacy": 196668,
+  "unknown_cell_policy": "BLOCKED",
+  "defining_controls": {
+    "Geo_W_WallBase10": {
+      "found": true,
+      "z_extent": [
+        0.0,
+        3.0
+      ],
+      "intersects_robot_band": true,
+      "legacy": {
+        "cells": 82,
+        "marked": 10,
+        "planner_visible": true
+      },
+      "physx": {
+        "cells": 82,
+        "marked": 82,
+        "planner_visible": true
+      },
+      "PASS": true
+    },
+    "SM_ReceptionDesk_01a2_52": {
+      "found": true,
+      "z_extent": [
+        0.0,
+        1.321
+      ],
+      "intersects_robot_band": true,
+      "legacy": {
+        "cells": 750,
+        "marked": 0,
+        "planner_visible": false
+      },
+      "physx": {
+        "cells": 750,
+        "marked": 222,
+        "planner_visible": true
+      },
+      "PASS": true
+    },
+    "SM_SupplyCart_03a_126": {
+      "found": true,
+      "z_extent": [
+        0.0,
+        1.034
+      ],
+      "intersects_robot_band": true,
+      "legacy": {
+        "cells": 84,
+        "marked": 0,
+        "planner_visible": false
+      },
+      "physx": {
+        "cells": 84,
+        "marked": 79,
+        "planner_visible": true
+      },
+      "PASS": true
+    },
+    "SM_Chart_Rack_01d_37": {
+      "found": true,
+      "z_extent": [
+        0.001,
+        1.638
+      ],
+      "intersects_robot_band": true,
+      "legacy": {
+        "cells": 84,
+        "marked": 45,
+        "planner_visible": true
+      },
+      "physx": {
+        "cells": 84,
+        "marked": 84,
+        "planner_visible": true
+      },
+      "PASS": true
+    },
+    "Geo_M1_TrimInsideSide": {
+      "found": true,
+      "z_extent": [
+        0.001,
+        0.159
+      ],
+      "intersects_robot_band": true,
+      "legacy": {
+        "cells": 120,
+        "marked": 40,
+        "planner_visible": true
+      },
+      "physx": {
+        "cells": 120,
+        "marked": 120,
+        "planner_visible": true
+      },
+      "PASS": true
+    }
+  },
+  "control_E_support_floor": {
+    "floor_found": true,
+    "floor_is_below_planner_slab": true,
+    "note": "the floor is below the slab z>=0.10, so it is not rasterised as an obstacle. Support is G3/G4's question, not the obstacle map's.",
+    "PASS": true
+  },
+  "population": {
+    "colliders_checked": 1089,
+    "limit": 100000,
+    "truncated": false,
+    "planner_invisible_count": 0,
+    "planner_invisible_examples": [],
+    "completeness_rule": "a truncated population cannot PASS"
+  },
+  "G2_V2": "PASS",
+  "g2_v2_reason": {
+    "defining_controls_pass": true,
+    "population_complete": true,
+    "planner_invisible_colliders": 0
+  },
+  "np_version": "1.26.0"
+}

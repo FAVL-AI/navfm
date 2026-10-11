@@ -1,0 +1,305 @@
+{
+  "name": "replay_recovery_validation_v2",
+  "evidence_root": "/home/favl/navfm-runtime-evidence",
+  "fixture": "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/fixture.usda",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json",
+  "checkpoint": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/epoch_020.pth",
+  "asset_sha256": {
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/fixture.usda": "2dd9c31647f85a6d0a4cb00a415f0805c563a57b1ab6f7eac3e298641eb45694",
+    "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+    "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json": "ceae6c39e2a95ff5e21f9dea17d00d0074c513abfa277f1fb901f434af1c8d55",
+    "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/epoch_020.pth": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
+    "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01/chain.json": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0000/start.png": "bb4bec7aff2856a55c6ae6b03400c8676d6a865ff8d06392238ac270ae3c9169",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0000/goal.png": "b91ff2cec9824b2f4f242bc1a1db9470cb1dac7e927821c65eedd091deabb1d9",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0000/runtime_manifest.json": "2d05970fcac74d1dd68b1408b5cdd1b7ee0e70151225b1aeb7025775919ba8af",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/0.jpg": "2edf3c430f6a1fd6690c7f6ae6a6cf264e957dcd6fcd871a14c0919a48ef497d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/12.jpg": "dcbca552a37991bae4fc66bf3e016b3a6aaf2eb7fceb77fa17e5230257909f32",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/24.jpg": "214ec7bd1e8476c6f30aafa90297d9a24b761b52e668914ea915532e69a37701",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/36.jpg": "9fbc60fd96ba195476a6e619028a4a20954f957fca347e068f6cf97e82d0cd84",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/48.jpg": "9ab082595ad0a575719e5b780524aa2769822d7ce8f1bd1747f4bdf0d147602e",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/60.jpg": "320ff01f2d1f948e7404690ff09416f337868d4667859617dcb976242aaa054c",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/72.jpg": "15351a2d53dfd06a7fd7e53b69840b9445c6538f33ee86e637e519e6346dc44b",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/84.jpg": "88573d60fe04e21e53027242dd786a82e82432d41cfc88e7ebcb4b0a3d9256e1",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/96.jpg": "90bfcdfdbf9c9a02a531025c3c3e15f69e303d10bc0c37b6d59c825f21e591e1",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/108.jpg": "d04cde3affcb23a06eb615ef8114a8ef6fc22f2f26ba7e021d2f373e1391cc56",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/120.jpg": "a2349b63ddf106baae13ae8efcf13b49c5dcd49573fffe997849aa1d5a620e01",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/132.jpg": "6c13abe61056749d79131d2ca2b660aa282f25db4a07e3d95d8b08dd12c45859",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/144.jpg": "24c97ad2217b1e98def690a38c9a8f2cd667f7bf0ab56a27af2bcb11b77b9029",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/156.jpg": "4ed13b950ba8b5d533b3a1f69cd3c8a38980750c1c7dcbf1125849054051ed16",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0000/trajectory/160.jpg": "d2e50118e3754b79a611be84ead9200145e26f6966b99facf3acf75075cee570",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/data/data_utils.py": "3f3429331db4e6a5a343dd6c8df1d579d3e20d2a050b253c43616576ca890d1b",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/models/base_model.py": "3928a0f616745a980a4c1f9c376d1c2494c179f28e0402f93d042e3539ea2958",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/models/vint/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/models/vint/self_attention.py": "e28c8eb0c5017d8690b1328a7ec75c30c7fa30416f232b05b9bb406670ce57a6",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/vint_train/models/vint/vint.py": "1af3afb275f6f52d643df792cf39d8bb77e0fe00f06d7ceb9c152a408554ad37",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0001/start.png": "8f1bb3d0676d13915084a17445f03c595a3859f1071094acbcd8083b9bb5bdfc",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0001/goal.png": "bd896c2bbe71662a568e775b81f397489f85abf006329b049dd7e721280a33bf",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/s_bend_run_0001/runtime_manifest.json": "9808e00699d78d4b330ef33f2f456764022bb0373ff0c31abc0646b7f6621244",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/0.jpg": "78c1f298f571dbe94aa9c6a4f8f26c5e37e7b616ffea7b8ee22607aa3e0035af",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/12.jpg": "859882d968406fa8993094e857ba34b28b8cdc06630956ef49443bfa239aaff1",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/24.jpg": "312d78707d4c737fc6ea62218f4826325b9223065d4e683a470ba18ddcd86a71",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/36.jpg": "cd9e751beb7481a6d55de325d3022307e5788cb4c483871ab311c9db7c268881",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/48.jpg": "2821f3e7c12a7f880aeb8e365a605dc7f75cc3e78737d95e8a38bc1589f0d42d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/60.jpg": "4a0933d1b76b4dc507f21634015226d91d9c2316ddcfc5b1d629a1bee56edd3e",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/72.jpg": "e4dce0755233184035ed9a3945dcc2ce9c0e4c05caad038fcce4b558a5dcea90",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/84.jpg": "c3212cadb2d67c13f42d7e090953f448855f0c259b691de70051eb734c31415e",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/96.jpg": "e12ae17f2d9d1c6b8e90d9cac39060fbd89cabe5f42e4f0395f48f65f72b620e",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/108.jpg": "f06796570f868ead9dc783be87ea227cb64a6f8a982087a917af2f7571b783a8",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/120.jpg": "3daca0b61df51f77f02144ed84ba7f431f3972a444df45e26a04bcac543a6237",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/132.jpg": "f68634d96e006efd79d925c43ec376aaceaac9c4ee194b1538929a1b769f04c9",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/144.jpg": "b570a386fffe026807cda0a5ed8039f0fc18052190ce290ef9f26766f9f26ae0",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/s_bend_run_0001/trajectory/150.jpg": "b610a14d1cc4226cd4ea75b2aef3ee0dd5b9960cd480dbd19f9b885fa5dd511b",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0000/start.png": "7ce78ade10d4c740275f9b052bbbe0e1e5ae401380256a019a2f3aabb47f2a13",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0000/goal.png": "219d525113d95b61c453fafede79f881a46fa6515d2327a0db019e74e57e7865",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0000/runtime_manifest.json": "59abf59c8181880cd84d48e70ed517d6b6a65749058b98ea45fae8b7ed2f5f25",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/0.jpg": "2781c2f1d5fcb360436f815e08f017b2900ebafdbdafa442812bdb570ccf0394",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/12.jpg": "956eb390a3edf0d5f3dd38462b8261faae9bc920c3bd27daab7d568c956720f5",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/24.jpg": "1d5b731512bec06df08501efe4a909fd0a7214c4c597aca21d9c05b574778d2d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/36.jpg": "2fd1060e16f9452f98b1a82da0887ef53e47040c2aa1c196447019ba1270a470",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/48.jpg": "465f2fb4ae112ebd4c64837a1013129c9fdfd5881ad284a8ca6ce19075c76bc1",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/60.jpg": "7a88a64869f515e043af1233248dabe60dcb7dd797865c8fa6c8d6b7abbca9c4",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/72.jpg": "2b17e23fb236d6c022a77363ceda7ac1d7bd87de87bdd5b9355cf19a23fed57c",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/84.jpg": "fc775a81ddf3d144fc7d9290619d31040c1270950a2c72c55dcc56b160d898fb",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/96.jpg": "64d5fb26a4fdcd2658f10390a0c02817dd23f9e52956b6301a26ec055e0b1a61",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/108.jpg": "5c70b434ecf54d8a71547c6dcc68bddd2d1d6bbec75fe19569e5f5c193c120bd",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/120.jpg": "aadd1515f66a65f0cb083938adf68161992be7c6e8017951c7ed8fc3de6c3b0c",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0000/trajectory/126.jpg": "9eb2d4afac0be749db587c5266568377de9994a174d6f60289456d1dd242dff2",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0001/start.png": "27380be48153750c1ec717b336eec49213ff6e93eefbc1731a27a3b4af6fed6f",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0001/goal.png": "392f94e43fd717a531cf3de5ab8836868a67ffc31c19dd2db5a7318ff47c22f4",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-R2_recover-20261010-01/junction_run_0001/runtime_manifest.json": "cc5e6be4107743b52b9f43dcabe8f162d58adbf60dcb7c2fdfefb55c52606980",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/0.jpg": "3c9839cec20bc80b015c1d32ab4bfbdd138959b76d7b7d6d5dceaa35a7f37982",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/12.jpg": "633c7941ef7e2b1f10364ae542dbc80a96ab318e6372ff9a21834e2d68a52d55",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/24.jpg": "7826f5f3853b41dedd415d82755cf1e43142b27d99227db85afa70c94ecd2601",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/36.jpg": "f891f0f8c2a5bc2bcf9c7092f8293ade7a38f727d96abad137e4109ec576351d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/48.jpg": "c63db4505ce79c597d95d83f68799160e4503e3c9debf4f0003dcdbf50d89a4f",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/60.jpg": "5448717030abd8eafe7ee9469dba4bc84ecaea8ac835b51ef071fe4a58797a2d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/72.jpg": "9d41ab10ad91009637a89a05b8d9acd6fa02b0c98525643839845818ff44a04d",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/84.jpg": "b8435f589ba5519ca111de080f6480b74c2231194fc100d2f0fe996d1be13f14",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/96.jpg": "bb1583e4e366eb61de77dc7046b037ae1dc1fc6e6fce5de3a17ab94b30b16758",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/108.jpg": "50f74b1258d81b2c5ee6d3f961b842153c1e78a9e981c755f6a2d80acc7a8921",
+    "/home/favl/navfm-runtime-evidence/arrival-goal-settle96-20261009-01/junction_run_0001/trajectory/117.jpg": "aea55e52c5de0ccb430806411a034f8aadc1bdb44813d9f9ec35f562031d1b6a",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0000/start.png": "048a0efc9dbd1d5ad99a46a817b0c284c33712d416949c8c7d65cfd2ec12283a",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0000/goal.png": "b91ff2cec9824b2f4f242bc1a1db9470cb1dac7e927821c65eedd091deabb1d9",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0000/runtime_manifest.json": "8f9d20119f486055f5303f18a1f2ae02beabbab89c274ebc6b0addd8f369b22d",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0001/start.png": "49ec2c95a47d95e72cc387f74b1d5b127bdb15e189b8b32b50fbbe28765dc1c9",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0001/goal.png": "bd896c2bbe71662a568e775b81f397489f85abf006329b049dd7e721280a33bf",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/s_bend_run_0001/runtime_manifest.json": "9f24de1257852af0cb3ee8ab6d5977ef66d31520fd92f6fe800944c415746e15",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0000/start.png": "68bb90b8ae44cfda586d79d8112511a32e318af9b8fbd81f9fd67b5e8d7036e3",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0000/goal.png": "219d525113d95b61c453fafede79f881a46fa6515d2327a0db019e74e57e7865",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0000/runtime_manifest.json": "3613ee8db494fc2b3d0f8108692963a76f31b50aa4b292ac84201167b6974889",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0001/start.png": "7c1dd08535ad3a4da7cae36b2ed63df23706c7c8361537399cdfbc49437b5995",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0001/goal.png": "392f94e43fd717a531cf3de5ab8836868a67ffc31c19dd2db5a7318ff47c22f4",
+    "/home/favl/navfm-runtime-evidence/v2-prospective_r2_a-B1x_exit-20261010-01/junction_run_0001/runtime_manifest.json": "22b7b4eb9e3eb3f8e78410491223a149f11da26616f12a0ea4065cf64f950223",
+    "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/extscache/omni.replicator.core-1.12.27+107.3.3.lx64.r.cp311/omni/replicator/core/scripts/orchestrator.py": "c297093ae4100f5fc20f576f0b71d0dc4c765b2135f2a945764bbe63889a7c42",
+    "/home/favl/navfm-runtime-evidence/replay-recovery-start-tuple-audit-20261010-01.json": "d40154456d35b5483bd5265aeee0692b10422e723d6d6dbbe9e0c069a9ce0c3f",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/config/defaults.yaml": "13ff0ed29fbe1a3292d7867642ce5028f5b4212096693d8b35285f867af04058",
+    "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream/train/config/vint.yaml": "8f80c791932eb93165dd973717d447d58a335f0ce2a6897450d6295b005b1c57",
+    "/home/favl/miniforge3/envs/isaac/bin/python": "2cfeb15bca9b4483886e787a5a0f7b86f44e1644ac45b003957e2211ac1c748a",
+    "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.camera/isaacsim/sensors/camera/camera.py": "f5392a11c22e460e979c19a2ddcef505ba88a9908fd3a9a09069bb833f8438ce"
+  },
+  "cases": {
+    "s_bend_run_0000": {
+      "start_pose": [
+        1.4397685204959858,
+        60.37230200353474,
+        1.3134726118238096
+      ],
+      "route": {
+        "id": "s_bend_run_0000",
+        "scene": "s_bend",
+        "split": "dev",
+        "route_id": "s_bend_route_0",
+        "scene_index": 3,
+        "seed": 6,
+        "waypoints": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.6,
+            0.35
+          ],
+          [
+            2.3,
+            -0.35
+          ],
+          [
+            3.0,
+            0.0
+          ]
+        ],
+        "speed": 0.2,
+        "start_yaw": 0.5280744484263595,
+        "wall_half_width": 2.3
+      }
+    },
+    "s_bend_run_0001": {
+      "start_pose": [
+        1.4397685204959858,
+        60.62230200353474,
+        1.3134726118238096
+      ],
+      "route": {
+        "id": "s_bend_run_0001",
+        "scene": "s_bend",
+        "split": "dev",
+        "route_id": "s_bend_route_1",
+        "scene_index": 3,
+        "seed": 7,
+        "waypoints": [
+          [
+            1.0,
+            0.25
+          ],
+          [
+            1.6,
+            0.6
+          ],
+          [
+            2.3,
+            -0.09999999999999998
+          ],
+          [
+            3.0,
+            0.25
+          ]
+        ],
+        "speed": 0.22,
+        "start_yaw": 0.5280744484263595,
+        "wall_half_width": 2.3
+      }
+    }
+  },
+  "repetitions": [
+    1,
+    2
+  ],
+  "methods": [
+    "continuous",
+    "command_replay",
+    "direct_root",
+    "direct_full"
+  ],
+  "watchdog_s": 600,
+  "steps": 36,
+  "history_indices": [
+    5,
+    11,
+    17,
+    23,
+    29,
+    35
+  ],
+  "command_segments": [
+    {
+      "frames": 18,
+      "command": [
+        0.04,
+        0,
+        0.15
+      ]
+    },
+    {
+      "frames": 18,
+      "command": [
+        0.04,
+        0,
+        -0.15
+      ]
+    }
+  ],
+  "bounds": {
+    "xy_m": 0.02,
+    "yaw_deg": 2,
+    "z_m": 0.002,
+    "quaternion_deg": 0.2,
+    "joint_position": 0.001,
+    "joint_velocity": 0.01,
+    "root_velocity": 0.01,
+    "controller": 1e-06,
+    "gray_mad": 2.5,
+    "history_age_s": 1e-06,
+    "capture_clock_s": 1e-08
+  },
+  "probe_prefix": "replay-recovery-validation-v2-20261010-01",
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream",
+  "chain_json": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01/chain.json",
+  "existing_routes": [
+    "s_bend_run_0000",
+    "s_bend_run_0001",
+    "junction_run_0000",
+    "junction_run_0001"
+  ],
+  "bootstrap_calls": 1,
+  "eligibility_frames": 3,
+  "orchestrator_source": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/extscache/omni.replicator.core-1.12.27+107.3.3.lx64.r.cp311/omni/replicator/core/scripts/orchestrator.py",
+  "first_case": "s_bend_run_0000",
+  "first_arm": "R2_recover",
+  "kidnap_tuple": [
+    0.31,
+    0.08,
+    60
+  ],
+  "authorized_processes": [
+    "v2-A-s_bend_run_0000-R2_recover-r1-reference",
+    "v2-A-s_bend_run_0000-R2_recover-r1-replay"
+  ],
+  "invocation_steps": [
+    0,
+    6,
+    12,
+    18,
+    24,
+    30,
+    36
+  ],
+  "output_atol": 0.001,
+  "output_rtol": 1e-05,
+  "continuation": "STOP_AFTER_FIRST_PAIR_EVEN_IF_PASS; no efficacy runner or further launches authorised",
+  "reserved_validation_ids": [
+    "v2-A-s_bend_run_0000-R2_recover-r1-reference",
+    "v2-A-s_bend_run_0000-R2_recover-r1-replay",
+    "v2-A-s_bend_run_0000-R2_recover-r2-reference",
+    "v2-A-s_bend_run_0000-R2_recover-r2-replay",
+    "v2-A-s_bend_run_0000-B1x_exit-r1-reference",
+    "v2-A-s_bend_run_0000-B1x_exit-r1-replay",
+    "v2-A-s_bend_run_0000-B1x_exit-r2-reference",
+    "v2-A-s_bend_run_0000-B1x_exit-r2-replay",
+    "v2-A-s_bend_run_0001-R2_recover-r1-reference",
+    "v2-A-s_bend_run_0001-R2_recover-r1-replay",
+    "v2-A-s_bend_run_0001-R2_recover-r2-reference",
+    "v2-A-s_bend_run_0001-R2_recover-r2-replay",
+    "v2-A-s_bend_run_0001-B1x_exit-r1-reference",
+    "v2-A-s_bend_run_0001-B1x_exit-r1-replay",
+    "v2-A-s_bend_run_0001-B1x_exit-r2-reference",
+    "v2-A-s_bend_run_0001-B1x_exit-r2-replay",
+    "v2-B-s_bend_run_0000-R2_recover-r1-reference",
+    "v2-B-s_bend_run_0000-R2_recover-r1-replay",
+    "v2-B-s_bend_run_0000-R2_recover-r2-reference",
+    "v2-B-s_bend_run_0000-R2_recover-r2-replay",
+    "v2-B-s_bend_run_0000-B1x_exit-r1-reference",
+    "v2-B-s_bend_run_0000-B1x_exit-r1-replay",
+    "v2-B-s_bend_run_0000-B1x_exit-r2-reference",
+    "v2-B-s_bend_run_0000-B1x_exit-r2-replay",
+    "v2-B-s_bend_run_0001-R2_recover-r1-reference",
+    "v2-B-s_bend_run_0001-R2_recover-r1-replay",
+    "v2-B-s_bend_run_0001-R2_recover-r2-reference",
+    "v2-B-s_bend_run_0001-R2_recover-r2-replay",
+    "v2-B-s_bend_run_0001-B1x_exit-r1-reference",
+    "v2-B-s_bend_run_0001-B1x_exit-r1-replay",
+    "v2-B-s_bend_run_0001-B1x_exit-r2-reference",
+    "v2-B-s_bend_run_0001-B1x_exit-r2-replay"
+  ],
+  "start_tuple_audit": "/home/favl/navfm-runtime-evidence/replay-recovery-start-tuple-audit-20261010-01.json",
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "status": "REVIEW_ACCEPTED_TWO_LAUNCHES_ONLY; launch requires clean exact named freeze HEAD",
+  "first_pair_only": true,
+  "camera_source": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.camera/isaacsim/sensors/camera/camera.py",
+  "observer_window": "Retain ALL window events; credit chronological last actual camera completion within exact boundarycall/product/nativeorder; outside/unrelated nevercredit; unknown/ambiguousfail"
+}

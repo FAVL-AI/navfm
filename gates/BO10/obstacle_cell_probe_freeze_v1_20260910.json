@@ -1,0 +1,55 @@
+{
+  "check": "OBSTACLE_CELL_PROBE_FREEZE_V1",
+  "artifact_semantics": "FROZEN_INSTRUMENT_DEFINITION",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-10T00:00:00+00:00",
+  "git_head_at_freeze": "fdee49deb86c2a08d5573b4033d0974a0bb487ab",
+  "estimand": "OBSTACLE_CELL_OCCUPANCY_V1 (gates/BO10/obstacle_cell_occupancy_v1_20260910.json)",
+  "implementation": {
+    "module": "src/navfm/isaac/collect.py",
+    "function": "Collector.build_occupancy_physx",
+    "module_sha256": "b98190837a9df2342d8aabd4b7e69b0f6f5167a39eb05a7d304698882ac14d6b",
+    "backend_id": "physx_cell_overlap_v1"
+  },
+  "query": {
+    "physx_query_type": "overlap_box (anyHit)",
+    "half_extents_m": [
+      0.05,
+      0.05,
+      0.25
+    ],
+    "centre_z_m": 0.35,
+    "rotation": "identity (axis-aligned)",
+    "obstacle_vertical_interval_m": [
+      0.1,
+      0.6
+    ],
+    "numerical_epsilon_m": 0.0,
+    "epsilon_justification": "no tangency false negative was demonstrated at epsilon 0, so none was introduced. Measured boundary convention is TOUCH."
+  },
+  "collision_filtering": "none. Any collider PhysX reports is blocking; no name or semantic filtering.",
+  "instance_proxy_semantics": "PhysX scene queries operate on the physics scene, so instanced and referenced colliders are resolved. Validated: the instanced-collider fixture agrees exactly (4/4).",
+  "unknown_cell_policy": {
+    "policy": "BLOCKED",
+    "query_failure": "a cell whose query raises is BLOCKED and counted in occupancy_query_failures",
+    "rationale": "the opposite convention made 54% of Hospital's map traversable (F-G5-1)"
+  },
+  "local_validation": {
+    "analytic_fixtures": "13/13 exact set agreement, 0 false negatives, 0 negative-control false positives",
+    "known_hospital_objects": "5/5, 0 genuine false negatives after independent dense adjudication",
+    "artefacts": [
+      "gates/BO10/obstacle_map_validation_eps0_20260910.json",
+      "gates/BO10/hospital_known_object_controls_20260910.json"
+    ]
+  },
+  "no_further_tuning": "This definition is frozen. It is not adjusted from Hospital route outcomes.",
+  "OBSTACLE_PROBE_LOCAL_VALIDATION": "PASS",
+  "OBSTACLE_MAP_FULL_ACCEPTANCE": "PENDING",
+  "full_acceptance_still_requires": [
+    "G2_V2 regression",
+    "planner-inflation validation",
+    "analytic/planner/PhysX clearance reconciliation",
+    "legacy-vs-new causal control",
+    "Office read-only generalisation"
+  ]
+}

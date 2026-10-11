@@ -1,0 +1,133 @@
+{
+  "check": "HOSPITAL_BO10_FROZEN_ROUTESET",
+  "artifact_semantics": "FROZEN_EXPERIMENTAL_RESULT",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-09T00:00:00+00:00",
+  "git_head_at_freeze": "4e015808e38c21f90faff3da74aa0aba636e1373",
+  "source_artefact": "gates/scenes/hospital_route_admission_20260907.json",
+  "source_artefact_sha256": "bf7d6c3a511de1ee5968bb4a97dac51de2013b618f9263499467710691c84253",
+  "HOSPITAL_BO10_FROZEN_ROUTESET": "NO_ADMISSIBLE_ROUTE",
+  "search_closure": {
+    "method": "navfm.planning.sample_episode_pair under a declared seed",
+    "seed": 0,
+    "budget": 96,
+    "expected_count": 96,
+    "evaluated_count": 96,
+    "expected_equals_evaluated": true,
+    "candidate_ordering": "seeded generation order, route_id hospital_route_000 .. hospital_route_095",
+    "ids_contiguous_and_complete": true,
+    "hand_picked": false,
+    "early_termination": false,
+    "early_termination_evidence": "the candidate loop is `for i in range(args.budget)` with no break; the single break in that region caps recorded support failures at 5 within one candidate's inner sampling loop. Selection sets `selected` on the first passing candidate and continues, so the budget is exhausted regardless.",
+    "planner_failures": 0,
+    "budget_fully_enumerated_control": true,
+    "verdict": "the 96 candidates constitute the complete preregistered population under the frozen search budget and generation method"
+  },
+  "result": {
+    "candidates_evaluated": 96,
+    "candidates_passing": 0,
+    "rejection_distribution": {
+      "G10_HEADING_CHANGES": 89,
+      "G5_OBSTACLE_CLEARANCE": 7
+    },
+    "instrument_controls": {
+      "support_fails_off_scene": true,
+      "clearance_reports_offgrid": true,
+      "straight_line_has_no_heading_changes": true,
+      "budget_fully_enumerated": true,
+      "all_pass": true
+    }
+  },
+  "structure_of_the_failure": {
+    "heading_change_distribution": {
+      "0": 73,
+      "1": 6,
+      "2": 10,
+      "3": 2,
+      "4": 3,
+      "5": 2
+    },
+    "candidates_meeting_the_long_horizon_requirement": 7,
+    "note": "exactly the 7 candidates with >= 3 qualifying heading changes reached G5, and all 7 failed it. The generator predominantly produces straight corridor runs: 73 of 96 have zero qualifying turns.",
+    "the_seven_that_reached_g5": {
+      "G3_START_SUPPORT": "PASS for all 7",
+      "G4_CONTINUOUS_SUPPORT": "PASS for all 7",
+      "G6_END_SUPPORT": "PASS for all 7",
+      "G10_LONG_HORIZON": "PASS for all 7",
+      "G5_OBSTACLE_CLEARANCE": "FAIL for all 7",
+      "min_physical_clearance_m_range": [
+        0.0003,
+        0.0203
+      ]
+    }
+  },
+  "why_the_remaining_gates_cannot_change_this": {
+    "argument": "every one of the 96 candidates already fails at least one hard required gate. G3, G4, G6, G7, G8 and G9 are additional REQUIRED gates under an all-must-pass admission rule, so adding them can only leave a candidate's failure unchanged or add a further failure. No monotone addition of required gates converts a FAIL into a PASS.",
+    "therefore": "re-running the Hospital route search after G3-G10 are implemented would consume Isaac time to re-derive a result already determined by the frozen artefact.",
+    "dependency_disclosure": "this argument is monotonicity, and it is sound. It does NOT establish that the two underlying verdicts are themselves correct -- see load_bearing_dependencies."
+  },
+  "load_bearing_dependencies": {
+    "note": "the freeze rests on two independent verdicts, and they are not equally well supported. Recorded so a reader can see which one would have to be wrong for the conclusion to change.",
+    "G10_89_of_96": {
+      "rests_on": "pure route geometry -- heading-change counting on a decimated polyline",
+      "independently_checkable": true,
+      "isaac_required": false,
+      "strength": "STRONG -- recomputable from the recorded candidate polylines without a simulator"
+    },
+    "G5_7_of_96": {
+      "rests_on": "the PhysX horizontal-clearance instrument",
+      "independently_checkable": false,
+      "isaac_required": true,
+      "strength": "WEAKER -- see gates/failures/F-G5-1.md, an unresolved two-order-of-magnitude disagreement between the PhysX reading and the planner's own map on these same 7 routes",
+      "if_this_instrument_were_wrong": "those 7 candidates would require re-adjudication and Hospital would not necessarily be NO_ADMISSIBLE_ROUTE. The other 89 would be unaffected."
+    }
+  },
+  "claim_boundary": {
+    "claim": "no route in the preregistered BO-10 candidate population satisfies the frozen collection contract",
+    "does_not_claim": [
+      "Hospital is physically incapable of long-horizon navigation",
+      "all possible Hospital routes fail",
+      "Hospital scene-wide navigation is impossible",
+      "the Hospital scene is unsuitable for the research programme"
+    ],
+    "scope": "the exact candidate-generation procedure, search budget, seed and frozen thresholds used in this experiment"
+  },
+  "frozen_thresholds_unchanged": {
+    "min_usable_frames": 120,
+    "min_travelled_distance_m": 8.0,
+    "min_start_goal_separation_m": 5.0,
+    "min_meaningful_heading_changes": 3,
+    "heading_change_definition_deg": 30.0,
+    "min_valid_context_windows": 30,
+    "retuned": false,
+    "candidate_generation_semantics_changed": false
+  },
+  "what_a_future_experiment_may_do": {
+    "permitted": "a NEW preregistered collection experiment may define a different route population -- multi-leg routes, waypoint routes, a different generator or a different budget.",
+    "required": "it must be preregistered before its candidates are evaluated, and it must be recorded as a separate experiment.",
+    "forbidden": "it must not overwrite this result, and it must not be presented as a repair to it. Retrofitting a route population after seeing that the current one fails is the shape of rescuing a hypothesis rather than fixing a protocol.",
+    "observation_for_that_experiment": "73 of 96 candidates have zero qualifying heading changes, which says the current generator and the predeclared long-horizon objective are mismatched. That is a design observation, not a licence to amend this experiment."
+  },
+  "provenance_caveat": {
+    "worktree_dirty_at_run": true,
+    "meaning": "the source run was made on a dirty worktree. The harness itself is pinned by harness_sha256 10c7b6aeb70668826159fd94eeeac3b0fbab2f8f8ef2cf3ba77e8386c171ed0e, and the harness sources have since been committed at 4e01580, so the executed harness text is recoverable. The scene and robot assets are pinned by URL and SHA-256."
+  },
+  "non_claims": [
+    "No route is admitted.",
+    "No data is collected.",
+    "No physical-hardware claim is made.",
+    "The scene-wide traversability verdict is unchanged: Hospital remains NOT ADMISSIBLE scene-wide.",
+    "F-TWIN-1 remains open; no contact-physics claim rests on this result."
+  ],
+  "robustness_to_the_heading_counting_amendment": {
+    "amendment": "gates/BO10/amendment_heading_change_counting_20260909.md",
+    "what_changed": "heading deltas are grouped into turn episodes rather than emitted on first threshold crossing",
+    "thresholds_changed": false,
+    "direction_of_effect": "counts can only merge downward, so the gate is strictly harder to pass",
+    "effect_on_this_result": "NONE",
+    "argument": "the 89 rejected with counts 0/1/2 stay below 3 because counts cannot rise; the 7 with counts 3/4/5 failed G5 regardless, and several would additionally fail G10 under the corrected rule. No candidate was admitted on the strength of an over-count, because no candidate was admitted.",
+    "recomputation_required": false,
+    "recomputation_possible": false,
+    "why_not_possible": "the candidate polylines were not stored in the artefact; only the counts and turn lists were"
+  }
+}

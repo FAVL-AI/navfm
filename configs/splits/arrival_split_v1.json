@@ -1,0 +1,57 @@
+{
+  "name": "arrival_split_v1",
+  "frozen": "2026-10-09",
+  "status": "FROZEN_SPECIFICATION; held-out groups NOT COLLECTED",
+  "unit_of_independence": "scene/route group; every relit, augmented or recaptured copy of a trajectory stays in its source group's partition",
+  "retired_from_confirmatory": {
+    "routes": [
+      "junction_run_0000",
+      "junction_run_0001"
+    ],
+    "reason": "corpus test split exposed in live engineering runs (option1-live-*-20261007-*, arrival-h0-*, arrival-matched-*) and open-loop diagnostics; retained as diagnostic/development evidence only"
+  },
+  "development": {
+    "routes": [
+      "s_bend_run_0000",
+      "s_bend_run_0001",
+      "junction_run_0000",
+      "junction_run_0001"
+    ],
+    "use": "diagnosis, calibration, threshold selection and learning curves; never reported as held-out performance"
+  },
+  "training": {
+    "source": "option1-expanded-admitted-20261007-01 train split (31 trajectories)",
+    "scene_indices": [
+      0,
+      1,
+      2,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "appearance_aliasing": "scene 8 shares scene%5 appearance parameters (floor colour, obstacle offset) with dev scene 3, and scene 9 with retired-test scene 4; partition layouts differ, so overlap is partial. Existing dev/test are not appearance-disjoint from training."
+  },
+  "held_out": {
+    "groups": [
+      "heldout_layout_A",
+      "heldout_layout_B",
+      "heldout_layout_C"
+    ],
+    "minimum_routes_per_group": 2,
+    "requirements": [
+      "new layout family whose geometry and appearance are not a function of scene_index % 5 (the current generator aliases index 20 to scene 0)",
+      "landmark-bearing route endpoints (goal photographs not dominated by a blank wall)",
+      "goal photographs captured in the same collection and fixture as the live episodes, verified by navfm.collection.fixture_identity",
+      "route specification and generator source digests recorded before collection",
+      "collected once, sealed, and not scored until the confirmatory protocol is frozen"
+    ],
+    "forbidden_uses": [
+      "threshold or stop-rule selection",
+      "checkpoint selection",
+      "training or calibration",
+      "pilot or diagnostic runs"
+    ]
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "check": "BO10_E2_SCOPE_DECLARATION",
+  "version": "BO10_E2_SCOPE_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_COLLECTION_CODE_CHANGED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-07T21:48:29+00:00",
+  "git_head_at_freeze": "6ce98933c116d81b32cbddbf08259ed72cc7c09a",
+  "append_only": "Superseded only by a later dated declaration. This file is never edited in place.",
+
+  "purpose": {
+    "id": "BO10_FRAMEWORK_COMPATIBILITY",
+    "statement": "One new Hospital trajectory, collected through the production collector, used only to prove that the collection pipeline executes and that the resulting on-disk trajectory is consumable by the three official data paths.",
+    "proves": [
+      "simulator collection execution",
+      "data-format correctness",
+      "GNM compatibility",
+      "ViNT compatibility",
+      "NoMaD compatibility"
+    ]
+  },
+
+  "e2_status": {
+    "e2_eligible": false,
+    "status": "EXCLUDED",
+    "e2_exclusion_reason": "compatibility trajectory collected outside the preregistered E2 population",
+    "excluded_by": "construction -- the manifest carries e2_eligible=false and the E2 admission function refuses it",
+    "not_excluded_by": "wording, convention, reviewer memory, or a note in a document"
+  },
+
+  "the_bo10_trajectory_must_not_be_used_for": [
+    "E2 2x2 experimental cells",
+    "E2 estimator computation",
+    "E2 confidence or tolerance decisions",
+    "E2 held-out evaluation",
+    "E2 per-cell episode counts",
+    "E2 optional-stopping decisions",
+    "thesis effect-size claims based on E2"
+  ],
+
+  "e2_deferred_decisions_untouched": {
+    "statement": "This declaration makes none of the four deferred E2 statistical-design decisions and changes no E2 expectation.",
+    "untouched": [
+      "E2 estimator",
+      "E2 tolerance",
+      "E2 held-out scene count",
+      "E2 per-cell episode count",
+      "E2 stopping rules",
+      "E2 expectations"
+    ],
+    "authority": "PREREGISTRATION.md Amendment 1; gates/g2_decisions.json remains the machine record of their status"
+  },
+
+  "g2_acknowledgement_authorisation": {
+    "flag": "--acknowledge-g2-block",
+    "authorised_for": "BO10_FRAMEWORK_COMPATIBILITY only",
+    "binding_requirement": "the flag is honoured only when bound to this declaration by path and by SHA-256 digest",
+    "is_not": "a general bypass of the G2 block",
+    "consequence_of_use": "the collection manifest records purpose=BO10_FRAMEWORK_COMPATIBILITY and e2_eligible=false; that trajectory can never be admitted to the E2 population",
+    "why_the_binding_exists": "an acknowledgement flag that can be passed on its own is a bypass with a comment attached. Requiring the declaration digest means the only way to use the flag is to name the scope it was granted under, and the scope carries the exclusion."
+  },
+
+  "machine_readable_manifest_fields": {
+    "purpose": "BO10_FRAMEWORK_COMPATIBILITY",
+    "e2_eligible": false,
+    "e2_exclusion_reason": "compatibility trajectory collected outside the preregistered E2 population"
+  },
+
+  "enforcement": {
+    "module": "src/navfm/collection/scope.py",
+    "admission_function": "assert_e2_admissible",
+    "population_filter": "select_e2_population",
+    "undeclared_is_refused": "a manifest carrying no scope block is REFUSED, not admitted. Absence of a declaration must never read as eligibility -- that is the FL-019 shape, where a missing fact is consumed as a benign value.",
+    "mandatory_negative_control": "BO-10 trajectory -> E2 population inclusion attempt -> FAIL / REJECT"
+  },
+
+  "relationship_to_other_contracts": {
+    "collection_route_admission_v1": "unchanged; G1-G12 admission still governs whether any route may be collected",
+    "scene_wide_traversability": "unchanged; Hospital remains NOT ADMISSIBLE scene-wide",
+    "g2_obstacle_map_integrity": "unchanged; measured PASS in gates/scenes/hospital_g2_obstacle_map_integrity_20260907.json"
+  },
+
+  "non_claims": [
+    "This declaration does not admit any route.",
+    "This declaration does not authorise the production Hospital collection.",
+    "This declaration makes no physical-hardware claim.",
+    "This declaration does not open E2, and does not weaken the G2 block for any other purpose."
+  ]
+}

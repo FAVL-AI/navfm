@@ -1,0 +1,1511 @@
+{
+  "check": "BLOCKER_TARGETABILITY_ROOT_CAUSE",
+  "artifact_semantics": "DIAGNOSTIC_ONLY_NOT_AN_EXPECTATION",
+  "timestamp_utc": "2026-09-07T00:50:51.018084+00:00",
+  "scene": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+  "replays": "gates/scenes/hospital_collision_coverage_audit.json",
+  "candidate_policy_digest": "c6534203825fa13d",
+  "question": "Which pre-query geometric condition makes every candidate fail to isolate its declared blocker?",
+  "claim_boundary": "Explains a pre-query decision. Establishes nothing about collider identity, wrong_1, scene admissibility, or any verdict.",
+  "unit_definition": {
+    "what_the_eight_are": "eight declared BLOCKING_STRUCTURE target prims, each with a four-candidate BLOCKER set; not eight candidates",
+    "selection_rule": "first 8 collision-enabled BLOCKING_STRUCTURE rows, audit QUOTA",
+    "blocking_rows_total": 1066,
+    "occlusion_pool_size": 400,
+    "floor_z": 0.0
+  },
+  "units": [
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "candidate_set_digest": "83b00401419b08b4",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "399e48cdb55ed2db",
+      "replay_candidate_digest": "399e48cdb55ed2db",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            13.749538576687755,
+            2.4007882299274277,
+            1.50100027164817
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.46,
+            2.4007882299274277,
+            1.50100027164817
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            0.35078857421875004,
+            1.50100027164817
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.3,
+            3.799999311417355
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.3,
+                3.799999311417355
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.29920898437499993,
+                0.4017004371622624
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.29920898437499993,
+                0.4017004371622624
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            4.450787885636105,
+            1.50100027164817
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                3.6982988742550926,
+                3.800790327042355
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                3.6982988742550926,
+                3.800790327042355
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "candidate_set_digest": "f03bd85ee3fa8c0c",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "8471f733e6c93a5e",
+      "replay_candidate_digest": "8471f733e6c93a5e",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            13.749538576687755,
+            2.4007882299274277,
+            1.50100027164817
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.46,
+            2.4007882299274277,
+            1.50100027164817
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            0.35078857421875004,
+            1.50100027164817
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.3,
+            3.799999311417355
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.3,
+                3.799999311417355
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.29920898437499993,
+                0.4017004371622624
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.29920898437499993,
+                0.4017004371622624
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            4.450787885636105,
+            1.50100027164817
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                3.6982988742550926,
+                3.800790327042355
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                3.6982988742550926,
+                3.800790327042355
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+      "candidate_set_digest": "f539cbbda67ad240",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "18f4bb4859a2b1a3",
+      "replay_candidate_digest": "18f4bb4859a2b1a3",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            10.859999850988391,
+            0.7012432849873812,
+            1.5009998131645437
+          ],
+          "max_range": 3.4500000819563827,
+          "target_interval": [
+            0.3000000000000007,
+            3.3000000819563837
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 3,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                3.1895387256993644,
+                3.300000149011609
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                3.1895387256993644,
+                3.300000149011609
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.3000000000000007,
+                3.3000000819563837
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.459999932944775,
+            0.7012432849873812,
+            1.5009998131645437
+          ],
+          "max_range": 3.4500000819563827,
+          "target_interval": [
+            0.3000000000000007,
+            3.3000000819563837
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 3,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.29999993294477534,
+                0.41046135625702007
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.29999993294477534,
+                0.41046135625702007
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.3000000000000007,
+                3.3000000819563837
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            12.659999891966583,
+            0.34999755859375,
+            1.5009998131645437
+          ],
+          "max_range": 0.5524914527872624,
+          "target_interval": [
+            0.3,
+            0.40249145278726245
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.3,
+                0.40249145278726245
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            12.659999891966583,
+            1.0524890113810124,
+            1.5009998131645437
+          ],
+          "max_range": 0.5524914527872624,
+          "target_interval": [
+            0.29999999999999993,
+            0.4024914527872624
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.29999999999999993,
+                0.4024914527872624
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+      "candidate_set_digest": "997875dfa4a2b667",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "7251e84004731788",
+      "replay_candidate_digest": "7251e84004731788",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            10.859999850988391,
+            0.7012432849873812,
+            1.5009998131645437
+          ],
+          "max_range": 3.4500000819563827,
+          "target_interval": [
+            0.3000000000000007,
+            3.3000000819563837
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 3,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                3.1895387256993644,
+                3.300000149011609
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                3.1895387256993644,
+                3.300000149011609
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.3000000000000007,
+                3.3000000819563837
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.459999932944775,
+            0.7012432849873812,
+            1.5009998131645437
+          ],
+          "max_range": 3.4500000819563827,
+          "target_interval": [
+            0.3000000000000007,
+            3.3000000819563837
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 3,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+              [
+                0.29999993294477534,
+                0.41046135625702007
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+              [
+                0.29999993294477534,
+                0.41046135625702007
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.3000000000000007,
+                3.3000000819563837
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            12.659999891966583,
+            0.34999755859375,
+            1.5009998131645437
+          ],
+          "max_range": 0.5524914527872624,
+          "target_interval": [
+            0.3,
+            0.40249145278726245
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.3,
+                0.40249145278726245
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            12.659999891966583,
+            1.0524890113810124,
+            1.5009998131645437
+          ],
+          "max_range": 0.5524914527872624,
+          "target_interval": [
+            0.29999999999999993,
+            0.4024914527872624
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.29999999999999993,
+                0.4024914527872624
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "candidate_set_digest": "6c77de766399b4db",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "a5efcfb4c59a4922",
+      "replay_candidate_digest": "a5efcfb4c59a4922",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            10.860000003576278,
+            -1.1000076685100728,
+            1.5010016449391843
+          ],
+          "max_range": 0.5604612671480786,
+          "target_interval": [
+            0.3000000000000007,
+            0.4104612671480794
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+              [
+                0.3000000000000007,
+                0.4104612671480794
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            11.570461270724358,
+            -1.1000076685100728,
+            1.5010016449391843
+          ],
+          "max_range": 0.5604612671480786,
+          "target_interval": [
+            0.3000000000000007,
+            0.4104612671480794
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+              [
+                0.3000000000000007,
+                0.4104612671480794
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            11.215230637150318,
+            -3.15000732421875,
+            1.5010016449391843
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                0.2999999999999998,
+                0.4024914527872623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                0.2999999999999998,
+                0.4024914527872623
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            11.215230637150318,
+            0.9499919871986047,
+            1.5010016449391843
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.30000000000000004,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+              [
+                0.30000000000000004,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                3.6975078586300922,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                3.6975078586300922,
+                3.7999993114173547
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "candidate_set_digest": "9dbc84c385c1e109",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "f2703c934ee51a6f",
+      "replay_candidate_digest": "f2703c934ee51a6f",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            10.860000003576278,
+            -1.1000076685100728,
+            1.5010016449391843
+          ],
+          "max_range": 0.5604612671480786,
+          "target_interval": [
+            0.3000000000000007,
+            0.4104612671480794
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+              [
+                0.3000000000000007,
+                0.4104612671480794
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            11.570461270724358,
+            -1.1000076685100728,
+            1.5010016449391843
+          ],
+          "max_range": 0.5604612671480786,
+          "target_interval": [
+            0.3000000000000007,
+            0.4104612671480794
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+              [
+                0.3000000000000007,
+                0.4104612671480794
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            11.215230637150318,
+            -3.15000732421875,
+            1.5010016449391843
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                0.2999999999999998,
+                0.4024914527872623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                0.2999999999999998,
+                0.4024914527872623
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            11.215230637150318,
+            0.9499919871986047,
+            1.5010016449391843
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.30000000000000004,
+            3.7999993114173547
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 5,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+              [
+                0.30000000000000004,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                3.6975078586300922,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                3.6975078586300922,
+                3.7999993114173547
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "candidate_set_digest": "7063789fb6ae6e03",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "f0b22b671aed2584",
+      "replay_candidate_digest": "f0b22b671aed2584",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            13.749538576687755,
+            -1.0992117700725728,
+            1.5009998901784436
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.46,
+            -1.0992117700725728,
+            1.5009998901784436
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            -3.14921142578125,
+            1.5009998901784436
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_W_WallBase1_556/Geo_W_WallBase1_8",
+          "competitors_total": 8,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                3.799208984375,
+                3.9017004371622623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                3.799208984375,
+                3.9017004371622623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                0.29920410156249977,
+                0.40169555434976223
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                0.29920410156249977,
+                0.40169555434976223
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            0.9507878856361047,
+            1.5009998901784436
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.30000000000000004,
+            3.7999993114173547
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+          "competitors_total": 8,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.1982988742550923,
+                0.30079032704235475
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.1982988742550923,
+                0.30079032704235475
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+              [
+                0.30000000000000004,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                3.6983037570675927,
+                3.800795209854855
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                3.6983037570675927,
+                3.800795209854855
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        }
+      ]
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "candidate_set_digest": "7c463051f5067ac7",
+      "candidates_valid": 4,
+      "candidates_logical": 4,
+      "replay_state": "TARGET_NOT_ISOLATABLE",
+      "replay_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_state": "TARGET_NOT_ISOLATABLE",
+      "recorded_reason": "no candidate isolates the target; nearest failure: /World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+      "recorded_candidate_digest": "5a0cf7c4d85a7796",
+      "replay_candidate_digest": "5a0cf7c4d85a7796",
+      "state_match": true,
+      "reason_match": true,
+      "per_candidate": [
+        {
+          "face_direction": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            13.749538576687755,
+            -1.0992117700725728,
+            1.5009998901784436
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "origin": [
+            14.46,
+            -1.0992117700725728,
+            1.5009998901784436
+          ],
+          "max_range": 0.5604614233122447,
+          "target_interval": [
+            0.3000000000000007,
+            0.41046142331224544
+          ],
+          "state": "TARGET_AMBIGUOUS",
+          "reason": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0 overlaps the target interval; ordering unresolved",
+          "competitors_total": 1,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+              [
+                0.3000000000000007,
+                0.41046142331224544
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            -3.14921142578125,
+            1.5009998901784436
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.2999999999999998,
+            3.7999993114173547
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_W_WallBase1_556/Geo_W_WallBase1_8",
+          "competitors_total": 8,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                3.799208984375,
+                3.9017004371622623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                3.799208984375,
+                3.9017004371622623
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+              [
+                0.2999999999999998,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                0.29920410156249977,
+                0.40169555434976223
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                0.29920410156249977,
+                0.40169555434976223
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        },
+        {
+          "face_direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "origin": [
+            14.104769288343878,
+            0.9507878856361047,
+            1.5009998901784436
+          ],
+          "max_range": 3.9499993114173546,
+          "target_interval": [
+            0.30000000000000004,
+            3.7999993114173547
+          ],
+          "state": "TARGET_OCCLUDED",
+          "reason": "intervention begins inside competing geometry: /World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+          "competitors_total": 8,
+          "competitors_nearer": [],
+          "competitors_straddling": [
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+              [
+                0.1982988742550923,
+                0.30079032704235475
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+              [
+                0.1982988742550923,
+                0.30079032704235475
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+              [
+                0.30000000000000004,
+                3.7999993114173547
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section0",
+              [
+                3.6983037570675927,
+                3.800795209854855
+              ]
+            ],
+            [
+              "/World/Scene/Geo_M3_SideWall4/Geo_M3_SideWall/Section1",
+              [
+                3.6983037570675927,
+                3.800795209854855
+              ]
+            ]
+          ],
+          "decisive_competitor": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0"
+        }
+      ]
+    }
+  ],
+  "replay_all_states_match": true,
+  "replay_all_reasons_match": true,
+  "ablations": [
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "parent_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section1",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "parent_prim": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section0",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "parent_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_NOT_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": false
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall/Section1",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall_386/Geo_M3_DoorWall/Section0",
+      "parent_prim": "/World/Scene/Geo_M3_SideWall2/Geo_M3_SideWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_NOT_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": false
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "parent_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section1",
+      "decisive_competitor": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall/Section0",
+      "parent_prim": "/World/Scene/Geo_M3_BackWall2/Geo_M3_BackWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "parent_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    },
+    {
+      "declared_target": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section1",
+      "decisive_competitor": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall/Section0",
+      "parent_prim": "/World/Scene/Geo_M3_DoorWall2/Geo_M3_DoorWall",
+      "baseline": "TARGET_NOT_ISOLATABLE",
+      "drop_decisive_only": "TARGET_ISOLATABLE",
+      "drop_same_parent_siblings": "TARGET_ISOLATABLE",
+      "drop_all_competitors": "TARGET_ISOLATABLE",
+      "decisive_is_same_parent_sibling": true
+    }
+  ],
+  "negative_controls": {
+    "isolated_valid_blocker_is_targetable": true,
+    "straddling_competitor_is_ambiguous": true,
+    "nearer_competitor_is_occluded": true,
+    "no_target_interval_is_invalid_geometry": true,
+    "harmless_far_competitor_does_not_fail": true,
+    "competitor_removed_recovers": true
+  }
+}

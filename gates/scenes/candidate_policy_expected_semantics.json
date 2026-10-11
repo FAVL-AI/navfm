@@ -1,0 +1,118 @@
+{
+  "check": "CANDIDATE_POLICY_EXPECTED_SEMANTICS",
+  "written_before_execution": true,
+  "sprint": "2B",
+  "independence_rule": "Every numeric expectation below is derived from archived evidence or from the target's own construction geometry, never from running the new implementation. The tests compare against these values; they must not recompute them from the module under test (FL-018).",
+  "supersedes": {
+    "policy_version": 2,
+    "policy_digest": "7136993d04151369",
+    "retired_because": "insufficient to express target-local support range as executed, the robot-pose footprint probe, or the harness control variants; retired, never reused"
+  },
+  "scope_boundary": "This record freezes the INTERVENTION only: role, origin, direction, standoff, range, population, identity and ordering. It does not define whether a query succeeds, which collider is returned, whether the returned collider is correct, or whether an experiment passes. Those are downstream and stay downstream.",
+  "roles": {
+    "BLOCKER": {
+      "subject": "AABB of the declared target",
+      "faces": ["+X", "-X", "+Y", "-Y"],
+      "logical_population": 4,
+      "standoff_m": 0.30,
+      "margin_m": 0.15,
+      "origin_rule": "target centre, with the probed axis moved to (min - standoff) or (max + standoff)",
+      "direction_rule": "unit vector along the probed axis, pointing inward toward the target centre",
+      "range_rule": "standoff_m + span[axis] + margin_m",
+      "invalid_rule": "a span <= 1e-6 on the probed axis yields an INVALID candidate that is RETAINED, so the logical population stays 4 and digests stay comparable across targets",
+      "no_vertical_faces": "+Z / -Z are excluded from this contract; a ceiling approach would need its own evidence",
+      "provenance": "scripts/diagnose_hospital_isolation.py local_probes(): LOCAL_STANDOFF 0.30, LOCAL_MARGIN 0.15, reach = LOCAL_STANDOFF + span[axis] + LOCAL_MARGIN, four faces (+X,-X,+Y,-Y). This is the generator the shared policy states it derives from."
+    },
+    "SUPPORT": {
+      "subject": "AABB of the declared support surface",
+      "faces": ["-Z"],
+      "logical_population": 1,
+      "start_height_m": 0.50,
+      "probe_length_m": 1.50,
+      "origin_rule": "(centre_x, centre_y, bounds_max_z + start_height_m)",
+      "direction_rule": "(0, 0, -1); a support surface is met from above, never edge-on",
+      "range_rule": "probe_length_m, a constant; it is not a function of target span",
+      "provenance": "scripts/audit_office_collision_coverage.py probe_target() SUPPORT branch, and the executed evidence in gates/scenes/{office,hospital,warehouse}_collision_coverage_audit.json where every SUPPORT row records direction [0,0,-1] and max_distance 1.5. probe_length_m 1.50 corrects the unsourced 1.00 frozen in policy version 2, which was the robot-pose oracle's constant and not this role's."
+    },
+    "FOOTPRINT_SUPPORT": {
+      "subject": "a robot query pose (x, y, z_start); NOT a target AABB",
+      "faces": ["-Z"],
+      "logical_population": 5,
+      "half_extents_m": [0.1175, 0.0975],
+      "sample_order": [[0.0, 0.0], [0.1175, 0.0975], [0.1175, -0.0975], [-0.1175, 0.0975], [-0.1175, -0.0975]],
+      "probe_length_m": 1.00,
+      "origin_rule": "(pose_x + dx, pose_y + dy, pose_z_start) for each sample offset in declared order",
+      "direction_rule": "(0, 0, -1)",
+      "range_rule": "probe_length_m, a constant",
+      "identity_note": "this role declares no target and adjudicates no collider identity; it asks whether the robot's own footprint is supported",
+      "criterion_is_downstream": "all-samples-must-hit and the 0.05 m height-spread tolerance are ADJUDICATION rules and are deliberately NOT owned here",
+      "provenance": "scripts/validate_physx_footprint_oracle.py footprint_samples(), SUPPORT_PROBE_M 1.0; half extents from gates/scenes/physx_fixture_expected_answers.json footprint.half_extents_m, whose margin_policy forbids inflation."
+    }
+  },
+  "variants": {
+    "DEFAULT": {
+      "applies_to": ["BLOCKER", "SUPPORT", "FOOTPRINT_SUPPORT"],
+      "description": "the production intervention; the only variant a production consumer may use"
+    },
+    "CAUSALITY_CONTROL": {
+      "applies_to": ["BLOCKER"],
+      "parameter": "standoff_m, explicit and required",
+      "measured_values_m": [0.50, 1.00, 1.50],
+      "range_rule": "standoff_m + span[axis] + margin_m, with the variant's standoff",
+      "description": "declared control for state discrimination; keeps the four-face population so only the standoff varies",
+      "provenance": "collision_probe_contract.json proven_properties.state_discrimination: standoffs 0.50/1.00/1.50 m measured as 0.50/1.00/1.50 m"
+    },
+    "SHARED_ORIGIN_CONTROL": {
+      "applies_to": ["BLOCKER"],
+      "parameter": "max_range_m, explicit and required",
+      "logical_population": 1,
+      "origin_rule": "(0.0, centre_y, centre_z) -- a shared world origin, deliberately not target-local",
+      "direction_rule": "(1, 0, 0)",
+      "description": "the retired construction, representable so it can go on being used as a NEGATIVE control. It must never be reachable from a production consumer by default.",
+      "provenance": "validate_collision_probe_causality.py probe(from_origin=True) reach 40.0; validate_dense_targetability.py candidates_for(naive=True) origin x=0 along +X"
+    }
+  },
+  "candidate_identity_rule": "candidate_id = '<target_id>#<ROLE>#<face_or_sample_label>#<policy_digest>'. Tying identity to the policy digest means two different physical interventions can never share an evidence identity, which is the defect this module exists to prevent.",
+  "ordering_rule": "declaration order, fixed: blocker faces (+X,-X,+Y,-Y); footprint samples centre then (+,+), (+,-), (-,+), (-,-). Ordering is semantically significant because downstream selection takes the first isolatable candidate.",
+  "observation_independence_rule": "generate_candidates() takes target id, role, subject geometry and policy, and nothing else. Candidate carries no hit, collider, distance, normal, identity or verdict field, and none may be added.",
+  "finiteness_rule": "every (role, variant) pair has a fixed logical population declared above. No candidate may be added after generation, and no candidate may be created because another candidate failed.",
+  "expected_values": {
+    "_comment": "Frozen numeric expectations for the canonical test box and pose. Computed by hand from the rules above BEFORE the implementation was written.",
+    "target_id": "/W/T",
+    "box": {"bounds_min": [0.0, 0.0, 0.0], "bounds_max": [1.0, 2.0, 0.5], "centre": [0.5, 1.0, 0.25], "span": [1.0, 2.0, 0.5]},
+    "BLOCKER_DEFAULT": [
+      {"face": "+X", "origin": [-0.30, 1.0, 0.25], "direction": [1.0, 0.0, 0.0], "max_range": 1.45, "valid": true},
+      {"face": "-X", "origin": [1.30, 1.0, 0.25], "direction": [-1.0, 0.0, 0.0], "max_range": 1.45, "valid": true},
+      {"face": "+Y", "origin": [0.5, -0.30, 0.25], "direction": [0.0, 1.0, 0.0], "max_range": 2.45, "valid": true},
+      {"face": "-Y", "origin": [0.5, 2.30, 0.25], "direction": [0.0, -1.0, 0.0], "max_range": 2.45, "valid": true}
+    ],
+    "SUPPORT_DEFAULT": [
+      {"face": "-Z", "origin": [0.5, 1.0, 1.00], "direction": [0.0, 0.0, -1.0], "max_range": 1.50, "valid": true}
+    ],
+    "FOOTPRINT_SUPPORT_DEFAULT": {
+      "pose": [2.0, 0.0, 0.5],
+      "candidates": [
+        {"label": "C", "origin": [2.0, 0.0, 0.5], "direction": [0.0, 0.0, -1.0], "max_range": 1.00},
+        {"label": "PP", "origin": [2.1175, 0.0975, 0.5], "direction": [0.0, 0.0, -1.0], "max_range": 1.00},
+        {"label": "PM", "origin": [2.1175, -0.0975, 0.5], "direction": [0.0, 0.0, -1.0], "max_range": 1.00},
+        {"label": "MP", "origin": [1.8825, 0.0975, 0.5], "direction": [0.0, 0.0, -1.0], "max_range": 1.00},
+        {"label": "MM", "origin": [1.8825, -0.0975, 0.5], "direction": [0.0, 0.0, -1.0], "max_range": 1.00}
+      ]
+    },
+    "BLOCKER_CAUSALITY_CONTROL_PLUS_X": [
+      {"standoff_m": 0.50, "origin": [-0.50, 1.0, 0.25], "max_range": 1.65},
+      {"standoff_m": 1.00, "origin": [-1.00, 1.0, 0.25], "max_range": 2.15},
+      {"standoff_m": 1.50, "origin": [-1.50, 1.0, 0.25], "max_range": 2.65}
+    ],
+    "BLOCKER_SHARED_ORIGIN_CONTROL": [
+      {"max_range_m": 40.0, "origin": [0.0, 1.0, 0.25], "direction": [1.0, 0.0, 0.0], "max_range": 40.0, "population": 1}
+    ],
+    "DEGENERATE_BOX": {
+      "bounds_min": [0.0, 0.0, 0.0], "bounds_max": [0.0, 2.0, 0.5],
+      "logical_population": 4, "valid_count": 2,
+      "invalid_faces": ["+X", "-X"]
+    }
+  },
+  "written_at": "2026-09-03",
+  "author": "Frank Asante Van Laarhoven"
+}

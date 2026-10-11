@@ -1,0 +1,256 @@
+{
+  "check": "TERMINAL_APPROACH_INTERVENTION_V1_ENVIRONMENT_V8",
+  "artifact_semantics": "AMENDMENT_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "amendment_id": "TAI-V1-A8-ENV",
+  "amendment_version": "V8",
+  "amended_at_utc": "2026-09-17T07:02:49.027726+00:00",
+  "STATUS": "FROZEN",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "authorisation": "NOT AUTHORISED. Neither arm may run under this amendment.",
+  "authoritative_intervention_contract": "V8",
+  "amends": {
+    "predecessor": {
+      "path": "gates/BO10/environment_identity_v7_20260917.json",
+      "sha256": "bd8abf5a5f0b3b97f13afc1e2d2f483e8507713f6a258733929f7117c1c1d79b",
+      "version": "V7"
+    },
+    "original_preregistration": {
+      "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+      "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "version": "V1"
+    },
+    "append_only": true,
+    "v1_to_v7_rewritten": false,
+    "reason": "V7 pinned a tree whose real path was entered and whose adapter handed the collector a configuration where a live application was required. V8 pins the first tree where that object crosses the boundary",
+    "this_does_not_repair_v7": "V7 remains correct about the tree it froze and must continue to refuse this one",
+    "the_intervention_design_is_unchanged": true,
+    "manipulated_factor": "target selection only"
+  },
+  "ARM_A_ATTEMPT_001": {
+    "record": {
+      "path": "gates/BO10/arm_a_attempt_001_20260917.json",
+      "sha256": "df83831673a923a4f8452c3fca9b59124694b677d53a3e81d531fc05c5525c4a"
+    },
+    "classification": "INFRASTRUCTURE_FAILURE_BEFORE_EPISODE",
+    "executed_at_head": "01916dfa3a2901177ae1bc07caffd0881139d798",
+    "episode_started": false,
+    "scientific_result": "NOT_OBSERVED",
+    "pre_capture": {
+      "path": "runs/bo10/intervention/arm_a/pre_capture.json",
+      "sha256": "884aa505bc288a8c69bc17aea5e6b9e07114432f5fa5292917828d6ba75d105a",
+      "label": "PRE_ARM_A",
+      "timestamp_utc": "2026-09-17T05:22:23.483861+00:00",
+      "capture_validation": "PASS",
+      "critical_digest": "40464d9fed338033732da4087f096f5021c8881939223e63593f8271e8469603",
+      "PRESERVED": true,
+      "never_reused": "this capture belongs to attempt 001. A repaired attempt receives a new identity and a new capture; recycling this one would erase the evidence that the failed attempt entered the lifecycle under a valid environment"
+    },
+    "excluded_from": [
+      "n",
+      "SR",
+      "OSR",
+      "goal distance",
+      "cross-track",
+      "treatment comparison"
+    ],
+    "NOT_AN_ARM_A_OUTCOME": "no episode ran, so this attempt has no success, no failure, no goal distance and no cross-track. Recording success=false would assert a completed trial that never began"
+  },
+  "ADAPTER_COLLECTOR_APP_SEAM": {
+    "artefact": {
+      "path": "gates/BO10/adapter_collector_app_seam_20260917.json",
+      "sha256": "d1e5c6758d25b312376a2976b54fa1c9a94c994a059fc1708984c437be12ae1d"
+    },
+    "verdict": "REPAIRED_AND_VALIDATED",
+    "old_dataflow": "IsaacRuntimeAdapter.initialise created and entered an IsaacApp. build_collector then called Collector(out_dir, collect_config, self._app.config, M3PRO) -- correct for the `sim: SimConfig` parameter, and not an application. Collector.run is the only place that assigned self._app, via `with IsaacApp(self.sim) as app`, and the adapter never calls run: an arm is one episode under a frozen route, not a collection loop. So load_scene reached Collector.open_scene with self._app still None",
+    "corrected_dataflow": "build_collector passes isaac_app=self._app, handing over the object it owns rather than describing it. open_scene refuses with a named category instead of a bare assert, and run refuses to create a second application when one was handed in",
+    "collector_accepts_a_live_app": true,
+    "adapter_passes_the_app": true,
+    "bare_assert_removed": true,
+    "structured_refusal_category": "ISAAC_APP_NOT_BOUND_TO_COLLECTOR",
+    "single_owner_category": "ISAAC_APP_SINGLE_OWNER_VIOLATION",
+    "same_object": true,
+    "applications_constructed": 1,
+    "open_stage_calls": 1,
+    "scene_identifier": "omniverse://example/hospital.usd",
+    "negative_controls": {
+      "config_only_is_refused": true,
+      "wrong_application_is_visible": true,
+      "duplicate_application_is_refused": true,
+      "missing_runtime_is_refused_at_its_stage": true,
+      "scene_before_collector_is_refused": true,
+      "bare_assertion_removed_from_the_boundary": true
+    },
+    "INVARIANT": "configuration compatibility is not live-runtime object propagation. An adapter holding an IsaacApp and a collector holding the correct SimConfig is not a collector holding the adapter's IsaacApp",
+    "CLAIM_BOUNDARY": "this establishes that the application propagates and that scene loading is reachable. It does NOT establish that the Hospital asset loads, that the render loop runs, or that the collector completes an episode. No remote asset was fetched"
+  },
+  "ATTEMPT_IDENTITY_MODEL": {
+    "intervention_id": "TERMINAL_APPROACH_INTERVENTION_V1",
+    "arm_ids": [
+      "ARM_A_CONTROL",
+      "ARM_B_TREATMENT"
+    ],
+    "attempt_ids": [
+      "001",
+      "002"
+    ],
+    "resolved_from": "the frozen manifest, never the command line",
+    "why_not_a_flag": "an attempt number that can be typed at run time can be retyped after a result is seen, and the point of numbering attempts is that an earlier one stays visible",
+    "label_shape": "<PHASE>_ARM_<ARM>[_ATTEMPT_<nnn>]",
+    "unnumbered_label_means": "attempt 001. PRE_ARM_A was written before attempts were numbered and is evidence, so it stays valid rather than becoming malformed",
+    "attempt_001_preserved": true
+  },
+  "ARM_A_BEHAVIOURAL_REGRESSION": {
+    "artefact": {
+      "path": "gates/BO10/collector_wiring_regression_20260912.json",
+      "sha256": "2252c1c45ebc9eed7e50b1b048a95b077723f4a5e0c5ef0a7b35e98925fc6d64"
+    },
+    "verdict": "PASS",
+    "traces": {
+      "frozen_route_polyline": {
+        "verdict": "PASS",
+        "steps_evaluated": 1200,
+        "mismatches": 0
+      },
+      "frozen_route_resampled_0m25": {
+        "verdict": "PASS",
+        "steps_evaluated": 1200,
+        "mismatches": 0
+      }
+    },
+    "CLAIM": "the seam repair moved a runtime object and changed no navigation mathematics"
+  },
+  "VERSION_CHAIN": [
+    {
+      "node": "ENVIRONMENT_V7",
+      "path": "gates/BO10/environment_identity_v7_20260917.json",
+      "sha256": "bd8abf5a5f0b3b97f13afc1e2d2f483e8507713f6a258733929f7117c1c1d79b",
+      "predecessor": "ENVIRONMENT_V6",
+      "reason": "pinned the tree whose real path is entered"
+    },
+    {
+      "node": "ARM_A_ATTEMPT_001",
+      "path": "gates/BO10/arm_a_attempt_001_20260917.json",
+      "sha256": "df83831673a923a4f8452c3fca9b59124694b677d53a3e81d531fc05c5525c4a",
+      "predecessor": "ENVIRONMENT_V7",
+      "reason": "the first real execution: lifecycle entered, Isaac launched, scene-load boundary failed, no episode"
+    },
+    {
+      "node": "ADAPTER_COLLECTOR_APP_SEAM",
+      "path": "gates/BO10/adapter_collector_app_seam_20260917.json",
+      "sha256": "d1e5c6758d25b312376a2976b54fa1c9a94c994a059fc1708984c437be12ae1d",
+      "predecessor": "ARM_A_ATTEMPT_001",
+      "reason": "the application now crosses the adapter/collector boundary"
+    },
+    {
+      "node": "ENVIRONMENT_V8",
+      "predecessor": "ADAPTER_COLLECTOR_APP_SEAM",
+      "reason": "pins the first tree where that propagation holds"
+    }
+  ],
+  "SOURCE_IDENTITY_TRANSITIONS_V7_TO_V8": {
+    "measured_not_prescribed": true,
+    "changed": {
+      "scientific_code.collect_sha256": {
+        "V7": "99715ba8921456b32698ff6c5a2a0e9b69234cafdb929c460d7b2176b04ed165",
+        "V8": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0"
+      },
+      "scientific_code.intervention_runner_sha256": {
+        "V7": "906691640e89469b47ddd87b5cef63f0787fc16f6806056c2008b864739653f2",
+        "V8": "db6d06c797f724461229461ec67fda7f4cdd5620bec96d486a76ba36ab0546af"
+      },
+      "scientific_code.arm_lifecycle_sha256": {
+        "V7": "9ed00ead506a550a90072762ef95b234cb3ea3afcdf3780ecf3b5168bf5c0569",
+        "V8": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29"
+      }
+    },
+    "added": {},
+    "unchanged_field_count": 46,
+    "expected_change": {
+      "scientific_code.collect_sha256": "Collector accepts a live isaac_app, refuses a missing one with a named category instead of a bare assertion, and refuses to build a second application when one was handed in",
+      "scientific_code.intervention_runner_sha256": "the manifest-version dispatch table gained EXECUTION_MANIFEST_V5, and the set of versions whose validators assert readiness facts gained it too. An unregistered version would be refused by name rather than checked by an older validator",
+      "scientific_code.arm_lifecycle_sha256": "the adapter hands the collector the application it owns, and the attempt identity is read from the frozen manifest so a repaired attempt cannot overwrite attempt 001"
+    },
+    "what_did_not_change": "the controller, the selectors, the route, the seed and the preregistration. This tranche moved a runtime object, not the experiment"
+  },
+  "EXECUTION_ENVIRONMENT_IDENTITY_V8": {
+    "contract_version": "EXECUTION_ENVIRONMENT_IDENTITY_V2",
+    "supersedes": "V7",
+    "implementation": "src/navfm/execution_environment.py",
+    "frozen_contract_values": {
+      "host.kernel_release": "6.8.0-138-generic",
+      "host.architecture": "x86_64",
+      "gpu.model": "NVIDIA GeForce RTX 4080 SUPER",
+      "gpu.uuid": "GPU-58834766-9fcc-9520-d400-d170f527c040",
+      "gpu.pci_bus_id": "00000000:01:00.0",
+      "gpu.driver_version": "580.178.04",
+      "gpu.kernel_module_version": "580.178.04",
+      "python.executable": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "python.version": "3.11.15",
+      "python.environment_path": "/home/favl/miniforge3/envs/isaac",
+      "python.torch_version": "2.7.0+cu128",
+      "python.torch_cuda_build": "12.8",
+      "python.cuda_available": true,
+      "python.visible_device_count": 1,
+      "isaac.isaacsim_version": "5.1.0.0",
+      "isaac.isaacsim_core_version": "5.1.0.0",
+      "isaac.interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+      "repository.path": "/home/favl/projects/navfm",
+      "repository.worktree_policy": "CLEAN_REQUIRED_AT_PRE_ARM_CAPTURE",
+      "scientific_code.control_sha256": "679cd60f86ea2b84e4f8fe93cd464a8484bee69204f6716a62f3adb05d04abc6",
+      "scientific_code.interpolated_target_sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290",
+      "scientific_code.route_projection_sha256": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a",
+      "scientific_code.kinematic_drive_sha256": "c947a68669d0ebaec1a050f2e62c6e1795ed437eabd2b765749c5f8f9e58c647",
+      "scientific_code.collect_sha256": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+      "scientific_code.app_sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "scientific_code.planning_sha256": "b785e67a8d048e515f68da069313951ffed1e60746718cf3312362bba61e79de",
+      "scientific_code.kinematics_sha256": "160e3a5ebe7e2cd2eabbbc2fe4aab8134603ed2ed2e8739f3f816e9aa2d0dec3",
+      "scientific_code.measurement_instrument_sha256": "b0449acfc1fe2903fe84add7b85eacedce1acad24af063c7d5e78b7eaac112dd",
+      "scientific_code.preregistration_sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+      "scientific_code.route_population_sha256": "382ca1c3b7ba25f6ebf09bb1cfb4fa526668ad01fd95f1ea6248acb05f4951dc",
+      "scientific_code.route_polyline_sha256": "07cb85711380a71f88aa626804f57d48435335288783bec4e82122939b86c0d8",
+      "scene.scene_id": "hospital_bo10",
+      "scene.scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+      "runtime_contract.physics_dt": 0.08333333333333333,
+      "runtime_contract.rendering_dt": 0.08333333333333333,
+      "runtime_contract.control_dt": 0.08333333333333333,
+      "runtime_contract.control_hz": 12.0,
+      "runtime_contract.max_steps": 1200,
+      "runtime_contract.lookahead_m": 0.45,
+      "runtime_contract.goal_tol_m": 0.2,
+      "runtime_contract.cruise_v": 0.35,
+      "runtime_contract.max_v": 0.45,
+      "runtime_contract.max_vy": 0.35,
+      "runtime_contract.max_w": 1.2,
+      "runtime_contract.seed": 0,
+      "scientific_code.target_selection_sha256": "c3d93f8c70e3f14e9d2fb6554d75c5ab2465eab3cac167075419840d1d451cf8",
+      "scientific_code.intervention_runner_sha256": "db6d06c797f724461229461ec67fda7f4cdd5620bec96d486a76ba36ab0546af",
+      "scientific_code.arm_runner_sha256": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05",
+      "scientific_code.arm_lifecycle_sha256": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29"
+    },
+    "field_count": 49,
+    "contract_digest": "0dd88b6a34c6f75282e688a2f9ffd33d253caa9fa30a1dac44a7e80507a825e6"
+  },
+  "HISTORICAL_CONTRACTS_REMAIN_FROZEN": {
+    "v1_to_v7_rewritten": false,
+    "required_control": {
+      "current_tree_against_V7": "REFUSE",
+      "current_tree_against_V8": "PASS"
+    }
+  },
+  "READINESS_MODEL": {
+    "LEVEL_1_COMPONENT_RESOLUTION": "established",
+    "LEVEL_2_ENTRYPOINT_REACHABILITY": "established",
+    "LEVEL_3_NON_ISAAC_LIFECYCLE_REHEARSAL": "established",
+    "LEVEL_4_CURRENT_PREFLIGHT_AND_ENVIRONMENT": "established at manifest freeze",
+    "LEVEL_4_5_REAL_MODE_ENTRYPOINT_REACHABILITY": "established by V7",
+    "LEVEL_4_6_RUNTIME_OBJECT_PROPAGATION": "established by V8",
+    "LEVEL_5_REAL_RUNTIME_ATTEMPT": "PARTIAL. Attempt 001 established that Isaac launches, that the runtime becomes available and that the collector constructs. It did NOT establish that the Hospital scene loads or that an episode runs",
+    "why_level_4_6_exists": "the real path being entered is not the objects that path needs being propagated across it. Every gate before Attempt 1 compared configuration, and configuration was correct throughout"
+  },
+  "EXECUTION_ENVIRONMENT_CLAIM_BOUNDARY": "the adapter's application reaches the collector and scene loading is reachable. It does not establish that the Hospital scene loads, that the render loop runs, or that the collector completes an episode. Only attempt 002 would establish those",
+  "EXECUTION_MANIFEST": "NOT_FROZEN_BY_THIS_AMENDMENT",
+  "ARM_A_ATTEMPT_002": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

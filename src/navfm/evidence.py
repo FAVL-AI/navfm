@@ -26,10 +26,17 @@ table access by resembling an old one.
 from __future__ import annotations
 
 import enum
+import hashlib
+import json
+from pathlib import Path
 from typing import Any
 
 __all__ = [
     "EvidenceClass",
+    "EvidenceNotPersisted",
+    "RunOutcome",
+    "adjudicate_run",
+    "emit_evidence",
     "evidence_block",
 ]
 
@@ -119,3 +126,120 @@ def evidence_block(
         "model_initialization": model_initialization,
         "data_source": data_source,
     }
+
+
+class EvidenceNotPersisted(RuntimeError):
+    """A run finished without durably emitting the evidence it owed."""
+
+
+def emit_evidence(
+    path: str | Path,
+    record: dict[str, Any],
+    *,
+    required_keys: tuple[str, ...] = (),
+) -> str:
+    """Write a run's evidence and prove it landed. Returns its SHA-256.
+
+    Call this BEFORE shutting down any runtime the experiment used.
+    ``SimulationApp.close()`` can terminate the process outright, so a write
+    placed after it never executes -- and the process still exits 0. That
+    produced exactly one failure here: a diagnostic reported success and left no
+    artefact, caught by a caller's file-existence check rather than by any exit
+    code (the F-M2/FL-019 genus, a clean status from a step that did not happen).
+
+    Writing is not persisting. This re-reads and re-parses what it wrote, so the
+    only way to return normally is for a valid artefact to exist on disk. A
+    caller that reaches the next line has evidence; a caller that does not gets
+    an exception rather than a zero.
+    """
+    target = Path(path)
+    try:
+        payload = json.dumps(record, indent=2, default=str) + "\n"
+    except Exception as exc:  # any render failure means nothing was written
+        raise EvidenceNotPersisted(
+            f"record is not serialisable, so nothing was written to {target}: {exc}") from exc
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(payload)
+
+    # Read back rather than trust the write. A truncated or empty artefact is
+    # indistinguishable from a healthy one until something tries to parse it.
+    if not target.is_file():
+        raise EvidenceNotPersisted(f"no artefact at {target} after writing it")
+    raw = target.read_bytes()
+    if not raw.strip():
+        raise EvidenceNotPersisted(f"artefact at {target} is empty")
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise EvidenceNotPersisted(f"artefact at {target} does not parse: {exc}") from exc
+
+    missing = [k for k in required_keys if k not in parsed]
+    if missing:
+        raise EvidenceNotPersisted(
+            f"artefact at {target} is missing required key(s) {missing}; a result that "
+            f"cannot say what it is may later be read as something it is not")
+
+    return hashlib.sha256(raw).hexdigest()
+
+
+class RunOutcome(enum.Enum):
+    """What a finished harness run actually established.
+
+    Exit code alone cannot answer this. FL-019 is the case where a run exits 0
+    having produced nothing -- an evidence write placed after
+    ``SimulationApp.close()``, a preflight that refused before the runtime
+    started, a wait loop that matched its own wrapper. Every one of those looks
+    like success to a caller reading ``$?``.
+
+    So the outcome is adjudicated from the exit code AND the artefact together,
+    and the case that must never be silent gets its own name.
+    """
+
+    #: Exit 0 and a parseable artefact carrying every required key.
+    RUN_OK = "RUN_OK"
+
+    #: Exit 0 with no artefact, an unparseable one, or one missing required
+    #: keys. The FL-019 shape: a clean status for a step that did not happen.
+    RUN_FAILED_NO_ARTEFACT = "RUN_FAILED_NO_ARTEFACT"
+
+    #: Non-zero exit. The run said it failed, and it is believed.
+    RUN_FAILED = "RUN_FAILED"
+
+    @property
+    def is_evidence(self) -> bool:
+        """May a caller read this run's output as evidence?"""
+        return self is RunOutcome.RUN_OK
+
+
+def adjudicate_run(
+    exit_code: int,
+    path: str | Path,
+    *,
+    required_keys: tuple[str, ...] = (),
+) -> RunOutcome:
+    """Decide what a finished run established, from its exit code and artefact.
+
+    A caller that routes every harness result through this cannot read exit 0 as
+    success without the artefact existing, parsing, and carrying what it owes.
+
+        >>> adjudicate_run(0, "/nonexistent.json")
+        <RunOutcome.RUN_FAILED_NO_ARTEFACT: 'RUN_FAILED_NO_ARTEFACT'>
+    """
+    if exit_code != 0:
+        return RunOutcome.RUN_FAILED
+    target = Path(path)
+    if not target.is_file():
+        return RunOutcome.RUN_FAILED_NO_ARTEFACT
+    raw = target.read_bytes()
+    if not raw.strip():
+        return RunOutcome.RUN_FAILED_NO_ARTEFACT
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        return RunOutcome.RUN_FAILED_NO_ARTEFACT
+    if not isinstance(parsed, dict):
+        return RunOutcome.RUN_FAILED_NO_ARTEFACT
+    if any(k not in parsed for k in required_keys):
+        return RunOutcome.RUN_FAILED_NO_ARTEFACT
+    return RunOutcome.RUN_OK

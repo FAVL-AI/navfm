@@ -1,0 +1,54 @@
+{
+  "check": "GNM_PUBLISHED_REPRODUCTION",
+  "artifact_semantics": "APPEND_ONLY_RESULT",
+  "model": "GNM",
+  "paper": "Shah et al., GNM: A General Navigation Model to Drive Any Robot",
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "navfm_head": "13670ba513598ec97f2dcfaa7e770af98eda54d2",
+  "checkpoint": {
+    "path": "checkpoints/gnm.pth",
+    "sha256": "4b03e0255f8a547290d4079f4e7d610ff69987122f17e019bd36684c08b3ee95",
+    "epoch": 29,
+    "params": 8732125,
+    "state_keys": 638
+  },
+  "reference_value": {
+    "value": 0.1393500482205535,
+    "source": "gnm.pth avg_total_test_loss, epoch 29",
+    "caveat": "config/gnm.yaml line 1 states 'this model uses private datasets', so the reference was computed over a mixture that includes corpora we cannot obtain"
+  },
+  "dataset": {
+    "name": "go_stanford",
+    "split": "test",
+    "provenance": "go_stanford_reconstruction",
+    "samples": 41872,
+    "batches": 105,
+    "batch_size": 400
+  },
+  "objective": {
+    "metric": "strict/total_loss",
+    "alpha": 0.5,
+    "note": "same evaluator, objective and population as the ViNT G0.c arm, for comparability"
+  },
+  "result": {
+    "r1": 0.15870234802528657,
+    "r2": 0.15870234802528657,
+    "repeatability": "EXACT \u2014 bitwise identical across two runs"
+  },
+  "random_init_control": {
+    "value": 2.7875974904258642,
+    "ratio_to_checkpoint": 17.56,
+    "role": "instrument sanity only; never used to define a reproduction tolerance"
+  },
+  "comparison": {
+    "absolute_delta": 0.019352299804733075,
+    "relative_delta_pct": 13.887544390442988,
+    "vint_relative_delta_pct": 3.61,
+    "reading": "GNM deviates ~4x further than ViNT. Consistent with GNM's reference mixture including private datasets, so our single-corpus GO Stanford reconstruction is a more distant estimand than it was for ViNT."
+  },
+  "classification": "PARTIALLY_REPRODUCED_WITH_AVAILABLE_RELEASE_ASSETS",
+  "why_not_reproduced": "the reference is a checkpoint-associated value over a mixture that includes private datasets. No preregistered reproduction tolerance existed, and none is invented after seeing the result; the delta is reported descriptively.",
+  "why_not_failed": "nothing failed. The evaluation path executed over the full declared population with exact repeatability and 17.6x separation from random initialisation.",
+  "not_a_g0c_arm": "run under runs/trackA/, not runs/g0c/. G0.c was preregistered for ViNT; claiming a preregistered gate arm for GNM would be false.",
+  "claim_boundary": "Establishes that the official GNM evaluation path executes over official data with a released checkpoint. Establishes nothing about Hospital, scene admission, sim-to-real, or navigation performance in deployment."
+}

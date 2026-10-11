@@ -162,6 +162,7 @@ def test_write_run_record_emits_the_three_files(tmp_path):
     assert "navfm" in sha and "upstream" in sha
 
 
+@pytest.mark.torch
 def test_empty_dataloader_is_an_error_with_the_likely_cause():
     torch = pytest.importorskip("torch")
     from navfm.eval.offline import evaluate

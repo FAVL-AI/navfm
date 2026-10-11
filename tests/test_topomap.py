@@ -1,0 +1,240 @@
+import pytest
+
+from navfm.collection.topomap import (
+    BoundedConfig,
+    BoundedTopomapState,
+    RecoveringTopomapState,
+    RecoveryConfig,
+    TopomapConfig,
+    TopomapState,
+)
+
+CFG = TopomapConfig(radius=2, close_threshold=3.0)
+
+
+def test_window_is_upstream_start_end():
+    s = TopomapState(goal_node=10, closest_node=0)
+    assert s.window(CFG) == (0, 3)
+    s.closest_node = 9
+    assert s.window(CFG) == (7, 10)
+
+
+def test_far_argmin_localises_without_advancing():
+    s = TopomapState(goal_node=10)
+    follow = s.update([9.0, 6.0, 8.0, 12.0], CFG)
+    assert follow == 1 and s.closest_node == 1 and not s.reached_goal
+
+
+def test_close_argmin_advances_to_next_node():
+    s = TopomapState(goal_node=10, closest_node=4)
+    assert s.window(CFG) == (2, 7)
+    follow = s.update([9.0, 7.0, 2.5, 6.0, 8.0, 9.0], CFG)  # argmin node 4, close
+    assert follow == 3 and s.closest_node == 5
+
+
+def test_goal_reached_only_at_goal_node():
+    s = TopomapState(goal_node=3, closest_node=2)
+    assert s.window(CFG) == (0, 3)
+    s.update([9.0, 8.0, 2.0, 5.0], CFG)  # close to node 2 -> advance to node 3 = goal
+    assert s.closest_node == 3 and s.reached_goal
+    s2 = TopomapState(goal_node=3, closest_node=1)
+    s2.update([9.0, 8.0, 4.0, 5.0], CFG)  # node 2 argmin but not close
+    assert s2.closest_node == 2 and not s2.reached_goal
+    assert s2.history[-1]["closest_node"] == 2
+
+
+def test_rejects_wrong_window_size_and_bad_config():
+    s = TopomapState(goal_node=5)
+    with pytest.raises(ValueError):
+        s.update([1.0, 2.0], CFG)
+    with pytest.raises(ValueError):
+        TopomapConfig(radius=-1)
+
+
+BC = BoundedConfig(max_jump=2, persistence=2, lost_enter=12.0, lost_exit=8.0, lost_patience=3)
+
+
+def bounded(goal_node=14, closest=5):
+    return BoundedTopomapState(goal_node=goal_node, closest_node=closest, bounded=BC)
+
+
+def far_except(n_window, best_idx, best=5.0, rest=9.0):
+    return [best if i == best_idx else rest for i in range(n_window)]
+
+
+def test_single_aliased_jump_is_withheld():
+    # The fine-tuned s_bend_0 case: node 10 scores slightly below node 5 once.
+    s2 = bounded(goal_node=14, closest=5)
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    start, end = s2.window(cfg4)  # (1, 10)
+    follow = s2.update(far_except(end - start + 1, 10 - start, best=5.3), cfg4)
+    assert s2.closest_node == 5 and s2.history[-1]["event"] == "jump_withheld"
+    assert start + follow == 6
+
+
+def test_persistent_jump_is_accepted_but_capped():
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(closest=5)
+    for _ in range(2):
+        start, end = s.window(cfg4)
+        s.update(far_except(end - start + 1, 10 - start, best=5.3), cfg4)
+    assert s.closest_node == 7 and s.history[-1]["event"] == "bounded_jump"
+
+
+def test_lost_entry_global_window_and_no_goal_while_lost():
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(goal_node=6, closest=5)
+    for _ in range(3):
+        start, end = s.window(cfg4)
+        s.update([20.0] * (end - start + 1), cfg4)
+    assert s.lost and s.history[-1]["event"] == "lost_entered"
+    assert s.window(cfg4) == (0, 6)
+    # Even a "close" goal node while lost does not reach the goal on the first decision.
+    s.update([20.0] * 6 + [1.0], cfg4)
+    assert s.lost and not s.reached_goal
+
+
+def test_recovery_needs_persistent_global_match():
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(goal_node=14, closest=5)
+    for _ in range(3):
+        start, end = s.window(cfg4)
+        s.update([20.0] * (end - start + 1), cfg4)
+    s.update(far_except(15, 9, best=7.0, rest=15.0), cfg4)
+    assert s.lost
+    s.update(far_except(15, 10, best=7.5, rest=15.0), cfg4)
+    assert not s.lost and s.closest_node == 10 and s.history[-1]["event"] == "recovered"
+
+
+def test_bounded_config_validation():
+    with pytest.raises(ValueError):
+        BoundedConfig(lost_exit=13.0, lost_enter=12.0)
+    with pytest.raises(ValueError):
+        BoundedConfig(max_jump=0)
+
+
+def test_accepted_bounded_jump_follows_the_capped_node_not_the_alias():
+    # Red-team F1: the s_bend alias (node 10 at 5.3 vs node 5) confirmed twice
+    # must move to node 7 and steer to node 8, never to node 10.
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(closest=5)
+    for _ in range(2):
+        start, end = s.window(cfg4)
+        follow = s.update(far_except(end - start + 1, 10 - start, best=5.3), cfg4)
+    assert s.history[-1]["event"] == "bounded_jump" and s.closest_node == 7
+    assert s.history[-1]["followed_node"] == 8 and start + follow == 8
+
+
+def test_lost_recovery_requires_consecutive_matches():
+    # Red-team F2: a failing decision between two matches must reset persistence.
+    cfg4 = TopomapConfig(radius=4, close_threshold=3.0)
+    s = bounded(goal_node=14, closest=5)
+    for _ in range(3):
+        start, end = s.window(cfg4)
+        s.update([20.0] * (end - start + 1), cfg4)
+    s.update(far_except(15, 9, best=2.0, rest=15.0), cfg4)
+    s.update([9.0] * 15, cfg4)
+    s.update(far_except(15, 9, best=2.0, rest=15.0), cfg4)
+    assert s.lost
+
+
+RC = RecoveryConfig(exit=6.0, persistence=2, scan_budget=5, max_attempts=2)
+CFG4 = TopomapConfig(radius=4, close_threshold=3.0)
+
+
+def recovering(goal_node=14, closest=5):
+    return RecoveringTopomapState(
+        goal_node=goal_node, closest_node=closest, bounded=BC, recovery=RC
+    )
+
+
+def enter_lost(s):
+    for _ in range(3):
+        start, end = s.window(CFG4)
+        s.update([20.0] * (end - start + 1), CFG4)
+    assert s.lost and s.scanning
+
+
+def test_recovery_relocalises_on_consecutive_global_matches():
+    s = recovering()
+    enter_lost(s)
+    assert s.attempts == 1
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    assert s.lost and s.history[-1]["event"] == "scan"
+    s.update(far_except(15, 10, best=5.9, rest=15.0), CFG4)
+    assert not s.lost and s.closest_node == 10 and s.history[-1]["event"] == "relocalised"
+
+
+def test_recovery_match_must_be_consecutive():
+    s = recovering()
+    enter_lost(s)
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    s.update([15.0] * 15, CFG4)
+    s.update(far_except(15, 9, best=5.5, rest=15.0), CFG4)
+    assert s.lost
+
+
+def test_recovery_match_must_be_at_a_consistent_node():
+    s = recovering()
+    enter_lost(s)
+    s.update(far_except(15, 3, best=5.5, rest=15.0), CFG4)
+    s.update(far_except(15, 10, best=5.5, rest=15.0), CFG4)
+    assert s.lost
+
+
+def test_scan_budget_exhaustion_is_terminal_and_never_arrival():
+    s = recovering(goal_node=6)
+    enter_lost(s)
+    for _ in range(5):
+        s.update([15.0] * 7, CFG4)
+        assert not s.reached_goal
+    assert s.recovery_failed and s.history[-1]["event"] == "recovery_failed"
+    with pytest.raises(ValueError):
+        s.update([15.0] * 7, CFG4)
+
+
+def test_lost_entries_beyond_max_attempts_are_terminal():
+    s = recovering()
+    for attempt in (1, 2):
+        enter_lost(s)
+        s.update(far_except(15, 5, best=1.0, rest=15.0), CFG4)
+        s.update(far_except(15, 5, best=1.0, rest=15.0), CFG4)
+        assert not s.lost and s.attempts == attempt
+    for _ in range(3):
+        start, end = s.window(CFG4)
+        s.update([20.0] * (end - start + 1), CFG4)
+    assert s.recovery_failed and s.attempts == 3
+
+
+def test_tracking_while_not_lost_is_the_bounded_v1_logic():
+    a, b = bounded(), recovering()
+    for d in ([9.0, 2.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0], [9.0] * 10):
+        start, end = a.window(CFG4)
+        n = end - start + 1
+        assert a.update(d[:n] + [9.0] * (n - len(d)), CFG4) == b.update(
+            d[:n] + [9.0] * (n - len(d)), CFG4
+        )
+        assert a.closest_node == b.closest_node
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        {"exit": 0},
+        {"exit": 1, "persistence": 0},
+        {"exit": 1, "scan_budget": 1, "persistence": 2},
+        {"exit": 1, "max_attempts": 0},
+    ],
+)
+def test_recovery_config_validation(kw):
+    with pytest.raises(ValueError):
+        RecoveryConfig(**kw)
+
+
+def test_relocalising_onto_the_goal_node_is_not_arrival():
+    s = recovering(goal_node=6)
+    enter_lost(s)
+    s.update([15.0] * 6 + [1.0], CFG4)
+    s.update([15.0] * 6 + [1.0], CFG4)
+    assert not s.lost and s.closest_node == 6
+    assert not s.reached_goal and s.history[-1]["event"] == "relocalised"

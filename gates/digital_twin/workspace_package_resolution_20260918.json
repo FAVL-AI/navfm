@@ -1,0 +1,505 @@
+{
+  "check": "WORKSPACE_PACKAGE_RESOLUTION",
+  "artifact_semantics": "RESOLVER_CAPABILITY_AND_REEVALUATION_NOTHING_ADOPTED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-18T00:37:39.408189+00:00",
+  "repository_head": "d2f0f63061d964d467b07a6c0108dd05da67363b",
+  "worktree_clean_at_measurement": true,
+  "worktree_clean_excluding_this_artefact": "this record's own output path is excluded from the check; everything else must be clean, so evidence is never measured against a tree that differs from the commit it names",
+  "other_dirty_entries": [],
+  "resolver": {
+    "module": "src/navfm/isaac/ros_package_resolver.py",
+    "sha256": "1269709fc9dcd9c198bfe5e26cdc86ce220c3d56352cd10a738b23fff3892285",
+    "ROS_PACKAGE_RESOLVER": "WORKSPACE_AWARE_STRICT",
+    "RESOLUTION_ROOTS": "EXPLICIT_ONLY",
+    "GLOBAL_FALLBACK": "DISABLED",
+    "precedence": [
+      "SOURCE",
+      "INSTALL"
+    ],
+    "precedence_frozen_before_evaluation": true,
+    "ambiguity_policy": "one name declared twice inside a precedence class refuses; no first-hit, alphabetical, mtime or nearest-directory tie-break exists",
+    "identity_source": "package.xml <name>",
+    "consulted_environment_variables": []
+  },
+  "resolution_roots": {
+    "ros2_ws_source": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+    "install_roots": [],
+    "install_note": "neither vendor workspace ships an ament install tree, so install semantics are supported but not manufactured here",
+    "HOST_LOCAL": "these absolute paths record where the measurement ran. Portable identity is the archive closure plus the package-relative path plus the hash"
+  },
+  "package_inventory": {
+    "source_roots": [
+      "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src"
+    ],
+    "install_roots": [],
+    "precedence": [
+      "SOURCE",
+      "INSTALL"
+    ],
+    "global_fallback": "DISABLED",
+    "package_count": 14,
+    "manifest_count": 14,
+    "packages": [
+      {
+        "name": "learn_launch",
+        "package_xml": "src/learn_launch/package.xml",
+        "package_root": "src/learn_launch",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "a7a63783626a83410d999c335711ab2b1ae3c6575401ee887487c3acccd70856",
+        "directory_name_differs": false
+      },
+      {
+        "name": "learning_dds",
+        "package_xml": "src/learning_dds/package.xml",
+        "package_root": "src/learning_dds",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "fe7d1927f3a58c6c7ceadf03d4413679ee22effa6cf86ffa06b20c9c36aaf072",
+        "directory_name_differs": false
+      },
+      {
+        "name": "learning_time",
+        "package_xml": "src/learning_time/package.xml",
+        "package_root": "src/learning_time",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "36a0ecb7ed0ae3b0b5f8cf9f5968ab82570d9be04a9acb16e3fcf5bd612cdd1b",
+        "directory_name_differs": false
+      },
+      {
+        "name": "myrobot",
+        "package_xml": "src/myrobot/package.xml",
+        "package_root": "src/myrobot",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "695a9dd3ce325891b183bbcc27502f40fa889b7efd0f3966517926065eeee843",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_action",
+        "package_xml": "src/pkg_action/package.xml",
+        "package_root": "src/pkg_action",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "23142bf20d5923c48a774a09dfd83ab34f13701b2dd0348c806012f4e7c06c68",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_helloworld_cpp",
+        "package_xml": "src/pkg_helloworld_cpp/package.xml",
+        "package_root": "src/pkg_helloworld_cpp",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "5b2b146009f5d4dbb832c7db0949bd89b7b983d4e36c064b69fc9c2f5eb69c8d",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_helloworld_py",
+        "package_xml": "src/pkg_helloworld_py/package.xml",
+        "package_root": "src/pkg_helloworld_py",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "811a7cd5084c4f4db534b37910b7e08db44859a07d741720dd8ce9ab2c302a3d",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_interfaces",
+        "package_xml": "src/pkg_interfaces/package.xml",
+        "package_root": "src/pkg_interfaces",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "d0f26e6ff3b9354dfd93f001cb3fd0ba5e63d5d262641f8b84949cb7dd8359d9",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_metapackage",
+        "package_xml": "src/pkg_metapackage/package.xml",
+        "package_root": "src/pkg_metapackage",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "98c5cb40796810c08447fd8007b172666131c752901a8fb0bf52587f520673ee",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_param",
+        "package_xml": "src/pkg_param/package.xml",
+        "package_root": "src/pkg_param",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "28f7af2474fc956c07790ced00c7ed55c6123218bc48ee70388cd7e49ab648e0",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_service",
+        "package_xml": "src/pkg_service/package.xml",
+        "package_root": "src/pkg_service",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "be6a9efeb949585b8d7b838f6ad65bc729b9dbcbc995bd25ed85606a02edcc14",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_tf",
+        "package_xml": "src/pkg_tf/package.xml",
+        "package_root": "src/pkg_tf",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "d3b08608c3b6a0a6a87122c8258b566acf320f147dc7df9e0d57a141f94682a3",
+        "directory_name_differs": false
+      },
+      {
+        "name": "pkg_topic",
+        "package_xml": "src/pkg_topic/package.xml",
+        "package_root": "src/pkg_topic",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "5491f5cc3618b09c16efb404fa52e98378ad5eb26c1a7d79f952f880c7debff7",
+        "directory_name_differs": false
+      },
+      {
+        "name": "yahboomcar_description",
+        "package_xml": "src/yahboomcar_description/package.xml",
+        "package_root": "src/yahboomcar_description",
+        "workspace_root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws/src",
+        "resolution_class": "SOURCE",
+        "package_xml_sha256": "9e7ec7f81442c543a63469e8adba7932ab876b050ebe5020899254198ccbd9ff",
+        "directory_name_differs": false
+      }
+    ],
+    "ambiguous_package_names": [],
+    "malformed_manifests": [],
+    "identity_source": "package.xml <name>, never the directory name"
+  },
+  "production_workspace_inventory": {
+    "root": "/home/favl/Downloads/yahboom/extracted/M3Pro_ws-0.0.1_f08db69b/m3pro_ws/src",
+    "package_count": 32,
+    "packages": [
+      "M3Pro",
+      "M3Pro_KCF",
+      "M3Pro_navigation",
+      "arm_util",
+      "calibration",
+      "ekf_bringup",
+      "imu_complementary_filter",
+      "imu_filter_madgwick",
+      "imu_tools",
+      "interfaces",
+      "ira_laser_tools",
+      "largemodel",
+      "largemodel_arm",
+      "laserscan_to_point_publisher",
+      "m3pro_bringup",
+      "multi_brains",
+      "multi_brains_pre",
+      "openslam_gmapping",
+      "patrol",
+      "robot_pose_publisher_ros2",
+      "rviz_imu_plugin",
+      "slam_gmapping",
+      "slam_mapping",
+      "text_chat",
+      "updatecostmap",
+      "waste_classify",
+      "waste_classify_msg",
+      "yahboom_app_save_map",
+      "yahboom_laser_filter",
+      "yahboom_mapping",
+      "yahboom_multi",
+      "yahboom_web_savmap_interfaces"
+    ],
+    "ambiguous_package_names": [],
+    "note": "recorded to show the resolver handles the nested production layout. No production description is parsed or adopted here"
+  },
+  "NEGATIVE_CONTROLS": {
+    "suite": "tests/test_ros_package_resolver.py",
+    "exit_code": 0,
+    "VERDICT": "PASS",
+    "last_line": "...............................................                          [100%]",
+    "controls": {
+      "NO_GLOBAL_FALLBACK": "a package present on disk but outside the declared roots must return UNRESOLVED_PACKAGE",
+      "ENVIRONMENT_INDEPENDENCE": "identical results under ROS_PACKAGE_PATH, AMENT_PREFIX_PATH, CMAKE_PREFIX_PATH, PYTHONPATH, COLCON_PREFIX_PATH pollution and a changed working directory",
+      "DUPLICATE_PACKAGE": "two manifests declaring one name in one precedence class refuse, in either root order",
+      "MISSING_PACKAGE": "distinct from missing resource",
+      "MISSING_RESOURCE": "distinct from missing package",
+      "WRONG_PACKAGE_BASENAME": "identical basenames in two packages resolve to their own package",
+      "TRAVERSAL": "'..', encoded '..', and extra or encoded separators refused before any read",
+      "MALFORMED_URI": "structured refusal, never a traceback or a local-path interpretation",
+      "SYMLINK_ESCAPE": "a link leaving the package root refused unless explicitly admitted",
+      "MANIFEST_IDENTITY": "a directory named foo is not package foo unless its manifest says so",
+      "STRICT_XML_UNCHANGED": "the tracked malformed NavFM URDF stays SOURCE_MALFORMED with and without a resolver"
+    }
+  },
+  "HISTORICAL_RESULT": {
+    "artefact": "gates/digital_twin/vendor_source_closure_20260918.json",
+    "observation": "all three Muto descriptions are refused UNRESOLVED_DEPENDENCY for their package:// mesh references",
+    "verdict": "B_TUTORIAL_OR_EXAMPLE_CONTENT",
+    "status": "UNCHANGED_AND_NOT_REWRITTEN"
+  },
+  "MUTO_REEVALUATION": [
+    {
+      "file": "src/yahboomcar_description/urdf/Muto.urdf",
+      "sha256": "fbfb9edd0a5cf173ef99c4f608eb4583180d4583d56faa18461c11e6a3e00352",
+      "byte_size": 31296,
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "yahboomcar",
+      "link_count": 23,
+      "joint_count": 22,
+      "references": {
+        "occurrence_count": 44,
+        "unique_count": 22,
+        "unique_references": [
+          "package://yahboomcar_description/meshes/LD_Link.STL",
+          "package://yahboomcar_description/meshes/base_link.STL",
+          "package://yahboomcar_description/meshes/camera_Link.STL",
+          "package://yahboomcar_description/meshes/imu_Link.STL",
+          "package://yahboomcar_description/meshes/yh1_Link.STL",
+          "package://yahboomcar_description/meshes/yh2_Link.STL",
+          "package://yahboomcar_description/meshes/yh3_Link.STL",
+          "package://yahboomcar_description/meshes/yq1_Link.STL",
+          "package://yahboomcar_description/meshes/yq2_Link.STL",
+          "package://yahboomcar_description/meshes/yq3_Link.STL",
+          "package://yahboomcar_description/meshes/yz1_Link.STL",
+          "package://yahboomcar_description/meshes/yz2_Link.STL",
+          "package://yahboomcar_description/meshes/yz3_Link.STL",
+          "package://yahboomcar_description/meshes/zh1_Link.STL",
+          "package://yahboomcar_description/meshes/zh2_Link.STL",
+          "package://yahboomcar_description/meshes/zh3_Link.STL",
+          "package://yahboomcar_description/meshes/zq1_Link.STL",
+          "package://yahboomcar_description/meshes/zq2_Link.STL",
+          "package://yahboomcar_description/meshes/zq3_Link.STL",
+          "package://yahboomcar_description/meshes/zz1_Link.STL",
+          "package://yahboomcar_description/meshes/zz2_Link.STL",
+          "package://yahboomcar_description/meshes/zz3_Link.STL"
+        ],
+        "packages_referenced": {
+          "yahboomcar_description": 22
+        },
+        "method": "counted from the file; no expected value is asserted"
+      },
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "22/22 resolved",
+      "resource_resolution_complete": true,
+      "resolution_statuses": {
+        "RESOLVED": 22
+      },
+      "resolution_classes": {
+        "SOURCE": 22
+      },
+      "failures": [],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNSUPPORTED_COLLISION_PRIMITIVE",
+        "detail": "base_link/collision[0] is a mesh. This module states and checks primitive dimensions; a mesh collider cannot be validated that way and must not be admitted on a check that does not cover it"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "4f84d68bfb07bbaee752980dea67e971d458870ad314fe79d4b0130d840fe335",
+      "closure_member_count": 45,
+      "closure_excludes_host_paths": true,
+      "PRODUCT_ROLE": "TUTORIAL_CONTENT",
+      "product_role_basis": "the launch graph, measured in the previous tranche. Resolution success is not evidence about product role and does not revise it"
+    },
+    {
+      "file": "src/yahboomcar_description/urdf/Muto_robot1.urdf",
+      "sha256": "4a17916a35dee87be9fe475d48f5bad4876940757c004cb6ac48d94336014975",
+      "byte_size": 31742,
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "yahboomcar",
+      "link_count": 23,
+      "joint_count": 22,
+      "references": {
+        "occurrence_count": 44,
+        "unique_count": 22,
+        "unique_references": [
+          "package://yahboomcar_description/meshes/IMU_Link.STL",
+          "package://yahboomcar_description/meshes/Lider_Link.STL",
+          "package://yahboomcar_description/meshes/base_link.STL",
+          "package://yahboomcar_description/meshes/camera_Link.STL",
+          "package://yahboomcar_description/meshes/yh1_Link.STL",
+          "package://yahboomcar_description/meshes/yh2_Link.STL",
+          "package://yahboomcar_description/meshes/yh3_Link.STL",
+          "package://yahboomcar_description/meshes/yq1_Link.STL",
+          "package://yahboomcar_description/meshes/yq2_Link.STL",
+          "package://yahboomcar_description/meshes/yq3_Link.STL",
+          "package://yahboomcar_description/meshes/yz1_Link.STL",
+          "package://yahboomcar_description/meshes/yz2_Link.STL",
+          "package://yahboomcar_description/meshes/yz3_Link.STL",
+          "package://yahboomcar_description/meshes/zh1_Link.STL",
+          "package://yahboomcar_description/meshes/zh2_Link.STL",
+          "package://yahboomcar_description/meshes/zh3_Link.STL",
+          "package://yahboomcar_description/meshes/zq1_Link.STL",
+          "package://yahboomcar_description/meshes/zq2_Link.STL",
+          "package://yahboomcar_description/meshes/zq3_Link.STL",
+          "package://yahboomcar_description/meshes/zz1_Link.STL",
+          "package://yahboomcar_description/meshes/zz2_Link.STL",
+          "package://yahboomcar_description/meshes/zz3_Link.STL"
+        ],
+        "packages_referenced": {
+          "yahboomcar_description": 22
+        },
+        "method": "counted from the file; no expected value is asserted"
+      },
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "20/22 resolved",
+      "resource_resolution_complete": false,
+      "resolution_statuses": {
+        "RESOLVED": 20,
+        "UNRESOLVED_RESOURCE": 2
+      },
+      "resolution_classes": {
+        "SOURCE": 20
+      },
+      "failures": [
+        {
+          "uri": "package://yahboomcar_description/meshes/IMU_Link.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "reason": "package 'yahboomcar_description' resolves, but it contains no 'meshes/IMU_Link.STL'",
+          "diagnosis": "CASE_ONLY_MISMATCH",
+          "referenced": "IMU_Link.STL",
+          "present_in_package": [
+            "imu_Link.STL"
+          ],
+          "consequence": "this reference resolves on a case-insensitive filesystem and fails on Linux, which is what the robot runs. It is a defect in the vendor description, not in the resolver",
+          "not_resolved_because": "matching case-insensitively would mean deciding the vendor meant a different file than it wrote"
+        },
+        {
+          "uri": "package://yahboomcar_description/meshes/Lider_Link.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "reason": "package 'yahboomcar_description' resolves, but it contains no 'meshes/Lider_Link.STL'",
+          "diagnosis": "ABSENT_UNDER_ANY_CASING",
+          "referenced": "Lider_Link.STL",
+          "sibling_count": 22,
+          "nearest_siblings": [
+            "LD_Link.STL",
+            "base_link.STL",
+            "camera_Link.STL",
+            "imu_Link.STL",
+            "yh1_Link.STL",
+            "yh2_Link.STL"
+          ],
+          "not_resolved_because": "no file of this name exists. A similarly named sibling is not evidence that it is the same asset"
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "4 of 44 package:// reference(s) do not resolve under the declared roots; first: package://yahboomcar_description/meshes/Lider_Link.STL -> UNRESOLVED_RESOURCE (package 'yahboomcar_description' resolves"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "PRODUCT_ROLE": "TUTORIAL_CONTENT",
+      "product_role_basis": "the launch graph, measured in the previous tranche. Resolution success is not evidence about product role and does not revise it"
+    },
+    {
+      "file": "src/yahboomcar_description/urdf/Muto_robot2.urdf",
+      "sha256": "6268ac0e69c19b4fe07fc018bef79d2eb1abb03d82405f3b15d3c57ca890c064",
+      "byte_size": 31742,
+      "XML_CONFORMANCE": "PASS",
+      "robot_name": "yahboomcar",
+      "link_count": 23,
+      "joint_count": 22,
+      "references": {
+        "occurrence_count": 44,
+        "unique_count": 22,
+        "unique_references": [
+          "package://yahboomcar_description/meshes/IMU_Link.STL",
+          "package://yahboomcar_description/meshes/Lider_Link.STL",
+          "package://yahboomcar_description/meshes/base_link.STL",
+          "package://yahboomcar_description/meshes/camera_Link.STL",
+          "package://yahboomcar_description/meshes/yh1_Link.STL",
+          "package://yahboomcar_description/meshes/yh2_Link.STL",
+          "package://yahboomcar_description/meshes/yh3_Link.STL",
+          "package://yahboomcar_description/meshes/yq1_Link.STL",
+          "package://yahboomcar_description/meshes/yq2_Link.STL",
+          "package://yahboomcar_description/meshes/yq3_Link.STL",
+          "package://yahboomcar_description/meshes/yz1_Link.STL",
+          "package://yahboomcar_description/meshes/yz2_Link.STL",
+          "package://yahboomcar_description/meshes/yz3_Link.STL",
+          "package://yahboomcar_description/meshes/zh1_Link.STL",
+          "package://yahboomcar_description/meshes/zh2_Link.STL",
+          "package://yahboomcar_description/meshes/zh3_Link.STL",
+          "package://yahboomcar_description/meshes/zq1_Link.STL",
+          "package://yahboomcar_description/meshes/zq2_Link.STL",
+          "package://yahboomcar_description/meshes/zq3_Link.STL",
+          "package://yahboomcar_description/meshes/zz1_Link.STL",
+          "package://yahboomcar_description/meshes/zz2_Link.STL",
+          "package://yahboomcar_description/meshes/zz3_Link.STL"
+        ],
+        "packages_referenced": {
+          "yahboomcar_description": 22
+        },
+        "method": "counted from the file; no expected value is asserted"
+      },
+      "PACKAGE_RESOLUTION": "PASS",
+      "RESOURCE_RESOLUTION": "20/22 resolved",
+      "resource_resolution_complete": false,
+      "resolution_statuses": {
+        "RESOLVED": 20,
+        "UNRESOLVED_RESOURCE": 2
+      },
+      "resolution_classes": {
+        "SOURCE": 20
+      },
+      "failures": [
+        {
+          "uri": "package://yahboomcar_description/meshes/IMU_Link.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "reason": "package 'yahboomcar_description' resolves, but it contains no 'meshes/IMU_Link.STL'",
+          "diagnosis": "CASE_ONLY_MISMATCH",
+          "referenced": "IMU_Link.STL",
+          "present_in_package": [
+            "imu_Link.STL"
+          ],
+          "consequence": "this reference resolves on a case-insensitive filesystem and fails on Linux, which is what the robot runs. It is a defect in the vendor description, not in the resolver",
+          "not_resolved_because": "matching case-insensitively would mean deciding the vendor meant a different file than it wrote"
+        },
+        {
+          "uri": "package://yahboomcar_description/meshes/Lider_Link.STL",
+          "status": "UNRESOLVED_RESOURCE",
+          "reason": "package 'yahboomcar_description' resolves, but it contains no 'meshes/Lider_Link.STL'",
+          "diagnosis": "ABSENT_UNDER_ANY_CASING",
+          "referenced": "Lider_Link.STL",
+          "sibling_count": 22,
+          "nearest_siblings": [
+            "LD_Link.STL",
+            "base_link.STL",
+            "camera_Link.STL",
+            "imu_Link.STL",
+            "yh1_Link.STL",
+            "yh2_Link.STL"
+          ],
+          "not_resolved_because": "no file of this name exists. A similarly named sibling is not evidence that it is the same asset"
+        }
+      ],
+      "GEOMETRY_VALIDITY": "FAIL",
+      "geometry_refusal": {
+        "category": "UNRESOLVED_DEPENDENCY",
+        "detail": "4 of 44 package:// reference(s) do not resolve under the declared roots; first: package://yahboomcar_description/meshes/Lider_Link.STL -> UNRESOLVED_RESOURCE (package 'yahboomcar_description' resolves"
+      },
+      "RESOURCE_CLOSURE_DIGEST": "NOT_COMPUTED_INCOMPLETE_RESOLUTION",
+      "PRODUCT_ROLE": "TUTORIAL_CONTENT",
+      "product_role_basis": "the launch graph, measured in the previous tranche. Resolution success is not evidence about product role and does not revise it"
+    }
+  ],
+  "MUTO_REEVALUATION_STATUS": "COMPLETE",
+  "MUTO_PRODUCT_ROLE": "TUTORIAL_CONTENT",
+  "INTERPRETATION": {
+    "separation": "XML validity, package resolution, resource existence and geometry validity are now four measurements rather than one refusal",
+    "what_changed": "the resolver's scope, not the vendor files",
+    "what_did_not_change": "the strict XML parser, the geometry rules, the numeric validation, and the requirement that every dependency resolve"
+  },
+  "CLAIM_BOUNDARY": "the workspace-aware resolver resolves ROS package:// resources using explicit vendor workspace roots while strict source validation is unchanged. Nothing here makes any description authoritative",
+  "NOT_CLAIMED": [
+    "Muto is authoritative",
+    "Muto is the production M3 Pro description",
+    "production apparatus is selected"
+  ],
+  "PRODUCTION_DESCRIPTION_IDENTIFIED": true,
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "AWAITING_REVIEW",
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "DECISION_B": "UNRESOLVED_AND_NOT_TOUCHED",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0
+}

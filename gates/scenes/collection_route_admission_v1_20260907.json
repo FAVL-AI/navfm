@@ -1,0 +1,97 @@
+{
+  "check": "COLLECTION_ROUTE_ADMISSION_V1",
+  "artifact_semantics": "PREREGISTRATION_FROZEN_BEFORE_ROUTE_EVALUATION",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-07T05:08:23.961512+00:00",
+  "git_head": "c21380ab6402cac84ff4d4dfb9d5b88eb9a5e040",
+  "is_not": "a repair, reinterpretation or replacement of the scene-wide traversability verdict. hospital_collision_coverage_audit.json, physx_traversability_admissible, the candidate policy, the collision-probe contract, targetability and ownership semantics are all untouched.",
+  "scene_wide_status_unchanged": {
+    "hospital": "physx_traversability_admissible = false / NOT ADMISSIBLE"
+  },
+  "chronology": [
+    "1. scene-wide Hospital failure observed (physx_traversability_admissible false)",
+    "2. collector dependencies inspected at source, not assumed",
+    "3. obstacle-map role and ground-support role found to be separable",
+    "4. band mismatch discovered between the audit's classification and the collector's slab",
+    "5. this contract frozen, with G2 written as a measurement rather than an inherited pass",
+    "6. ONLY THEN are candidate routes to be evaluated",
+    "the amendment derives from the collector's actual dependencies, not from a wish to make Hospital pass"
+  ],
+  "two_estimands": {
+    "scene_wide_traversability": "obstacle AND support completeness across the whole scene",
+    "collection_route_admissibility": "a trustworthy obstacle map over the band the PLANNER queries, plus verified continuous support along the executed swept route",
+    "relationship": "different questions, separate gates; neither supersedes the other"
+  },
+  "collector_dependency_evidence": {
+    "grid_built": "collect.py:150 open_scene -> build_occupancy",
+    "grid_required": "collect.py:207 run_episode asserts self._grid is not None",
+    "planner_consumes": "collect.py:212,220 _inflated / _inflated_clearance -> plan(...)",
+    "physics_used_for_support": "teleport(start, yaw) -> step() settle -> set_body_velocity(...)",
+    "refuses_without_map": "build_occupancy raises: planning without a map is unsupported because a random-walk demonstrator yields temporal-distance labels uncorrelated with spatial proximity",
+    "COLLECTION_REQUIRES_GLOBAL_MAP": true
+  },
+  "band_mismatch_finding": {
+    "audit_robot_band": "floor_z + [0.02, 0.2803]; Hospital floor_z = 0.0",
+    "collector_occupancy_slab": "absolute z in [0.10, 0.60]",
+    "region_below_slab": {
+      "range": "[0.02, 0.10)",
+      "risk": "HAZARDOUS \u2014 inside the robot band, below the slab, so invisible to the planner map",
+      "example": "a 5-9 cm threshold, step or cable tray"
+    },
+    "region_above_band": {
+      "range": "(0.2803, 0.60]",
+      "risk": "conservative only \u2014 treated as an obstacle though the robot passes under it"
+    },
+    "consequence": "blocking_coverage_fraction = 1.0 does NOT establish that the planner's obstacle map is trustworthy for the robot. G2 must therefore be measured, not inherited."
+  },
+  "gates": {
+    "G1_scene_identity": "exact scene URL, ETag/digest and version frozen before collection",
+    "G2_obstacle_map_integrity": {
+      "requirement": "no geometry of blocking size lies in [floor_z+0.02, slab_min) unrepresented in the planner's occupancy map; i.e. the robot band below the slab must be empty of blocking-size geometry, or the slab must be lowered to cover it",
+      "status": "MUST BE MEASURED \u2014 not satisfied by blocking_coverage_fraction = 1.0",
+      "failure_action": "route rejected; do not lower the requirement"
+    },
+    "G3_start_support": "entire robot footprint supported on collidable geometry at the start pose",
+    "G4_continuous_route_support": "entire swept footprint remains on collidable support throughout; a single unsupported tile on the route FAILS",
+    "G5_obstacle_clearance": "swept robot volume does not intersect blocking collision geometry",
+    "G6_end_support": "entire footprint supported at the goal pose",
+    "G7_camera": "robot-mounted forward-facing RGB camera passes the frozen hard gate incl. negatives",
+    "G8_controller": "controller identity and configuration fixed and recorded",
+    "G9_goal": "goal image declared, acquired and sealed BEFORE motion; never the final observation",
+    "G10_long_horizon": "route meets the preregistered temporal/spatial thresholds",
+    "G11_data": "ordered RGB frames + position [T,2] + yaw [T] recorded correctly",
+    "G12_evidence": "evidence written and validated BEFORE app.close()",
+    "admission_rule": "ALL gates required; no averaging, no partial credit"
+  },
+  "long_horizon_thresholds": {
+    "note": "frozen here, before any route is evaluated",
+    "min_usable_frames": 120,
+    "min_travelled_distance_m": 8.0,
+    "min_start_goal_separation_m": 5.0,
+    "min_meaningful_heading_changes": 3,
+    "heading_change_definition_deg": 30.0,
+    "min_valid_context_windows": 30,
+    "derivation": "GNM/ViNT context_size 5 and NoMaD context_size 3, plus len_traj_pred 8 for NoMaD; a route must supply valid sampling windows for all three, so the binding constraint is GNM/ViNT context 5 + horizon 5 = 10 frames consumed per sample",
+    "not_defined_by": "elapsed wall-clock seconds"
+  },
+  "claim_boundary": {
+    "a_route_local_pass_does_not_mean": [
+      "Hospital scene-wide traversability is admissible",
+      "all Hospital floors are safe",
+      "missing collider geometry is repaired",
+      "the scene can be used for arbitrary planning",
+      "Hospital deployment safety is established"
+    ],
+    "it_means_only": "the specific declared collection route has a trustworthy obstacle map over the planner's queried band and continuous verified physical support"
+  },
+  "open_measurements_required_before_any_route_is_admitted": [
+    "enumerate ALL 23 collider-less meshes, not the 10 listed examples",
+    "measure whether any blocking-size geometry occupies [floor_z+0.02, 0.10)"
+  ],
+  "non_claims": [
+    "Hospital passes",
+    "Hospital is admissible scene-wide",
+    "wrong_1 resolved",
+    "canonical scene selected"
+  ]
+}

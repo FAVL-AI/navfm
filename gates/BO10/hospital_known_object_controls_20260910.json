@@ -1,0 +1,1044 @@
+{
+  "check": "HOSPITAL_OBSTACLE_MAP_KNOWN_OBJECT_CONTROLS",
+  "artifact_semantics": "INSTRUMENT_VALIDATION_ON_A_REAL_SCENE",
+  "scene_id": "hospital",
+  "timestamp_utc": "2026-09-10T00:42:53.851385+00:00",
+  "estimand": "OBSTACLE_CELL_OCCUPANCY_V1",
+  "resolution_m": 0.1,
+  "slab_z_m": [
+    0.1,
+    0.6
+  ],
+  "epsilon_m": 0.0,
+  "same_algorithm_for_walls_and_furniture": true,
+  "aggregate_rule": "scene-wide totals are CORROBORATIVE ONLY; per-object controls carry the causal evidence",
+  "provenance": {
+    "isaac_sim_version": "5.1.0.0",
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "scene_asset": "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd",
+    "gpu": {
+      "driver_reachable": true,
+      "gpus": [
+        {
+          "name": "NVIDIA GeForce RTX 4080 SUPER",
+          "driver_version": "580.173.02",
+          "memory_total": "16376 MiB"
+        }
+      ]
+    }
+  },
+  "known_objects": [
+    {
+      "target": "SM_ReceptionDesk_01a2_52",
+      "found": true,
+      "is_instance_proxy": false,
+      "collision_prim": "/World/Scene/SM_ReceptionDesk_01a2_52",
+      "world_aabb": {
+        "min_x": -0.691535947411147,
+        "min_y": 1.9860868372493905,
+        "min_z": 4.0832519531255315e-05,
+        "max_x": 2.175756392355761,
+        "max_y": 4.405821793606157,
+        "max_z": 1.32100119117736
+      },
+      "z_extent": [
+        0.0,
+        1.321
+      ],
+      "intersects_slab": true,
+      "expected_intersecting_cells": 750,
+      "occupied_cells_within_expected": 210,
+      "cells_in_aabb_not_marked": 540,
+      "crosscheck_truly_empty": 540,
+      "genuine_false_negatives": 0,
+      "genuine_false_negative_cells": [],
+      "false_negatives": 0,
+      "aabb_fill_fraction": 0.28,
+      "comparison": {
+        "expected_cells": 750,
+        "measured_cells": 266,
+        "true_positives": 210,
+        "false_negatives": 540,
+        "false_positives": 56,
+        "recall": 0.28,
+        "precision": 0.7894736842105263,
+        "exact_agreement": false,
+        "false_negative_cells": [
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ],
+          [
+            3,
+            6
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            3,
+            8
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            3,
+            10
+          ],
+          [
+            3,
+            11
+          ],
+          [
+            3,
+            12
+          ],
+          [
+            3,
+            13
+          ],
+          [
+            3,
+            14
+          ],
+          [
+            3,
+            15
+          ],
+          [
+            3,
+            16
+          ],
+          [
+            3,
+            17
+          ],
+          [
+            3,
+            18
+          ],
+          [
+            3,
+            19
+          ],
+          [
+            3,
+            20
+          ],
+          [
+            3,
+            21
+          ],
+          [
+            3,
+            22
+          ],
+          [
+            3,
+            23
+          ],
+          [
+            3,
+            24
+          ],
+          [
+            3,
+            25
+          ],
+          [
+            3,
+            26
+          ],
+          [
+            3,
+            27
+          ],
+          [
+            3,
+            28
+          ],
+          [
+            3,
+            29
+          ],
+          [
+            3,
+            30
+          ],
+          [
+            3,
+            31
+          ],
+          [
+            3,
+            32
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            11
+          ]
+        ],
+        "false_positive_cells": [
+          [
+            4,
+            33
+          ],
+          [
+            4,
+            34
+          ],
+          [
+            4,
+            35
+          ],
+          [
+            5,
+            33
+          ],
+          [
+            5,
+            34
+          ],
+          [
+            5,
+            35
+          ],
+          [
+            6,
+            33
+          ],
+          [
+            6,
+            34
+          ],
+          [
+            7,
+            33
+          ],
+          [
+            7,
+            34
+          ],
+          [
+            8,
+            33
+          ],
+          [
+            8,
+            34
+          ],
+          [
+            9,
+            33
+          ],
+          [
+            9,
+            34
+          ],
+          [
+            10,
+            33
+          ],
+          [
+            10,
+            34
+          ],
+          [
+            11,
+            33
+          ],
+          [
+            11,
+            34
+          ],
+          [
+            12,
+            33
+          ],
+          [
+            12,
+            34
+          ],
+          [
+            28,
+            3
+          ],
+          [
+            28,
+            4
+          ],
+          [
+            28,
+            5
+          ],
+          [
+            28,
+            6
+          ],
+          [
+            28,
+            7
+          ],
+          [
+            28,
+            8
+          ],
+          [
+            28,
+            9
+          ],
+          [
+            28,
+            10
+          ],
+          [
+            28,
+            11
+          ],
+          [
+            29,
+            3
+          ],
+          [
+            29,
+            4
+          ],
+          [
+            29,
+            5
+          ]
+        ],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "no GENUINE false negatives: each cell inside the AABB but not marked is re-tested with an independent dense sphere sub-sample, and only independently-occupied cells count",
+      "PASS": true
+    },
+    {
+      "target": "SM_SupplyCart_03a_126",
+      "found": true,
+      "is_instance_proxy": false,
+      "collision_prim": "/World/Scene/SM_SupplyCart_03a_126",
+      "world_aabb": {
+        "min_x": -30.452058656262547,
+        "min_y": 1.8667825555721373,
+        "min_z": 3.747558593749645e-05,
+        "max_x": -29.339171812487532,
+        "max_y": 2.4632113027652656,
+        "max_z": 1.033943702476332
+      },
+      "z_extent": [
+        0.0,
+        1.034
+      ],
+      "intersects_slab": true,
+      "expected_intersecting_cells": 84,
+      "occupied_cells_within_expected": 79,
+      "cells_in_aabb_not_marked": 5,
+      "crosscheck_truly_empty": 5,
+      "genuine_false_negatives": 0,
+      "genuine_false_negative_cells": [],
+      "false_negatives": 0,
+      "aabb_fill_fraction": 0.9405,
+      "comparison": {
+        "expected_cells": 84,
+        "measured_cells": 131,
+        "true_positives": 79,
+        "false_negatives": 5,
+        "false_positives": 52,
+        "recall": 0.9404761904761905,
+        "precision": 0.6030534351145038,
+        "exact_agreement": false,
+        "false_negative_cells": [
+          [
+            3,
+            14
+          ],
+          [
+            4,
+            14
+          ],
+          [
+            5,
+            14
+          ],
+          [
+            6,
+            14
+          ],
+          [
+            9,
+            14
+          ]
+        ],
+        "false_positive_cells": [
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            1,
+            9
+          ],
+          [
+            1,
+            10
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            1,
+            13
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            1,
+            15
+          ],
+          [
+            1,
+            16
+          ],
+          [
+            1,
+            17
+          ],
+          [
+            1,
+            18
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            2,
+            9
+          ],
+          [
+            2,
+            10
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            2,
+            12
+          ]
+        ],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "no GENUINE false negatives: each cell inside the AABB but not marked is re-tested with an independent dense sphere sub-sample, and only independently-occupied cells count",
+      "PASS": true
+    },
+    {
+      "target": "Geo_W_WallBase10",
+      "found": true,
+      "is_instance_proxy": false,
+      "collision_prim": "/World/Scene/Geo_W_WallBase10",
+      "world_aabb": {
+        "min_x": -33.708032137155534,
+        "min_y": 1.650869140625,
+        "min_z": 4.067993164063308e-05,
+        "max_x": -29.7080322265625,
+        "max_y": 1.7508700539171491,
+        "max_z": 3.000040612876415
+      },
+      "z_extent": [
+        0.0,
+        3.0
+      ],
+      "intersects_slab": true,
+      "expected_intersecting_cells": 82,
+      "occupied_cells_within_expected": 82,
+      "cells_in_aabb_not_marked": 0,
+      "crosscheck_truly_empty": 0,
+      "genuine_false_negatives": 0,
+      "genuine_false_negative_cells": [],
+      "false_negatives": 0,
+      "aabb_fill_fraction": 1.0,
+      "comparison": {
+        "expected_cells": 82,
+        "measured_cells": 142,
+        "true_positives": 82,
+        "false_negatives": 0,
+        "false_positives": 60,
+        "recall": 1.0,
+        "precision": 0.5774647887323944,
+        "exact_agreement": false,
+        "false_negative_cells": [],
+        "false_positive_cells": [
+          [
+            3,
+            0
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            44
+          ],
+          [
+            3,
+            45
+          ],
+          [
+            3,
+            46
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            44
+          ],
+          [
+            4,
+            45
+          ],
+          [
+            4,
+            46
+          ],
+          [
+            5,
+            35
+          ],
+          [
+            5,
+            36
+          ],
+          [
+            5,
+            37
+          ],
+          [
+            5,
+            38
+          ],
+          [
+            5,
+            39
+          ],
+          [
+            5,
+            40
+          ],
+          [
+            5,
+            41
+          ],
+          [
+            5,
+            42
+          ],
+          [
+            5,
+            43
+          ],
+          [
+            5,
+            44
+          ],
+          [
+            5,
+            45
+          ],
+          [
+            5,
+            46
+          ],
+          [
+            6,
+            35
+          ],
+          [
+            6,
+            36
+          ],
+          [
+            6,
+            37
+          ],
+          [
+            6,
+            38
+          ],
+          [
+            6,
+            39
+          ],
+          [
+            6,
+            40
+          ],
+          [
+            6,
+            41
+          ],
+          [
+            6,
+            42
+          ]
+        ],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "no GENUINE false negatives: each cell inside the AABB but not marked is re-tested with an independent dense sphere sub-sample, and only independently-occupied cells count",
+      "PASS": true
+    },
+    {
+      "target": "SM_Chart_Rack_01d_37",
+      "found": true,
+      "is_instance_proxy": false,
+      "collision_prim": "/World/Scene/SM_Chart_Rack_01d_37",
+      "world_aabb": {
+        "min_x": 1.6816183611142028,
+        "min_y": 8.244056630188215,
+        "min_z": 0.0010004577636718779,
+        "max_x": 2.9295062497866757,
+        "max_y": 8.67552222723366,
+        "max_z": 1.638146112088583
+      },
+      "z_extent": [
+        0.001,
+        1.638
+      ],
+      "intersects_slab": true,
+      "expected_intersecting_cells": 65,
+      "occupied_cells_within_expected": 65,
+      "cells_in_aabb_not_marked": 0,
+      "crosscheck_truly_empty": 0,
+      "genuine_false_negatives": 0,
+      "genuine_false_negative_cells": [],
+      "false_negatives": 0,
+      "aabb_fill_fraction": 1.0,
+      "comparison": {
+        "expected_cells": 65,
+        "measured_cells": 128,
+        "true_positives": 65,
+        "false_negatives": 0,
+        "false_positives": 63,
+        "recall": 1.0,
+        "precision": 0.5078125,
+        "exact_agreement": false,
+        "false_negative_cells": [],
+        "false_positive_cells": [
+          [
+            0,
+            16
+          ],
+          [
+            0,
+            18
+          ],
+          [
+            0,
+            19
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            16
+          ],
+          [
+            1,
+            18
+          ],
+          [
+            1,
+            19
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            2,
+            18
+          ],
+          [
+            2,
+            19
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            16
+          ],
+          [
+            3,
+            18
+          ],
+          [
+            4,
+            0
+          ],
+          [
+            4,
+            1
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            16
+          ],
+          [
+            4,
+            18
+          ],
+          [
+            5,
+            0
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            16
+          ],
+          [
+            5,
+            18
+          ],
+          [
+            6,
+            0
+          ],
+          [
+            6,
+            1
+          ]
+        ],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "no GENUINE false negatives: each cell inside the AABB but not marked is re-tested with an independent dense sphere sub-sample, and only independently-occupied cells count",
+      "PASS": true
+    },
+    {
+      "target": "Geo_M1_TrimInsideSide",
+      "found": true,
+      "is_instance_proxy": false,
+      "collision_prim": "/World/Scene/Geo_M1_TrimInsideSide21",
+      "world_aabb": {
+        "min_x": 20.850308943564823,
+        "min_y": 10.066294327614557,
+        "min_z": 0.0009995402707414498,
+        "max_x": 26.76974377414562,
+        "max_y": 10.103540992332446,
+        "max_z": 0.15920144299711503
+      },
+      "z_extent": [
+        0.001,
+        0.159
+      ],
+      "intersects_slab": true,
+      "expected_intersecting_cells": 60,
+      "occupied_cells_within_expected": 60,
+      "cells_in_aabb_not_marked": 0,
+      "crosscheck_truly_empty": 0,
+      "genuine_false_negatives": 0,
+      "genuine_false_negative_cells": [],
+      "false_negatives": 0,
+      "aabb_fill_fraction": 1.0,
+      "comparison": {
+        "expected_cells": 60,
+        "measured_cells": 289,
+        "true_positives": 60,
+        "false_negatives": 0,
+        "false_positives": 229,
+        "recall": 1.0,
+        "precision": 0.20761245674740483,
+        "exact_agreement": false,
+        "false_negative_cells": [],
+        "false_positive_cells": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            62
+          ],
+          [
+            0,
+            65
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            62
+          ],
+          [
+            1,
+            65
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            62
+          ],
+          [
+            2,
+            65
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            65
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            9
+          ],
+          [
+            4,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            4,
+            12
+          ],
+          [
+            4,
+            13
+          ],
+          [
+            4,
+            14
+          ],
+          [
+            4,
+            15
+          ],
+          [
+            4,
+            16
+          ],
+          [
+            4,
+            17
+          ],
+          [
+            4,
+            18
+          ],
+          [
+            4,
+            19
+          ]
+        ],
+        "safety_note": "false negatives are cells containing blocking geometry reported free. They require explicit adjudication and are never averaged away."
+      },
+      "judged_on": "no GENUINE false negatives: each cell inside the AABB but not marked is re-tested with an independent dense sphere sub-sample, and only independently-occupied cells count",
+      "PASS": true
+    }
+  ],
+  "objects_passed": 5,
+  "objects_total": 5,
+  "total_false_negatives": 0,
+  "KNOWN_OBJECT_CONTROLS": "PASS",
+  "np_version": "1.26.0",
+  "OBSTACLE_PROBE_LOCAL_VALIDATION": "PASS",
+  "OBSTACLE_MAP_FULL_ACCEPTANCE": "PENDING"
+}

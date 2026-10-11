@@ -124,3 +124,15 @@ verified in the same run.
 
 `import isaacsim` fails in `~/.venv-train` by design — the two environments are
 never merged, and that failure is not evidence about the machine.
+
+**Reconfirmed 2026-09-05**, during the G2 runtime reproduction. Same interpreter
+and same Isaac Sim 5.1.0.0 / 25 distributions; `nvidia-smi` reports NVIDIA
+GeForce RTX 4080 SUPER, **driver 580.173.02**, 16376 MiB — the driver version the
+2026-08-07 record did not carry. Method: `nvidia-smi --query-gpu=name,
+driver_version,memory.total --format=csv,noheader` plus `importlib.metadata`
+over the `isaacsim-*` distributions, captured before execution into
+`~/navfm-runtime-evidence/g2-20260905/isaac_runtime_identity.json`. Three
+headless harnesses then ran to completion against PhysX in that session, which
+is behavioural confirmation rather than a version string alone. This is an
+identity and availability check; **no throughput or performance figure is
+claimed.**

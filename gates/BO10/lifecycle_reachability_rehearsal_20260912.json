@@ -1,0 +1,508 @@
+{
+  "check": "LIFECYCLE_REACHABILITY_AND_REHEARSAL",
+  "artifact_semantics": "REHEARSAL_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-16T19:17:37.551093+00:00",
+  "repository_head": "7105f74cba18c0ff4c4d0f810a84ae4087432d8a",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "gap_record": {
+    "path": "gates/BO10/execution_reachability_gap_v2_20260912.json",
+    "sha256": "8db0d738e6d7feb740d369e91f4aa607403587d6dea17769cda4af12e10e754d"
+  },
+  "lifecycle_stages": [
+    "MANIFEST_VALIDATED",
+    "PRE_ENV_CAPTURED",
+    "RUNTIME_INITIALISING",
+    "COLLECTOR_READY",
+    "SCENE_READY",
+    "INITIAL_STATE_VALIDATED",
+    "EPISODE_RUNNING",
+    "EPISODE_FINISHED",
+    "SCIENTIFIC_EVIDENCE_WRITTEN",
+    "SCIENTIFIC_EVIDENCE_VALIDATED",
+    "POST_ENV_CAPTURED",
+    "ARM_VALIDATED"
+  ],
+  "producer_lifecycle_map": [
+    {
+      "output_id": "pre_capture",
+      "arm_scoped": true,
+      "lifecycle_stage": "PRE_ENV_CAPTURED",
+      "producer": "navfm.arm_environment_guard:capture_arm_environment",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "after the manifest validates and before any runtime is started"
+    },
+    {
+      "output_id": "trajectory_dir",
+      "arm_scoped": true,
+      "lifecycle_stage": "EPISODE_FINISHED",
+      "producer": "navfm.isaac.collect:Collector",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "the collector writes the episode directory as the episode completes"
+    },
+    {
+      "output_id": "result",
+      "arm_scoped": true,
+      "lifecycle_stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+      "producer": "navfm.intervention_runner:write_arm_result",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "after the episode finishes and its outcome is computed"
+    },
+    {
+      "output_id": "trace",
+      "arm_scoped": true,
+      "lifecycle_stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+      "producer": "navfm.intervention_runner:write_terminal_trace",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "after the episode finishes; the terminal-leg rows are derived from it"
+    },
+    {
+      "output_id": "status",
+      "arm_scoped": true,
+      "lifecycle_stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+      "producer": "navfm.intervention_runner:write_status",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "after the result and trace exist, recording their hashes"
+    },
+    {
+      "output_id": "post_capture",
+      "arm_scoped": true,
+      "lifecycle_stage": "POST_ENV_CAPTURED",
+      "producer": "navfm.arm_environment_guard:capture_arm_environment",
+      "required": true,
+      "multiplicity": 1,
+      "invocation_precondition": "only after the arm's scientific evidence has been read back and validated"
+    },
+    {
+      "output_id": "environment_equivalence",
+      "arm_scoped": false,
+      "lifecycle_stage": "ARM_VALIDATED",
+      "producer": "navfm.arm_environment_guard:arm_environment_equivalence",
+      "required": false,
+      "multiplicity": 1,
+      "invocation_precondition": "after POST_ARM_B, comparing all four captures"
+    },
+    {
+      "output_id": "comparison",
+      "arm_scoped": false,
+      "lifecycle_stage": "ARM_VALIDATED",
+      "producer": "navfm.intervention_runner:write_comparison",
+      "required": false,
+      "multiplicity": 1,
+      "invocation_precondition": "only after both arms are valid and the environments are equivalent"
+    }
+  ],
+  "required_arm_scoped_producer_count": 6,
+  "ENTRYPOINT_REACHABILITY": {
+    "ENTRYPOINT_REACHABILITY": "PASS",
+    "method": "the orchestration is a declared plan table, so producer binding is read rather than inferred. Static call-path analysis would be incomplete here: dispatch, factories and injection hide edges from it",
+    "plan_steps": [
+      {
+        "stage": "MANIFEST_VALIDATED",
+        "action": "_validate_manifest",
+        "produces": null
+      },
+      {
+        "stage": "PRE_ENV_CAPTURED",
+        "action": "_capture_pre",
+        "produces": "pre_capture"
+      },
+      {
+        "stage": "RUNTIME_INITIALISING",
+        "action": "_initialise_runtime",
+        "produces": null
+      },
+      {
+        "stage": "COLLECTOR_READY",
+        "action": "_build_collector",
+        "produces": null
+      },
+      {
+        "stage": "SCENE_READY",
+        "action": "_load_scene",
+        "produces": null
+      },
+      {
+        "stage": "INITIAL_STATE_VALIDATED",
+        "action": "_validate_initial_state",
+        "produces": null
+      },
+      {
+        "stage": "EPISODE_RUNNING",
+        "action": "_start_episode",
+        "produces": null
+      },
+      {
+        "stage": "EPISODE_FINISHED",
+        "action": "_finish_episode",
+        "produces": "trajectory_dir"
+      },
+      {
+        "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+        "action": "_write_result",
+        "produces": "result"
+      },
+      {
+        "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+        "action": "_write_trace",
+        "produces": "trace"
+      },
+      {
+        "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+        "action": "_write_status",
+        "produces": "status"
+      },
+      {
+        "stage": "SCIENTIFIC_EVIDENCE_VALIDATED",
+        "action": "_validate_evidence",
+        "produces": null
+      },
+      {
+        "stage": "POST_ENV_CAPTURED",
+        "action": "_capture_post",
+        "produces": "post_capture"
+      },
+      {
+        "stage": "ARM_VALIDATED",
+        "action": "_finalise",
+        "produces": null
+      }
+    ],
+    "required_arm_scoped_outputs": [
+      "pre_capture",
+      "trajectory_dir",
+      "result",
+      "trace",
+      "status",
+      "post_capture"
+    ],
+    "producers_bound_into_plan": [
+      "post_capture",
+      "pre_capture",
+      "result",
+      "status",
+      "trace",
+      "trajectory_dir"
+    ],
+    "required_outputs_not_bound": [],
+    "stage_binding_mismatches": [],
+    "plan_is_stage_monotone": true,
+    "plan_actions_missing": [],
+    "sufficient_on_its_own": false,
+    "why_not_sufficient": "a binding can be present in the table and still never execute, which is what the non-Isaac rehearsal establishes"
+  },
+  "NON_ISAAC_LIFECYCLE_REHEARSAL": {
+    "verdict": "PASS",
+    "one_orchestration": "rehearsal walks ARM_PLAN, the same table real execution walks. There is no second lifecycle implementation, because a rehearsal with its own copy could pass while the real path stayed disconnected",
+    "adapter_boundary": {
+      "orchestration": "shared",
+      "real_adapter": "navfm.arm_lifecycle:IsaacRuntimeAdapter",
+      "rehearsal_adapter": "navfm.arm_lifecycle:RehearsalRuntimeAdapter",
+      "adapters_cannot_change_scientific_configuration": true
+    },
+    "traces": {
+      "ARM_A_CONTROL": {
+        "status": "VALID",
+        "lifecycle": "PASS",
+        "stages_entered": [
+          "MANIFEST_VALIDATED",
+          "PRE_ENV_CAPTURED",
+          "RUNTIME_INITIALISING",
+          "COLLECTOR_READY",
+          "SCENE_READY",
+          "INITIAL_STATE_VALIDATED",
+          "EPISODE_RUNNING",
+          "EPISODE_FINISHED",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_VALIDATED",
+          "POST_ENV_CAPTURED",
+          "ARM_VALIDATED"
+        ],
+        "invocation_counts": {
+          "pre_capture": 1,
+          "trajectory_dir": 1,
+          "result": 1,
+          "trace": 1,
+          "status": 1,
+          "post_capture": 1
+        },
+        "invocations": [
+          {
+            "output_id": "pre_capture",
+            "stage": "PRE_ENV_CAPTURED",
+            "producer": "navfm.arm_environment_guard:capture_arm_environment"
+          },
+          {
+            "output_id": "trajectory_dir",
+            "stage": "EPISODE_FINISHED",
+            "producer": "navfm.isaac.collect:Collector"
+          },
+          {
+            "output_id": "result",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_arm_result"
+          },
+          {
+            "output_id": "trace",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_terminal_trace"
+          },
+          {
+            "output_id": "status",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_status"
+          },
+          {
+            "output_id": "post_capture",
+            "stage": "POST_ENV_CAPTURED",
+            "producer": "navfm.arm_environment_guard:capture_arm_environment"
+          }
+        ],
+        "adapter_boundaries": [
+          "initialise",
+          "build_collector",
+          "load_scene",
+          "validate_initial_state",
+          "run_episode",
+          "shutdown"
+        ],
+        "selector_identity": "PATH_VERTEX",
+        "collect_config": {
+          "scenes": [
+            "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd"
+          ],
+          "episodes": 1,
+          "max_steps": 1200,
+          "target_model": "vint",
+          "min_path_m": 3.0,
+          "max_path_m": 40.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator": "nonholonomic",
+          "perturb_fraction": 0.35,
+          "perturb_sigma_m": 0.25,
+          "wander_fraction": 0.2,
+          "grid_resolution": 0.1,
+          "min_clearance_m": 0.35,
+          "max_stationary_fraction": 0.5,
+          "stall_patience": 40,
+          "seed": 0,
+          "scene_name": "hospital_bo10",
+          "target_selector": "PATH_VERTEX"
+        },
+        "problems": [],
+        "isaac_launched": false,
+        "production_label_consumed": false
+      },
+      "ARM_B_TREATMENT": {
+        "status": "VALID",
+        "lifecycle": "PASS",
+        "stages_entered": [
+          "MANIFEST_VALIDATED",
+          "PRE_ENV_CAPTURED",
+          "RUNTIME_INITIALISING",
+          "COLLECTOR_READY",
+          "SCENE_READY",
+          "INITIAL_STATE_VALIDATED",
+          "EPISODE_RUNNING",
+          "EPISODE_FINISHED",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_WRITTEN",
+          "SCIENTIFIC_EVIDENCE_VALIDATED",
+          "POST_ENV_CAPTURED",
+          "ARM_VALIDATED"
+        ],
+        "invocation_counts": {
+          "pre_capture": 1,
+          "trajectory_dir": 1,
+          "result": 1,
+          "trace": 1,
+          "status": 1,
+          "post_capture": 1
+        },
+        "invocations": [
+          {
+            "output_id": "pre_capture",
+            "stage": "PRE_ENV_CAPTURED",
+            "producer": "navfm.arm_environment_guard:capture_arm_environment"
+          },
+          {
+            "output_id": "trajectory_dir",
+            "stage": "EPISODE_FINISHED",
+            "producer": "navfm.isaac.collect:Collector"
+          },
+          {
+            "output_id": "result",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_arm_result"
+          },
+          {
+            "output_id": "trace",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_terminal_trace"
+          },
+          {
+            "output_id": "status",
+            "stage": "SCIENTIFIC_EVIDENCE_WRITTEN",
+            "producer": "navfm.intervention_runner:write_status"
+          },
+          {
+            "output_id": "post_capture",
+            "stage": "POST_ENV_CAPTURED",
+            "producer": "navfm.arm_environment_guard:capture_arm_environment"
+          }
+        ],
+        "adapter_boundaries": [
+          "initialise",
+          "build_collector",
+          "load_scene",
+          "validate_initial_state",
+          "run_episode",
+          "shutdown"
+        ],
+        "selector_identity": "ARC_LENGTH_INTERPOLATED",
+        "collect_config": {
+          "scenes": [
+            "https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Hospital/hospital.usd"
+          ],
+          "episodes": 1,
+          "max_steps": 1200,
+          "target_model": "vint",
+          "min_path_m": 3.0,
+          "max_path_m": 40.0,
+          "cruise_v": 0.35,
+          "lookahead_m": 0.45,
+          "goal_tol_m": 0.2,
+          "demonstrator": "nonholonomic",
+          "perturb_fraction": 0.35,
+          "perturb_sigma_m": 0.25,
+          "wander_fraction": 0.2,
+          "grid_resolution": 0.1,
+          "min_clearance_m": 0.35,
+          "max_stationary_fraction": 0.5,
+          "stall_patience": 40,
+          "seed": 0,
+          "scene_name": "hospital_bo10",
+          "target_selector": "ARC_LENGTH_INTERPOLATED"
+        },
+        "problems": [],
+        "isaac_launched": false,
+        "production_label_consumed": false
+      }
+    },
+    "shared_configuration_differs_only_in": [
+      "target_selector"
+    ]
+  },
+  "OUTPUT_PRODUCER_REACHABILITY": {
+    "verdict": "PASS",
+    "definition": "declared + producer resolves + bound to a lifecycle stage + reachable from the authorised entry point + demonstrated invocation in rehearsal + valid ordering + valid multiplicity",
+    "supersedes": "the Manifest V2 definition, which was 'every output has an importable callable'. That label is not reused, because its semantics changed"
+  },
+  "negative_controls": {
+    "verdict": "PASS",
+    "results": {
+      "missing_call": {
+        "DETECTED": true,
+        "expected_kind": "PRODUCER_UNREACHABLE_FROM_ENTRYPOINT",
+        "kinds": [
+          "LIFECYCLE_INCOMPLETE",
+          "PRODUCER_UNREACHABLE_FROM_ENTRYPOINT"
+        ],
+        "names_the_intended_kind": true,
+        "detail": "status is declared, resolves and binds to SCIENTIFIC_EVIDENCE_WRITTEN, and was never invoked"
+      },
+      "defined_but_never_called": {
+        "DETECTED": true,
+        "structural_verdict": "FAIL",
+        "unbound_outputs": [
+          "never_called_probe"
+        ],
+        "rehearsal_status": "LIFECYCLE_INCOMPLETE",
+        "names_the_intended_kind": true
+      },
+      "wrong_order": {
+        "DETECTED": true,
+        "kinds": [
+          "STAGE_OUT_OF_ORDER"
+        ],
+        "names_the_intended_kind": true
+      },
+      "duplicate_call": {
+        "DETECTED": true,
+        "kinds": [
+          "PRODUCER_MULTIPLICITY_VIOLATION",
+          "STAGE_OUT_OF_ORDER"
+        ],
+        "names_the_intended_kind": true,
+        "counts": {
+          "pre_capture": 1,
+          "trajectory_dir": 1,
+          "result": 2,
+          "trace": 1,
+          "status": 1,
+          "post_capture": 1
+        }
+      },
+      "early_return": {
+        "DETECTED": true,
+        "status": "LIFECYCLE_INCOMPLETE",
+        "kinds": [
+          "LIFECYCLE_INCOMPLETE",
+          "PRODUCER_UNREACHABLE_FROM_ENTRYPOINT"
+        ],
+        "names_the_intended_kind": true
+      },
+      "structured_refusal": {
+        "DETECTED": true,
+        "refusal": {
+          "stage": "run_episode",
+          "reason": "injected rehearsal failure"
+        },
+        "escaped_exception": false,
+        "verdict_is_structured": true
+      },
+      "exception_during_refusal_handling": {
+        "DETECTED": true,
+        "refusal": {
+          "stage": "EPISODE_FINISHED",
+          "reason": "unhandled RuntimeError: simulated adapter fault that is not a LifecycleRefused",
+          "escaped_exception": "true"
+        },
+        "recorded_rather_than_raised": true,
+        "escaped_exception_flagged": true
+      },
+      "unknown_mode": {
+        "DETECTED": true,
+        "refusal": {
+          "stage": "<entry>",
+          "reason": "unknown mode 'PRODUCTION?'"
+        }
+      }
+    },
+    "why_these_shapes": "defects here have clustered in negative-space code: refusal handlers, unreachable dependencies, early returns and partial outputs, none of which happy-path execution exercises"
+  },
+  "readiness_levels": {
+    "LEVEL_1_COMPONENT_RESOLUTION": "PASS",
+    "LEVEL_2_ENTRYPOINT_REACHABILITY": "PASS",
+    "LEVEL_3_NON_ISAAC_LIFECYCLE_REHEARSAL": "PASS",
+    "LEVEL_4_CURRENT_PREFLIGHT_AND_ENVIRONMENT": "ESTABLISHED_AT_MANIFEST_FREEZE",
+    "LEVEL_5_REAL_RUNTIME_ATTEMPT": "NOT_ESTABLISHED",
+    "why_level_5_is_separate": "no rehearsal can establish that Isaac launches, that the Hospital asset loads, that rendering works, or that the collector completes. Only an actual attempt can"
+  },
+  "no_production_labels_used": true,
+  "isaac_launched": false,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "LIFECYCLE_REACHABILITY": "PASS"
+}

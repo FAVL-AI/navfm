@@ -1,0 +1,277 @@
+{
+  "check": "VENDOR_ACQUISITION_PROVENANCE",
+  "artifact_semantics": "ACQUISITION_ONLY_NOT_EXTRACTED_NOT_SELECTED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-17T23:19:03.591758+00:00",
+  "repository_head": "7d980108e7a2cc4ceae7ff57284a71ec6f8911a9",
+  "official_source": {
+    "tutorial": "https://www.yahboom.net/study/ROSMASTER-M3PRO",
+    "github": "https://github.com/YahboomTechnology/ROSMASTER-M3PRO",
+    "code_folder_id": "1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw",
+    "model_folder_id": "1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS",
+    "folder_caveat": "a Drive folder is mutable and identifies no fixed content. It is provenance context; the archive SHA-256 is the identity"
+  },
+  "artefacts": [
+    {
+      "present": true,
+      "absolute_path": "/home/favl/Downloads/ROSMASTER M3 PRO-Code.zip",
+      "original_filename": "ROSMASTER M3 PRO-Code.zip",
+      "byte_size": 1298282193,
+      "inode": 48607055,
+      "filesystem_mtime": "2026-09-17T22:57:59.251143+00:00",
+      "filesystem_birth_time": "2026-09-17 23:56:43.724327742 +0100",
+      "file_type": "Zip archive data, at least v1.0 to extract, compression method=store",
+      "mime_type": "application/zip",
+      "sha256": "7f9083d301fef50633445272505e9acb561a4b6abe362dd946d7deaaf4caff0f",
+      "sha512": "7cca39e03d0a5ba6735f64297089d4208d261aa27c25e0cf54d1ca7996c5589ad0f9024cafae6f96c80ab88872ef5e3f38ea517479d670e2ec70d3a39911fd01",
+      "official_source_context": {
+        "tutorial": "https://www.yahboom.net/study/ROSMASTER-M3PRO",
+        "github": "https://github.com/YahboomTechnology/ROSMASTER-M3PRO",
+        "code_folder_id": "1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw",
+        "model_folder_id": "1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS",
+        "folder_caveat": "a Drive folder is mutable and identifies no fixed content. It is provenance context; the archive SHA-256 is the identity",
+        "container": "1.Code",
+        "folder_id": "1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw"
+      },
+      "source_role": "vendor code package",
+      "source_association_confidence": "REPORTED_BY_USER",
+      "acquired_at": "NOT_RECORDED",
+      "acquired_at_note": "no human acquisition timestamp was recorded at download time. The filesystem birth time is measured and is not promoted to acquisition truth",
+      "provenance_observed_at": "2026-09-17T23:19:03.591758+00:00",
+      "archive_format": "ZIP",
+      "member_count": 1758,
+      "inventory_digest": "2e4abbaef6d63aa70e6c1d03b68600395c33cc3b269095b3027f181bbab0110c",
+      "integrity_verdict": "PASS",
+      "integrity_method": "unzip -t (non-extracting)",
+      "absolute_path_entries": [],
+      "traversal_entries": [],
+      "duplicate_member_names": 0,
+      "encrypted_members": "NOT_DETECTED",
+      "urdf_members": [],
+      "xacro_member_count": 0,
+      "mesh_member_count": 0,
+      "yahboomcar_description_member_count": 0,
+      "package_xml_members": [
+        "opencv/package.xml"
+      ],
+      "nested_archive_count": 7,
+      "carries_own_git_history": false,
+      "licence_candidate_members": [
+        "dify/dify-1.11.1/LICENSE"
+      ],
+      "licence_members_read": [
+        {
+          "member": "dify/dify-1.11.1/LICENSE",
+          "byte_size": 1801,
+          "sha256": "232cf91474932d5110ed304e53b6b742a58463857c571fae803fdf2ac36d7bb3",
+          "first_line": "# Open Source License"
+        }
+      ],
+      "package_declared_licences": {
+        "opencv/package.xml": "TODO"
+      },
+      "extracted": false,
+      "moved_or_renamed": false,
+      "authoritative_apparatus_selected": false
+    },
+    {
+      "present": true,
+      "absolute_path": "/home/favl/Downloads/ROSMASTER-M3Pro.x_t",
+      "original_filename": "ROSMASTER-M3Pro.x_t",
+      "byte_size": 189763420,
+      "inode": 48607096,
+      "filesystem_mtime": "2026-09-17T22:57:27.136222+00:00",
+      "filesystem_birth_time": "2026-09-17 23:57:10.519262291 +0100",
+      "file_type": "ASCII text",
+      "mime_type": "text/plain",
+      "sha256": "e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee",
+      "sha512": "05d3a4d3ffb121f82876f483b9ba7ceaf5532e0c9b93bff16912e03def33cfbf613f4416935ff9b6d339ca1ac70bae533a1919eae4817fe38657ce8c2e6dc0bb",
+      "official_source_context": {
+        "tutorial": "https://www.yahboom.net/study/ROSMASTER-M3PRO",
+        "github": "https://github.com/YahboomTechnology/ROSMASTER-M3PRO",
+        "code_folder_id": "1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw",
+        "model_folder_id": "1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS",
+        "folder_caveat": "a Drive folder is mutable and identifies no fixed content. It is provenance context; the archive SHA-256 is the identity",
+        "container": "4.3D_Model_File",
+        "folder_id": "1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS"
+      },
+      "source_role": "vendor CAD model",
+      "source_association_confidence": "REPORTED_BY_USER",
+      "acquired_at": "NOT_RECORDED",
+      "acquired_at_note": "no human acquisition timestamp was recorded at download time. The filesystem birth time is measured and is not promoted to acquisition truth",
+      "provenance_observed_at": "2026-09-17T23:19:03.591758+00:00",
+      "archive_format": "NOT_AN_ARCHIVE",
+      "cad_format": "PARASOLID_TRANSMIT_X_T",
+      "header_signature_present": true,
+      "header_sample": [
+        "**ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz**************************",
+        "**PARASOLID !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~0123456789**************************",
+        "**PART1;",
+        "MC=AMD64;"
+      ],
+      "geometry_parsed": false,
+      "converted": false,
+      "note": "identified from a header sample only. No geometry was parsed and no STEP/STL/USD was produced",
+      "licence_candidate_members": [],
+      "licence_note": "no licence may be inferred from CAD content",
+      "extracted": false,
+      "moved_or_renamed": false,
+      "authoritative_apparatus_selected": false
+    },
+    {
+      "present": true,
+      "absolute_path": "/home/favl/Downloads/ros2_ws.zip",
+      "original_filename": "ros2_ws.zip",
+      "byte_size": 36100902,
+      "inode": 48607034,
+      "filesystem_mtime": "2026-09-17T22:56:35.205348+00:00",
+      "filesystem_birth_time": "2026-09-17 23:56:32.804354434 +0100",
+      "file_type": "Zip archive data, at least v1.0 to extract, compression method=store",
+      "mime_type": "application/zip",
+      "sha256": "0c3e33aa2a551caba424aba88199496d46b0a0f32b56587e0bbfabc10cb16619",
+      "sha512": "f67d6f75fbeb4d5a02aedc17ef796fe4ff189ed5d7d9858d4b975fa132c717cac3fbe72679df50de46722fadec863a6fe3d22b1f3389f9f170c823823674b7a2",
+      "official_source_context": {
+        "tutorial": "https://www.yahboom.net/study/ROSMASTER-M3PRO",
+        "github": "https://github.com/YahboomTechnology/ROSMASTER-M3PRO",
+        "code_folder_id": "1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw",
+        "model_folder_id": "1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS",
+        "folder_caveat": "a Drive folder is mutable and identifies no fixed content. It is provenance context; the archive SHA-256 is the identity",
+        "container": "UNCONFIRMED",
+        "folder_id": null
+      },
+      "source_role": "CANDIDATE_VENDOR_ARTEFACT",
+      "source_association_confidence": "UNCONFIRMED",
+      "acquired_at": "NOT_RECORDED",
+      "acquired_at_note": "no human acquisition timestamp was recorded at download time. The filesystem birth time is measured and is not promoted to acquisition truth",
+      "provenance_observed_at": "2026-09-17T23:19:03.591758+00:00",
+      "archive_format": "ZIP",
+      "member_count": 534,
+      "inventory_digest": "8bbf79224002a97db2eb029eb281e7f4ecab9a686b025ae5f1384ce0806db164",
+      "integrity_verdict": "PASS",
+      "integrity_method": "unzip -t (non-extracting)",
+      "absolute_path_entries": [],
+      "traversal_entries": [],
+      "duplicate_member_names": 0,
+      "encrypted_members": "NOT_DETECTED",
+      "urdf_members": [
+        "ros2_ws/src/myrobot/urdf/demo01_base.urdf",
+        "ros2_ws/src/yahboomcar_description/urdf/Muto.urdf",
+        "ros2_ws/src/yahboomcar_description/urdf/Muto_robot1.urdf",
+        "ros2_ws/src/yahboomcar_description/urdf/Muto_robot2.urdf"
+      ],
+      "xacro_member_count": 0,
+      "mesh_member_count": 22,
+      "yahboomcar_description_member_count": 45,
+      "package_xml_members": [
+        "ros2_ws/src/learning_dds/package.xml",
+        "ros2_ws/src/learning_time/package.xml",
+        "ros2_ws/src/learn_launch/package.xml",
+        "ros2_ws/src/myrobot/package.xml",
+        "ros2_ws/src/pkg_action/package.xml",
+        "ros2_ws/src/pkg_helloworld_cpp/package.xml",
+        "ros2_ws/src/pkg_helloworld_py/package.xml",
+        "ros2_ws/src/pkg_interfaces/package.xml",
+        "ros2_ws/src/pkg_metapackage/package.xml",
+        "ros2_ws/src/pkg_param/package.xml",
+        "ros2_ws/src/pkg_service/package.xml",
+        "ros2_ws/src/pkg_tf/package.xml",
+        "ros2_ws/src/pkg_topic/package.xml",
+        "ros2_ws/src/yahboomcar_description/package.xml"
+      ],
+      "nested_archive_count": 0,
+      "carries_own_git_history": true,
+      "licence_candidate_members": [
+        "ros2_ws/LICENSE"
+      ],
+      "licence_members_read": [
+        {
+          "member": "ros2_ws/LICENSE",
+          "byte_size": 10353,
+          "sha256": "9bf4e882bdd75e8d10fc788c53d0a787ef0f59cead1fe1f0878c240896fc8610",
+          "first_line": "Apache License"
+        }
+      ],
+      "package_declared_licences": {
+        "ros2_ws/src/learning_dds/package.xml": "TODO: License declaration",
+        "ros2_ws/src/learning_time/package.xml": "TODO: License declaration",
+        "ros2_ws/src/learn_launch/package.xml": "TODO: License declaration",
+        "ros2_ws/src/myrobot/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_action/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_helloworld_cpp/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_helloworld_py/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_interfaces/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_metapackage/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_param/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_service/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_tf/package.xml": "TODO: License declaration",
+        "ros2_ws/src/pkg_topic/package.xml": "TODO: License declaration",
+        "ros2_ws/src/yahboomcar_description/package.xml": "TODO: License declaration"
+      },
+      "extracted": false,
+      "moved_or_renamed": false,
+      "authoritative_apparatus_selected": false
+    }
+  ],
+  "immutability": {
+    "checks": [
+      {
+        "original_filename": "ROSMASTER M3 PRO-Code.zip",
+        "sha256_before": "7f9083d301fef50633445272505e9acb561a4b6abe362dd946d7deaaf4caff0f",
+        "sha256_after": "7f9083d301fef50633445272505e9acb561a4b6abe362dd946d7deaaf4caff0f",
+        "unchanged": true
+      },
+      {
+        "original_filename": "ROSMASTER-M3Pro.x_t",
+        "sha256_before": "e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee",
+        "sha256_after": "e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee",
+        "unchanged": true
+      },
+      {
+        "original_filename": "ros2_ws.zip",
+        "sha256_before": "0c3e33aa2a551caba424aba88199496d46b0a0f32b56587e0bbfabc10cb16619",
+        "sha256_after": "0c3e33aa2a551caba424aba88199496d46b0a0f32b56587e0bbfabc10cb16619",
+        "unchanged": true
+      }
+    ],
+    "ALL_UNCHANGED": true
+  },
+  "LICENCE_ADJUDICATION": {
+    "LICENCE_STATUS": "AMBIGUOUS",
+    "workspace_root_licence": {
+      "member": "ros2_ws/LICENSE",
+      "byte_size": 10353,
+      "sha256": "9bf4e882bdd75e8d10fc788c53d0a787ef0f59cead1fe1f0878c240896fc8610",
+      "first_line": "Apache License"
+    },
+    "package_declarations_unfilled": {
+      "opencv/package.xml": "TODO",
+      "ros2_ws/src/learning_dds/package.xml": "TODO: License declaration",
+      "ros2_ws/src/learning_time/package.xml": "TODO: License declaration",
+      "ros2_ws/src/learn_launch/package.xml": "TODO: License declaration",
+      "ros2_ws/src/myrobot/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_action/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_helloworld_cpp/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_helloworld_py/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_interfaces/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_metapackage/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_param/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_service/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_tf/package.xml": "TODO: License declaration",
+      "ros2_ws/src/pkg_topic/package.xml": "TODO: License declaration",
+      "ros2_ws/src/yahboomcar_description/package.xml": "TODO: License declaration"
+    },
+    "reasoning": "the workspace root carries an Apache-2.0 text, and every package.xml in that workspace -- including yahboomcar_description's -- still carries the unfilled `ros2 pkg create` placeholder. A permissive licence at the root alongside fourteen packages declaring TODO does not establish a grant for the package the apparatus would depend on",
+    "VENDOR_PACKAGE_REDISTRIBUTION": "NOT_AUTHORISED",
+    "consequence": "the vendor archives are not committed into this repository. Provenance is carried by source context, archive SHA-256, inventory digest and reproducible acquisition instructions"
+  },
+  "FINDING_DESCRIPTION_LOCATION": "yahboomcar_description is inside ros2_ws.zip and absent from ROSMASTER M3 PRO-Code.zip, which contains no URDF at all. The archive expected to carry the description does not, and the one that does was the candidate held as unconfirmed. Nothing is selected on this basis",
+  "AUTHORITATIVE_VENDOR_SOURCE": "ACQUIRED_NOT_YET_EXTRACTED",
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "NOT_SELECTED",
+  "PHYSICAL_CAMERA_EXTRINSIC": "NOT_MEASURED",
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0
+}

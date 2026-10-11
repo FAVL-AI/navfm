@@ -42,7 +42,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -51,6 +50,7 @@ from typing import Any
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
+from navfm.evidence import emit_evidence  # noqa: E402
 from navfm.measurement import Liveness, MeasurementEnvelope, not_run  # noqa: E402
 
 OUT = REPO / "gates" / "scenes"
@@ -541,9 +541,10 @@ def main() -> int:
 
 
 def _emit(record: dict[str, Any], envelopes: list[MeasurementEnvelope], scene_id: str) -> None:
+    """Persist and prove it landed. A bare write cannot fail loudly (FL-019)."""
     record["measurements"] = [e.to_json() for e in envelopes]
-    OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / f"scene_visibility_{scene_id}.json").write_text(json.dumps(record, indent=2) + "\n")
+    emit_evidence(OUT / f"scene_visibility_{scene_id}.json", record,
+                  required_keys=("check", "verdict", "measurements"))
 
 
 if __name__ == "__main__":

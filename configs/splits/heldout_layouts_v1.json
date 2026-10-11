@@ -1,0 +1,1761 @@
+{
+ "name": "heldout_layouts_v1",
+ "frozen": "2026-10-09",
+ "sealed": true,
+ "status": "FROZEN_SPECIFICATION; NOT COLLECTED; NOT SCORED",
+ "realises": "configs/splits/arrival_split_v2.json held_out groups",
+ "split_v2_sha256": "f09cb892a6ade892a0fc67943c91a41dbbf3a4c2aea98d33aeda67a3e9458fef",
+ "generator": "scripts/make_heldout_layouts_v1.py",
+ "generator_sha256": "1a56040a2ce8f1d6751b14f231c994b49d0e1d745e3ff46a534238e37712ac19",
+ "scene_layouts_sha256": "4bbd49d88098261ed88be1603a2295fc73e212f8e7d39280557637fb9c80cb15",
+ "design": "explicit boxes, never scene_index % 5; new palettes, obstacles and end-wall landmarks. Route starts (x=1.0) and lengths (2.15-2.22 m) are matched to training. The final approach (lateral offset 0.6-0.7 m from the start line, heading +x, ending at x=2.9) is near training endpoints such as straight_run_0001 (2.8, 0.25, heading 0) and layout7-9 behavior4 (2.8, 0.20-0.28, heading -12 deg) but at larger offsets; held-out therefore tests unseen scenes with a modestly shifted final pose, not novel route shapes.",
+ "residual_resemblance": "obstacles are plain boxes like the training Obstacle; lighting is the shared normal-light Sun 1500 / Dome 800",
+ "policy_clearance_note": "teacher body clearance >= 0.46 m on every route except group E (0.348 m to the central Cabinet); a policy deviating ~0.1-0.2 m toward a central obstacle (groups A, C, E) can contact it, which scores as a collision episode",
+ "reserved_scene_indices": [
+  40,
+  41,
+  42,
+  43,
+  44,
+  45
+ ],
+ "ray_cast_limit": "goal_view is a planar ray-cast for boxes rising >=0.3 m; valid for these box scenes only",
+ "protocol": {
+  "teacher_speed_m_s": 0.2,
+  "teacher_max_steps": 360,
+  "policy_max_v_m_s": 0.1,
+  "policy_max_steps": 600,
+  "control_hz": 12.0,
+  "arrival_radius_m": 0.5,
+  "min_endpoint_separation_m": 1.0,
+  "clearance_requirement_m": 0.34,
+  "min_goal_landmark_fraction": 0.3,
+  "unseal_slots": {
+   "teacher_goal_traversal": 1,
+   "policy_episode_run": 4,
+   "goal_swap_control": 2
+  },
+  "unseal_slot_reason": "one teacher traversal for goal frames; policy runs for at most four pre-declared checkpoints; goal-swap control for two of them",
+  "contact_scoring": "any robot contact with a non-floor fixture prim marks the episode a collision episode; completion requires a correct stop and no contact"
+ },
+ "analysis_plan": {
+  "unit_of_analysis": "route (12 routes in 6 scene groups); episodes are nested within routes",
+  "episodes_per_route": 1,
+  "primary_endpoint": "completion: correct stop within arrival radius and no contact",
+  "secondary_endpoints": [
+   "arrival: any frame within arrival radius",
+   "correct stop, wrong stop (>radius), collision episode, timeout"
+  ],
+  "goal_blind_nulls": "always-left and always-right policies would complete about 6/12 because each group pairs a left and a right goal",
+  "decision_rule": "a checkpoint is called competent on held-out only if completion >= 10/12 (one-sided exact binomial against the goal-blind p = 0.5: P(X >= 10) = 0.019); below that the result is reported as not established",
+  "goal_swap_control": "each route run with its partner route's goal image (teacher final frame of the partner); goal-conditioning is supported only if the episode ends nearer the partner goal than the route's own goal in >= 10/12 routes and completion against the route's own goal is <= 2/12",
+  "retry_rule": "a run that attempted no episode (collector refusal or crash before the first episode) does not consume its slot; one such retry per role, recorded in the ledger; any run that attempted an episode is final and reported",
+  "post_render_check": "before scoring, the image distance between the two goal photographs of a group must exceed the distance between repeated renders of one goal; otherwise the group is excluded and reported",
+  "reporting": "counts with route denominators per checkpoint; Wilson 95% intervals; per-group table; paired route-level differences between checkpoints",
+  "null_baseline": "straight-line drive from the start never comes within the arrival radius (recorded per route; in groups A, C, E it collides with the central obstacle)",
+  "interpretation_limit": "descriptive engineering evidence; with 12 routes a Wilson interval spans about +/-0.25 and 6 groups cannot estimate between-group variance; not confirmatory of any scientific claim"
+ },
+ "verification": {
+  "a_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 135,
+   "teacher_final_pose": [
+    2.7845,
+    0.6572,
+    -0.0562
+   ],
+   "polyline_clearance_m": 0.475,
+   "teacher_body_clearance_m": 0.481,
+   "goal_photo_pose": [
+    2.9,
+    0.65,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.523,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.554,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.65
+  },
+  "a_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 135,
+   "teacher_final_pose": [
+    2.7845,
+    -0.6572,
+    0.0562
+   ],
+   "polyline_clearance_m": 0.475,
+   "teacher_body_clearance_m": 0.481,
+   "goal_photo_pose": [
+    2.9,
+    -0.65,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.431,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.462,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.65
+  },
+  "heldout_layout_A": {
+   "goal_photo_separation_m": 1.3
+  },
+  "b_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    0.8066,
+    -0.0529
+   ],
+   "polyline_clearance_m": 0.525,
+   "teacher_body_clearance_m": 0.509,
+   "goal_photo_pose": [
+    2.9,
+    0.8,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.554,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.569,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "b_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    -0.4066,
+    0.0529
+   ],
+   "polyline_clearance_m": 1.312,
+   "teacher_body_clearance_m": 1.334,
+   "goal_photo_pose": [
+    2.9,
+    -0.4,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.477,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.492,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "heldout_layout_B": {
+   "goal_photo_separation_m": 1.2
+  },
+  "c_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 137,
+   "teacher_final_pose": [
+    2.7821,
+    0.7076,
+    -0.0576
+   ],
+   "polyline_clearance_m": 0.472,
+   "teacher_body_clearance_m": 0.461,
+   "goal_photo_pose": [
+    2.9,
+    0.7,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.523,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.508,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.7
+  },
+  "c_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 137,
+   "teacher_final_pose": [
+    2.7821,
+    -0.7076,
+    0.0576
+   ],
+   "polyline_clearance_m": 0.472,
+   "teacher_body_clearance_m": 0.461,
+   "goal_photo_pose": [
+    2.9,
+    -0.7,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.4,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.415,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.7
+  },
+  "heldout_layout_C": {
+   "goal_photo_separation_m": 1.4
+  },
+  "d_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    0.4066,
+    -0.0529
+   ],
+   "polyline_clearance_m": 1.131,
+   "teacher_body_clearance_m": 1.154,
+   "goal_photo_pose": [
+    2.9,
+    0.4,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.554,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.569,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "d_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    -0.8066,
+    0.0529
+   ],
+   "polyline_clearance_m": 0.475,
+   "teacher_body_clearance_m": 0.459,
+   "goal_photo_pose": [
+    2.9,
+    -0.8,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.477,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.492,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "heldout_layout_D": {
+   "goal_photo_separation_m": 1.2
+  },
+  "e_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    0.6066,
+    -0.0529
+   ],
+   "polyline_clearance_m": 0.354,
+   "teacher_body_clearance_m": 0.348,
+   "goal_photo_pose": [
+    2.9,
+    0.6,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.554,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.569,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "e_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 133,
+   "teacher_final_pose": [
+    2.7866,
+    -0.6066,
+    0.0529
+   ],
+   "polyline_clearance_m": 0.354,
+   "teacher_body_clearance_m": 0.348,
+   "goal_photo_pose": [
+    2.9,
+    -0.6,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.477,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.492,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.6
+  },
+  "heldout_layout_E": {
+   "goal_photo_separation_m": 1.2
+  },
+  "f_route_0": {
+   "teacher_reached": true,
+   "teacher_steps": 135,
+   "teacher_final_pose": [
+    2.7845,
+    0.5572,
+    -0.0562
+   ],
+   "polyline_clearance_m": 0.8,
+   "teacher_body_clearance_m": 0.783,
+   "goal_photo_pose": [
+    2.9,
+    0.55,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.523,
+   "goal_view_dominant": "PanelEndL",
+   "final_frame_landmark_fraction": 0.554,
+   "final_frame_view_dominant": "PanelEndL",
+   "straight_line_null_min_goal_distance_m": 0.65
+  },
+  "f_route_1": {
+   "teacher_reached": true,
+   "teacher_steps": 135,
+   "teacher_final_pose": [
+    2.7845,
+    -0.7572,
+    0.0562
+   ],
+   "polyline_clearance_m": 1.15,
+   "teacher_body_clearance_m": 1.133,
+   "goal_photo_pose": [
+    2.9,
+    -0.75,
+    0.0
+   ],
+   "goal_landmark_fraction": 0.431,
+   "goal_view_dominant": "PanelEndR",
+   "final_frame_landmark_fraction": 0.462,
+   "final_frame_view_dominant": "PanelEndR",
+   "straight_line_null_min_goal_distance_m": 0.65
+  },
+  "heldout_layout_F": {
+   "goal_photo_separation_m": 1.3
+  }
+ },
+ "forbidden_uses": [
+  "recovery or training collection",
+  "stop-rule or threshold calibration",
+  "checkpoint selection",
+  "controller tuning",
+  "pilot, debugging or diagnostic runs"
+ ],
+ "enforcement": "collect, admission, replay, summary, decompose and audit scripts refuse routes matching a sealed id, reserved scene index or route geometry (Hausdorff <0.1 m) and scenes reproducing half of a sealed scene's boxes; collection needs --unseal-heldout LEDGER_DIR --unseal-role ROLE within the declared slots, all routes, and the frozen protocol budget; scoring needs the collection recorded in that ledger",
+ "unseal_rule": "only after the confirmatory protocol is frozen and red-teamed and the evaluated checkpoint sha256 values are declared in configs/splits/heldout_layouts_v1_checkpoints.json; one teacher_goal_traversal run first; policy goals are that run's final recorded frames (goal_source.json sources must lie in it; goal-swap uses the partner route's frame); the pinned ledger ~/navfm-runtime-evidence/heldout_layouts_v1-ledger is archived under gates/ after each run",
+ "accepted_residuals": "the seal guards against accidental use by project tooling, not a determined operator: deleting the ledger, shifting a route by >= 0.1 m, a uniform colour tint, copying fewer than half of a scene's boxes, or reusing only the final approach pose evade it",
+ "scenes": [
+  {
+   "scene_index": 40,
+   "group": "heldout_layout_A",
+   "wall_half_width": 1.6,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.62,
+      0.55,
+      0.42
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      1.6,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.85,
+      0.82,
+      0.6
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -1.6,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.85,
+      0.82,
+      0.6
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      3.2,
+      2.8
+     ],
+     "color": [
+      0.8,
+      0.78,
+      0.58
+     ],
+     "collision": true
+    },
+    {
+     "name": "Crate",
+     "xyz": [
+      2.6,
+      0.0,
+      0.3
+     ],
+     "size": [
+      0.35,
+      0.35,
+      0.6
+     ],
+     "color": [
+      0.45,
+      0.25,
+      0.1
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.65,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.8,
+      0.1,
+      0.1
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -1.0,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.1,
+      0.6,
+      0.2
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.65,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.1,
+      0.6,
+      0.2
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.30000000000000004,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.1,
+      0.6,
+      0.2
+     ],
+     "collision": false
+    }
+   ]
+  },
+  {
+   "scene_index": 41,
+   "group": "heldout_layout_B",
+   "wall_half_width": 2.2,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.15,
+      0.42,
+      0.2
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      2.2,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.45,
+      0.5,
+      0.62
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -2.2,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.45,
+      0.5,
+      0.62
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      4.4,
+      2.8
+     ],
+     "color": [
+      0.3,
+      0.3,
+      0.75
+     ],
+     "collision": true
+    },
+    {
+     "name": "Drum",
+     "xyz": [
+      2.5,
+      1.55,
+      0.35
+     ],
+     "size": [
+      0.45,
+      0.45,
+      0.7
+     ],
+     "color": [
+      0.85,
+      0.65,
+      0.1
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.8,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.5,
+      0.05
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -0.75,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.55,
+      0.1,
+      0.65
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.39999999999999997,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.55,
+      0.1,
+      0.65
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.04999999999999999,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.55,
+      0.1,
+      0.65
+     ],
+     "collision": false
+    }
+   ]
+  },
+  {
+   "scene_index": 42,
+   "group": "heldout_layout_C",
+   "wall_half_width": 1.8,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.55,
+      0.33,
+      0.27
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      1.8,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.9,
+      0.9,
+      0.88
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -1.8,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.9,
+      0.9,
+      0.88
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      3.6,
+      2.8
+     ],
+     "color": [
+      0.88,
+      0.88,
+      0.86
+     ],
+     "collision": true
+    },
+    {
+     "name": "Pillar",
+     "xyz": [
+      2.5,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.3,
+      0.3,
+      2.8
+     ],
+     "color": [
+      0.3,
+      0.1,
+      0.35
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.7,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.1,
+      0.1,
+      0.45
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -1.0499999999999998,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.85,
+      0.2
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.7,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.85,
+      0.2
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.35,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.85,
+      0.2
+     ],
+     "collision": false
+    }
+   ]
+  },
+  {
+   "scene_index": 43,
+   "group": "heldout_layout_D",
+   "wall_half_width": 1.9,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.12,
+      0.1,
+      0.1
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      1.9,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.7,
+      0.55,
+      0.5
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -1.9,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.7,
+      0.55,
+      0.5
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      3.8,
+      2.8
+     ],
+     "color": [
+      0.65,
+      0.5,
+      0.45
+     ],
+     "collision": true
+    },
+    {
+     "name": "Bench",
+     "xyz": [
+      2.4,
+      -1.45,
+      0.25
+     ],
+     "size": [
+      0.9,
+      0.35,
+      0.5
+     ],
+     "color": [
+      0.2,
+      0.45,
+      0.3
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.39999999999999997,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.05,
+      0.55,
+      0.6
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -1.15,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.9,
+      0.3,
+      0.55
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.8,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.9,
+      0.3,
+      0.55
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.45000000000000007,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.9,
+      0.3,
+      0.55
+     ],
+     "collision": false
+    }
+   ]
+  },
+  {
+   "scene_index": 44,
+   "group": "heldout_layout_E",
+   "wall_half_width": 1.7,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.7,
+      0.55,
+      0.2
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      1.7,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.4,
+      0.75,
+      0.4
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -1.7,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.4,
+      0.75,
+      0.4
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      3.4,
+      2.8
+     ],
+     "color": [
+      0.5,
+      0.6,
+      0.45
+     ],
+     "collision": true
+    },
+    {
+     "name": "Cabinet",
+     "xyz": [
+      2.5,
+      0.0,
+      0.5
+     ],
+     "size": [
+      0.35,
+      0.45,
+      1.0
+     ],
+     "color": [
+      0.85,
+      0.2,
+      0.4
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.6,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.15,
+      0.15,
+      0.15
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -0.95,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.95,
+      0.3
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.6,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.95,
+      0.3
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.25,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.95,
+      0.3
+     ],
+     "collision": false
+    }
+   ]
+  },
+  {
+   "scene_index": 45,
+   "group": "heldout_layout_F",
+   "wall_half_width": 2.0,
+   "boxes": [
+    {
+     "name": "Floor",
+     "xyz": [
+      2.0,
+      0.0,
+      -0.05
+     ],
+     "size": [
+      8.0,
+      8.0,
+      0.1
+     ],
+     "color": [
+      0.4,
+      0.22,
+      0.2
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallLeft",
+     "xyz": [
+      2.0,
+      2.0,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.8,
+      0.75,
+      0.85
+     ],
+     "collision": true
+    },
+    {
+     "name": "WallRight",
+     "xyz": [
+      2.0,
+      -2.0,
+      1.4
+     ],
+     "size": [
+      6.0,
+      0.2,
+      2.8
+     ],
+     "color": [
+      0.8,
+      0.75,
+      0.85
+     ],
+     "collision": true
+    },
+    {
+     "name": "EndWall",
+     "xyz": [
+      5.0,
+      0.0,
+      1.4
+     ],
+     "size": [
+      0.2,
+      4.0,
+      2.8
+     ],
+     "color": [
+      0.95,
+      0.8,
+      0.95
+     ],
+     "collision": true
+    },
+    {
+     "name": "Planter",
+     "xyz": [
+      2.3,
+      1.6,
+      0.3
+     ],
+     "size": [
+      0.5,
+      0.5,
+      0.6
+     ],
+     "color": [
+      0.25,
+      0.55,
+      0.15
+     ],
+     "collision": true
+    },
+    {
+     "name": "PanelEndL",
+     "xyz": [
+      4.885,
+      0.55,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.9,
+      1.2
+     ],
+     "color": [
+      0.2,
+      0.35,
+      0.9
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR0",
+     "xyz": [
+      4.885,
+      -1.1,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.55,
+      0.45
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR1",
+     "xyz": [
+      4.885,
+      -0.75,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.55,
+      0.45
+     ],
+     "collision": false
+    },
+    {
+     "name": "PanelEndR2",
+     "xyz": [
+      4.885,
+      -0.4,
+      1.0
+     ],
+     "size": [
+      0.03,
+      0.2,
+      1.2
+     ],
+     "color": [
+      0.95,
+      0.55,
+      0.45
+     ],
+     "collision": false
+    }
+   ]
+  }
+ ],
+ "routes": [
+  {
+   "id": "a_route_0",
+   "scene": "heldout_layout_A",
+   "split": "heldout",
+   "route_id": "heldout_layout_A_route_0",
+   "scene_index": 40,
+   "seed": 4080,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     0.65
+    ],
+    [
+     2.9,
+     0.65
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.6
+  },
+  {
+   "id": "a_route_1",
+   "scene": "heldout_layout_A",
+   "split": "heldout",
+   "route_id": "heldout_layout_A_route_1",
+   "scene_index": 40,
+   "seed": 4081,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     -0.65
+    ],
+    [
+     2.9,
+     -0.65
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.6
+  },
+  {
+   "id": "b_route_0",
+   "scene": "heldout_layout_B",
+   "split": "heldout",
+   "route_id": "heldout_layout_B_route_0",
+   "scene_index": 41,
+   "seed": 4082,
+   "waypoints": [
+    [
+     1.0,
+     0.2
+    ],
+    [
+     1.6,
+     0.2
+    ],
+    [
+     2.2,
+     0.8
+    ],
+    [
+     2.9,
+     0.8
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 2.2
+  },
+  {
+   "id": "b_route_1",
+   "scene": "heldout_layout_B",
+   "split": "heldout",
+   "route_id": "heldout_layout_B_route_1",
+   "scene_index": 41,
+   "seed": 4083,
+   "waypoints": [
+    [
+     1.0,
+     0.2
+    ],
+    [
+     1.6,
+     0.2
+    ],
+    [
+     2.2,
+     -0.39999999999999997
+    ],
+    [
+     2.9,
+     -0.39999999999999997
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 2.2
+  },
+  {
+   "id": "c_route_0",
+   "scene": "heldout_layout_C",
+   "split": "heldout",
+   "route_id": "heldout_layout_C_route_0",
+   "scene_index": 42,
+   "seed": 4084,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     0.7
+    ],
+    [
+     2.9,
+     0.7
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.8
+  },
+  {
+   "id": "c_route_1",
+   "scene": "heldout_layout_C",
+   "split": "heldout",
+   "route_id": "heldout_layout_C_route_1",
+   "scene_index": 42,
+   "seed": 4085,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     -0.7
+    ],
+    [
+     2.9,
+     -0.7
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.8
+  },
+  {
+   "id": "d_route_0",
+   "scene": "heldout_layout_D",
+   "split": "heldout",
+   "route_id": "heldout_layout_D_route_0",
+   "scene_index": 43,
+   "seed": 4086,
+   "waypoints": [
+    [
+     1.0,
+     -0.2
+    ],
+    [
+     1.6,
+     -0.2
+    ],
+    [
+     2.2,
+     0.39999999999999997
+    ],
+    [
+     2.9,
+     0.39999999999999997
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.9
+  },
+  {
+   "id": "d_route_1",
+   "scene": "heldout_layout_D",
+   "split": "heldout",
+   "route_id": "heldout_layout_D_route_1",
+   "scene_index": 43,
+   "seed": 4087,
+   "waypoints": [
+    [
+     1.0,
+     -0.2
+    ],
+    [
+     1.6,
+     -0.2
+    ],
+    [
+     2.2,
+     -0.8
+    ],
+    [
+     2.9,
+     -0.8
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.9
+  },
+  {
+   "id": "e_route_0",
+   "scene": "heldout_layout_E",
+   "split": "heldout",
+   "route_id": "heldout_layout_E_route_0",
+   "scene_index": 44,
+   "seed": 4088,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     0.6
+    ],
+    [
+     2.9,
+     0.6
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.7
+  },
+  {
+   "id": "e_route_1",
+   "scene": "heldout_layout_E",
+   "split": "heldout",
+   "route_id": "heldout_layout_E_route_1",
+   "scene_index": 44,
+   "seed": 4089,
+   "waypoints": [
+    [
+     1.0,
+     0.0
+    ],
+    [
+     1.6,
+     0.0
+    ],
+    [
+     2.2,
+     -0.6
+    ],
+    [
+     2.9,
+     -0.6
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 1.7
+  },
+  {
+   "id": "f_route_0",
+   "scene": "heldout_layout_F",
+   "split": "heldout",
+   "route_id": "heldout_layout_F_route_0",
+   "scene_index": 45,
+   "seed": 4090,
+   "waypoints": [
+    [
+     1.0,
+     -0.1
+    ],
+    [
+     1.6,
+     -0.1
+    ],
+    [
+     2.2,
+     0.55
+    ],
+    [
+     2.9,
+     0.55
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 2.0
+  },
+  {
+   "id": "f_route_1",
+   "scene": "heldout_layout_F",
+   "split": "heldout",
+   "route_id": "heldout_layout_F_route_1",
+   "scene_index": 45,
+   "seed": 4091,
+   "waypoints": [
+    [
+     1.0,
+     -0.1
+    ],
+    [
+     1.6,
+     -0.1
+    ],
+    [
+     2.2,
+     -0.75
+    ],
+    [
+     2.9,
+     -0.75
+    ]
+   ],
+   "speed": 0.2,
+   "start_yaw": 0.0,
+   "wall_half_width": 2.0
+  }
+ ],
+ "content_digest": "703d751c6c16ba37f01187188ee76fb42b8e01da545f049ff4ab985d7a1b7a9a"
+}

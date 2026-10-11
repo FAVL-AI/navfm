@@ -48,3 +48,10 @@ assets/robots/**/*_physics.usd
 
 # Ledger visuals are rebuilt from the recorded runs by scripts/publish_ledger.py
 gates/kpi/visuals/*.gif
+
+# Development governance: the system is committed, two of its files are not.
+# settings.local.json is the per-developer permission allowlist and carries
+# absolute home paths; execution-preflight.md is rewritten by the SessionStart
+# hook on every session, so tracking it would dirty the worktree at each start.
+.claude/settings.local.json
+.claude/execution-preflight.md

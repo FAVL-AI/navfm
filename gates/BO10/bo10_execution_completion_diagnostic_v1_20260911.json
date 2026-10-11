@@ -1,0 +1,77 @@
+{
+  "check": "BO10_EXECUTION_COMPLETION_DIAGNOSTIC_V1",
+  "artifact_semantics": "PREREGISTRATION_CREATED_NOT_EXECUTED",
+  "author": "Frank Asante Van Laarhoven",
+  "frozen_at": "2026-09-11T00:00:00+00:00",
+  "git_head_at_freeze": "e3b1d7845262b8b097ba786ca93ac466a64dac2c",
+  "execution_status": "NOT EXECUTED. Created alongside the compatibility package and deliberately not run in that tranche.",
+  "research_question": "Why did an otherwise admissible trajectory terminate at max_steps 1.679 m from its sealed goal?",
+  "observations_motivating_it": {
+    "planned_path_length_m": 23.252,
+    "realised_path_length_m": 25.707,
+    "termination": "max_steps",
+    "final_distance_to_goal_m": 1.679,
+    "goal_tolerance_m": 0.2,
+    "planned_turn_magnitudes_deg": [
+      50.71,
+      -58.39,
+      94.42
+    ],
+    "realised_turn_magnitudes_deg": [
+      131.27,
+      -101.92,
+      166.32
+    ],
+    "note": "these are observations from ONE trajectory and support no causal claim"
+  },
+  "decomposition_before_any_measurement": {
+    "Q1": {
+      "question": "was the route geometrically reachable inside the frozen step budget?",
+      "method": "compute the minimum step count the route requires at the frozen cruise velocity and control rate, independent of the controller",
+      "if_NO": "experimental-budget/configuration issue -- the budget is structurally insufficient",
+      "if_YES": "proceed to Q2"
+    },
+    "Q2": {
+      "question": "did realised execution waste distance or time?",
+      "method": "compare realised arc length and step count against the Q1 minimum",
+      "if_YES": "controller, tracking or route-interface issue",
+      "if_NO": "proceed to Q3"
+    },
+    "Q3": {
+      "question": "was terminal approach or stop logic wrong?",
+      "method": "inspect the last portion of the trajectory: distance-to-goal over time, lookahead behaviour near the terminal waypoint, and whether the robot approached and then departed"
+    },
+    "why_this_order": "Q1 is answerable without the controller and can settle the question on its own. Asking about controller behaviour first would risk diagnosing a controller for failing to complete a route that no controller could complete in the budget."
+  },
+  "hypotheses_none_selected": [
+    "controller tracking / lookahead",
+    "turn overshoot",
+    "speed profile",
+    "route geometry",
+    "max_steps budget",
+    "terminal approach behaviour",
+    "route-controller interaction",
+    "kinematic integration",
+    "mixed causes"
+  ],
+  "forbidden_in_this_diagnostic": [
+    "choosing a cause from the single existing trajectory",
+    "increasing max_steps before Q1 distinguishes the two defects it could indicate",
+    "tuning pure pursuit",
+    "modifying, recollecting or overwriting hospital_bo10_run_00001",
+    "changing the frozen admission contract retrospectively"
+  ],
+  "max_steps_note": "reaching max_steps does not by itself show the budget is too low. A route that should have completed inside the budget but wasted it, and a budget structurally insufficient for the route, are different defects that look identical from the current evidence. Q1 distinguishes them.",
+  "data_available_without_recollection": {
+    "trajectory": "runs/bo10/hospital_bo10_run_00001",
+    "contents": [
+      "1200 recorded poses",
+      "1200 images",
+      "recorded yaw",
+      "planned route reproducible by replaying the seeded generator",
+      "kinematic drive step outcomes"
+    ],
+    "note": "Q1 and Q2 are answerable from this trajectory and its route without any new collection"
+  },
+  "relationship_to_bo03_bo10": "does not reopen them. BO-03 compatibility and BO-10 collection are closed for their stated purposes, and NAVIGATION_TASK_COMPLETION was already recorded as FAIL/NOT ACHIEVED. This diagnostic explains a recorded failure; it does not revise a claim."
+}

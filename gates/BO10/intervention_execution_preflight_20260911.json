@@ -1,0 +1,175 @@
+{
+  "check": "TERMINAL_APPROACH_INTERVENTION_V1_EXECUTION_PREFLIGHT",
+  "artifact_semantics": "PREFLIGHT_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-11T17:40:48.197586+00:00",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "preregistration": {
+    "path": "gates/BO10/terminal_approach_intervention_v1_20260911.json",
+    "sha256": "941e44da35c8a4145fa4154d1c82deb53da2ef76f04d649789946cc2c3825b4d",
+    "version": "V1"
+  },
+  "gates": {
+    "PREREG_CANONICAL_PAYLOAD_GUARD": {
+      "verdict": "PASS",
+      "controls": "8/8",
+      "artefact": "gates/BO10/prereg_immutability_guard_20260911.json",
+      "sha256": "5cbb6f1449000340ecdc35a23de5ef295e5baa4852985c6af2194a11aba53c93"
+    },
+    "TARGET_SELECTION_CONTROLS": {
+      "verdict": "PASS",
+      "controls": "19/19",
+      "artefact": "gates/BO10/target_selection_controls_20260911.json",
+      "sha256": "fc6da5030a30e957dfe16877d2aad92dc19f643aee49f64acf68650835ee0f37"
+    }
+  },
+  "amendment": {
+    "path": "gates/BO10/environment_identity_v2_20260911.json",
+    "sha256": "d664388997dcec8014a1fd598bf315a0ef76cad4d9e679b0a248c67650d4a16a",
+    "amendment_id": "TAI-V1-A2-ENV",
+    "version": "V2"
+  },
+  "design_freeze": {
+    "frozen_at_utc": "2026-09-11T09:33:12.858582+00:00",
+    "outcomes_observable_at_freeze": false,
+    "basis": {
+      "source_artifact": "gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_commit_path": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3:gates/BO10/intervention_execution_preflight_20260911.json",
+      "source_sha256": "13c6b583f9fac24af1436033f510254be49123daf923eddd140f34d194f05dbf",
+      "repository_commit": "0ac2fb04a6ff42103d39bb27faa1bfecad1ff7a3",
+      "isaac_execution_available_at_freeze": false,
+      "evidence_type": "historical_frozen_assertion",
+      "supporting_values_read_from_the_frozen_source": {
+        "ISAAC_SLOT": "BLOCKED",
+        "cuda_available": false,
+        "cuda_device_count": 0,
+        "cuda_error_code": "804",
+        "loaded_kernel_module_version": "580.173.02",
+        "userspace_driver_version": "580.178.04",
+        "EXECUTION_STATUS": "NOT_RUN",
+        "arms_executed": 0
+      },
+      "corroboration_first_boot_after_freeze_utc": "2026-09-11T17:27:36+00:00",
+      "not_derived_from": "any live reading of the machine. Re-running the preflight, repairing the GPU, or rebooting cannot change this block"
+    },
+    "STATUS": "VERIFIED",
+    "read_from": "gates/BO10/environment_identity_v2_20260911.json",
+    "recomputed_by_this_preflight": false
+  },
+  "PROVENANCE_FIELD_REGRESSION_V1": "DEPRECATED_FOR_PROVENANCE_INTERPRETATION",
+  "implementation_difference_audit": {
+    "method": "the class dictionary is inspected directly, so an override cannot be hidden behind a comment or a docstring claim",
+    "control_class": "navfm.control.PurePursuit",
+    "treatment_class": "navfm.collection.interpolated_target.InterpolatedLookaheadPursuit",
+    "treatment_is_subclass_of_control": true,
+    "overridden_attributes": [
+      "target"
+    ],
+    "behavioural_overrides": [
+      "target"
+    ],
+    "added_attributes": [
+      "target_type"
+    ],
+    "inherited_unchanged": [
+      "finished",
+      "step"
+    ],
+    "ONLY_TARGET_SELECTION_DIFFERS": true,
+    "why_that_is_the_criterion": "target() is the smallest component that selects what the tracker steers at. Everything the speed and stop behaviour depend on -- step, finished, the limits, the goal predicate -- is inherited, so a difference between arms cannot come from them",
+    "control_source_unmodified": {
+      "path": "src/navfm/control.py",
+      "sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "note": "arm A runs this file unchanged; the treatment lives in a separate module so the control arm's code is byte-identical to the frozen one"
+    }
+  },
+  "arm_identity_and_order": {
+    "frozen_before_execution": true,
+    "frozen_while_results_were_impossible_to_observe": "DEPRECATED_FOR_PROVENANCE_INTERPRETATION",
+    "frozen_while_results_were_impossible_to_observe_superseded_by": "design_freeze, sourced from gates/BO10/environment_identity_v2_20260911.json",
+    "see": "PROVENANCE_FIELD_REGRESSION_V1",
+    "execution_order": [
+      "ARM_A_CONTROL",
+      "ARM_B_TREATMENT"
+    ],
+    "order_selection_rule": "control before treatment, fixed by protocol rather than chosen. Order picked after a crash or a suggestive trace is order picked by the experimenter",
+    "retry_rule": "an arm that fails before producing a valid artefact is recorded as RUN_FAILED_NO_ARTEFACT and may be re-run once under the identical frozen configuration. Repeated re-running until a desired outcome appears is forbidden, and any re-run is recorded with its reason",
+    "ARM_A_CONTROL": {
+      "tracker": "navfm.control.PurePursuit",
+      "target_type": "PATH_VERTEX",
+      "source_sha256": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074"
+    },
+    "ARM_B_TREATMENT": {
+      "tracker": "navfm.collection.interpolated_target.InterpolatedLookaheadPursuit",
+      "target_type": "ARC_LENGTH_INTERPOLATED",
+      "source_sha256": "44401986a634ccda792308bfcf8c085be8bf35fe60fbfbea1a3aa42aa6535290"
+    },
+    "shared_configuration_digests": {
+      "src/navfm/control.py": "f5992b60564de9a8928fc1ade70655c882f0b19aae8c48a5d085a4c78fcae074",
+      "src/navfm/isaac/collect.py": "5c5694dc178eef47f4e5593673270bb1ffb327997e4ea648914658355b4811c5",
+      "src/navfm/isaac/robot.py": "7fb07f94f4dd817ba5fdec1caf893fcc20b7e60d6d573392e0d96867d402fb7f",
+      "src/navfm/isaac/app.py": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "src/navfm/collection/kinematic_drive.py": "c947a68669d0ebaec1a050f2e62c6e1795ed437eabd2b765749c5f8f9e58c647",
+      "src/navfm/collection/route_projection.py": "8bb15fd50bcb0872486bd7b546225939883503db8fd157a6cb7b234c83be3a8a",
+      "src/navfm/planning.py": "b785e67a8d048e515f68da069313951ffed1e60746718cf3312362bba61e79de",
+      "src/navfm/kinematics.py": "160e3a5ebe7e2cd2eabbbc2fe4aab8134603ed2ed2e8739f3f816e9aa2d0dec3"
+    },
+    "frozen_parameters_from_the_preregistration": {
+      "lookahead_m": 0.45,
+      "goal_tol_m": 0.2,
+      "note": "read from the preregistration, not restated independently"
+    },
+    "reset_requirements_between_arms": [
+      "the same scene asset and digest",
+      "the same start position and yaw",
+      "the same camera transform",
+      "the same frozen route polyline",
+      "the same sealed goal",
+      "a freshly constructed tracker, so no target index carries over",
+      "no residual base or articulation velocity",
+      "the same seed",
+      "no trajectory history from the previous arm"
+    ],
+    "arm_b_must_not_start_from_arm_a_terminal_state": true
+  },
+  "live_execution_readiness": {
+    "recomputed_every_run": true,
+    "isaac_slot": "AVAILABLE",
+    "driver_version": "580.178.04",
+    "kernel_module_version": "580.178.04",
+    "kernel_userspace_mismatch": false,
+    "cuda_available": true,
+    "may_not_be_used_to_infer": "anything about what was true at the design freeze. Readiness is a fact about now; provenance is a fact about then"
+  },
+  "isaac_slot": {
+    "interpreter": "/home/favl/miniforge3/envs/isaac/bin/python",
+    "nvidia_smi_returncode": 0,
+    "nvidia_smi_stderr": [
+      "Fri Sep 11 18:40:48 2026       ",
+      "+-----------------------------------------------------------------------------------------+"
+    ],
+    "kernel_module_version": "580.178.04",
+    "userspace_libcuda": [
+      "libcuda.so.580.178.04"
+    ],
+    "userspace_version": "580.178.04",
+    "kernel_userspace_mismatch": false,
+    "cuda_probe": {
+      "torch": "2.7.0+cu128",
+      "available": true,
+      "count": 1
+    },
+    "cuda_error_code": "none",
+    "ISAAC_SLOT": "AVAILABLE"
+  },
+  "SOFTWARE_PREFLIGHT": "PASS",
+  "EXECUTION_GATE": "OPEN",
+  "blocking_reason": null,
+  "classification_of_the_arms": "NOT_RUN. Neither arm has been attempted. This is the absence of an experiment, not a failed one, and it must never be recorded as a result",
+  "milestone_unaffected": {
+    "BO-03_REAL_DATA_COMPATIBILITY": "COMPLETE",
+    "BO-10_HOSPITAL_COLLECTION": "COMPLETE_FOR_COMPATIBILITY_PURPOSE",
+    "run_00001": "IMMUTABLE and excluded from the two-arm comparison"
+  }
+}

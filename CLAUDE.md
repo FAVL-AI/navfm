@@ -14,20 +14,130 @@ matrix headed for a CoRL/ICRA/RA-L submission. Read, in order:
 `docs/EXPERIMENTS.md` → `PREREGISTRATION.md`. `docs/METHODOLOGY.md` is the
 deep reference; `paper/draft.md` is the paper.
 
-## Environment on this machine (facts, do not "fix" them)
+## Canonical identity (frozen 2026-09-04)
 
-- Ubuntu 22.04, RTX 4080 SUPER 16 GB, ROS 2 Humble.
-- **Isaac Sim 5.1.0 is installed. Do NOT upgrade to 6.x.** 5.1 is the stable
-  Isaac Lab pairing (Python 3.11). The codebase supports both namespaces; on
-  this machine the 5.x path is PRIMARY: `isaacsim.core.api.SimulationContext`,
-  `isaacsim.core.prims.Articulation`, `isaacsim.sensors.camera.Camera`.
-  The 6.0 experimental APIs (`isaacsim.core.experimental.*`,
-  `isaacsim.sensors.experimental.rtx`) are the fallback branch here, not the
-  default. If you touch `src/navfm/isaac/`, keep both branches working and
-  make the 5.1 branch the tested one.
+| | |
+|---|---|
+| Repository | `FAVL-AI/navfm` — https://github.com/FAVL-AI/navfm |
+| Organisation | `FAVL-AI` |
+| Author | Frank (Asante) Van Laarhoven |
+| Role | Doctoral Researcher / PhD Candidate |
+| Affiliation | Newcastle University |
+| Academic email | `F.Van-Laarhoven2@newcastle.ac.uk` — correspondence and papers |
+| Git identity | `frankleroyvan@gmail.com` — commits only, see rule 1 below |
+
+The remote is `FAVL-AI/navfm` and never a personal account. Verify before every
+push, because the failure is quiet and the repair afterwards is history
+rewriting:
+
+    git remote -v                 # git@github.com:FAVL-AI/navfm.git
+    gh repo view FAVL-AI/navfm
+
+**The repository is private.** A tool that lacks authorisation for the
+organisation reports 404 rather than 403, so "not found" from a third-party
+integration is the expected symptom of a missing installation — not evidence
+that the repository is absent, misnamed, or has moved. Diagnose the integration
+before touching the remote.
+
+**`FAVL-Engineering-OS` is a separate repository.** It holds the machine-level
+governance and tooling; it is not NavFM, not a mirror of NavFM, and not a
+fallback for it. A push failing there says nothing about this repository, and
+neither one is evidence about the other.
+
+Public-facing authorship is Frank (Asante) Van Laarhoven alone. No AI system is
+recorded as author, contributor or co-author, in commits, code, docs, metadata,
+papers or slides. The tool identifiers this repository's governance layer
+requires — the standing-instructions filename, the `.claude/` configuration
+directory, the `CLAUDE_PROJECT_DIR` environment variable — are technical
+identifiers rather than attribution, which is why `.attribution-allow` lists
+exactly where they may appear and why the guard still refuses every credit
+construction inside those same paths.
+
+## Execution environments (facts, do not "fix" them)
+
+Three environments, and conflating them is how a tranche gets planned against a
+machine that cannot run it. "The repository is configured for Isaac Sim 5.1" is
+not "Isaac Sim is installed on this machine", and only the second one lets you
+report a physics result.
+
+### 1. Development / build host
+
+The ordinary development host does NOT have Isaac Sim installed. On it:
+
+- static repository inspection is allowed;
+- ordinary Python tests may run;
+- CI reproduction may run where dependencies exist;
+- formatting, linting and type checking may run;
+- Isaac Sim / PhysX-dependent harnesses MUST NOT be reported as executed;
+- a missing Isaac runtime is NOT evidence of a physics-test failure -- it is
+  the absence of a test, and the two must never be recorded the same way;
+- physics-dependent results are reported as **NOT RUN**, never as a number.
+
+Two commands settle which host you are on, and they must name the environment,
+because Isaac Sim is pip-installed in a conda env and is invisible from any
+other interpreter:
+
+    ~/miniforge3/envs/isaac/bin/python -c "import isaacsim"   # must import
+    nvidia-smi                                                # must reach the driver
+
+Measured 2026-09-05 on host `favl`: **both SUCCEED**. Isaac Sim 5.1.0.0, 25
+`isaacsim-*` distributions, under `~/miniforge3/envs/isaac` (Python 3.11.15);
+NVIDIA GeForce RTX 4080 SUPER, driver 580.173.02, 16376 MiB. The GPU is
+therefore VERIFIED present, which is an identity check and not a performance
+claim. Method and the earlier 2026-08-07 measurement are in `docs/HARDWARE.md`
+§"Isaac Sim 5.1 — verified invocation".
+
+**Do not conclude absence from the wrong interpreter.** `import isaacsim` fails
+in `~/.venv-train` and in `navfm-ci` by design — the environments are never
+merged — and there are no launcher artefacts (`python.sh`, `~/.local/share/ov/`)
+because this is a pip install, not a launcher bundle. Concluding "Isaac Sim is
+absent" from either observation is a false negative that has now been recorded
+twice: `gates/failures/F-PILOT-1.md`, and again in this file between 2026-09-04
+and 2026-09-06.
+
+So this host CAN execute the Isaac-dependent code: the three frozen harnesses
+(`validate_collision_probe_causality`, `validate_dense_targetability`,
+`validate_physx_footprint_oracle`), the scene audits
+(`audit_office_collision_coverage`, `diagnose_hospital_isolation`) and all of
+`src/navfm/isaac/`. They must still be run from the Isaac interpreter above, and
+under the provenance capture the gate discipline requires. Everything else in
+this section stands: an unexecuted harness is still **NOT RUN**, never a number,
+and static reasoning about what one would return remains weaker evidence than a
+run and must be labelled as such wherever it is recorded.
+
+### 2. GitHub CI
+
+Reproducibility and software gates only: lint, types, the test matrix, the
+upstream compatibility proof, population ownership, the corpus owner job. CI
+being green says nothing about physics and must never be cited as though it
+did.
+
+### 3. Isaac Sim execution machine
+
+A separate machine runs the physics-dependent experiments, on **Isaac Sim
+5.1.0**. Do NOT upgrade the NavFM research environment to 6.x without an
+explicit compatibility and revalidation tranche. 5.1 is the stable Isaac Lab
+pairing (Python 3.11); the codebase supports both namespaces and the 5.x path
+is PRIMARY: `isaacsim.core.api.SimulationContext`,
+`isaacsim.core.prims.Articulation`, `isaacsim.sensors.camera.Camera`. The 6.0
+experimental APIs (`isaacsim.core.experimental.*`,
+`isaacsim.sensors.experimental.rtx`) are the fallback branch, not the default.
+If you touch `src/navfm/isaac/`, keep both branches working and make the 5.1
+branch the tested one.
+
+Only this machine may support a claim requiring real Isaac Sim / PhysX
+execution: the three frozen harnesses, scene collision remeasurement, footprint
+sweeps, and any other Isaac-dependent runtime evidence.
+
+Before accepting any Isaac-dependent result, record: hostname or
+execution-environment identity, repository HEAD, Isaac Sim version, the
+interpreter used, the relevant policy and contract digests, and worktree state.
+A physics number without that provenance is not admissible, because nothing
+distinguishes it from a number produced somewhere else.
+
 - Two virtualenvs, never merged: `~/.venv-train` (Python 3.11, torch cu128,
-  this package + patched upstream) and the Isaac Sim 5.1 Python environment.
-  They exchange only files on disk.
+  this package + patched upstream) and, on the Isaac machine, its 5.1 Python
+  environment. They exchange only files on disk.
 - Upstream reference: `third_party/visualnav-transformer` pinned at commit
   `dca7981`, patched via `scripts/patch_upstream.py` (idempotent, reversible).
   Never edit upstream files directly; extend the patch script instead.
@@ -94,6 +204,24 @@ deep reference; `paper/draft.md` is the paper.
 8. **Don't chase upstream.** The reference repo is unmaintained; treat its
    quirks (documented as findings F1–F11 in `paper/draft.md` §3) as fixed
    facts to reproduce or consciously patch — each patch recorded.
+9. **Causal order for a failed execution.** A failed execution must not be
+   attributed to the controller until the task has first been shown feasible
+   under the frozen route, budget, cadence and motion limits. Diagnose in this
+   order, and do not skip a stage:
+
+       feasibility → execution efficiency → terminal/stop behaviour
+                   → controller / root-cause attribution
+
+   The reason is that the first two stages can settle the question without the
+   controller, and the failure they rule out is invisible afterwards: a run that
+   exhausts its budget looks identical whether the budget was too small for the
+   route or the execution wasted a budget that was ample. Attributing blame
+   before separating those two diagnoses a controller for a task no controller
+   could have completed. Each stage may only claim what its own evidence
+   supports — a stage that locates *where* steps or distance were lost has not
+   thereby established *why*, and must say so. Worked instance:
+   `gates/BO10/bo10_execution_completion_diagnostic_v1_20260911.json` (frozen
+   decomposition) with `q1_budget_feasibility_20260911.json` (stage 1).
 
 ## Adversarial review policy (when to red-team, and when not to)
 
@@ -178,7 +306,8 @@ entrypoints that close the path from a dataset to a paper table:
 `navfm.eval.offline`, `navfm.train.run`, `scripts/make_tables.py`. Evidence in
 `gates/M1/`; `bash gates/M1/reproduce.sh` re-runs the whole chain on CPU.
 
-Implemented but NEVER EXECUTED (no Isaac Sim in the build environment):
+Implemented but NEVER EXECUTED (not for want of a runtime — Isaac Sim 5.1.0.0
+runs on this host; these modules simply have not been run yet):
 `navfm/isaac/{app,robot,randomize,collect}.py` — expect real API friction on
 first 5.1 run; fix in the fallback branch.
 
@@ -194,3 +323,6 @@ Not yet implemented:
 - NoMaD offline evaluation: `upstream.build_model` raises for it on purpose.
   `_compute_losses_nomad` needs a diffusion sampling loop, so E1.3 is its own
   entrypoint rather than a `--model nomad` flag on `eval.offline`.
+
+@.claude/governance-router.md
+@.claude/project-router.md

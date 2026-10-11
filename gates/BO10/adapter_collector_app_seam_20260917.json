@@ -1,0 +1,150 @@
+{
+  "check": "ADAPTER_COLLECTOR_APP_SEAM",
+  "artifact_semantics": "SEAM_VALIDATION_ONLY_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T07:00:52.669752+00:00",
+  "repository_head": "73653c26178cff36d50904ccb73a56314bccb94c",
+  "attempt_001_record": {
+    "path": "gates/BO10/arm_a_attempt_001_20260917.json",
+    "sha256": "df83831673a923a4f8452c3fca9b59124694b677d53a3e81d531fc05c5525c4a"
+  },
+  "sources": {
+    "src/navfm/isaac/collect.py": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+    "src/navfm/arm_lifecycle.py": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29",
+    "src/navfm/arm_environment_guard.py": "69c7602a86dcfede6cff7f75f3b0b53c6a13450762bcc0033fc87e2dc564dc4b",
+    "scripts/run_terminal_approach_intervention.py": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05"
+  },
+  "dataflow": {
+    "collector_constructor_parameters": [
+      "self",
+      "out_dir",
+      "collect",
+      "sim",
+      "robot_config",
+      "randomization",
+      "scope",
+      "occupancy_backend",
+      "isaac_app"
+    ],
+    "collector_accepts_a_live_app": true,
+    "adapter_passes_the_app": true,
+    "open_scene_uses_a_bare_assert": false,
+    "open_scene_raises_structured": true,
+    "run_enforces_single_owner": true,
+    "old_dataflow": "IsaacRuntimeAdapter.initialise created and entered an IsaacApp. build_collector then called Collector(out_dir, collect_config, self._app.config, M3PRO) -- correct for the `sim: SimConfig` parameter, and not an application. Collector.run is the only place that assigned self._app, via `with IsaacApp(self.sim) as app`, and the adapter never calls run: an arm is one episode under a frozen route, not a collection loop. So load_scene reached Collector.open_scene with self._app still None",
+    "corrected_dataflow": "build_collector passes isaac_app=self._app, handing over the object it owns rather than describing it. open_scene refuses with a named category instead of a bare assert, and run refuses to create a second application when one was handed in",
+    "why_every_earlier_gate_passed": "every earlier readiness level was measured through the rehearsal adapter, whose build_collector returns a dictionary and asserts nothing. The seam between two individually correct components was never exercised"
+  },
+  "proof": {
+    "same_object": {
+      "PASS": true,
+      "detail": "the collector holds the adapter's application, not a copy",
+      "adapter_reported_binding": true
+    },
+    "single_owner": {
+      "PASS": true,
+      "applications_constructed": 1
+    },
+    "configuration_preserved": {
+      "PASS": true,
+      "detail": "the repair added the app without trading the config away"
+    },
+    "scene_load_reachability": {
+      "PASS": true,
+      "open_stage_calls": 1,
+      "scene_identifier_passed": "omniverse://example/hospital.usd",
+      "detail": "the call Attempt 1 never made, proven without fetching the remote asset"
+    },
+    "negative_controls": {
+      "verdict": "PASS",
+      "results": {
+        "config_only_is_refused": {
+          "DETECTED": true,
+          "category": "ISAAC_APP_NOT_BOUND_TO_COLLECTOR",
+          "reason_is_non_empty": true,
+          "detail": "Attempt 1 reproduced exactly: a correct SimConfig and no application. This is the control that had to exist"
+        },
+        "wrong_application_is_visible": {
+          "DETECTED": true,
+          "detail": "adapter owns one application and the collector holds another"
+        },
+        "duplicate_application_is_refused": {
+          "DETECTED": true,
+          "category": "ISAAC_APP_SINGLE_OWNER_VIOLATION"
+        },
+        "missing_runtime_is_refused_at_its_stage": {
+          "DETECTED": true,
+          "stage": "COLLECTOR_READY"
+        },
+        "scene_before_collector_is_refused": {
+          "DETECTED": true,
+          "stage": "SCENE_READY",
+          "detail": "the order is collector, then scene -- never the reverse"
+        },
+        "bare_assertion_removed_from_the_boundary": {
+          "DETECTED": true,
+          "detail": "an assertion carries no category and, without a message, no reason either. Attempt 1 recorded an empty one"
+        }
+      }
+    },
+    "ADAPTER_COLLECTOR_APP_SEAM": "REPAIRED_AND_VALIDATED"
+  },
+  "HEAD_CONTENT_COHERENCE": {
+    "HEAD_CONTENT_COHERENCE": "PASS",
+    "repository_head": "73653c26178cff36d50904ccb73a56314bccb94c",
+    "sources": [
+      {
+        "path": "src/navfm/isaac/collect.py",
+        "recorded_sha256": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+        "sha256_at_head": "e3b9a04fa5c1ee40e35a14049d60665f94e8b720160f58d6d015d1ee939ff4b0",
+        "matches": true
+      },
+      {
+        "path": "src/navfm/arm_lifecycle.py",
+        "recorded_sha256": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29",
+        "sha256_at_head": "dd3dc058ce9cd841ad41b8bcd2dc89f4744d5541f5bf4ed49c9c5d6ad4318a29",
+        "matches": true
+      },
+      {
+        "path": "src/navfm/arm_environment_guard.py",
+        "recorded_sha256": "69c7602a86dcfede6cff7f75f3b0b53c6a13450762bcc0033fc87e2dc564dc4b",
+        "sha256_at_head": "69c7602a86dcfede6cff7f75f3b0b53c6a13450762bcc0033fc87e2dc564dc4b",
+        "matches": true
+      },
+      {
+        "path": "scripts/run_terminal_approach_intervention.py",
+        "recorded_sha256": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05",
+        "sha256_at_head": "a84ae3b694f006fc3f6b5191320e7c58640254af2bdd7c271fb4011ac511dd05",
+        "matches": true
+      }
+    ],
+    "rule": "evidence recording a repository head must be emitted after the commit that carries the sources it describes, or it names a head that cannot reproduce it"
+  },
+  "ARM_A_BEHAVIOURAL_REGRESSION": {
+    "artefact": {
+      "path": "gates/BO10/collector_wiring_regression_20260912.json",
+      "sha256": "2252c1c45ebc9eed7e50b1b048a95b077723f4a5e0c5ef0a7b35e98925fc6d64"
+    },
+    "verdict": "PASS",
+    "traces": {
+      "frozen_route_polyline": {
+        "verdict": "PASS",
+        "steps_evaluated": 1200,
+        "mismatches": 0
+      },
+      "frozen_route_resampled_0m25": {
+        "verdict": "PASS",
+        "steps_evaluated": 1200,
+        "mismatches": 0
+      }
+    },
+    "CLAIM": "the seam repair moved a runtime object and changed no navigation mathematics"
+  },
+  "INVARIANT": "configuration compatibility is not live-runtime object propagation. An adapter holding an IsaacApp and a collector holding the correct SimConfig is not a collector holding the adapter's IsaacApp",
+  "CLAIM_BOUNDARY": "this establishes that the application propagates and that scene loading is reachable. It does NOT establish that the Hospital asset loads, that the render loop runs, or that the collector completes an episode. No remote asset was fetched",
+  "isaac_launched": false,
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_ATTEMPT_002": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

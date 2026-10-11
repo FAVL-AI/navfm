@@ -1,0 +1,248 @@
+{
+  "check": "REAL_TRAJECTORY_LOADER_COMPATIBILITY",
+  "artifact_semantics": "DATASET_FORMAT_COMPATIBILITY_ONLY",
+  "timestamp_utc": "2026-09-10T05:25:21.367138+00:00",
+  "trajectory": "runs/bo10/hospital_bo10_run_00001",
+  "claim_boundary": "establishes that the pinned reference loader accepts this trajectory and yields training samples. NOT reproduction, NOT training performance, NOT a physical-robot claim.",
+  "frameworks_reported_separately": true,
+  "provenance": {
+    "python": "3.11.15",
+    "torch": "2.11.0+cu128",
+    "cuda_runtime": "12.8",
+    "interpreter": "/home/favl/.venv-train/bin/python"
+  },
+  "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
+  "upstream_root": "/home/favl/projects/navfm/third_party/visualnav-transformer",
+  "trajectory_identity": {
+    "frames": 1200,
+    "images": 1200,
+    "traj_data_sha256": "40b9890d96973b3b910e218cfd0e64fd5453e881822ebcce62bd7da99b30ef09",
+    "first_image_sha256": "201c7d1b101dce8632779c73563871e4a7ed35b73ed8bb61fb3e219d072a4e7f",
+    "last_image_sha256": "88a7c019fee131499398a5a42dac21bc05e302adee49042b34e8bd9383bd8dda",
+    "positions_finite": true,
+    "yaws_finite": true
+  },
+  "splits": {
+    "root": "/tmp/_bo10_splits",
+    "per_model_split_folders": true,
+    "borrowed_dataset_name": "recon",
+    "why": "the reference loader keys metric_waypoint_spacing off a name in its own data_config.yaml; 'recon' is borrowed for that lookup and implies no claim about RECON data"
+  },
+  "frameworks": {
+    "gnm": {
+      "model": "gnm",
+      "context_size": 5,
+      "len_traj_pred": 5,
+      "split_folder": "/tmp/_bo10_splits/gnm/recon/train",
+      "dataset_built": true,
+      "samples": 1190,
+      "getitem_executed": true,
+      "tuple_length": 7,
+      "sample_structure": [
+        {
+          "type": "tensor",
+          "shape": [
+            18,
+            64,
+            85
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            3,
+            64,
+            85
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            5,
+            4
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.float32"
+        }
+      ],
+      "action_shape": [
+        5,
+        4
+      ],
+      "action_finite": true,
+      "learn_angle_dims": "dx,dy,cos,sin",
+      "distance_dtype": "torch.int64",
+      "distance_value": 9.0,
+      "synthetic_fallback_used": false,
+      "result": "PASS"
+    },
+    "vint": {
+      "model": "vint",
+      "context_size": 5,
+      "len_traj_pred": 5,
+      "split_folder": "/tmp/_bo10_splits/vint/recon/train",
+      "dataset_built": true,
+      "samples": 1190,
+      "getitem_executed": true,
+      "tuple_length": 7,
+      "sample_structure": [
+        {
+          "type": "tensor",
+          "shape": [
+            18,
+            64,
+            85
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            3,
+            64,
+            85
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            5,
+            4
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.float32"
+        }
+      ],
+      "action_shape": [
+        5,
+        4
+      ],
+      "action_finite": true,
+      "learn_angle_dims": "dx,dy,cos,sin",
+      "distance_dtype": "torch.int64",
+      "distance_value": 10.0,
+      "synthetic_fallback_used": false,
+      "result": "PASS"
+    },
+    "nomad": {
+      "model": "nomad",
+      "context_size": 3,
+      "len_traj_pred": 8,
+      "split_folder": "/tmp/_bo10_splits/nomad/recon/train",
+      "dataset_built": true,
+      "samples": 1189,
+      "getitem_executed": true,
+      "tuple_length": 7,
+      "sample_structure": [
+        {
+          "type": "tensor",
+          "shape": [
+            12,
+            96,
+            96
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            3,
+            96,
+            96
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            8,
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [
+            2
+          ],
+          "dtype": "torch.float32"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.int64"
+        },
+        {
+          "type": "tensor",
+          "shape": [],
+          "dtype": "torch.float32"
+        }
+      ],
+      "action_shape": [
+        8,
+        2
+      ],
+      "action_finite": true,
+      "learn_angle_dims": "dx,dy",
+      "distance_dtype": "torch.int64",
+      "distance_value": 14.0,
+      "synthetic_fallback_used": false,
+      "result": "PASS"
+    }
+  },
+  "GNM_REAL_HOSPITAL_COMPATIBILITY": "PASS",
+  "VINT_REAL_HOSPITAL_COMPATIBILITY": "PASS",
+  "NOMAD_REAL_HOSPITAL_COMPATIBILITY": "PASS",
+  "all_three_accept": true,
+  "LOADER_COMPATIBILITY": "PASS"
+}

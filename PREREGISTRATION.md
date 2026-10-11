@@ -1328,3 +1328,89 @@ until a later frozen evaluation protocol supplies their required inputs: a
 defined episode set with start and goal poses, a stopping criterion, final poses
 in a verified metric coordinate system, and for SPL the shortest feasible path
 length alongside the executed path length.
+
+## Amendment 6 — 2026-09-17 — navigation arm pose, frozen before any pose exists
+
+Pre-results, and deliberately pre-*values*: no candidate joint vector has been
+commanded, no candidate camera imagery has been viewed, and the physical arm has
+not been moved. What is frozen here is the rule for choosing the pose, not the
+pose.
+
+### Why this needs preregistering at all
+
+The ROSMASTER M3 Pro carries its depth camera on the 6-DOF manipulator rather
+than on the chassis. The transform from `base_link` to the camera is therefore
+not a constant of the apparatus but a function of the arm configuration, and
+camera height and pitch are what determine where floor, horizon and obstacles
+fall in frame. For image-goal navigation that makes the arm pose part of the
+sensing instrument.
+
+A pose chosen after seeing which one produced better navigation would be an
+experimental condition selected on the outcome. The protection is ordering:
+the pose is fixed from mechanical criteria, and only then is anything rendered
+through it.
+
+### Selection hierarchy
+
+**Priority 1.** If the authoritative Yahboom source defines a documented
+forward-facing camera or navigation pose appropriate to the installed
+configuration, that pose is used and its provenance recorded.
+
+**Priority 2.** Otherwise one fixed pose is selected against these criteria and
+no others:
+
+- camera nominally forward;
+- central field of view not materially occluded by arm or gripper;
+- all joints inside their limits with margin;
+- statically stable, no self-collision, no cable strain;
+- arm does not materially enlarge the navigation footprint;
+- camera elevated enough for usable forward perception, and not dominated by
+  floor or ceiling;
+- reproducible from reset or home.
+
+### Forbidden selection evidence
+
+GNM, ViNT or NoMaD performance; navigation success or route completion; model
+confidence; stopping behaviour; image similarity; any downstream task score; or
+choosing whichever camera image looks best. Camera height and pitch may not be
+tuned after observing Arm-A behaviour.
+
+### Per-joint tolerance
+
+No numerical tolerance is frozen here, because none has been measured. A guessed
+±1° or ±2° would be a threshold invented to be passed.
+
+The tolerance is derived from at least ten independent reset-and-return cycles,
+recording all six joint readbacks each time, from which per-joint mean, standard
+deviation, min, max and maximum absolute deviation from the reference are
+computed. The rule converting that repeatability and the joint-state resolution
+into a tolerance is fixed before any navigation episode runs.
+
+### Episode admission
+
+Before any production PRE capture, every joint is compared against the frozen
+navigation vector. Any joint outside its frozen tolerance refuses the episode
+rather than recording one under unknown camera geometry. Arm motion during
+navigation is prohibited; movement beyond tolerance during an episode
+invalidates the camera apparatus condition for that episode.
+
+### Camera transform model
+
+`T_base_camera(q) = T_base_arm x FK(q1..q6) x T_mount_camera`
+
+`T_base_arm` and the kinematic chain come from the authoritative description;
+`q1..q6` is the frozen navigation pose; `T_mount_camera` is the fixed physical
+calibration from the mounting link or bracket to the camera datum. Only the last
+of these is a physical measurement, and it is not a chassis-to-camera number.
+
+The camera housing datum, the RGB optical frame identity, and the housing to
+optical correction are recorded separately. Where the optical correction is not
+supported by a datasheet or calibration it is recorded NOT_MEASURED, never
+substituted with zero.
+
+### Status at the time of freezing
+
+    NAVIGATION_ARM_CONFIGURATION = SELECTION_PROTOCOL_FROZEN / VALUES_NOT_ESTABLISHED
+    PER_JOINT_TOLERANCE          = PENDING_REPEATABILITY_MEASUREMENT
+    PHYSICAL_CAMERA_EXTRINSIC    = NOT_MEASURED
+    ARM_MOTION_DURING_NAVIGATION = PROHIBITED

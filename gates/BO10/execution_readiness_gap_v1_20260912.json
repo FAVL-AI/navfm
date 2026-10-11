@@ -1,0 +1,31 @@
+{
+  "check": "EXECUTION_READINESS_GAP_V1",
+  "artifact_semantics": "GOVERNANCE_RECORD_NO_ARM_HAS_RUN",
+  "author": "Frank Asante Van Laarhoven",
+  "timestamp_utc": "2026-09-17T07:00:52.360494+00:00",
+  "classification": "EXECUTION_READINESS_GAP_V1",
+  "what_happened": "the first Arm-A execution authorisation was refused at the pre-Isaac gates and never became an execution",
+  "THIS_IS_NOT_AN_ARM_A_FAILURE": "Arm A never started. Recording this as a failed control arm would leave a reader believing the experiment was attempted and went badly",
+  "blockers": {
+    "A_selector_not_wired_through_the_collector": "selector injection existed in the controller layer but the collector constructed PurePursuit with no target_selector, so no production path could request an arm",
+    "B_no_manifest_driven_runner": "no runner existed that could read EXECUTION_MANIFEST_V1 and produce the exact output artefacts it declared",
+    "C_stale_preflight_payload": "the committed preflight recorded the pre-seam controller hash in three canonical fields, so its scientific payload described a tree that had moved"
+  },
+  "observed_at": {
+    "manifest": "runs/bo10/intervention/execution_manifest.json",
+    "manifest_bound_head": "effcce1ee22e8480a4c43e656e7355e628cadcc5"
+  },
+  "explicitly_did_not_happen": [
+    "no Isaac process was launched",
+    "no Hospital scene was loaded",
+    "no collector was executed",
+    "no PRE_ARM_A was created",
+    "no scientific arm result was produced"
+  ],
+  "methodological_correction": "a valid manifest must establish declaration integrity AND execution-path existence. V1 established the first and not the second, so it was correct on paper and unrunnable at the same time",
+  "manifest_v1_status": "historically frozen and NOT overwritten. Its source HEAD was correctly pinned; its executability assurance was incomplete, and that limitation is recorded here rather than repaired in place",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "ARM_A_EXECUTION": "NOT_STARTED",
+  "ARM_B_EXECUTION": "NOT_STARTED"
+}

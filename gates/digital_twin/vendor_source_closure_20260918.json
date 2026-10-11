@@ -1,0 +1,237 @@
+{
+  "check": "VENDOR_SOURCE_CLOSURE",
+  "artifact_semantics": "SOURCE_DISCOVERY_NO_DESCRIPTION_SELECTED",
+  "author": "Frank Asante Van Laarhoven",
+  "provenance_observed_at": "2026-09-17T23:55:04.187702+00:00",
+  "repository_head": "770c604d49d40b422f556e159ea400812327d862",
+  "acquisition_evidence": {
+    "path": "gates/digital_twin/vendor_acquisition_20260918.json",
+    "sha256": "cea2feca68df77b132f14b63ae385a2599c2ca1e6efb2e246c929a40e06cbd96"
+  },
+  "originals_reverified": true,
+  "extraction": {
+    "staging_root": "/home/favl/Downloads/yahboom/extracted",
+    "content_addressed": true,
+    "inside_repository": false,
+    "ros2_ws_closure": {
+      "root": "/home/favl/Downloads/yahboom/extracted/ros2_ws_0c3e33aa/ros2_ws",
+      "regular_file_count": 151,
+      "directory_count": 196,
+      "symlink_count": 0,
+      "closure_digest": "d224f2e3ea5116fada486be968f23a30a336b7cbdb6433098482787be0b8932c",
+      "digest_basis": "relative path + SHA-256, excluding .git and mtime"
+    }
+  },
+  "EMBEDDED_GIT_IDENTITY": {
+    "present": true,
+    "HEAD": "ref: refs/heads/master",
+    "head_commit": "a283d0ffbc29d3612af54f6e453f70c10074f8b8",
+    "remote_origin": "http://yahboomrdc:3000/Yahboom/ros2_ws.git",
+    "remote_is_first_party": true,
+    "clone_event": "0000000000000000000000000000000000000000 c983dc3a8fc1dc1a62f3adf9cfe050cb1ee24f96 kaiser <yahboom@163.com> 1757122392 +0800\tclone: from http://yahboomrdc:3000/Yahboom/ros2_ws.git",
+    "commit_event": "c983dc3a8fc1dc1a62f3adf9cfe050cb1ee24f96 a283d0ffbc29d3612af54f6e453f70c10074f8b8 kaiser <yahboom@163.com> 1757122502 +0800\tcommit: first commit",
+    "tracked_file_count": 151,
+    "exact_match": 107,
+    "differs_by_line_endings_only": 44,
+    "genuinely_different_or_missing": 0,
+    "EXTRACTED_TREE_MATCHES_EMBEDDED_HEAD": "PASS_MODULO_LINE_ENDINGS",
+    "note": "the archive was not made from a clean checkout in the byte sense: the working tree carries CRLF where the objects hold LF. Every difference is explained by that, and none by content"
+  },
+  "description_candidates": [
+    {
+      "path": "src/myrobot/urdf/demo01_base.urdf",
+      "sha256": "55559ffdbaafde5b7c1ba49b87490ee6bab14196420334d03c8c5895c24f4ec1",
+      "byte_size": 716,
+      "STRICT_XML_PARSE": "PASS",
+      "robot_name": "myrobot",
+      "link_count": 1,
+      "joint_count": 0,
+      "collision_count": 1,
+      "package_references": 0,
+      "unique_package_references": 0,
+      "references_resolvable_in_workspace": 0,
+      "references_missing": 0,
+      "referenced_by": [
+        "src/myrobot/launch/bringup_model.launch.py"
+      ]
+    },
+    {
+      "path": "src/yahboomcar_description/urdf/Muto.urdf",
+      "sha256": "fbfb9edd0a5cf173ef99c4f608eb4583180d4583d56faa18461c11e6a3e00352",
+      "byte_size": 31296,
+      "STRICT_XML_PARSE": "REFUSED",
+      "refusal_category": "UNRESOLVED_DEPENDENCY",
+      "refusal_detail": "44 package:// reference(s) cannot be resolved locally; a source whose geometry is fetched from outside the admitted closure cannot be hashed as a whole",
+      "package_references": 44,
+      "unique_package_references": 22,
+      "references_resolvable_in_workspace": 22,
+      "references_missing": 0,
+      "referenced_by": [
+        "src/yahboomcar_description/launch/display.launch.py"
+      ]
+    },
+    {
+      "path": "src/yahboomcar_description/urdf/Muto_robot1.urdf",
+      "sha256": "4a17916a35dee87be9fe475d48f5bad4876940757c004cb6ac48d94336014975",
+      "byte_size": 31742,
+      "STRICT_XML_PARSE": "REFUSED",
+      "refusal_category": "UNRESOLVED_DEPENDENCY",
+      "refusal_detail": "44 package:// reference(s) cannot be resolved locally; a source whose geometry is fetched from outside the admitted closure cannot be hashed as a whole",
+      "package_references": 44,
+      "unique_package_references": 22,
+      "references_resolvable_in_workspace": 20,
+      "references_missing": 2,
+      "referenced_by": [
+        "src/yahboomcar_description/launch/description_multi_robot1.launch.py"
+      ]
+    },
+    {
+      "path": "src/yahboomcar_description/urdf/Muto_robot2.urdf",
+      "sha256": "6268ac0e69c19b4fe07fc018bef79d2eb1abb03d82405f3b15d3c57ca890c064",
+      "byte_size": 31742,
+      "STRICT_XML_PARSE": "REFUSED",
+      "refusal_category": "UNRESOLVED_DEPENDENCY",
+      "refusal_detail": "44 package:// reference(s) cannot be resolved locally; a source whose geometry is fetched from outside the admitted closure cannot be hashed as a whole",
+      "package_references": 44,
+      "unique_package_references": 22,
+      "references_resolvable_in_workspace": 20,
+      "references_missing": 2,
+      "referenced_by": [
+        "src/yahboomcar_description/launch/description_multi_robot2.launch.py"
+      ]
+    }
+  ],
+  "course_workspace": {
+    "packages": [
+      "learn_launch",
+      "learning_dds",
+      "learning_time",
+      "myrobot",
+      "pkg_action",
+      "pkg_helloworld_cpp",
+      "pkg_helloworld_py",
+      "pkg_interfaces",
+      "pkg_metapackage",
+      "pkg_param",
+      "pkg_service",
+      "pkg_tf",
+      "pkg_topic",
+      "yahboomcar_description"
+    ],
+    "package_count": 14,
+    "production_packages_present": [],
+    "VERDICT": "ROS2_COURSE_WORKSPACE",
+    "reasoning": "fourteen packages, of which thirteen are ROS2 tutorials, and no bringup, navigation or MoveIt package anywhere. The only description package is consumed by an RViz display launch"
+  },
+  "MUTO_MODEL_IDENTITY": {
+    "VERDICT": "B_TUTORIAL_OR_EXAMPLE_CONTENT",
+    "evidence": [
+      "Muto.urdf is referenced only by yahboomcar_description/launch/display.launch.py, an RViz display",
+      "the workspace containing it has no bringup, navigation or MoveIt",
+      "the production stack is a separate nested workspace carrying m3pro_bringup and M3Pro_navigation"
+    ],
+    "not_inferred_from_filename": true,
+    "consequence": "the Muto descriptions are characterised and set aside. They are not the M3 Pro apparatus"
+  },
+  "PRODUCTION_WORKSPACES_LOCATED": [
+    {
+      "nested_archive": "M3Pro_ws-0.0.1.zip",
+      "extracted_from": "ROSMASTER M3 PRO-Code.zip",
+      "board_variant": "orin",
+      "sha256": "f08db69bbdeb1c4639f973382462783d4325ffb823d73e1ddb47670e5af7923b",
+      "byte_size": 19460432,
+      "member_count": 930,
+      "urdf_count": 5,
+      "xacro_count": 0,
+      "mesh_count": 20,
+      "packages": [
+        "",
+        "M3Pro",
+        "M3Pro_KCF",
+        "M3Pro_core",
+        "M3Pro_navigation",
+        "arm_util",
+        "calibration",
+        "ekf_bringup",
+        "interfaces",
+        "largemodel",
+        "largemodel_arm",
+        "m3pro_bringup",
+        "multi_brains",
+        "multi_brains_pre",
+        "patrol",
+        "road_net_route",
+        "ros_robot_app",
+        "slam_mapping",
+        "text_chat",
+        "updatecostmap",
+        "waste_classify",
+        "waste_classify_msg",
+        "yahboom_mapping",
+        "yahboom_multi"
+      ],
+      "analysed": false,
+      "status": "LOCATED_NOT_ANALYSED"
+    },
+    {
+      "nested_archive": "yahboomcar_ws.zip",
+      "extracted_from": "ROSMASTER M3 PRO-Code.zip",
+      "board_variant": "orin",
+      "sha256": "8da310fbfb03714877bed2dea291f3e48fc04d26440a6164d99ca2c72cfd8471",
+      "byte_size": 445633806,
+      "member_count": 1135,
+      "urdf_count": 2,
+      "xacro_count": 6,
+      "mesh_count": 20,
+      "packages": [
+        "",
+        "M3Pro_MoveIt_demo",
+        "M3Pro_config",
+        "M3Pro_demo",
+        "MoveIt_demo",
+        "OrbbecSDK_ROS2",
+        "arm_driver",
+        "arm_interface",
+        "arm_kin",
+        "arm_msgs",
+        "test_config",
+        "test_moveit_config",
+        "yahboom_M3Pro_DepthCam",
+        "yahboom_M3Pro_description",
+        "yahboom_M3Pro_laser",
+        "yahboom_yolov8",
+        "yahboomcar_ctrl",
+        "yahboomcar_mediapipe",
+        "yahboomcar_msgs"
+      ],
+      "analysed": false,
+      "status": "LOCATED_NOT_ANALYSED"
+    }
+  ],
+  "production_note": "nested inside the code archive and split by controller board: an orin/ set and a 'jetson nano, pi' set. The Orin variants match the installed module. Two M3Pro_ws versions exist across boards, 0.0.1 for orin and 0.0.2 for nano/pi, which is itself a discrepancy to resolve before adoption",
+  "PARSER_FINDING": {
+    "observation": "all three Muto descriptions are refused UNRESOLVED_DEPENDENCY for their package:// mesh references",
+    "but": "every unique reference resolves to a file present in the workspace. The refusal is a true statement about the parser's resolver scope, not about the source",
+    "resolution": "a workspace-aware package:// resolver is a capability the parser lacks, and adding one is not loosening it. The parser stays strict"
+  },
+  "LICENCE": {
+    "root_licence": "Apache-2.0 at ros2_ws/LICENSE",
+    "package_declarations": "TODO: License declaration, in all fifteen",
+    "public_github_repository_licence": "none declared",
+    "PACKAGE_LICENCE_CLARITY": "AMBIGUOUS",
+    "VENDOR_SOURCE_REDISTRIBUTION": "NOT_AUTHORISED_PENDING_CLARIFICATION",
+    "analysis_permitted": true,
+    "vendoring_permitted": false
+  },
+  "AUTHORITATIVE_VENDOR_SOURCE": "EXTRACTED_AND_CONTENT_ADDRESSED",
+  "ROBOT_DESCRIPTION_CANDIDATES": "CHARACTERIZED",
+  "AUTHORITATIVE_ROBOT_DESCRIPTION": "NOT_SELECTED",
+  "PHYSICAL_CAMERA_EXTRINSIC": "NOT_MEASURED",
+  "PRODUCTION_M3PRO_USD": "NOT_GENERATED",
+  "SCIENTIFIC_ARM_A_N": 0,
+  "ARM_A_ATTEMPT_003": "NOT_AUTHORISED",
+  "ARM_B_EXECUTION": "NOT_STARTED",
+  "EXECUTION_STATUS": "NOT_RUN",
+  "arms_executed": 0,
+  "CLAIM_BOUNDARY": "this establishes where the descriptions are and what they belong to. It selects nothing, measures no physical quantity, and no vendor source is committed to this repository"
+}
