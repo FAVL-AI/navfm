@@ -9,7 +9,7 @@
     "note": "Historical provisioned measurement for the original 777-node population. Current integration membership was collected separately as recorded in integration_population_update; this metadata does not claim the expanded population passed."
   },
   "required_marker": "upstream",
-  "expected_required_count": 42,
+  "expected_required_count": 43,
   "required_node_ids": [
     "tests/test_compat_harness.py::TestAValidFixturePasses::test_compliant_trajectory_passes_every_data_check",
     "tests/test_engineering_recording.py::test_sidecar_recording_is_consumed_by_pinned_official_loader[gnm]",
@@ -19,6 +19,7 @@
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_contradicting_batch_size_is_refused_by_name",
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_contradicting_population_seed_is_refused",
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_undeclared_model_seed_is_refused",
+    "tests/test_native_adaptation_smoke_v1.py::test_nomad_native_nonclipped_delta_normalization_roundtrip",
     "tests/test_r6_harness.py::TestTheHarnessDoesNotSmuggleInR7::test_nomad_evaluation_path_is_not_enabled_by_this_harness",
     "tests/test_rng_domains.py::TestCausalContract::test_eval_seed_varies_population_only",
     "tests/test_rng_domains.py::TestCausalContract::test_model_seed_varies_weights_only",
@@ -54,29 +55,29 @@
     "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame",
     "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default"
   ],
-  "required_node_ids_sha256": "4c22c174801548a193de34aa5a9b32ff42bfe0a4c733ee722fd4f05d161ba07c",
+  "required_node_ids_sha256": "5fcde8eca510886de122c5afee080b5fbc3bf5f2afa5ef2ee7bb483bcf498736",
   "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2815,
-      "sha256": "ac5108fdc543ce6190c406a31b5cf38ef623e7c90b2ac65fc915396b27245816"
+      "count": 2975,
+      "sha256": "9c470573df45b96af95fd69de7ed533459ee15b399b641ed479b258218bbe6f7"
     },
     "hermetic": {
-      "count": 2690,
-      "sha256": "1d3b095bb5e3ad53a1ce3bf30f59c66fe9d4c33b71fc1d206fcf924460131f9a"
+      "count": 2777,
+      "sha256": "cb0ccc96ba896698e734a8b399050e6356b379cfe15236ed14092215d9888754"
     },
     "resource_union": {
-      "count": 125,
-      "sha256": "2224586d2edfcb835b25d837e9fec5a22e4038abb2def919f758a83e51eb24e0"
+      "count": 198,
+      "sha256": "7e9c266e0ab2db4b507b16e4599ce8de57d600b0168e19024f078dbc80dfb480"
     },
     "upstream": {
-      "count": 42,
-      "sha256": "4c22c174801548a193de34aa5a9b32ff42bfe0a4c733ee722fd4f05d161ba07c"
+      "count": 43,
+      "sha256": "5fcde8eca510886de122c5afee080b5fbc3bf5f2afa5ef2ee7bb483bcf498736"
     },
     "torch": {
-      "count": 55,
-      "sha256": "6768762641e6f38c8cc1b12a751a0a0ebb60e38d95f3c25544160582bd6dbb3f"
+      "count": 63,
+      "sha256": "f1975ee13504f639d9cb53df019d54f5f05fe0b07b353af7022a24f0616677df"
     },
     "plot": {
       "count": 1,
@@ -3472,7 +3473,51 @@
     "tests/test_actuator_contact_diagnostic_v1.py::test_nested_pose_clearance": [],
     "tests/test_actuator_contact_diagnostic_v1.py::test_contact_empty_and_actual_vector_impulse": [],
     "tests/test_actuator_contact_diagnostic_v1.py::test_transform_compiles_actual_source": [],
-    "tests/test_actuator_contact_diagnostic_v1.py::test_unapplied_gravity_authored_explicitly": []
+    "tests/test_actuator_contact_diagnostic_v1.py::test_unapplied_gravity_authored_explicitly": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_common_metric_uses_same_five_physical_steps_and_masks": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_eval_preserves_state_modes_and_rng": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[batchnorm]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[ema]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[optimizer]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_history_anchor_leak_rejected_even_training_goal": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_launcher_has_exact_watchdog_and_source_frozen_contract": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_native_context_and_label_endpoints_are_explicit": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_nomad_native_nonclipped_delta_normalization_roundtrip": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_nonadmitted_history_and_boolean_time_rejected": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_positive_and_negative_development_goal_leak_rejected[False]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_positive_and_negative_development_goal_leak_rejected[True]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_resume_restores_real_optimizer_and_rejects_missing_model_key": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_complete_rng_optimizer_scheduler_ema_restore_controls": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_independent_second_smoke_uses_shared_integrity_not_model_outcome[FAIL]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_independent_second_smoke_uses_shared_integrity_not_model_outcome[PASS]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3583,5 +3628,13 @@
     "new_hermetic_nodes": 6,
     "total_nodes": 2959,
     "all_prior_retained": true
+  },
+  "native_adaptation_smoke_v1_update": {
+    "prior_nodes": 2959,
+    "new_nodes": 16,
+    "total_nodes": 2975,
+    "all_prior_retained": true,
+    "focused_passed": 16,
+    "execution_scope": "CPU controls only; no model smoke yet"
   }
 }
