@@ -60,12 +60,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2992,
-      "sha256": "a42b52e3aa689966c0bba12a02be147ac64429f6b0beb03be513a04ca658b838"
+      "count": 3002,
+      "sha256": "23cd5018fe4e7c412d7f21ab71ad0a43cc387ec2151bd4a0603496e8820651e1"
     },
     "hermetic": {
-      "count": 2789,
-      "sha256": "6976b0426432043bd87dfa90620b24d5b62f74ca802f1f2cd5106a0482e5c7f4"
+      "count": 2799,
+      "sha256": "d1c43763fc7896f5451afb1add4d7becd48eee68fad83013ab3cc39eb105c5b7"
     },
     "resource_union": {
       "count": 203,
@@ -3544,7 +3544,17 @@
     "tests/test_native_multiseed_v1.py::test_selection_uses_development_not_train_latest_tie": [],
     "tests/test_native_multiseed_v1.py::test_failed_reservation_consumed_and_shared_failure_blocks": [],
     "tests/test_native_multiseed_v1.py::test_checkpoint_cuda_shadow_continuation_and_device_rejection": [],
-    "tests/test_native_multiseed_v1.py::test_completed_transaction_durable_before_checkpoint_failure": []
+    "tests/test_native_multiseed_v1.py::test_completed_transaction_durable_before_checkpoint_failure": [],
+    "tests/test_offline_evaluation_v1.py::test_pair_partition_and_full_label_horizon": [],
+    "tests/test_offline_evaluation_v1.py::test_coupled_draw_identity": [],
+    "tests/test_offline_evaluation_v1.py::test_physical_units_and_negative_denominator": [],
+    "tests/test_offline_evaluation_v1.py::test_nonfinite_draw_retained_not_best_sample": [],
+    "tests/test_offline_evaluation_v1.py::test_expected_draw_metric_not_oracle_minimum": [],
+    "tests/test_offline_evaluation_v1.py::test_timing_rejects_unsynchronized_invalid_interval": [],
+    "tests/test_offline_evaluation_v1.py::test_malformed_action_and_distance_retained_invalid": [],
+    "tests/test_offline_evaluation_v1.py::test_exception_mid_pair_preserves_attempts": [],
+    "tests/test_offline_evaluation_v1.py::test_missing_draw_pair_and_duplicate_population": [],
+    "tests/test_offline_evaluation_v1.py::test_atomic_snapshot_interrupted_replace_preserves_prior": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3682,5 +3692,11 @@
     "added": 7,
     "total": 2992,
     "execution": "NOT_RUN"
+  },
+  "offline_evaluation_v1_update": {
+    "prior_retained": 2992,
+    "added": 10,
+    "total": 3002,
+    "scoring": "NOT_RUN"
   }
 }
