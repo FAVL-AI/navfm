@@ -3404,7 +3404,35 @@
     ],
     "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_method_slot]": [
       "parametrize"
-    ]
+    ],
+    "tests/test_matched_navigation_v2.py::test_source_binding_uses_native_sensor_after_selected_start": [],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[wrong_freeze]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[failed]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[duplicate]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[unknown]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_keeps_fixed_abba_order": [],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_zero_or_wrong_sign_cannot_pass[0]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_zero_or_wrong_sign_cannot_pass[-0.005]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_exact_response_and_uncovered_exposure": [],
+    "tests/test_matched_navigation_v2.py::test_nonfinite_tracking_rejected": [],
+    "tests/test_matched_navigation_v2.py::test_stop_uses_predecision_pose_not_postcapture": [],
+    "tests/test_matched_navigation_v2.py::test_contacts_support_fixture_and_unknown": [],
+    "tests/test_matched_navigation_v2.py::test_native_startup_order_and_no_live_teleport": [],
+    "tests/test_matched_navigation_v2.py::test_zero_command_reads_native_sensor_once_without_pi_update": [],
+    "tests/test_matched_navigation_v2.py::test_first_decision_stop_does_not_receive_tail_goal_visit_or_tracking": [],
+    "tests/test_matched_navigation_v2.py::test_prior_png_gate_artifact_mutation_rejected": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3502,6 +3530,12 @@
     "prior_nodes": 2892,
     "new_hermetic_nodes": 11,
     "total_nodes": 2903,
+    "all_prior_retained": true
+  },
+  "matched_navigation_v2_update": {
+    "prior_nodes": 2903,
+    "new_hermetic_nodes": 16,
+    "total_nodes": 2919,
     "all_prior_retained": true
   }
 }
