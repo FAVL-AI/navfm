@@ -3315,7 +3315,16 @@
     ],
     "tests/test_imu_controller_boundary_v1.py::test_invalid_evaluation_outside_scoring_window_is_refused[1199]": [
       "parametrize"
-    ]
+    ],
+    "tests/test_targeted_qualification_repairs_v2.py::test_authenticated_source_import": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_changed_dependency_refused_before_execution": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_undeclared_diffusion_import_refused": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_preloaded_namespace_refused": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_lifecycle_fsync_and_sequence": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_lifecycle_transformation_preserves_physics": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_stage_markers_exact_boundary": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_loaded_dependency_origin_is_authenticated": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_embedded_torch_module_requires_exact_authenticated_parent_identity": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3377,6 +3386,12 @@
     "prior_nodes": 2847,
     "new_hermetic_nodes": 15,
     "total_nodes": 2862,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v2_update": {
+    "prior_nodes": 2862,
+    "new_hermetic_nodes": 9,
+    "total_nodes": 2871,
     "all_prior_retained": true
   }
 }
