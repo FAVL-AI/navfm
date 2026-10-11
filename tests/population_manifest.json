@@ -3372,7 +3372,8 @@
     "tests/test_targeted_diagnostics_v4.py::test_all_loaded_rejections_preserved": [],
     "tests/test_targeted_diagnostics_v4.py::test_initialization_only_preserves_predicates_before_guard": [],
     "tests/test_targeted_diagnostics_v4.py::test_partial_initialization_state_is_saved_before_rejection": [],
-    "tests/test_targeted_diagnostics_v4_1.py::test_shared_freeze_keys_and_upstream_identity_preserved": []
+    "tests/test_targeted_diagnostics_v4_1.py::test_shared_freeze_keys_and_upstream_identity_preserved": [],
+    "tests/test_dependency_import_audit_v5.py::test_manifest_index_once_file_digest_once_all_objects_retained": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3458,6 +3459,12 @@
     "prior_nodes": 2890,
     "new_hermetic_nodes": 1,
     "total_nodes": 2891,
+    "all_prior_retained": true
+  },
+  "dependency_import_audit_v5_update": {
+    "prior_nodes": 2891,
+    "new_hermetic_nodes": 1,
+    "total_nodes": 2892,
     "all_prior_retained": true
   }
 }
