@@ -3373,7 +3373,38 @@
     "tests/test_targeted_diagnostics_v4.py::test_initialization_only_preserves_predicates_before_guard": [],
     "tests/test_targeted_diagnostics_v4.py::test_partial_initialization_state_is_saved_before_rejection": [],
     "tests/test_targeted_diagnostics_v4_1.py::test_shared_freeze_keys_and_upstream_identity_preserved": [],
-    "tests/test_dependency_import_audit_v5.py::test_manifest_index_once_file_digest_once_all_objects_retained": []
+    "tests/test_dependency_import_audit_v5.py::test_manifest_index_once_file_digest_once_all_objects_retained": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[changed_method]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_original]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_export]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_descriptor]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_legacy_name_alone_no_longer_admitted[torch.ops]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_legacy_name_alone_no_longer_admitted[torch.classes]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_stopped_physical_authoring_precedes_sensor_and_preserves_guard": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_descriptor_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_method_slot]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3465,6 +3496,12 @@
     "prior_nodes": 2891,
     "new_hermetic_nodes": 1,
     "total_nodes": 2892,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v6_update": {
+    "prior_nodes": 2892,
+    "new_hermetic_nodes": 11,
+    "total_nodes": 2903,
     "all_prior_retained": true
   }
 }

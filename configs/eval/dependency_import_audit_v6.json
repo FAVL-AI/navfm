@@ -1,0 +1,263 @@
+{
+  "status": "DRAFT_CORRECTIVE_V6_NOT_RUN",
+  "models": {
+    "nomad-release": {
+      "model": "nomad",
+      "checkpoint": "/home/favl/projects/navfm/checkpoints/nomad.pth",
+      "sha256": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333"
+    }
+  },
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/checkpoints/nomad.pth",
+      "sha256": "70f79b8262527e20e56ced64a3e3d7ef91855bc9e7c3fa348d78edcb83c6a333",
+      "size": 76473631
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01/s_bend_run_0000/goal.png",
+      "sha256": "d2e50118e3754b79a611be84ead9200145e26f6966b99facf3acf75075cee570",
+      "size": 10892
+    },
+    {
+      "path": "/home/favl/projects/navfm/third_party/diffusion_policy/diffusion_policy/model/diffusion/conditional_unet1d.py",
+      "sha256": "8a95014f8aa52ade086f967c9018a66bf0c68f2133969c8f7a8522da01b472ac"
+    },
+    {
+      "path": "/home/favl/projects/navfm/third_party/diffusion_policy/diffusion_policy/model/diffusion/conv1d_components.py",
+      "sha256": "ea2aa10e297cf253bc1a1919ba47fe6ae32049b5eaaab292ed9cc145d8d2adc0"
+    },
+    {
+      "path": "/home/favl/projects/navfm/third_party/diffusion_policy/diffusion_policy/model/diffusion/positional_embedding.py",
+      "sha256": "2266c75ecc9c9ac8ca126839d39a7bafbdd7af8800d6de903f66815e64cc366c"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/nomad-installed-dependency-manifest-v2.json",
+      "sha256": "f2f010e75e547a4f5eb32a6b601a7fa4061eb8986f03fec27c72f8d67aba1eeb"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/v3-static-repair-evidence.json",
+      "sha256": "07b4af58452ec19f02172a476a0d5bf4571f04ab2fdd5c2a700212d9bb83c7f1"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/dependency-import-audit-v5-01/audit.json",
+      "sha256": "6f886440cf6aa610bb7bed1f583a3373e3e2edbd0a67ecb5cb2420d22f9c873c"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/imu-initialization-v4-01/attempt/lifecycle.jsonl",
+      "sha256": "bfb8f0448912bcf294562093ecd01302b519da27181da51e8a0b3206e523154e"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/xform_prim.py",
+      "sha256": "df60f2fa629a5876dca529b46609f56c743612ea6f018fd2c4c2cafdbd5f8fd2"
+    }
+  ],
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream",
+  "upstream_files": [
+    {
+      "path": "train/config/defaults.yaml",
+      "sha256": "13ff0ed29fbe1a3292d7867642ce5028f5b4212096693d8b35285f867af04058"
+    },
+    {
+      "path": "train/config/gnm.yaml",
+      "sha256": "4a48a8465c5984516d48a80a03b9316f43fa285a8ed57e20dbabb382fca0b4ce"
+    },
+    {
+      "path": "train/config/late_fusion.yaml",
+      "sha256": "089c9e5d2b62936fa3af160805e180b5624fe4f8223159ba4118c5cbc17a56e3"
+    },
+    {
+      "path": "train/config/nomad.yaml",
+      "sha256": "9101097b9634513d47b97f6d7e76c9f77af7aa5a72a861af3f17cf04cd2bf797"
+    },
+    {
+      "path": "train/config/vint.yaml",
+      "sha256": "8f80c791932eb93165dd973717d447d58a335f0ce2a6897450d6295b005b1c57"
+    },
+    {
+      "path": "train/data_split.py",
+      "sha256": "bf7ecf15deafeae953fa71f13229da72a3370f1495d53d28c5c5b03492802a28"
+    },
+    {
+      "path": "train/process_bag_diff.py",
+      "sha256": "0c8b9d79a2884bc638d6ef2a3f287627df44c313f3980fd98cf17ff3f7bcc0ee"
+    },
+    {
+      "path": "train/process_bags.py",
+      "sha256": "ec01f1950a799eda2165e8293f7eea211c994fa3b81afe324ea640a5a0e556f6"
+    },
+    {
+      "path": "train/process_recon.py",
+      "sha256": "3e254b7e0c7658ffc2665a95c5f9524e7e5dbcd582e1b9d21de6d73a2ba34c4e"
+    },
+    {
+      "path": "train/setup.py",
+      "sha256": "167dc7e4b1e7b77af21ea882924fe7127acfcae1c0e0d3f539a6cb526521e236"
+    },
+    {
+      "path": "train/train.py",
+      "sha256": "e07a1ed1f70007d1935c2582788fc60a03bd76bbd70f9055c8f84a849c47d70a"
+    },
+    {
+      "path": "train/train_environment.yml",
+      "sha256": "862a04cd16e421ab17dc031d3a849d92653bbdc991526eef7d7abbac6c5beeea"
+    },
+    {
+      "path": "train/vint_train/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/data/data_config.yaml",
+      "sha256": "0b3412db15c8e867cce4af297cc079f8b4cf81ae2675c03f92f3df598728981b"
+    },
+    {
+      "path": "train/vint_train/data/data_utils.py",
+      "sha256": "3f3429331db4e6a5a343dd6c8df1d579d3e20d2a050b253c43616576ca890d1b"
+    },
+    {
+      "path": "train/vint_train/data/pristine_loader.py",
+      "sha256": "37887c6fee485388c8f227fa5145002639b5f1454437661f3eccece74bbddafd"
+    },
+    {
+      "path": "train/vint_train/data/vint_dataset.py",
+      "sha256": "378f1c53ba9d8dc4c68ff2848f1a87ac0f3f055854a8e6b83c51db3c436fab20"
+    },
+    {
+      "path": "train/vint_train/models/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/base_model.py",
+      "sha256": "3928a0f616745a980a4c1f9c376d1c2494c179f28e0402f93d042e3539ea2958"
+    },
+    {
+      "path": "train/vint_train/models/gnm/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/gnm/gnm.py",
+      "sha256": "4c71ff2473f197f9b08aa066c339c6cdfc2971f20d2cc7106fde4dd74211624b"
+    },
+    {
+      "path": "train/vint_train/models/gnm/modified_mobilenetv2.py",
+      "sha256": "a705c9db714f0af2f353313cf74455f8026ac55cb06d2daaea9c5693d826a884"
+    },
+    {
+      "path": "train/vint_train/models/nomad/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/nomad/nomad.py",
+      "sha256": "fd404eb014195a090964ee214d5a976f5b8e8e181c48230b3f8957a04836dd61"
+    },
+    {
+      "path": "train/vint_train/models/nomad/nomad_vint.py",
+      "sha256": "87c2440ee1ffe9b6ecbdfc17c9fff2223ac90096bd3abd75ee0b59a0c0a67224"
+    },
+    {
+      "path": "train/vint_train/models/nomad/vib_placeholder.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/vint/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/vint/self_attention.py",
+      "sha256": "e28c8eb0c5017d8690b1328a7ec75c30c7fa30416f232b05b9bb406670ce57a6"
+    },
+    {
+      "path": "train/vint_train/models/vint/vint.py",
+      "sha256": "1af3afb275f6f52d643df792cf39d8bb77e0fe00f06d7ceb9c152a408554ad37"
+    },
+    {
+      "path": "train/vint_train/models/vint/vit.py",
+      "sha256": "e37dfe2da650490d9d906fad49b0cf80d09afe3b1e56f776837afe4dc6ab6312"
+    },
+    {
+      "path": "train/vint_train/process_data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/process_data/process_bags_config.yaml",
+      "sha256": "f5b4be4aed960981658b5f6f0fd0af452b8bda2aa13ac9eac911085ac56c33e8"
+    },
+    {
+      "path": "train/vint_train/process_data/process_data_utils.py",
+      "sha256": "0e1e7d147358a1241247ea6c8d8667d93edf9c5e4343ffc3325f5a1c31e6a706"
+    },
+    {
+      "path": "train/vint_train/training/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/training/logger.py",
+      "sha256": "78772979bd33da9ca9db7ecd47c69853065ff3381ddcbbd0a5d7f81761817269"
+    },
+    {
+      "path": "train/vint_train/training/train_eval_loop.py",
+      "sha256": "92e2eb5aa6967e27832e7fa0a43e691d5ce6d75df26fa8d93746cb71e6bbbd0b"
+    },
+    {
+      "path": "train/vint_train/training/train_utils.py",
+      "sha256": "b7789697406a2fd8d0fb7eddef49e994da489c86a9ffc7e43c7c7b38b596adbe"
+    },
+    {
+      "path": "train/vint_train/visualizing/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/visualizing/action_utils.py",
+      "sha256": "4c40e53bf7f3c252b418eed8f96535e57b87df9b0cb975fd26d8b76ac3e962fa"
+    },
+    {
+      "path": "train/vint_train/visualizing/distance_utils.py",
+      "sha256": "c20bd042646443bc2654aa626f8a590cc2f1fc10f8ebd604aada3b683220e813"
+    },
+    {
+      "path": "train/vint_train/visualizing/visualize_utils.py",
+      "sha256": "0d504df70f1d2fb6325ab9a60e713be8c198381467925f40d0b0013fa68dc8f2"
+    }
+  ],
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "qualification": "/home/favl/navfm-runtime-evidence/articulated-control-20261009-10/qualification.json",
+  "goal_image": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01/s_bend_run_0000/goal.png",
+  "goal_root": "/home/favl/navfm-runtime-evidence/arrival-goal-traversal-final-frame-20261009-01",
+  "route": "s_bend_run_0000",
+  "cleanup_must_be_absent": [
+    "/var/lib/navfm-ci",
+    "/var/lib/navfm-ci-control",
+    "/usr/local/libexec/navfm-ci"
+  ],
+  "topomap_root": "/home/favl/navfm-runtime-evidence/topomap-traversal-12f-20261009-01",
+  "chain_sha256": "9a411dd6ffeff0eab786a613555dd5fec48359beb347f7fd8129b0ce25504d6d",
+  "development_pair_authorized": false,
+  "development_blocker": "Inherited ideal gyro reads simulator root angular velocity; no approved physical sensor/controller input boundary established for requested RGB-only deployed method",
+  "diffusion_root": "/home/favl/projects/navfm/third_party/diffusion_policy",
+  "diffusion_git_head": "5ba07ac6661db573af695b419a7947ecb704690f",
+  "diffusion_origin": "https://github.com/real-stanford/diffusion_policy.git",
+  "diffusion_files": [
+    {
+      "module": "diffusion_policy.model.diffusion.conditional_unet1d",
+      "path": "diffusion_policy/model/diffusion/conditional_unet1d.py",
+      "sha256": "8a95014f8aa52ade086f967c9018a66bf0c68f2133969c8f7a8522da01b472ac"
+    },
+    {
+      "module": "diffusion_policy.model.diffusion.conv1d_components",
+      "path": "diffusion_policy/model/diffusion/conv1d_components.py",
+      "sha256": "ea2aa10e297cf253bc1a1919ba47fe6ae32049b5eaaab292ed9cc145d8d2adc0"
+    },
+    {
+      "module": "diffusion_policy.model.diffusion.positional_embedding",
+      "path": "diffusion_policy/model/diffusion/positional_embedding.py",
+      "sha256": "2266c75ecc9c9ac8ca126839d39a7bafbdd7af8800d6de903f66815e64cc366c"
+    }
+  ],
+  "installed_dependency_manifest": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/nomad-installed-dependency-manifest-v2.json",
+  "v3_static_evidence": "Creation/enable before restart PLAY after initial placement; or confirmed torch compiled_autograd alias.",
+  "manifest": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/nomad-installed-dependency-manifest-v2.json"
+}
