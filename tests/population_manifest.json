@@ -60,12 +60,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3002,
-      "sha256": "23cd5018fe4e7c412d7f21ab71ad0a43cc387ec2151bd4a0603496e8820651e1"
+      "count": 3009,
+      "sha256": "af6412561afe3801d5ae13fcf48d6c28e2f198b3f38c94ebb26fa8c0091cc9ff"
     },
     "hermetic": {
-      "count": 2799,
-      "sha256": "d1c43763fc7896f5451afb1add4d7becd48eee68fad83013ab3cc39eb105c5b7"
+      "count": 2806,
+      "sha256": "0f2d9e9ebc1421204f80beee3ce5e6d465a07cf4a0eed92fba11d512d1d279b5"
     },
     "resource_union": {
       "count": 203,
@@ -3554,7 +3554,14 @@
     "tests/test_offline_evaluation_v1.py::test_malformed_action_and_distance_retained_invalid": [],
     "tests/test_offline_evaluation_v1.py::test_exception_mid_pair_preserves_attempts": [],
     "tests/test_offline_evaluation_v1.py::test_missing_draw_pair_and_duplicate_population": [],
-    "tests/test_offline_evaluation_v1.py::test_atomic_snapshot_interrupted_replace_preserves_prior": []
+    "tests/test_offline_evaluation_v1.py::test_atomic_snapshot_interrupted_replace_preserves_prior": [],
+    "tests/test_prospective_data_v1.py::test_known_fixture_recipe_horizon_and_no_route_object_overlap": [],
+    "tests/test_prospective_data_v1.py::test_seal_content_and_contamination_stop": [],
+    "tests/test_prospective_data_v1.py::test_clock_pose_shape_prevents_stale_reordered_capture": [],
+    "tests/test_prospective_data_v1.py::test_raw_prediction_retained_without_changing_metric_inputs": [],
+    "tests/test_prospective_data_v1.py::test_native_reference_time_and_held_interval": [],
+    "tests/test_prospective_data_v1.py::test_float32_offset_and_reverse_qualification_coverage": [],
+    "tests/test_prospective_data_v1.py::test_failed_camera_candidate_fields_are_jsonsafe_before_guard": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3698,5 +3705,11 @@
     "added": 10,
     "total": 3002,
     "scoring": "NOT_RUN"
+  },
+  "prospective_data_v1_update": {
+    "prior_retained": 3002,
+    "added": 7,
+    "total": 3009,
+    "collection_scoring": "NOT_RUN"
   }
 }
