@@ -3443,7 +3443,12 @@
     "tests/test_controller_alignment_v1.py::test_cross_boundary_acquisition_not_consumption": [],
     "tests/test_controller_alignment_v1.py::test_wrong_frame_rejected": [],
     "tests/test_controller_alignment_v1.py::test_duplicate_groups_and_ambiguous_evaluation": [],
-    "tests/test_controller_alignment_v1.py::test_partial_matched_window_statistics": []
+    "tests/test_controller_alignment_v1.py::test_partial_matched_window_statistics": [],
+    "tests/test_controller_telemetry_v1.py::test_transform_preserves_native_read_and_schedule": [],
+    "tests/test_controller_telemetry_v1.py::test_boundary_drift_rejected": [],
+    "tests/test_controller_telemetry_v1.py::test_schema_and_nonfinite_rejected": [],
+    "tests/test_controller_telemetry_v1.py::test_derived_flags_not_state_mutation": [],
+    "tests/test_controller_telemetry_v1.py::test_partial_failure_artifacts_bound": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
