@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3165,
-      "sha256": "0c5d75fcc62b2988404f13ceaf9f43d93e5ef22d2d06a8c9014d42adfd546a19"
+      "count": 3167,
+      "sha256": "3057f883d1a95675556bbb230f45704a3396d9722651a13e7121e8931c86eb90"
     },
     "hermetic": {
-      "count": 2960,
-      "sha256": "929ab9cd52a3179338f13b9740938c84b470bc335494c457d4d0fa6c4866dde7"
+      "count": 2962,
+      "sha256": "1c41385a0b8dac6bfe9db91679a5bdc4bea56e8f48d91d0a2dd31a0cdcb33833"
     },
     "resource_union": {
       "count": 205,
@@ -3723,7 +3723,9 @@
     "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[graph_claim]": [],
     "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[navigation]": [],
     "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[reselection]": [],
-    "tests/test_recorded_rgb_stop_v1.py::test_worker_python_network_refusal_is_enforced_in_isolated_process": []
+    "tests/test_recorded_rgb_stop_v1.py::test_worker_python_network_refusal_is_enforced_in_isolated_process": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_missing_globals_before_source_access": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_globals_outside_frozen_allowlist": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3970,5 +3972,12 @@
     "owner": "ordinary-hermetic",
     "positive_replay_owner": "separate_frozen_recorded_RGB_GPU_probe",
     "status": "16_HERMETIC_GUARDS_PASS_ENCODER_REPLAY_NOT_RUN"
+  },
+  "rgb_source_closure_v2_update": {
+    "previous_nodes_preserved": 3165,
+    "added_hermetic_nodes": 2,
+    "total_count": 3167,
+    "external_cpu_qualification_owner": "explicit recorded-RGB source-closure qualification command; not an archive-owned pytest test",
+    "scope": "No encoder or model execution; external pinned source and native dependency environment required only by separate CPU probe."
   }
 }

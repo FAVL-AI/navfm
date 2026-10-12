@@ -102,6 +102,27 @@ def source_definitions(row, names, namespace):
     return SimpleNamespace(**namespace)
 
 
+ULVN_RGB_DEFINITIONS_V2 = frozenset(
+    {"VPRModelBase", "MegaLocEmbeddings", "MyVPR", "build_transform"}
+)
+ULVN_RGB_GLOBALS_V2 = frozenset(
+    {"np", "torch", "nn", "F", "transforms", "Image", "sys", "_torch_no_grad"}
+)
+
+
+def load_ulvn_rgb_definitions_v2(row, namespace):
+    """Authenticated production definition closure; no construction or forward."""
+    if namespace.keys() - ULVN_RGB_GLOBALS_V2:
+        raise ValueError("native RGB globals outside fixed allowlist")
+    missing = ULVN_RGB_GLOBALS_V2 - namespace.keys()
+    if missing:
+        raise ValueError("native RGB globals missing: " + ",".join(sorted(missing)))
+    native = source_definitions(row, ULVN_RGB_DEFINITIONS_V2, dict(namespace))
+    if native.MyVPR.__bases__ != (native.VPRModelBase,):
+        raise ValueError("native RGB inheritance mismatch")
+    return native
+
+
 def validate_manifest(cfg):
     if cfg["navigation_authorized"] is not False or cfg["threshold_fitting"] is not False:
         raise ValueError("scope escalation refused")
@@ -206,14 +227,16 @@ def encode_recorded(cfg, emit):
     assert set(state) == set(mega.state_dict()), "MegaLoc full state coverage missing"
     mega.load_state_dict(state, strict=True)
     del state
-    native_vpr = source_definitions(
+    native_vpr = load_ulvn_rgb_definitions_v2(
         s["ulvn_ros"],
-        {"MegaLocEmbeddings", "MyVPR", "build_transform"},
         {
+            "np": np,
             "torch": torch,
             "nn": torch.nn,
             "F": torch.nn.functional,
             "transforms": transforms,
+            "Image": Image,
+            "sys": sys,
             "_torch_no_grad": torch.no_grad,
         },
     )

@@ -140,3 +140,23 @@ def test_completed_admitted_DEV_metadata_guards_are_not_hash_only(mutation):
         complete["status"] = "STARTED"
     with pytest.raises(ValueError):
         validate_admission_fields(cfg, admitted, complete)
+
+
+def test_native_rgb_loader_rejects_missing_globals_before_source_access():
+    from recorded_rgb_stop_v1 import ULVN_RGB_GLOBALS_V2, load_ulvn_rgb_definitions_v2
+
+    namespace = dict.fromkeys(ULVN_RGB_GLOBALS_V2, object())
+    for name in ULVN_RGB_GLOBALS_V2:
+        reduced = dict(namespace)
+        del reduced[name]
+        with pytest.raises(ValueError, match="native RGB globals missing"):
+            load_ulvn_rgb_definitions_v2({}, reduced)
+
+
+def test_native_rgb_loader_rejects_globals_outside_frozen_allowlist():
+    from recorded_rgb_stop_v1 import ULVN_RGB_GLOBALS_V2, load_ulvn_rgb_definitions_v2
+
+    namespace = dict.fromkeys(ULVN_RGB_GLOBALS_V2, object())
+    namespace["unapproved"] = object()
+    with pytest.raises(ValueError, match="outside fixed allowlist"):
+        load_ulvn_rgb_definitions_v2({}, namespace)
