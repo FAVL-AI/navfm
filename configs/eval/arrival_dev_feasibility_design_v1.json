@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT_NOT_FROZEN",
+  "scope": "DEV_FEASIBILITY_PREPARATION_ONLY",
+  "runtime_authorized": false,
+  "scientific_scope": "Describe baseline stop risk/completion/time, paired layout variability and measured resource feasibility; no confirmatory efficacy or novelty claim",
+  "backbone": {
+    "family": "NoMaD_native_adapted_closed_pilot_checkpoint_family",
+    "seeds": [
+      0,
+      11,
+      22
+    ],
+    "deployment_role": "native_EMA",
+    "identities": {
+      "0": null,
+      "11": null,
+      "22": null
+    },
+    "selection": "fixed_family_all_seeds_no_architecture_or_checkpoint_reselection"
+  },
+  "arms": [
+    "PlaceNav_STOP_adapter",
+    "ULVN_STOP_adapter",
+    "full_candidate"
+  ],
+  "fairness": {
+    "shared": [
+      "navigator",
+      "reference_RGB_chain",
+      "goal_RGB",
+      "controller",
+      "IMU_low_level_only",
+      "motion_limits",
+      "contact_observation",
+      "policy_horizon",
+      "cadence",
+      "inference_budget"
+    ],
+    "inputs": "RGB_history_goal_and_prior_reference_only_no_live_ground_truth_or_depth",
+    "reference_acquisition": "separate_permitted_prior_traversal_equal_for_all_arms_cost_reported",
+    "cadence_hz": 4,
+    "reference_cadence_hz": 4,
+    "photometric_or_cadence_perturbation": false,
+    "comparator_fallback": false,
+    "PlaceNav": "preserve_VPR_Bayesian_filter_and_original_MAP_goal_node_rule_as_diagnostic;common_NoMaD_4Hz_STOP_wrapper_is_adaptation",
+    "ULVN": "require_graph_belief_entropy_fusion_component_parity;terminal_STOP_extraction_is_adaptation",
+    "matcher_graph_threshold_controller_identities": null
+  },
+  "population": {
+    "unit": "DEV_layout",
+    "layouts": 6,
+    "ownership": "new_layouts_disjoint_from_TRAIN_calibration_prior_accessed_pilot_and_future_TEST",
+    "custodian_and_assignment_attestation": null,
+    "reference_chains_per_layout": 2,
+    "reference_chain_types": [
+      "predeclared_alias_heavy",
+      "ordinary"
+    ],
+    "starts_per_reference_chain": 2,
+    "feasible_tasks_per_layout": 4,
+    "mismatch_control_slots_per_layout": 2,
+    "feasible_denominator": "all_planned_feasible_attempts_failures_refusals_missingness_retained_no_replacement",
+    "test_geometry_access": "BLOCKED_UNCHANGED",
+    "test_budget_authorization": false
+  },
+  "controls": {
+    "admission": "common_RGB_goal_admission_passive_control;no_forced_existing_map_goal_index_for_absent_or_unrepresentable_goal",
+    "unsupported_interface": "NOT_RUN_UNSUPPORTED_GOAL_INTERFACE",
+    "unsupported_scoring": "NO_wrong_location_distance_OR_achievable_goal_completion;EFFICACY_NOT_ADJUDICABLE_FOR_UNSUPPORTED_STRATUM",
+    "reporting": "PASSIVE_admission_false_acceptance_status_only;NO_W_C_Tstar_or_navigation_outcomes",
+    "slot_budget": "maximum_allocation_not_fictional_closed_loop_outcomes",
+    "navigation_permitted": false
+  },
+  "first_block": {
+    "layouts": 1,
+    "feasible_tasks": 1,
+    "arms": 3,
+    "seeds": 3,
+    "slots": 9,
+    "included_in_total": true,
+    "advance_rule": "only_prospective_integrity_fidelity_motion_contact_and_endpoint_completeness_pass_under_separate_authorization",
+    "outcome_based_retuning_or_early_success": false,
+    "layout_route_start_IDs": null
+  },
+  "measures": {
+    "wrong_location_STOP": "latched_STOP_outside_frozen0.5m_goal_capture_radius;unknown_if_unobservable_never_impute_zero",
+    "completion": "legacy_correct_stop_settling_final1s_motion_lt0.01m_final_pose_within0.5m_and_no_unintended_contact_before_task_end",
+    "Tstar": "collision_free_correct_stop_time_by120simulation_seconds_else_assign120s_all_feasible_attempts",
+    "delay_secondary": "first_goal_entry_by110s_conditioned_cap10s_no_qualifying_stop_or_competing_failure_assign10s_report_entry_fraction",
+    "aggregation": "all_seed_means_within_layout_no_best_seed;paired_layout_differences_all_six_layouts",
+    "variation": "paired_layout_sample_SD_descriptive_not_frame_independence_not_joint_power",
+    "resources": "measured_per_process_walltime_GPU_reserved_time_peak_memory_storage_bytes_and_failure_exposure",
+    "missing_mandatory_endpoint": "NO_EFFICACY_ADJUDICATION",
+    "baseline_rates_SD_throughput": "UNKNOWN",
+    "clock": "4Hz_simulation_time_observation_policy_reference;120s_decision_plus2s_postSTOP_simulation_reserve;wall_latency_and600s_process_cap_separate",
+    "contact": "observable_unintended_robot_environment_contacts_excluding_qualified_support_wheel_floor_pairs;retain_raw_events_and_filter_identity"
+  },
+  "resources": {
+    "status": "PROPOSED_NOT_AUTHORIZED_NOT_MEASURED",
+    "decision_horizon_simulation_s": 120,
+    "post_stop_reserve_simulation_s": 2,
+    "episode_process_wall_cap_s": 600,
+    "reference_processes_cap": 12,
+    "comparator_measurement_replay_processes_cap": 12,
+    "calibrator_training_wall_GPU_hours_cap": 6,
+    "analysis_wall_GPU_hours_cap": 2,
+    "total_wall_GPU_hours_cap": 72,
+    "external_storage_GiB_cap": 50,
+    "headroom_rule": "unused_headroom_never_adds_slots_retries_or_extra_trials",
+    "overrun_rule": "REFUSE_NO_AUTOMATIC_EXPANSION",
+    "qualification": "separate_BLOCKED_prerequisite_not_included_or_authorized_by_this_budget"
+  },
+  "gates": {
+    "authentic_CAD_motion_plant": "BLOCKED",
+    "controller_contact_clean_start": "BLOCKED",
+    "checkpoint_matcher_graph_threshold_provenance": "BLOCKED",
+    "PlaceNav_component_fidelity": "BLOCKED",
+    "ULVN_component_fidelity": "BLOCKED",
+    "reference_goal_admission_fairness": "BLOCKED",
+    "DEV_layout_ownership_and_frozen_assignments": "BLOCKED",
+    "training_label_calibration_disjointness": "BLOCKED",
+    "source_clock_budget_and_endpoint_integrity": "BLOCKED",
+    "first_matched_block": "NOT_RUN",
+    "runtime_training_collection_scoring": "NOT_RUN",
+    "independent_confirmatory_test_custody": "BLOCKED_UNCHANGED",
+    "80_layout_confirmatory_or_2000_hour_resources": "NOT_AUTHORIZED"
+  },
+  "fitting": {
+    "admission": "only_admitted_TRAIN_or_separate_DEV_FIT_positive_and_negative_labels",
+    "disjointness": "no_six_feasibility_layouts_closed_pilot_outcomes_or_future_TEST",
+    "freeze": "all_trial_IDs_labels_matcher_calibrator_thresholds_assignments_before_first9",
+    "selection_budget": "all_fitting_and_selection_included_in6hour_cap",
+    "evidence": null
+  }
+}

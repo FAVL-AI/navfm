@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3113,
-      "sha256": "fa05f267712fde8d16674aaeb6e60b82420d12eb463323dd391363c9a6f35120"
+      "count": 3125,
+      "sha256": "5ab3e412095aa822d9107d0034607382119b915f002626b03c5e12abbbd5b986"
     },
     "hermetic": {
-      "count": 2908,
-      "sha256": "aa1fafc8159a6b26b19a232387adb218f439e618b17ea797c0d3d5300782adc6"
+      "count": 2920,
+      "sha256": "8e9e3c99655c2cef2acde9f95714977eec9fbeeb1fdafa066a4df0b288a33e71"
     },
     "resource_union": {
       "count": 205,
@@ -3671,7 +3671,19 @@
     "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-denominator-successful_attempts_only]": [],
     "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-human_reviewer-same_custodian]": [],
     "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-test_access-SEALED_BY_SELF]": [],
-    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-unit-frame]": []
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-unit-frame]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_changed_on_disk_draft_cannot_self_certify": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_finite_slot_budget_preserves_first_block_and_control_distinction": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[None-runtime_authorized-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[backbone-seeds-value2]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[controls-unsupported_interface-FORCE_GOAL_INDEX_ZERO]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[fairness-comparator_fallback-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[fairness-photometric_or_cadence_perturbation-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[first_block-included_in_total-False]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[first_block-outcome_based_retuning_or_early_success-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[population-test_budget_authorization-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-episode_process_wall_cap_s-nan]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-total_wall_GPU_hours_cap-50]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3895,5 +3907,12 @@
       "unchanged_derived_membership_count": 205,
       "reason": "mechanical_aggregate_digest_repin_no_node_marker_or_owner_change"
     }
+  },
+  "arrival_dev_feasibility_design_v1_update": {
+    "prior_retained": 3113,
+    "added": 12,
+    "total": 3125,
+    "owner": "ordinary-hermetic",
+    "status": "PREPARATION_ONLY_RUNTIME_NOT_RUN"
   }
 }
