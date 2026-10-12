@@ -1,0 +1,446 @@
+{
+  "python": "/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python",
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-expanded-admitted-20261007-01/upstream",
+  "upstream_files": [
+    {
+      "path": "source_identity.json",
+      "sha256": "f4fe96096a25c0bfd4398ac44ca290ce32eac999e2ef1ec2d1e071b3bf2e43ee"
+    },
+    {
+      "path": "train/config/defaults.yaml",
+      "sha256": "13ff0ed29fbe1a3292d7867642ce5028f5b4212096693d8b35285f867af04058"
+    },
+    {
+      "path": "train/config/gnm.yaml",
+      "sha256": "4a48a8465c5984516d48a80a03b9316f43fa285a8ed57e20dbabb382fca0b4ce"
+    },
+    {
+      "path": "train/config/late_fusion.yaml",
+      "sha256": "089c9e5d2b62936fa3af160805e180b5624fe4f8223159ba4118c5cbc17a56e3"
+    },
+    {
+      "path": "train/config/nomad.yaml",
+      "sha256": "9101097b9634513d47b97f6d7e76c9f77af7aa5a72a861af3f17cf04cd2bf797"
+    },
+    {
+      "path": "train/config/vint.yaml",
+      "sha256": "8f80c791932eb93165dd973717d447d58a335f0ce2a6897450d6295b005b1c57"
+    },
+    {
+      "path": "train/data_split.py",
+      "sha256": "bf7ecf15deafeae953fa71f13229da72a3370f1495d53d28c5c5b03492802a28"
+    },
+    {
+      "path": "train/process_bag_diff.py",
+      "sha256": "0c8b9d79a2884bc638d6ef2a3f287627df44c313f3980fd98cf17ff3f7bcc0ee"
+    },
+    {
+      "path": "train/process_bags.py",
+      "sha256": "ec01f1950a799eda2165e8293f7eea211c994fa3b81afe324ea640a5a0e556f6"
+    },
+    {
+      "path": "train/process_recon.py",
+      "sha256": "3e254b7e0c7658ffc2665a95c5f9524e7e5dbcd582e1b9d21de6d73a2ba34c4e"
+    },
+    {
+      "path": "train/setup.py",
+      "sha256": "167dc7e4b1e7b77af21ea882924fe7127acfcae1c0e0d3f539a6cb526521e236"
+    },
+    {
+      "path": "train/train.py",
+      "sha256": "e07a1ed1f70007d1935c2582788fc60a03bd76bbd70f9055c8f84a849c47d70a"
+    },
+    {
+      "path": "train/train_environment.yml",
+      "sha256": "862a04cd16e421ab17dc031d3a849d92653bbdc991526eef7d7abbac6c5beeea"
+    },
+    {
+      "path": "train/vint_train/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/data/data_config.yaml",
+      "sha256": "0b3412db15c8e867cce4af297cc079f8b4cf81ae2675c03f92f3df598728981b"
+    },
+    {
+      "path": "train/vint_train/data/data_utils.py",
+      "sha256": "3f3429331db4e6a5a343dd6c8df1d579d3e20d2a050b253c43616576ca890d1b"
+    },
+    {
+      "path": "train/vint_train/data/pristine_loader.py",
+      "sha256": "37887c6fee485388c8f227fa5145002639b5f1454437661f3eccece74bbddafd"
+    },
+    {
+      "path": "train/vint_train/data/vint_dataset.py",
+      "sha256": "378f1c53ba9d8dc4c68ff2848f1a87ac0f3f055854a8e6b83c51db3c436fab20"
+    },
+    {
+      "path": "train/vint_train/models/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/base_model.py",
+      "sha256": "3928a0f616745a980a4c1f9c376d1c2494c179f28e0402f93d042e3539ea2958"
+    },
+    {
+      "path": "train/vint_train/models/gnm/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/gnm/gnm.py",
+      "sha256": "4c71ff2473f197f9b08aa066c339c6cdfc2971f20d2cc7106fde4dd74211624b"
+    },
+    {
+      "path": "train/vint_train/models/gnm/modified_mobilenetv2.py",
+      "sha256": "a705c9db714f0af2f353313cf74455f8026ac55cb06d2daaea9c5693d826a884"
+    },
+    {
+      "path": "train/vint_train/models/nomad/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/nomad/nomad.py",
+      "sha256": "fd404eb014195a090964ee214d5a976f5b8e8e181c48230b3f8957a04836dd61"
+    },
+    {
+      "path": "train/vint_train/models/nomad/nomad_vint.py",
+      "sha256": "87c2440ee1ffe9b6ecbdfc17c9fff2223ac90096bd3abd75ee0b59a0c0a67224"
+    },
+    {
+      "path": "train/vint_train/models/nomad/vib_placeholder.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/vint/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/models/vint/self_attention.py",
+      "sha256": "e28c8eb0c5017d8690b1328a7ec75c30c7fa30416f232b05b9bb406670ce57a6"
+    },
+    {
+      "path": "train/vint_train/models/vint/vint.py",
+      "sha256": "1af3afb275f6f52d643df792cf39d8bb77e0fe00f06d7ceb9c152a408554ad37"
+    },
+    {
+      "path": "train/vint_train/models/vint/vit.py",
+      "sha256": "e37dfe2da650490d9d906fad49b0cf80d09afe3b1e56f776837afe4dc6ab6312"
+    },
+    {
+      "path": "train/vint_train/process_data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/process_data/process_bags_config.yaml",
+      "sha256": "f5b4be4aed960981658b5f6f0fd0af452b8bda2aa13ac9eac911085ac56c33e8"
+    },
+    {
+      "path": "train/vint_train/process_data/process_data_utils.py",
+      "sha256": "0e1e7d147358a1241247ea6c8d8667d93edf9c5e4343ffc3325f5a1c31e6a706"
+    },
+    {
+      "path": "train/vint_train/training/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/training/logger.py",
+      "sha256": "78772979bd33da9ca9db7ecd47c69853065ff3381ddcbbd0a5d7f81761817269"
+    },
+    {
+      "path": "train/vint_train/training/train_eval_loop.py",
+      "sha256": "92e2eb5aa6967e27832e7fa0a43e691d5ce6d75df26fa8d93746cb71e6bbbd0b"
+    },
+    {
+      "path": "train/vint_train/training/train_utils.py",
+      "sha256": "b7789697406a2fd8d0fb7eddef49e994da489c86a9ffc7e43c7c7b38b596adbe"
+    },
+    {
+      "path": "train/vint_train/visualizing/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "train/vint_train/visualizing/action_utils.py",
+      "sha256": "4c40e53bf7f3c252b418eed8f96535e57b87df9b0cb975fd26d8b76ac3e962fa"
+    },
+    {
+      "path": "train/vint_train/visualizing/distance_utils.py",
+      "sha256": "c20bd042646443bc2654aa626f8a590cc2f1fc10f8ebd604aada3b683220e813"
+    },
+    {
+      "path": "train/vint_train/visualizing/visualize_utils.py",
+      "sha256": "0d504df70f1d2fb6325ab9a60e713be8c198381467925f40d0b0013fa68dc8f2"
+    }
+  ],
+  "installed_dependency_manifest": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/nomad-installed-dependency-manifest-v2.json",
+  "diffusion_root": "/home/favl/projects/navfm/third_party/diffusion_policy",
+  "diffusion_files": [
+    {
+      "module": "diffusion_policy.model.diffusion.conditional_unet1d",
+      "path": "diffusion_policy/model/diffusion/conditional_unet1d.py",
+      "sha256": "8a95014f8aa52ade086f967c9018a66bf0c68f2133969c8f7a8522da01b472ac"
+    },
+    {
+      "module": "diffusion_policy.model.diffusion.conv1d_components",
+      "path": "diffusion_policy/model/diffusion/conv1d_components.py",
+      "sha256": "ea2aa10e297cf253bc1a1919ba47fe6ae32049b5eaaab292ed9cc145d8d2adc0"
+    },
+    {
+      "module": "diffusion_policy.model.diffusion.positional_embedding",
+      "path": "diffusion_policy/model/diffusion/positional_embedding.py",
+      "sha256": "2266c75ecc9c9ac8ca126839d39a7bafbdd7af8800d6de903f66815e64cc366c"
+    }
+  ],
+  "status": "REVIEWED_CPU_REJECTION_IDENTIFIED_SYNTHETIC_REPLAY_NOT_RUN",
+  "qualification_registry": "/home/favl/navfm-training-evidence/vint-provenance-diagnostic-v1/execution-registry",
+  "component": {
+    "wall_s": 150,
+    "execution_s": 145,
+    "cases": 2,
+    "pair_scoring": false,
+    "training": false,
+    "simulator": false
+  },
+  "metric_spacing_m": 0.049994826316833496,
+  "vint_checkpoints": [
+    {
+      "role": "release",
+      "seed": null,
+      "path": "/home/favl/projects/navfm/checkpoints/vint.pth",
+      "sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f"
+    },
+    {
+      "role": "prior-selected-epoch20",
+      "seed": 0,
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/epoch_020.pth",
+      "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c"
+    },
+    {
+      "role": "prior-selected-epoch20",
+      "seed": 11,
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed11-20261009-01/epoch_020.pth",
+      "sha256": "f6383c6a59bdd3dad980cc64e934edfe378ccceb942650c12c673309792bb44c"
+    },
+    {
+      "role": "prior-selected-epoch20",
+      "seed": 22,
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed22-20261009-01/epoch_020.pth",
+      "sha256": "e94a42fe547644b01b0093a3e8f550e78668f14e61786b1c9e2c25e446d616a1"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_adaptation_contracts_v1.py",
+      "sha256": "4a33e79f4e85133757ece2d35be1dc50c50328a8c1532327d078f66048e6940a"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/adapt_gnm_native_v1.py",
+      "sha256": "fd81be116fda44af9eee869c3b3297b85446bea57484e9ee9b1dfd601165fb9c"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/adapt_nomad_native_v1.py",
+      "sha256": "067473563958a793aa53c263ce8eb195c219e88efd73b1be1e43e8fe84e255ef"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_adaptation_worker_v1.py",
+      "sha256": "2a3b05f63df4422faa9cdf8fb9295b07dbee587a8fd03404c2ad224e12a4a65f"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_native_adaptation_smoke_v1.py",
+      "sha256": "fb51b4636758272353c4316e1169a2a445fc75dc9b891db847723b1437a1df58"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/nomad_dependency_boundary_v6.py",
+      "sha256": "f86f33d2cf63dbdee9b621b0fea061413c99af7ddbd2fcf662026f1699669add"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/authenticate_torch_wrappers_v6.py",
+      "sha256": "c835465899953f2430220be9c120554c321b7daa84ff02a89430c30d7a3f3e85"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/development_qualification_contracts_v1.py",
+      "sha256": "356cfbc0f571bdae1a421a12ea82103919e0f4c17c09d5f4c2e198236a34d8f4"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/verify_r6_strict_load.py",
+      "sha256": "49be84b7054b7f64b40af94cfa50504323df7eb4e82f2e5eccd1c3ff30aba5d5"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/src/navfm/upstream.py",
+      "sha256": "ecacaf5df496d7f8cdfd40980e4de920b2f351dc111f25617ec0e5a5e017c464"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/src/navfm/models/loader.py",
+      "sha256": "eabfbe049c809fdffc783b052e0666328174fa5e2dd5609a1e144c3da173f309"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_adaptation_worker_v2.py",
+      "sha256": "385b590380d69c1dfbc1c0b484dbcf37291df27330263e65eff6360a86805095"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_native_adaptation_smoke_v2.py",
+      "sha256": "59f72ed81ab6542d8d8b2a3756c083cc172c6902a7aa84074b484d5091910a87"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_dependency_closure_v2.py",
+      "sha256": "b23af8e3ad718c24fb7bfc3ce0ebb7fecbc2ad61559263eac5367ac9b1732db4"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/preflight_native_adaptation_v2.py",
+      "sha256": "c08ce9ef415ff7e8197014492625a0bc2df3c2397012666bb3fef2fc358222c4"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/adapt_nomad_native_v3.py",
+      "sha256": "ea73f5ce6ce00f17cceb12896eddad2e8c52a7a79052d3b868e7e2f217bf654e"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_ema_integration_v3.py",
+      "sha256": "e884a77fbbcdc0040584f012ed7d8738c63ed2cf60d3944c6967eae09fbf29f0"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_adaptation_worker_v3.py",
+      "sha256": "d95e4bf815fa0886e636e5fe31a33b4aed4f1f6561eb16c369b32797a43fdc59"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_native_adaptation_smoke_v3.py",
+      "sha256": "6e8e4349a6cd01ff0f5ff697f406266bbfbb999d936e5739810d8b95693c53de"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/preflight_native_adaptation_v3.py",
+      "sha256": "2b45b57df87f4c1b88f0842239d3bf20832cd4b367ee1dfd4df7543c8847ccfd"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_multiseed_contracts_v1.py",
+      "sha256": "31824fdcca2fb32dd4cc892e2484653fef3df102f5e9b8f1f2109e28a4a6379e"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_multiseed_worker_v1.py",
+      "sha256": "e9bfee7cac478471ddbccee1e6c9d370ea8f8615fb3dce580f131a5f841f037f"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_native_multiseed_v1.py",
+      "sha256": "5b4c0238fc745b97606d6d6478ab7e07a635960a2ad06190a06253fd1119c648"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/offline_evaluation_contracts_v1.py",
+      "sha256": "4aba2507f3ada502efec5fc26c40a5dbfbe2051260cf2bc4ea7c6cde45a660f5"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/offline_evaluation_worker_v1.py",
+      "sha256": "46a7dd91709712a6f76c5a561f4f58c569a04ed862d0699e3997b5e8c68559fd"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_offline_evaluation_v1.py",
+      "sha256": "2335b47c4469321c3d1cf8ebce8a42ee9232806d0725865a9dab119154137974"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_data_contracts_v1.py",
+      "sha256": "e822816ba66ca8c72697b5930d2e323f778b4024323f3af4190b0d7a3ae5ae1a"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_capture_v1.py",
+      "sha256": "c94f7e0ca1fc735e3b1d6b4edeae5e212a4139ffa26dd86756b95311d527208d"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_score_v1.py",
+      "sha256": "39789153f1f2d812f7b87c395892e524d58060c53ddc22ee05e0729b09f59842"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_prospective_data_v1.py",
+      "sha256": "37b4acb179616a765a36b8a8059b1d61d32af6667efc522ca42b628113793681"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/src/navfm/isaac/app.py",
+      "sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_scoring_contracts_v2.py",
+      "sha256": "39e9d3c8af8b567b01f991a383b1a58709b00ad5fc182e777db1bfed42f41ea9"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_score_continuation_v2.py",
+      "sha256": "6b0224840be88e18da121ff9c68b5fefd58360882c13c73dda7fd25c244b5048"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_prospective_scoring_v2.py",
+      "sha256": "ea2fd8c570e8cb5911362f3742177f8b42ca9aa6cfa55b4999330d20f9211306"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_collection_budget_v2.py",
+      "sha256": "828d3c63f6da00cdab379d81005a7b3c0d12ebfeb6bede5014ee4f2f0ad154c6"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/prospective_budget_proposal_v1.py",
+      "sha256": "7b98254a87936239f1ce9d5d39696a74e28d28b5dd26273666a104ceae00b641"
+    },
+    {
+      "path": "/home/favl/projects/navfm/checkpoints/vint.pth",
+      "sha256": "155fd72de2e98ae0e2fef9404072e1aefa79dae5f7f2411d4bcf7e384b83aa1f"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/epoch_020.pth",
+      "sha256": "c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed11-20261009-01/epoch_020.pth",
+      "sha256": "f6383c6a59bdd3dad980cc64e934edfe378ccceb942650c12c673309792bb44c"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed22-20261009-01/epoch_020.pth",
+      "sha256": "e94a42fe547644b01b0093a3e8f550e78668f14e61786b1c9e2c25e446d616a1"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/training_report.json",
+      "sha256": "3154f9649159febf4768fe6bc290e45d801ab66d2d32dc91019b42864812098c"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed11-20261009-01/training_report.json",
+      "sha256": "27995bc7551a0db1f36c287c4eda46d4a9f1d0fb4dfb8c7a6738ae88aa96be16"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/option1-arrival-n31-e20-seed22-20261009-01/training_report.json",
+      "sha256": "8c1848e6d1b2d0811fc13e93f024c05adeba2f7522db18d671454705f2bb7749"
+    },
+    {
+      "path": "/home/favl/navfm-runtime-evidence/pr2-resource-contract-20261010/operator-setup/nomad-installed-dependency-manifest-v2.json",
+      "sha256": "f2f010e75e547a4f5eb32a6b601a7fa4061eb8986f03fec27c72f8d67aba1eeb"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/vint_interface_v1.py",
+      "sha256": "48bb38bb975b6573e92cfcdaa84b8821fbe11be227b580e74f5ff8ae90b21398"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/qualify_vint_interface_v1.py",
+      "sha256": "9d03b437b6f8414cb77a07f957be997712bbd8630dfbb08f4a8dc6c66bfbca0b"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_vint_interface_qualification_v1.py",
+      "sha256": "4ab629dad0d47f41708982f090aca5988fb956267e313411d238723ba50b6fb8"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/vint-interface-v1/checkpoint-selection-provenance.json",
+      "sha256": "05e6f911051acce1ed6fa2e6b20a9de9ccaefd4d5106276129df41b8d294a990"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/native_provenance_diagnostic_v1.py",
+      "sha256": "0a862d845b14af80573b107cf4b3a1a98a95837dcfebb9bfd0f834938456ef11"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/qualify_vint_provenance_diagnostic_v1.py",
+      "sha256": "3291acc2f93f51c2e7119080f52c3a0487f922c75d45feff8da3d2f7c6c4f94d"
+    },
+    {
+      "path": "/home/favl/projects/navfm-research-planning/scripts/run_vint_provenance_diagnostic_v1.py",
+      "sha256": "68a576a9325c2ace5e60adc8383edd81aa9bf7769ddf0ce135569657a1ad4c63"
+    },
+    {
+      "path": "/home/favl/navfm-training-evidence/vint-provenance-diagnostic-v1/native-source-closure.json",
+      "sha256": "a5e52de58bc56f2e953d2e9bc5f9f7e22ffe2427d3bf7df1ed8fd56fb56506ff"
+    }
+  ],
+  "native_dependency_manifest": "/home/favl/navfm-training-evidence/vint-provenance-diagnostic-v1/native-source-closure.json",
+  "diagnostic_rejection_path": "/home/favl/navfm-training-evidence/vint-provenance-diagnostic-v1-01/rejection.json"
+}
