@@ -83,13 +83,13 @@ flat index excluded squared-distance2/4 while admitting smaller distances; nativ
 pruning removed a redundant300 edge, retained301, and preserved an isolated node.
 These synthetic component checks do not qualify a graph from RGB.
 There were zero matcher constructions and zero encoder/matching forwards.
-Final CPU wall1.824s; result SHA `cb5f3536d377b8cde972df321cc2ee3e4b284e6d945cfd68923cc1ebb203735a` at
-`/home/favl/navfm-runtime-evidence/ravel-fixed-cpu-closure-v1-04/result.json`;
+Final CPU wall1.782s; result SHA `3b21621b44b8dc34c94f33e45e1792ebf564d147dedcc579a90fddfc0f081b59` at
+`/home/favl/navfm-runtime-evidence/ravel-fixed-cpu-closure-v1-05/result.json`;
 its synthetic matrices/index/node paths and rejection evidence remain external.
 Initial CPU source closure exposed a missing inherited Torch site path; the
 isolated overlay binding was corrected before model construction. No asset fetch
-was repeated. Nine hermetic guards/Ruff pass; all3167 old nodes and owners remain,
-3176 expected nodes total. The separate external CPU qualification has explicit
+was repeated. Ten hermetic guards/Ruff pass; all3167 old nodes and owners remain,
+3177 expected nodes total. The separate external CPU qualification has explicit
 command ownership, not immutable archive ownership.
 
 ```sh

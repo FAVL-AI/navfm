@@ -1,6 +1,6 @@
 {
   "version": "RAVEL_FIXED_NATIVE_GRAPH_V1",
-  "status": "PREPARATION_NOT_FROZEN",
+  "status": "FROZEN_NATIVE_FIXED_GRAPH_V1",
   "native_commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
   "sources": {
     "build_matrix": {

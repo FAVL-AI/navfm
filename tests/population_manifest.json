@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3176,
-      "sha256": "2e3afe2ca1fcfca882ad2243078e5ea034809702f984ae973e571b79e1917698"
+      "count": 3177,
+      "sha256": "932b756d9bc53df74ef3d3f3e6ce38b83d9e7da3ab0039983d3048ed38390ab7"
     },
     "hermetic": {
-      "count": 2971,
-      "sha256": "0f5ad604eb7cf9b54bd1ee6a754be9d16caa145c0337a4d3a5e2a3b34a017165"
+      "count": 2972,
+      "sha256": "ae0bf96f8ffd25d5afe42b42872337df7d660f872b53e398d4d8cffcdc89343d"
     },
     "resource_union": {
       "count": 205,
@@ -3734,7 +3734,8 @@
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[pairs]": [],
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[whole_worker_s]": [],
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_duplicate_reference_identity_is_rejected": [],
-    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_reference_order_cannot_be_reselected": []
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_reference_order_cannot_be_reselected": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_parent_timeout_vetoes_zero_exit_and_valid_evidence": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3996,5 +3997,11 @@
     "resource_owners_changed": false,
     "separate_CPU_probe_owner": "explicit native RAVEL source-closure command with authenticated external source and isolated overlay",
     "qualification_scope": "CPU synthetic component boundaries only; prospective native fixed-mode recorded graph requires separate frozen measured attempt."
+  },
+  "ravel_parent_timeout_gate_update": {
+    "old_nodes_preserved": 3176,
+    "added_hermetic_nodes": 1,
+    "total_count": 3177,
+    "resource_owners_changed": false
   }
 }

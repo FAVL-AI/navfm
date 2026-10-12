@@ -423,6 +423,11 @@ def run_graph(cfg, folder, emit):
     return stats
 
 
+def accept_worker_outcome(outcome, valid):
+    """Timeout veto is independent of child exit and evidence acceptance."""
+    return bool(valid and outcome["exit_code"] == 0 and not outcome["timeout"])
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--freeze", required=True)
@@ -499,7 +504,7 @@ def main():
         and sum(p.stat().st_size for p in folder.iterdir() if p.is_file())
         <= cfg["caps"]["raw_output_acceptance_bytes"]
     )
-    outcome.update(status="PASS" if valid and outcome["exit_code"] == 0 else "FAIL", freeze=head)
+    outcome.update(status="PASS" if accept_worker_outcome(outcome, valid) else "FAIL", freeze=head)
     write_json(folder / "parent_status.json", outcome)
     print(json.dumps(outcome))
     raise SystemExit(0 if outcome["status"] == "PASS" else 1)

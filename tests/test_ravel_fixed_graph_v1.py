@@ -48,3 +48,11 @@ def test_native_graph_reference_order_cannot_be_reselected():
     cfg["references"] = cfg["references"][::-1]
     with pytest.raises(ValueError, match="row/order"):
         validate_contract(cfg)
+
+
+def test_parent_timeout_vetoes_zero_exit_and_valid_evidence():
+    from ravel_fixed_graph_v1 import accept_worker_outcome
+
+    assert accept_worker_outcome({"exit_code": 0, "timeout": False}, True)
+    assert not accept_worker_outcome({"exit_code": 0, "timeout": True}, True)
+    assert not accept_worker_outcome({"exit_code": 0, "timeout": False}, False)
