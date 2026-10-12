@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3177,
-      "sha256": "932b756d9bc53df74ef3d3f3e6ce38b83d9e7da3ab0039983d3048ed38390ab7"
+      "count": 3184,
+      "sha256": "2b677d2a2b8e3cc3b2e7b632abbf40f62395467e8ebb2e88957b38676442049a"
     },
     "hermetic": {
-      "count": 2972,
-      "sha256": "ae0bf96f8ffd25d5afe42b42872337df7d660f872b53e398d4d8cffcdc89343d"
+      "count": 2979,
+      "sha256": "0e4369ad560e768cef7c91f7d7e9f854b76279510e6a9e131dbae53e1aa35144"
     },
     "resource_union": {
       "count": 205,
@@ -3735,7 +3735,14 @@
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[whole_worker_s]": [],
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_duplicate_reference_identity_is_rejected": [],
     "tests/test_ravel_fixed_graph_v1.py::test_native_graph_reference_order_cannot_be_reselected": [],
-    "tests/test_ravel_fixed_graph_v1.py::test_parent_timeout_vetoes_zero_exit_and_valid_evidence": []
+    "tests/test_ravel_fixed_graph_v1.py::test_parent_timeout_vetoes_zero_exit_and_valid_evidence": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_checkpoint_diagnostics_separate_shapes_parameters_buffers_and_unused_keys": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_diagnostics_preserve_existing_parameter_and_unexpected_key_guard": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[forwards]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[GPU_calls]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[constructor_attempts]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[worker_cpu_wall_s]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_superpoint_evidence_cannot_complete_targeted_lightglue_diagnosis": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4003,5 +4010,13 @@
     "added_hermetic_nodes": 1,
     "total_count": 3177,
     "resource_owners_changed": false
+  },
+  "ravel_checkpoint_diagnostic_v1_update": {
+    "old_nodes_preserved": 3177,
+    "added_hermetic_nodes": 7,
+    "total_count": 3184,
+    "resource_owners_changed": false,
+    "external_probe_owner": "explicit CPU matcher-constructor diagnostic command, existing authenticated source/weights and isolated overlay",
+    "scope": "No forward, graph, calibration or GPU; keys/shapes/diagnostic evidence external only."
   }
 }

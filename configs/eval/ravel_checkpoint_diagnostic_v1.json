@@ -1,0 +1,17 @@
+{
+  "version": "RAVEL_CHECKPOINT_DIAGNOSTIC_V1",
+  "status": "FROZEN_CPU_CHECKPOINT_DIAGNOSTIC_V1",
+  "device": "cpu",
+  "fit": false,
+  "graph_config_sha256": "651bfafc9dd70d3697fc41e14f3b873adc969ba1143a2f225ae6b136b8af61f8",
+  "caps": {
+    "worker_cpu_wall_s": 30,
+    "parent_wall_s": 60,
+    "raw_bytes": 16777216,
+    "constructor_attempts": 2,
+    "forwards": 0,
+    "GPU_calls": 0
+  },
+  "result_directory": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-diagnostic-v1-01",
+  "scope": "actual authenticated native matcher constructor statements and unchanged admission guard; raw key/shape metadata external only"
+}

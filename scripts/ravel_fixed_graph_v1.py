@@ -1,6 +1,7 @@
 """Source-bound nondefault native RAVEL fixed-mode graph; no calibration or VPR calls."""
 
 import argparse
+import ast
 import hashlib
 import importlib.metadata
 import inspect
@@ -176,7 +177,123 @@ def observe_native_counter(counter, emit, stats):
     return counted
 
 
-def instrument_models(native, cfg, emit, stats):
+def verify_matcher_assets(cfg):
+    for asset in ("superpoint_v1.pth", "superpoint_lightglue.pth"):
+        row = cfg["weights"][asset]
+        verify_file(row["local_path"], row["sha256"])
+
+
+def checkpoint_structure(expected, parameters, buffers, supplied):
+    return dict(
+        missing_parameters=sorted(parameters.keys() - supplied.keys()),
+        missing_buffers=sorted(buffers.keys() - supplied.keys()),
+        unexpected_keys=sorted(supplied.keys() - expected.keys()),
+        shape_mismatches={
+            k: dict(expected=expected[k], supplied=supplied[k])
+            for k in expected.keys() & supplied.keys()
+            if expected[k] != supplied[k]
+        },
+    )
+
+
+def checkpoint_admitted(missing_parameters, unexpected_keys):
+    return not missing_parameters and not unexpected_keys
+
+
+def native_remap_report(cfg, original_shapes, layers):
+    row = cfg["sources"]["lightglue"]
+    verify_file(row["local_path"], row["sha256"])
+    parsed = ast.parse(Path(row["local_path"]).read_text())
+    cls = next(
+        node for node in parsed.body if isinstance(node, ast.ClassDef) and node.name == "LightGlue"
+    )
+    init = next(
+        node for node in cls.body if isinstance(node, ast.FunctionDef) and node.name == "__init__"
+    )
+    loops = [
+        node
+        for node in ast.walk(init)
+        if isinstance(node, ast.For)
+        and any(isinstance(child, ast.Name) and child.id == "pattern" for child in ast.walk(node))
+    ]
+    if len(loops) != 1 or type(layers) is not int or not 1 <= layers <= 32:
+        raise ValueError("native remap statement closure changed")
+    code = compile(
+        ast.fix_missing_locations(ast.Module(body=loops, type_ignores=[])),
+        row["local_path"],
+        "exec",
+    )
+    mapping = {}
+    for original in original_shapes:
+        namespace = dict(
+            self=types.SimpleNamespace(conf=types.SimpleNamespace(n_layers=layers)),
+            state_dict={original: original},
+        )
+        namespace["__builtins__"] = {"range": range}
+        exec(code, namespace, namespace)
+        mapped = namespace["state_dict"]
+        if len(mapped) != 1:
+            raise ValueError("native single-key remap changed")
+        mapping[original] = next(iter(mapped))
+    groups = {}
+    for old, new in mapping.items():
+        groups.setdefault(new, []).append(old)
+    return dict(
+        original_to_final=mapping, collisions={k: v for k, v in groups.items() if len(v) > 1}
+    )
+
+
+def native_matcher_constructor_preflight(native, cfg, emit):
+    """Invoke exact authenticated native matcher constructor statements on CPU."""
+    import torch
+
+    verify_matcher_assets(cfg)
+    stats = dict(superpoint=0, lightglue=0, technical_failures=0)
+    configure_native_matcher_constructors(
+        native, cfg, emit, stats, forward_caps=dict(superpoint=0, lightglue=0)
+    )
+    row = cfg["sources"]["analyze_parameters"]
+    verify_file(row["local_path"], row["sha256"])
+    parsed = ast.parse(Path(row["local_path"]).read_text())
+    function = next(
+        node
+        for node in parsed.body
+        if isinstance(node, ast.FunctionDef) and node.name == "run_parameter_analysis"
+    )
+    assignments = [
+        node
+        for node in ast.walk(function)
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id in {"extractor", "matcher"}
+    ]
+    if [node.targets[0].id for node in assignments] != ["extractor", "matcher"]:
+        raise ValueError("native constructor statement closure changed")
+    namespace = dict(
+        SuperPoint=native.analyzer.SuperPoint,
+        LightGlue=native.analyzer.LightGlue,
+        args=types.SimpleNamespace(lightglue_weights="indoor"),
+        device=torch.device("cpu"),
+    )
+    for assignment in assignments:
+        emit(
+            dict(
+                event="CONSTRUCTOR_ATTEMPT",
+                kind="superpoint" if assignment.targets[0].id == "extractor" else "lightglue",
+                device="cpu",
+            )
+        )
+        code = compile(
+            ast.fix_missing_locations(ast.Module(body=[assignment], type_ignores=[])),
+            row["local_path"],
+            "exec",
+        )
+        exec(code, {"__builtins__": {}}, namespace)
+    return namespace["extractor"], namespace["matcher"]
+
+
+def configure_native_matcher_constructors(native, cfg, emit, stats, forward_caps=None):
     import torch
 
     class TorchTransport:
@@ -201,14 +318,75 @@ def instrument_models(native, cfg, emit, stats):
     def observed_class(base, kind, cap):
         class Observed(base):
             def load_state_dict(self, state, *args, **kwargs):
-                result = super().load_state_dict(state, *args, **kwargs)
+                self.load_sequence = getattr(self, "load_sequence", 0) + 1
+                parameters = {k: list(v.shape) for k, v in self.named_parameters()}
+                buffers = {k: list(v.shape) for k, v in self.named_buffers()}
+                expected = {k: list(v.shape) for k, v in self.state_dict().items()}
+                supplied = {k: list(v.shape) for k, v in state.items()}
+                if self.load_sequence == 1:
+                    self.original_checkpoint_shapes = supplied
+                effective = self.conf if isinstance(self.conf, dict) else vars(self.conf)
+                detail = dict(
+                    event="STATE_LOAD_DIAGNOSTIC",
+                    kind=kind,
+                    sequence=self.load_sequence,
+                    strict=kwargs.get("strict", args[0] if args else True),
+                    parameter_shapes=parameters,
+                    buffer_shapes=buffers,
+                    checkpoint_shapes=supplied,
+                    effective_config=effective,
+                    source_sha256=cfg["sources"][kind]["sha256"],
+                    checkpoint_sha256=cfg["weights"][
+                        "superpoint_v1.pth" if kind == "superpoint" else "superpoint_lightglue.pth"
+                    ]["sha256"],
+                )
+                detail.update(checkpoint_structure(expected, parameters, buffers, supplied))
+                if kind == "lightglue":
+                    detail["native_remap"] = native_remap_report(
+                        cfg, self.original_checkpoint_shapes, self.conf.n_layers
+                    )
+                emit(detail)  # Durable before native load can fail on shapes.
+                try:
+                    result = super().load_state_dict(state, *args, **kwargs)
+                except Exception as exc:
+                    emit(
+                        dict(
+                            event="STATE_LOAD_REFUSED",
+                            kind=kind,
+                            sequence=self.load_sequence,
+                            exception_type=type(exc).__name__,
+                            reason=str(exc)[:500],
+                        )
+                    )
+                    raise
                 self.last_load = result
+                emit(
+                    dict(
+                        event="STATE_LOAD_RESULT",
+                        kind=kind,
+                        sequence=self.load_sequence,
+                        missing_keys=result.missing_keys,
+                        unexpected_keys=result.unexpected_keys,
+                    )
+                )
                 return result
 
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
                 missing = set(self.last_load.missing_keys) & dict(self.named_parameters()).keys()
-                if missing or self.last_load.unexpected_keys:
+                emit(
+                    dict(
+                        event="FINAL_ADMISSION_DIAGNOSTIC",
+                        kind=kind,
+                        missing_parameters=sorted(missing),
+                        missing_buffers=sorted(
+                            set(self.last_load.missing_keys) & dict(self.named_buffers()).keys()
+                        ),
+                        unexpected_keys=self.last_load.unexpected_keys,
+                        admitted=checkpoint_admitted(missing, self.last_load.unexpected_keys),
+                    )
+                )
+                if not checkpoint_admitted(missing, self.last_load.unexpected_keys):
                     raise ValueError("native final checkpoint coverage incomplete")
                 emit(
                     dict(
@@ -235,8 +413,17 @@ def instrument_models(native, cfg, emit, stats):
 
         return Observed
 
-    native.analyzer.SuperPoint = observed_class(native.sp.SuperPoint, "superpoint", 56)
-    native.analyzer.LightGlue = observed_class(native.lg.LightGlue, "lightglue", 28)
+    native.analyzer.SuperPoint = observed_class(
+        native.sp.SuperPoint, "superpoint", (forward_caps or {}).get("superpoint", 56)
+    )
+    native.analyzer.LightGlue = observed_class(
+        native.lg.LightGlue, "lightglue", (forward_caps or {}).get("lightglue", 28)
+    )
+    return native.analyzer.SuperPoint, native.analyzer.LightGlue
+
+
+def instrument_models(native, cfg, emit, stats):
+    configure_native_matcher_constructors(native, cfg, emit, stats)
     original = native.analyzer.create_general_match_counter
     seen = set()
 
