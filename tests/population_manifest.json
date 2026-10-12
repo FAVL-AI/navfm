@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3086,
-      "sha256": "1fb8a400a42e22f9c6ebf5064c75f25a645bd09a560e06cf950ac8287a7294a8"
+      "count": 3091,
+      "sha256": "a5016341c60c5cf3bee2d4c033ef568a80432aba6b55d5bc18a6fa91658f82a9"
     },
     "hermetic": {
-      "count": 2881,
-      "sha256": "ecf649c75eec2e38989799013c6554d8d7715074687a1e7533fdd20dbd0813ce"
+      "count": 2886,
+      "sha256": "1c6d48d51b825ff4dc94cb4907490b69251b349bf974f2111e23653e363e7537"
     },
     "resource_union": {
       "count": 140,
@@ -3644,7 +3644,12 @@
     "tests/test_native_provenance_diagnostic_v1.py::test_cleanup_signal_error_cannot_bypass_reaping": [],
     "tests/test_native_provenance_diagnostic_v1.py::test_first_rejection_survives_distinct_final_rejection": [],
     "tests/test_native_provenance_diagnostic_v1.py::test_rejection_path_mismatch_rejects_before_launch": [],
-    "tests/test_vint_native_manifest_v2.py::test_original_verifier_exact_entry_and_all_three_rejections": []
+    "tests/test_vint_native_manifest_v2.py::test_original_verifier_exact_entry_and_all_three_rejections": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_viNT_raw_heading_and_xy_metric_no_second_cumsum": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_vint_fixed_population_missing_pair_null": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_qualified_binding_tamper_and_role_drift": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_reused_worker_qualified_forward_binding": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_transformed_native_load_trust_release_only": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3850,5 +3855,11 @@
     "added": 1,
     "total": 3086,
     "status": "CPU_CLOSURE_PASS_COMPONENT_NOT_RUN"
+  },
+  "prospective_vint_scoring_v1_update": {
+    "prior_retained": 3086,
+    "added": 5,
+    "total": 3091,
+    "status": "PREPARATION_ONLY_SCORING_NOT_RUN"
   }
 }
