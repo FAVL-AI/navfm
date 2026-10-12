@@ -3607,7 +3607,20 @@
     "tests/test_prospective_collection_budget_v2.py::test_registry_write_failure_invalidates_output_pass": [],
     "tests/test_prospective_collection_budget_v2.py::test_deadline_crossed_during_persistence_cannot_leave_admission": [],
     "tests/test_prospective_collection_budget_v2.py::test_cancellation_after_admission_is_fail_closed": [],
-    "tests/test_prospective_collection_budget_v2.py::test_completed_final_transaction_verifies_and_rejects_drift": []
+    "tests/test_prospective_collection_budget_v2.py::test_completed_final_transaction_verifies_and_rejects_drift": [],
+    "tests/test_prospective_scoring_v2.py::test_completed_dataset_bind_and_fixed_population": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[wrong_source]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[wrong_dataset]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[marker]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[artifact]": [],
+    "tests/test_prospective_scoring_v2.py::test_invalid_raw_draw_survives_metric_exception_and_partial_snapshot": [],
+    "tests/test_prospective_scoring_v2.py::test_atomic_failure_preserves_prior_raw_draw": [],
+    "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[ledger]": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[artifact]": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[registry]": [],
+    "tests/test_prospective_scoring_v2.py::test_scoring_persistence_overrun_invalidates_completed_marker": [],
+    "tests/test_prospective_scoring_v2.py::test_completed_scoring_stage_requires_bound_output_and_artifacts": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3787,5 +3800,11 @@
     "added": 12,
     "total": 3055,
     "status": "PREPARATION_PENDING_USER_APPROVAL_NOT_RUN"
+  },
+  "prospective_scoring_v2_update": {
+    "prior_retained": 3055,
+    "added": 13,
+    "total": 3068,
+    "status": "PREPARATION_NOT_RUN"
   }
 }
