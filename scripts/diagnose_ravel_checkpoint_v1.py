@@ -103,7 +103,9 @@ def main():
             native = load_native(graph)
             refused = None
             try:
-                native_matcher_constructor_preflight(native, graph, emit)
+                native_matcher_constructor_preflight(
+                    native, graph, emit, canonicalize_lightglue=False
+                )
             except ValueError as exc:
                 if str(exc) != "native final checkpoint coverage incomplete":
                     raise

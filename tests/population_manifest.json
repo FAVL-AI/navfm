@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3184,
-      "sha256": "2b677d2a2b8e3cc3b2e7b632abbf40f62395467e8ebb2e88957b38676442049a"
+      "count": 3192,
+      "sha256": "448cec35bb2b00c59bc4485fb28f6a249b2708c19ca94c1b4ce4b78260044805"
     },
     "hermetic": {
-      "count": 2979,
-      "sha256": "0e4369ad560e768cef7c91f7d7e9f854b76279510e6a9e131dbae53e1aa35144"
+      "count": 2987,
+      "sha256": "11b9114ee71983e246f103b5b4fbfd2295391b239f6cf7826fc9359d8b2efa8c"
     },
     "resource_union": {
       "count": 205,
@@ -3742,7 +3742,15 @@
     "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[GPU_calls]": [],
     "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[constructor_attempts]": [],
     "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[worker_cpu_wall_s]": [],
-    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_superpoint_evidence_cannot_complete_targeted_lightglue_diagnosis": []
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_superpoint_evidence_cannot_complete_targeted_lightglue_diagnosis": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[source]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[asset]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[config]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_cannot_expand_unused_key_removal": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[forwards]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[GPU_calls]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[constructor_attempts]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[worker_cpu_wall_s]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4018,5 +4026,13 @@
     "resource_owners_changed": false,
     "external_probe_owner": "explicit CPU matcher-constructor diagnostic command, existing authenticated source/weights and isolated overlay",
     "scope": "No forward, graph, calibration or GPU; keys/shapes/diagnostic evidence external only."
+  },
+  "ravel_checkpoint_validation_v2_update": {
+    "old_nodes_preserved": 3184,
+    "added_hermetic_nodes": 8,
+    "total_count": 3192,
+    "resource_owners_changed": false,
+    "external_CPU_probe_owner": "explicit six-constructor native/canonical CPU validation command with authenticated local source/assets",
+    "scope": "No forwards/GPU/graph; derived negative mappings are explicit validation-only fixtures after authenticated input, never replacement checkpoint files."
   }
 }

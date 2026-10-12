@@ -243,14 +243,120 @@ def native_remap_report(cfg, original_shapes, layers):
     )
 
 
-def native_matcher_constructor_preflight(native, cfg, emit):
+CANONICAL_POLICY_V2 = (
+    Path(__file__).resolve().parents[1] / "configs/eval/ravel_lightglue_transport_v2.json"
+)
+
+
+def validate_canonical_binding_v2(cfg, effective, policy):
+    expected_keys = [f"log_assignment.{i}.r" for i in range(9)]
+    if (
+        policy["legacy_keys"] != expected_keys
+        or policy["legacy_shape"] != [1]
+        or policy["legacy_dtype"] != "torch.float32"
+        or policy["require_finite"] is not True
+    ):
+        raise ValueError("exact legacy transport policy changed")
+    row = cfg["sources"]["lightglue"]
+    weight = cfg["weights"]["superpoint_lightglue.pth"]
+    if (
+        row["sha256"] != policy["source_sha256"]
+        or weight["sha256"] != policy["checkpoint_sha256"]
+        or effective != policy["effective_config"]
+    ):
+        raise ValueError("legacy transport source/asset/config binding mismatch")
+    return expected_keys
+
+
+def canonicalize_lightglue_transport_v2(state, cfg, effective, emit):
+    import torch
+
+    policy = json.loads(CANONICAL_POLICY_V2.read_text())
+    expected_keys = validate_canonical_binding_v2(cfg, effective, policy)
+    row = cfg["sources"]["lightglue"]
+    verify_file(row["local_path"], policy["source_sha256"])
+    for key in expected_keys:
+        tensor = state.get(key)
+        if (
+            not isinstance(tensor, torch.Tensor)
+            or list(tensor.shape) != [1]
+            or tensor.dtype != torch.float32
+            or not bool(torch.isfinite(tensor).all())
+        ):
+            raise ValueError("legacy transport key shape/dtype/finite predicate failed")
+    remap = native_remap_report(cfg, {k: list(v.shape) for k, v in state.items()}, 9)
+    if remap["collisions"]:
+        raise ValueError("native remap collision refused before transport copy")
+    copied = {k: v for k, v in state.items() if k not in expected_keys}
+    if any(copied[k] is not state[k] for k in copied):
+        raise ValueError("remaining trained state changed in transport")
+    emit(
+        dict(
+            event="EXACT_LEGACY_TRANSPORT_CANONICALIZED",
+            removed_keys=expected_keys,
+            shape=[1],
+            dtype="torch.float32",
+            finite=True,
+            retained_key_count=len(copied),
+            unchanged_tensor_objects=True,
+            source_sha256=policy["source_sha256"],
+            checkpoint_sha256=policy["checkpoint_sha256"],
+        )
+    )
+    return copied
+
+
+def invoke_native_lightglue_constructor_v2(native, cfg, constructor, emit, role):
+    """Exact native matcher assignment; CPU constructor only, no detector repeat."""
+    import torch
+
+    row = cfg["sources"]["analyze_parameters"]
+    verify_file(row["local_path"], row["sha256"])
+    tree = ast.parse(Path(row["local_path"]).read_text())
+    function = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "run_parameter_analysis"
+    )
+    assignments = [
+        node
+        for node in ast.walk(function)
+        if isinstance(node, ast.Assign)
+        and len(node.targets) == 1
+        and isinstance(node.targets[0], ast.Name)
+        and node.targets[0].id == "matcher"
+    ]
+    if len(assignments) != 1:
+        raise ValueError("native matcher constructor assignment changed")
+    namespace = dict(
+        LightGlue=constructor,
+        args=types.SimpleNamespace(lightglue_weights="indoor"),
+        device=torch.device("cpu"),
+        __builtins__={},
+    )
+    emit(dict(event="CONSTRUCTOR_ATTEMPT", kind="lightglue", device="cpu", role=role))
+    code = compile(
+        ast.fix_missing_locations(ast.Module(body=assignments, type_ignores=[])),
+        row["local_path"],
+        "exec",
+    )
+    exec(code, namespace, namespace)
+    return namespace["matcher"]
+
+
+def native_matcher_constructor_preflight(native, cfg, emit, canonicalize_lightglue=True):
     """Invoke exact authenticated native matcher constructor statements on CPU."""
     import torch
 
     verify_matcher_assets(cfg)
     stats = dict(superpoint=0, lightglue=0, technical_failures=0)
     configure_native_matcher_constructors(
-        native, cfg, emit, stats, forward_caps=dict(superpoint=0, lightglue=0)
+        native,
+        cfg,
+        emit,
+        stats,
+        forward_caps=dict(superpoint=0, lightglue=0),
+        canonicalize_lightglue=canonicalize_lightglue,
     )
     row = cfg["sources"]["analyze_parameters"]
     verify_file(row["local_path"], row["sha256"])
@@ -293,8 +399,12 @@ def native_matcher_constructor_preflight(native, cfg, emit):
     return namespace["extractor"], namespace["matcher"]
 
 
-def configure_native_matcher_constructors(native, cfg, emit, stats, forward_caps=None):
+def configure_native_matcher_constructors(
+    native, cfg, emit, stats, forward_caps=None, canonicalize_lightglue=False, validation_case=None
+):
     import torch
+
+    active_model = [None]
 
     class TorchTransport:
         def __getattr__(self, name):
@@ -309,7 +419,42 @@ def configure_native_matcher_constructors(native, cfg, emit, stats, forward_caps
             raise ValueError("unbound native model download")
         verify_file(row["local_path"], row["sha256"])
         emit(dict(event="WEIGHT_LOAD", asset=name, sha256=row["sha256"]))
-        return torch.load(row["local_path"], map_location="cpu", weights_only=True)
+        state = torch.load(row["local_path"], map_location="cpu", weights_only=True)
+        if name == "superpoint_lightglue.pth" and canonicalize_lightglue:
+            if validation_case is not None:
+                if (
+                    forward_caps != dict(superpoint=0, lightglue=0)
+                    or os.environ.get("CUDA_VISIBLE_DEVICES") != ""
+                    or torch.cuda.is_available()
+                ):
+                    raise ValueError("derived state controls are CPU-preflight-only")
+                if validation_case not in {
+                    "missing_parameter",
+                    "unknown_extra",
+                    "wrong_shape",
+                    "remap_collision",
+                }:
+                    raise ValueError("unapproved derived state control")
+                emit(
+                    dict(
+                        event="CONTROLLED_DERIVED_STATE",
+                        case=validation_case,
+                        authenticated_original_sha256=row["sha256"],
+                        checkpoint_file_changed=False,
+                    )
+                )
+                if validation_case == "remap_collision":
+                    state = dict(state)
+                    state["transformers.0.self_attn.Wqkv.weight"] = state["self_attn.0.Wqkv.weight"]
+            effective = vars(active_model[0].conf)
+            state = canonicalize_lightglue_transport_v2(state, cfg, effective, emit)
+            if validation_case == "missing_parameter":
+                del state["posenc.Wr.weight"]
+            elif validation_case == "unknown_extra":
+                state["diagnostic_unexpected"] = torch.zeros(1)
+            elif validation_case == "wrong_shape":
+                state["posenc.Wr.weight"] = torch.zeros(1)
+        return state
 
     TorchTransport.hub.load_state_dict_from_url = local_weights
     native.sp.torch = TorchTransport()
@@ -372,6 +517,7 @@ def configure_native_matcher_constructors(native, cfg, emit, stats, forward_caps
                 return result
 
             def __init__(self, *args, **kwargs):
+                active_model[0] = self
                 super().__init__(*args, **kwargs)
                 missing = set(self.last_load.missing_keys) & dict(self.named_parameters()).keys()
                 emit(
@@ -423,7 +569,7 @@ def configure_native_matcher_constructors(native, cfg, emit, stats, forward_caps
 
 
 def instrument_models(native, cfg, emit, stats):
-    configure_native_matcher_constructors(native, cfg, emit, stats)
+    configure_native_matcher_constructors(native, cfg, emit, stats, canonicalize_lightglue=True)
     original = native.analyzer.create_general_match_counter
     seen = set()
 
