@@ -3595,7 +3595,19 @@
     "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[wrong_total]": [],
     "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[bool_allowance]": [],
     "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[held_steps]": [],
-    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[uninspected]": []
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[uninspected]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_actual_execution_and_cleanup_deadlines": [],
+    "tests/test_prospective_collection_budget_v2.py::test_pending_approval_has_no_execution_authority": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[nan]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[inf]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[-1]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[True]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_existing_capsule_admission_counts_and_process_guards_unchanged": [],
+    "tests/test_prospective_collection_budget_v2.py::test_continuation_reuses_exact_capture_and_has_no_scorer": [],
+    "tests/test_prospective_collection_budget_v2.py::test_registry_write_failure_invalidates_output_pass": [],
+    "tests/test_prospective_collection_budget_v2.py::test_deadline_crossed_during_persistence_cannot_leave_admission": [],
+    "tests/test_prospective_collection_budget_v2.py::test_cancellation_after_admission_is_fail_closed": [],
+    "tests/test_prospective_collection_budget_v2.py::test_completed_final_transaction_verifies_and_rejects_drift": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3769,5 +3781,11 @@
     "added": 7,
     "total": 3043,
     "status": "UNAPPROVED_UNEXECUTED"
+  },
+  "prospective_collection_budget_v2_update": {
+    "prior_retained": 3043,
+    "added": 12,
+    "total": 3055,
+    "status": "PREPARATION_PENDING_USER_APPROVAL_NOT_RUN"
   }
 }
