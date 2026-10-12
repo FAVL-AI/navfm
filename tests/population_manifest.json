@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3167,
-      "sha256": "3057f883d1a95675556bbb230f45704a3396d9722651a13e7121e8931c86eb90"
+      "count": 3176,
+      "sha256": "2e3afe2ca1fcfca882ad2243078e5ea034809702f984ae973e571b79e1917698"
     },
     "hermetic": {
-      "count": 2962,
-      "sha256": "1c41385a0b8dac6bfe9db91679a5bdc4bea56e8f48d91d0a2dd31a0cdcb33833"
+      "count": 2971,
+      "sha256": "0f5ad604eb7cf9b54bd1ee6a754be9d16caa145c0337a4d3a5e2a3b34a017165"
     },
     "resource_union": {
       "count": 205,
@@ -3725,7 +3725,16 @@
     "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[reselection]": [],
     "tests/test_recorded_rgb_stop_v1.py::test_worker_python_network_refusal_is_enforced_in_isolated_process": [],
     "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_missing_globals_before_source_access": [],
-    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_globals_outside_frozen_allowlist": []
+    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_globals_outside_frozen_allowlist": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[num_clusters-2]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[tau-1.0]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[radius-4.0]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[index_type-hnsw]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[disable_ransac-True]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[pairs]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[whole_worker_s]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_duplicate_reference_identity_is_rejected": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_reference_order_cannot_be_reselected": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3979,5 +3988,13 @@
     "total_count": 3167,
     "external_cpu_qualification_owner": "explicit recorded-RGB source-closure qualification command; not an archive-owned pytest test",
     "scope": "No encoder or model execution; external pinned source and native dependency environment required only by separate CPU probe."
+  },
+  "ravel_fixed_graph_v1_update": {
+    "old_nodes_preserved": 3167,
+    "added_hermetic_nodes": 9,
+    "total_count": 3176,
+    "resource_owners_changed": false,
+    "separate_CPU_probe_owner": "explicit native RAVEL source-closure command with authenticated external source and isolated overlay",
+    "qualification_scope": "CPU synthetic component boundaries only; prospective native fixed-mode recorded graph requires separate frozen measured attempt."
   }
 }
