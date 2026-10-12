@@ -61,16 +61,16 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3091,
-      "sha256": "a5016341c60c5cf3bee2d4c033ef568a80432aba6b55d5bc18a6fa91658f82a9"
+      "count": 3113,
+      "sha256": "fa05f267712fde8d16674aaeb6e60b82420d12eb463323dd391363c9a6f35120"
     },
     "hermetic": {
-      "count": 2886,
-      "sha256": "1c6d48d51b825ff4dc94cb4907490b69251b349bf974f2111e23653e363e7537"
+      "count": 2908,
+      "sha256": "aa1fafc8159a6b26b19a232387adb218f439e618b17ea797c0d3d5300782adc6"
     },
     "resource_union": {
-      "count": 140,
-      "sha256": "4b12d214bc42728f630e513423a96981011ce230845ed8f54251c1f2b57720c6"
+      "count": 205,
+      "sha256": "56deff74da8a778a81c9c5a3f3d84afddb3591f94be2ce367757a71d5ca2e2e4"
     },
     "upstream": {
       "count": 44,
@@ -3649,7 +3649,29 @@
     "tests/test_prospective_vint_scoring_v1.py::test_vint_fixed_population_missing_pair_null": [],
     "tests/test_prospective_vint_scoring_v1.py::test_qualified_binding_tamper_and_role_drift": [],
     "tests/test_prospective_vint_scoring_v1.py::test_reused_worker_qualified_forward_binding": [],
-    "tests/test_prospective_vint_scoring_v1.py::test_transformed_native_load_trust_release_only": []
+    "tests/test_prospective_vint_scoring_v1.py::test_transformed_native_load_trust_release_only": [],
+    "tests/test_arrival_design_contracts_v1.py::test_absent_subject_and_unknown_field_fail": [],
+    "tests/test_arrival_design_contracts_v1.py::test_boolean_numeric_schema_confusion_fails[runtime_authorized-0]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_boolean_numeric_schema_confusion_fails[schema_version-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_changed_on_disk_design_cannot_self_certify": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0.15-0]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0.15-inf]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[True-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[nan-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_layout_sensitivity_and_resource_envelope": [],
+    "tests/test_arrival_design_contracts_v1.py::test_more_layout_variance_or_smaller_effect_gap_needs_more_layouts": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[None-runtime_authorized-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[comparison-seed_aggregation-best_test_seed]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[comparison-test_tuning-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[gates-illumination_authorization-AUTHORIZED]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[gates-motion_qualification-PASS]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[method-cadence_hz-3]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[metrics-oracle-ground_truth_policy_stop]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-denominator-successful_attempts_only]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-human_reviewer-same_custodian]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-test_access-SEALED_BY_SELF]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-unit-frame]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3861,5 +3883,17 @@
     "added": 5,
     "total": 3091,
     "status": "PREPARATION_ONLY_SCORING_NOT_RUN"
+  },
+  "arrival_contribution_design_v1_update": {
+    "prior_retained": 3091,
+    "added": 22,
+    "total": 3113,
+    "owner": "ordinary-hermetic",
+    "status": "DESIGN_ONLY_22_SOFTWARE_CONTROLS_PASS_RUNTIME_NOT_RUN",
+    "resource_union_correction": {
+      "prior_stale_count": 140,
+      "unchanged_derived_membership_count": 205,
+      "reason": "mechanical_aggregate_digest_repin_no_node_marker_or_owner_change"
+    }
   }
 }

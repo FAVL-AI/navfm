@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT_NOT_FROZEN",
+  "scope": "DESIGN_ONLY",
+  "runtime_authorized": false,
+  "hypothesis": "Reference-alias margin plus ordered RGB history reduces wrong-location STOP versus a development-selected admissible champion while preserving completion and bounded restricted completion time.",
+  "inputs": [
+    "RGB_history",
+    "goal_RGB",
+    "frozen_reference_RGB_chain"
+  ],
+  "privileged_data": "ground_truth_offline_admitted_training_labels_initialization_and_evaluation_only_no_live_pose_input",
+  "controller_boundary": "same qualified low_level_controller_and_IMU_for_all_arms; no_IMU_to_arrival_verifier",
+  "method": {
+    "reference": "R[0:J], goal R[J]; permitted prior reference acquired separately, never from test rollout",
+    "history_frames": 4,
+    "cadence_hz": 4,
+    "ordered_score": "S_t(j)=mean_k=0..3 s(I[t-k],R[max(0,j-k)])",
+    "alias_margin": "A_t=S_t(J)-max_{j outside terminal_reference_window} S_t(j)",
+    "decision": "calibrator(S_t(J),A_t)>=theta AND A_t>=margin for 1s",
+    "dwell_s": 1,
+    "matcher_identity": null,
+    "calibrator_identity": null,
+    "terminal_reference_window": null,
+    "theta": null,
+    "margin": null,
+    "reference_cadence_hz": 4,
+    "alignment_assumption": "reference_motion_and_sampling_alignment_qualified_on_development; no_cadence_invariance_claim"
+  },
+  "comparison": {
+    "development_candidates": [
+      "native_distance",
+      "tuned_distance_dwell",
+      "learned_current_goal_classifier",
+      "RGB_geometric_verification",
+      "ULVN_style_graph_belief",
+      "PlaceNav_style_VPR_Bayesian_terminal_belief"
+    ],
+    "primary_champion": null,
+    "selection": "development_only_under_completion_and_time_constraints",
+    "test_arms": [
+      "champion",
+      "full",
+      "minus_alias_margin",
+      "minus_ordered_history"
+    ],
+    "primary_arms": [
+      "champion",
+      "full"
+    ],
+    "secondary_inference": "DESCRIPTIVE_ONLY",
+    "model_ladder": "GNM_ViNT_NoMaD_release_and_adapted_DEVELOPMENT_ONLY",
+    "seeds": [
+      0,
+      11,
+      22
+    ],
+    "seed_aggregation": "all_seeds_mean_within_layout_no_best_seed",
+    "test_tuning": false,
+    "diffusion_extra_replicas": 0
+  },
+  "population": {
+    "unit": "independent_layout",
+    "planned_test_layouts": 80,
+    "base_start_goals_per_layout": 2,
+    "alias_levels": 2,
+    "illumination_levels": 2,
+    "feasible_episodes_per_layout": 8,
+    "goal_mismatch_controls_per_layout": 2,
+    "controls_analysis": "SEPARATE_OBJECTIVE_NO_ACHIEVABLE_GOAL_COMPLETION",
+    "denominator": "all_planned_attempts_failures_and_refusals_retained",
+    "split": "TRAIN_DEV_CALIBRATION_TEST_LAYOUT_DISJOINT",
+    "human_reviewer": null,
+    "independent_seed_custodian": null,
+    "independent_attestation": null,
+    "test_access": "BLOCKED",
+    "custodian_requirement": "different_human_from_designer_with_independent_seed_custody_and_external_attestation; self_seal_is_not_independence"
+  },
+  "metrics": {
+    "goal": "goal_image_capture_position_not_route_endpoint",
+    "radius_m": 0.5,
+    "legacy_correct_stop": "latched stop in radius AND final1s motion<0.01m AND final pose in radius",
+    "legacy_wrong_stop": "any_latched_stop_failing_legacy_correct_stop",
+    "wrong_location_stop": "latched_stop_outside_radius",
+    "completion": "legacy_correct_stop_and_no_counted_contact_before_task_end",
+    "restricted_completion_time": "valid_collision_free_correct_stop_time_if_by120s_else120s_all_attempts",
+    "decision_horizon_s": 120,
+    "post_stop_reserve_s": 2,
+    "oracle": "ground_truth_evaluation_only_not_policy_arm",
+    "clock": "decision_horizon_and_post_stop_reserve_use_simulation_time;4Hz_simulation_time_observation_and_policy_cadence;wall_latency_separate",
+    "contact": "unintended_robot_environment_contact_excluding_qualified_support_wheel_floor_pairs;raw_contact_events_and_filter_identity_retained",
+    "wrong_location_missingness": "UNKNOWN_for_unobservable_failed_attempts_not_zero;no_efficacy_adjudication_if_mandatory_endpoint_missing;all_planned_attempts_ledger_no_replacement",
+    "secondary_arrival_delay": "conditional_on_first_goal_entry_by110simulation_seconds;min(qualified_stop_delay,10s);no_qualifying_stop_or_competing_failure_assign10s;report_entry_fraction_and_conditional_estimand"
+  },
+  "inference": {
+    "primary_test": "INTERSECTION_UNION_ALL_THREE_PASS",
+    "one_sided_alpha": 0.025,
+    "confidence": "one_sided97.5percent_equivalent_two_sided95percent",
+    "layout_analysis": "paired_layout_means_over_prespecified_feasible_routes_and_all_seeds",
+    "interval_method": "paired_layout_student_t_with_all_layouts_no_frame_independence",
+    "wrong_location_delta_upper_bound": -0.05,
+    "completion_delta_lower_bound": -0.05,
+    "restricted_time_delta_upper_bound_s": 5,
+    "baseline_wrong_location_rate": "UNKNOWN"
+  },
+  "planning": {
+    "status": "ASSUMPTIONS_NORMAL_APPROXIMATION_NOT_EMPIRICAL_POWER",
+    "target_power": 0.8,
+    "binary_sd_sensitivity": [
+      0.1,
+      0.15,
+      0.2
+    ],
+    "time_sd_sensitivity_s": [
+      10,
+      15,
+      20
+    ],
+    "wrong_location_alternative": -0.1,
+    "completion_alternative": 0,
+    "time_alternative_s": 0,
+    "pilot_upper_sd_binary": null,
+    "pilot_upper_sd_time_s": null,
+    "sample_support": "BLOCKED_PENDING_DISJOINT_DEVELOPMENT_VARIANCE_BOUND",
+    "joint_power": "UNKNOWN; marginal80percent_does_not_establish80percent_joint_power",
+    "proposed_CI_half_width_binary": 0.035,
+    "proposed_CI_half_width_time_s": 3.5,
+    "wrong_location_alternative_feasibility": "UNKNOWN_REQUIRES_CHAMPION_RATE_AT_LEAST0.10_FOR_ASSUMED0.10_REDUCTION"
+  },
+  "gates": {
+    "independent_test_seal": "BLOCKED",
+    "motion_qualification": "BLOCKED",
+    "controller_qualification": "BLOCKED",
+    "CAD_geometry": "BLOCKED",
+    "clean_start_qualification": "BLOCKED",
+    "comparator_implementation": "BLOCKED",
+    "reference_acquisition_fairness": "BLOCKED",
+    "sample_size_support": "BLOCKED",
+    "resource_approval": "BLOCKED",
+    "illumination_authorization": "BLOCKED",
+    "training_collection_scoring_runtime": "NOT_RUN",
+    "real_robot_actuation": "UNAUTHORIZED",
+    "baseline_effect_floor": "BLOCKED_UNKNOWN_CHAMPION_WRONG_LOCATION_RATE",
+    "development_champion_eligibility": "BLOCKED",
+    "contact_observability": "BLOCKED",
+    "mandatory_endpoint_completeness": "BLOCKED_NO_EFFICACY_ADJUDICATION_IF_MISSING"
+  },
+  "resources": {
+    "status": "PROPOSED_NOT_AUTHORIZED_NOT_MEASURED",
+    "episode_wall_cap_s": 600,
+    "qualification_episode_equivalents_cap": 40,
+    "reference_acquisition_episodes_cap": 200,
+    "development_calibration_episodes_cap": 1600,
+    "training_GPU_hours_cap": 72,
+    "total_GPU_hours_cap": 2000,
+    "total_wall_hours_cap": 2000,
+    "external_storage_GiB_cap": 500,
+    "measurement_requirement": "measured_throughput_GPU_peak_memory_contact_observability_storage_before_freeze",
+    "overrun_rule": "REFUSE_NO_AUTOMATIC_EXPANSION",
+    "GPU_accounting": "conservative_one_GPU_reserved_for_full_process_wall_duration;training_counted_separately",
+    "training_wall_hours_cap": 72
+  }
+}
