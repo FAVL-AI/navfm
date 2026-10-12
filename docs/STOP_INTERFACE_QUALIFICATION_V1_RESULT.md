@@ -50,7 +50,7 @@ Config SHA-256: `599ec7dd33403a28e7cff537ca37008a45d5e552adfc0e0ce0519e618019cd8
 | parent_status.json | 269 | `f3b8a927fa625aa121c88d29cc32c208892af385f9854361c03271d46533d931` |
 | worker.log | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
 
-No images, weights, geometry, raw trajectories or logs are committed. No model
+No images, weights, geometry, raw trajectories or logs are committed. No neural checkpoint
 inference, fitting, simulator, navigation study, test access or robot actuation
 occurred. The prior 29 prerequisite failures remain unresolved; hermetic guard
 checks and this native-component result do not replace missing resources.
