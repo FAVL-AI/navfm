@@ -15,7 +15,9 @@ from navfm.collection.alias_aware_arrival import (
     LogisticArrivalCalibrator,
     arrival_features,
     fit_logistic_calibrator,
+    goal_region_features,
     ordered_similarity_scores,
+    pool_goal_region_scores,
 )
 
 
@@ -59,6 +61,191 @@ def test_alias_margin_excludes_the_explicit_terminal_window() -> None:
     assert two_terminal_nodes.strongest_distractor_index == 2
     assert two_terminal_nodes.alias_margin == pytest.approx(1.75)
     assert one_terminal_node.scores[-1] == one_terminal_node.terminal_score
+
+
+def test_goal_region_pooling_accepts_stronger_valid_nonterminal_match() -> None:
+    # A positive query is closest to an in-region nonterminal. The legacy
+    # terminal-only margin is negative, while explicit region pooling retains
+    # that valid reference as goal support.
+    row = [0.1, 0.1, 0.1, 0.2, 0.9, 0.9, 0.9, 0.1]
+    history = [row, row, row, row]
+    ids = tuple(f"ref-{index}" for index in range(len(row)))
+    features = goal_region_features(
+        history,
+        reference_ids=ids,
+        requested_goal_id=ids[-1],
+        goal_region_reference_ids=(ids[6], ids[7]),
+    )
+    legacy = arrival_features(history, terminal_reference_window=1)
+
+    assert legacy.alias_margin < 0.0
+    assert features.strongest_goal_reference_id == ids[6]
+    assert features.goal_region_score > features.scores[-1]
+    assert features.region_margin > 0.0
+
+
+def test_goal_region_support_uses_all_valid_goal_references() -> None:
+    features = pool_goal_region_scores(
+        [0.1, 0.8, 0.7, 0.2],
+        reference_ids=("far", "near-a", "near-b", "goal"),
+        requested_goal_id="goal",
+        goal_region_reference_ids=("near-a", "near-b", "goal"),
+    )
+
+    assert features.goal_region_score == pytest.approx(0.8)
+    assert features.region_margin == pytest.approx(0.7)
+    assert features.strongest_goal_reference_id == "near-a"
+    assert features.strongest_outside_reference_id == "far"
+
+
+def test_reviewed_terminal_margin_counterexample_is_recovered_by_region_support() -> None:
+    scores = (0.125, 0.125, 0.125, 0.2, 0.9, 0.1, 0.1, 0.6)
+    identities = tuple(f"ref-{index}" for index in range(len(scores)))
+    query_distance_to_goal_m = 0.4  # Synthetic positive under the frozen radius.
+    assert query_distance_to_goal_m <= 0.5
+
+    legacy_margin = scores[-1] - max(scores[:-1])
+    features = pool_goal_region_scores(
+        scores,
+        reference_ids=identities,
+        requested_goal_id=identities[-1],
+        goal_region_reference_ids=(identities[4], identities[7]),
+    )
+
+    assert legacy_margin == pytest.approx(-0.3)
+    assert features.goal_region_score == pytest.approx(0.9)
+    assert features.region_margin == pytest.approx(0.7)
+
+
+def test_distant_lookalike_can_defeat_both_feature_formulations() -> None:
+    positive = pool_goal_region_scores(
+        [0.2, 0.95],
+        reference_ids=("lookalike", "goal"),
+        requested_goal_id="goal",
+        goal_region_reference_ids=("goal",),
+    )
+    negative = pool_goal_region_scores(
+        [0.2, 0.95],
+        reference_ids=("lookalike", "goal"),
+        requested_goal_id="goal",
+        goal_region_reference_ids=("goal",),
+    )
+
+    # Opposite geometric labels with identical feature inputs are
+    # non-identifiable from these scores; synthetic fixtures cannot establish
+    # visual discrimination.
+    assert positive == negative
+    assert positive.goal_region_score == pytest.approx(0.95)
+    assert positive.region_margin > 0.0
+
+
+def test_goal_region_pooling_is_identity_bound_but_ordered_scores_are_not() -> None:
+    scores = [0.2, 0.6, 0.4, 0.8]
+    identities = ["outside-a", "inside-a", "outside-b", "goal"]
+    expected = pool_goal_region_scores(
+        scores,
+        reference_ids=identities,
+        requested_goal_id="goal",
+        goal_region_reference_ids=("inside-a", "goal"),
+    )
+    permutation = [2, 1, 0, 3]
+    reordered = pool_goal_region_scores(
+        [scores[index] for index in permutation],
+        reference_ids=[identities[index] for index in permutation],
+        requested_goal_id="goal",
+        goal_region_reference_ids=("inside-a", "goal"),
+    )
+    assert reordered.goal_region_score == pytest.approx(expected.goal_region_score)
+    assert reordered.region_margin == pytest.approx(expected.region_margin)
+    assert reordered.strongest_goal_reference_id == expected.strongest_goal_reference_id
+
+    history = [
+        [0.0, 1.0, 2.0, 3.0],
+        [10.0, 11.0, 12.0, 13.0],
+        [20.0, 21.0, 22.0, 23.0],
+        [30.0, 31.0, 32.0, 33.0],
+    ]
+    ordered = ordered_similarity_scores(history)
+    swapped = ordered_similarity_scores([[row[1], row[0], *row[2:]] for row in history])
+    assert ordered != swapped
+
+
+def test_region_max_is_duplicate_score_invariant_but_chain_density_is_not() -> None:
+    original = pool_goal_region_scores(
+        [0.2, 0.7, 0.5],
+        reference_ids=("outside", "inside", "goal"),
+        requested_goal_id="goal",
+        goal_region_reference_ids=("inside", "goal"),
+    )
+    with_duplicate = pool_goal_region_scores(
+        [0.2, 0.7, 0.7, 0.5],
+        reference_ids=("outside", "inside", "inside-copy", "goal"),
+        requested_goal_id="goal",
+        goal_region_reference_ids=("inside", "inside-copy", "goal"),
+    )
+    assert with_duplicate.goal_region_score == pytest.approx(original.goal_region_score)
+    assert with_duplicate.region_margin == pytest.approx(original.region_margin)
+
+    history = [[float(index) for index in range(5)] for _ in range(4)]
+    before = ordered_similarity_scores(history)
+    densified = ordered_similarity_scores([[*row[:2], row[1], *row[2:]] for row in history])
+    assert densified != before
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "reference_ids": ("a", "goal"),
+            "requested_goal_id": "goal",
+            "goal_region_reference_ids": (),
+        },
+        {
+            "reference_ids": ("a", "goal"),
+            "requested_goal_id": "goal",
+            "goal_region_reference_ids": ("a",),
+        },
+        {
+            "reference_ids": ("a", "goal"),
+            "requested_goal_id": "other",
+            "goal_region_reference_ids": ("goal",),
+        },
+        {
+            "reference_ids": ("a", "goal"),
+            "requested_goal_id": "goal",
+            "goal_region_reference_ids": ("unknown", "goal"),
+        },
+    ],
+)
+def test_goal_region_contract_rejects_missing_or_ambiguous_membership(kwargs) -> None:
+    with pytest.raises(ValueError):
+        pool_goal_region_scores([0.1, 0.2], **kwargs)
+
+
+def test_logistic_fit_can_learn_negative_margin_association() -> None:
+    rows = [
+        CalibrationRow("episode-a", "a0", 0.6, -0.3, True),
+        CalibrationRow("episode-a", "a1", 0.7, -0.2, True),
+        CalibrationRow("episode-a", "a2", 0.6, 0.2, False),
+        CalibrationRow("episode-a", "a3", 0.7, 0.3, False),
+        CalibrationRow("episode-b", "b0", 0.6, -0.3, True),
+        CalibrationRow("episode-b", "b1", 0.7, -0.2, True),
+        CalibrationRow("episode-b", "b2", 0.6, 0.2, False),
+        CalibrationRow("episode-b", "b3", 0.7, 0.3, False),
+    ]
+    calibrator = fit_logistic_calibrator(rows, l2=0.2)
+
+    assert calibrator.margin_coefficient < 0.0
+    assert calibrator.probability(0.65, -0.25) > calibrator.probability(0.65, 0.25)
+
+
+def test_legacy_hard_margin_floor_vetoes_high_probability() -> None:
+    state = ArrivalDecisionState(_config())
+
+    result = state.update(timestamp_seconds=0.0, calibrated_probability=0.99, alias_margin=-0.3)
+
+    assert result["eligible"] is False
+    assert result["candidate_since_seconds"] is None
 
 
 @pytest.mark.parametrize(

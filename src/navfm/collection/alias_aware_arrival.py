@@ -25,6 +25,17 @@ class ArrivalFeatures:
     scores: tuple[float, ...]
 
 
+@dataclass(frozen=True)
+class GoalRegionFeatures:
+    """Candidate scores pooled over explicitly annotated goal-region nodes."""
+
+    goal_region_score: float
+    region_margin: float
+    strongest_goal_reference_id: str
+    strongest_outside_reference_id: str
+    scores: tuple[float, ...]
+
+
 def ordered_similarity_scores(
     history_similarity: Sequence[Sequence[float]],
 ) -> tuple[float, ...]:
@@ -79,6 +90,87 @@ def arrival_features(
         alias_margin=scores[terminal] - scores[strongest],
         strongest_distractor_index=strongest,
         scores=scores,
+    )
+
+
+def pool_goal_region_scores(
+    scores: Sequence[float],
+    *,
+    reference_ids: Sequence[str],
+    requested_goal_id: str,
+    goal_region_reference_ids: Sequence[str],
+) -> GoalRegionFeatures:
+    """Pool scores using explicit reference-node membership for one goal.
+
+    ``goal_region_reference_ids`` must come from authenticated reference and
+    goal-capture poses in a shared frame. This function receives no query pose
+    or ground-truth query label. The requested goal must be the final ordered
+    node and a member of the region. At least one out-of-region competitor is
+    required; missing or ambiguous membership is rejected rather than filled
+    with a synthetic score.
+    """
+
+    values = tuple(float(value) for value in scores)
+    identities = tuple(reference_ids)
+    region_ids = tuple(goal_region_reference_ids)
+    if len(values) < 2 or len(identities) != len(values):
+        raise ValueError("scores and reference identities must align with at least two nodes")
+    if any(not identity for identity in identities) or len(set(identities)) != len(identities):
+        raise ValueError("reference identities must be non-empty and unique")
+    if any(not math.isfinite(value) for value in values):
+        raise ValueError("scores must be finite")
+    if not requested_goal_id or identities[-1] != requested_goal_id:
+        raise ValueError("requested goal must identify the final ordered reference node")
+    if not region_ids or any(not identity for identity in region_ids):
+        raise ValueError("goal-region reference identities must be explicit and non-empty")
+    if len(set(region_ids)) != len(region_ids):
+        raise ValueError("goal-region reference identities must be unique")
+    unknown = set(region_ids).difference(identities)
+    if unknown:
+        raise ValueError("goal-region references must exist in the ordered reference chain")
+    if requested_goal_id not in region_ids:
+        raise ValueError("requested goal reference must belong to its goal region")
+
+    goal_region = set(region_ids)
+    goal_indices = [index for index, identity in enumerate(identities) if identity in goal_region]
+    outside_indices = [
+        index for index, identity in enumerate(identities) if identity not in goal_region
+    ]
+    if not outside_indices:
+        raise ValueError("goal-region scoring requires an out-of-region competitor")
+    strongest_goal = max(goal_indices, key=values.__getitem__)
+    strongest_outside = max(outside_indices, key=values.__getitem__)
+    goal_score = values[strongest_goal]
+    return GoalRegionFeatures(
+        goal_region_score=goal_score,
+        region_margin=goal_score - values[strongest_outside],
+        strongest_goal_reference_id=identities[strongest_goal],
+        strongest_outside_reference_id=identities[strongest_outside],
+        scores=values,
+    )
+
+
+def goal_region_features(
+    history_similarity: Sequence[Sequence[float]],
+    *,
+    reference_ids: Sequence[str],
+    requested_goal_id: str,
+    goal_region_reference_ids: Sequence[str],
+) -> GoalRegionFeatures:
+    """Compute ordered history scores, then pool annotated goal-region nodes.
+
+    Reference ordering remains part of ``ordered_similarity_scores``. The
+    identity-aware pooling itself is insensitive to permutation or exact
+    duplicate scored evidence, but changing the ordered chain can change the
+    upstream history alignment and resulting scores.
+    """
+
+    scores = ordered_similarity_scores(history_similarity)
+    return pool_goal_region_scores(
+        scores,
+        reference_ids=reference_ids,
+        requested_goal_id=requested_goal_id,
+        goal_region_reference_ids=goal_region_reference_ids,
     )
 
 
