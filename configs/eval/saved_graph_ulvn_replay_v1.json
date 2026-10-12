@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_SAVED_GRAPH_ULVN_REPLAY_V1",
+  "graph_freeze": "7869df824a78e64e19927e60330927fcb5f09616",
+  "rgb_freeze": "b466f026286e04e350dfc89bb743ed3c550ce69d",
+  "goal_node": 7,
+  "query_frames": [
+    1,
+    5,
+    9,
+    13,
+    17,
+    21,
+    25,
+    29
+  ],
+  "repetitions": 2,
+  "caps": {
+    "worker_cpu_wall_s": 30,
+    "parent_wall_s": 60,
+    "raw_bytes": 16777216,
+    "production_updates": 16,
+    "unreachable_updates": 1,
+    "transition_filter_objects": 2,
+    "neural_model_calls": 0,
+    "GPU_calls": 0
+  },
+  "bindings": {
+    "graph_result": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01/result.json",
+      "sha256": "b9b47f87288dda138e430d06cac0ac04927b806035b16d2a4c061120aa18816c"
+    },
+    "graph_parent": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01/parent_status.json",
+      "sha256": "14bd184773622d9071249920998a3ff8074998111e18d9dc5ec04b59791a1323"
+    },
+    "pair_ledger": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01/pair_decisions.json",
+      "sha256": "a402fc4c09e1a12107922f7a1dce3d9389cbb8adf2244d61dfd56047b977d6cf"
+    },
+    "node_map": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01/node_map.json",
+      "sha256": "c591d691e668a30347a0a71e6898a86539935176e83b4c890dec2d1fecf54e8f"
+    },
+    "pruned_graph": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01/pruned.npy",
+      "sha256": "fc14ff6266dfa5870ee105aa8d18eb1b33ca58165c113552d913baab4a5a03bb"
+    },
+    "descriptors": {
+      "path": "/home/favl/navfm-runtime-evidence/recorded-rgb-stop-v2-01/descriptors.npz",
+      "sha256": "e93c50d1a952882cc2444d9d48df536db7876aed9025d6e67c3e97c6389ae16a"
+    },
+    "rgb_result": {
+      "path": "/home/favl/navfm-runtime-evidence/recorded-rgb-stop-v2-01/result.json",
+      "sha256": "e78b4bd84173ca90da76d13c02d3925d94ec64f177341b28b0e4629d165ac293"
+    },
+    "rgb_config": {
+      "path": "/home/favl/projects/navfm-research-planning/configs/eval/recorded_rgb_stop_v1.json",
+      "sha256": "c73b433b7f298c99e53ee37e5596b2eaa4da1fcb6240e5c386f6fded37a86d4f"
+    },
+    "native_source_config": {
+      "path": "/home/favl/projects/navfm-research-planning/configs/eval/stop_interface_qualification_v1.json",
+      "sha256": "599ec7dd33403a28e7cff537ca37008a45d5e552adfc0e0ce0519e618019cd8c"
+    },
+    "graph_config": {
+      "path": "/home/favl/projects/navfm-research-planning/configs/eval/ravel_fixed_graph_v1.json",
+      "sha256": "651bfafc9dd70d3697fc41e14f3b873adc969ba1143a2f225ae6b136b8af61f8"
+    },
+    "transport_policy": {
+      "path": "/home/favl/projects/navfm-research-planning/configs/eval/ravel_lightglue_transport_v2.json",
+      "sha256": "8478c7d92453199edf79bc649f6e434f2dc1e17bcc83cbeab256354946cc8a52"
+    }
+  },
+  "physical_actuation": false,
+  "threshold_fitting": false,
+  "clock": "VIRTUAL_ADAPTER_ONLY",
+  "routing": "NATIVE_UNWEIGHTED_BASS",
+  "graph": "AUTHENTICATED_PRUNED_INT32_WEIGHTED_FIXED_MODE"
+}

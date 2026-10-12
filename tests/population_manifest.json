@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3201,
-      "sha256": "2cf9846f91436b060aa42a152af14a6c1a8c8ffe22231659e8d1c5245e86de54"
+      "count": 3213,
+      "sha256": "064ec621efc9a1e9817e94c0720fc36b7ab0da7155b3d2f5393b485d1d744f3f"
     },
     "hermetic": {
-      "count": 2996,
-      "sha256": "3412f860de34068cf9d5ca90fe56e8e959e835bc3b8dd02f5bfeea6832ef41c8"
+      "count": 3008,
+      "sha256": "47b9a151f41eda7961748f54a19d409d6163838109f7ae7e57dd442187506a4b"
     },
     "resource_union": {
       "count": 205,
@@ -3759,7 +3759,19 @@
     "tests/test_ravel_graph_continuation_v2.py::test_modified_CPU_proof_bytes_are_rejected_before_semantic_admission": [],
     "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[references]": [],
     "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[native_mode]": [],
-    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[caps]": []
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[caps]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_admitted_numeric_order": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[reorder]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[duplicate]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[dtype]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[asymmetric]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[diagonal]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[negative]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[goal]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[query]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[resets]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[budget]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_stale_episode_rejects_before_native_state": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4057,5 +4069,13 @@
     "resource_owners_changed": false,
     "external_CPU_cases": 6,
     "owner": "explicit CPU-only actual CLI lifecycle check command; no historical archive or hermetic model ownership implied"
+  },
+  "saved_graph_ulvn_v1_update": {
+    "old_nodes_preserved": 3201,
+    "added_hermetic_nodes": 12,
+    "total_count": 3213,
+    "resource_owners_changed": false,
+    "external_CPU_replay_owner": "explicit frozen saved-graph/native-component replay command; authenticated external arrays and source required only there",
+    "scope": "Hermetic map/selection/stale-state guards; no model or graph replay during pytest."
   }
 }
