@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3149,
-      "sha256": "f90533c728f2902df9864f878e4c65f9c729880b2ff7b0800ac6982ec66d33e1"
+      "count": 3165,
+      "sha256": "0c5d75fcc62b2988404f13ceaf9f43d93e5ef22d2d06a8c9014d42adfd546a19"
     },
     "hermetic": {
-      "count": 2944,
-      "sha256": "8fced8237b33039b9c4607fd46472280c0ba20efcf76b9d967ef34022fb40354"
+      "count": 2960,
+      "sha256": "929ab9cd52a3179338f13b9740938c84b470bc335494c457d4d0fa6c4866dde7"
     },
     "resource_union": {
       "count": 205,
@@ -3707,7 +3707,23 @@
     "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[launch_error]": [],
     "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[nonzero]": [],
     "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[timeout]": [],
-    "tests/test_pinned_stop_interfaces_v1.py::test_supported_and_unsupported_goal_identity_do_not_force_nearest_node": []
+    "tests/test_pinned_stop_interfaces_v1.py::test_supported_and_unsupported_goal_identity_do_not_force_nearest_node": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[DEV_selection]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[finalization]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[image_binding]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_fixed_admitted_sequence_and_native_graph_gap": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_immutable_record_or_weight_tampering_refused": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_episodes_are_independent": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[1]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[publication2]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[true]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_stop_latch_absence_cancel_and_reset_are_separate_from_native_publication": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[extra_forwards]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[fitting]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[graph_claim]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[navigation]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[reselection]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_worker_python_network_refusal_is_enforced_in_isolated_process": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3946,5 +3962,13 @@
     "owner": "ordinary-hermetic",
     "native_parity_owner": "separate_frozen_synthetic_source_cache_probe",
     "status": "24_HERMETIC_GUARDS_PASS_NATIVE_PROBE_NOT_RUN"
+  },
+  "recorded_rgb_stop_v1_update": {
+    "prior_retained": 3149,
+    "added": 16,
+    "total": 3165,
+    "owner": "ordinary-hermetic",
+    "positive_replay_owner": "separate_frozen_recorded_RGB_GPU_probe",
+    "status": "16_HERMETIC_GUARDS_PASS_ENCODER_REPLAY_NOT_RUN"
   }
 }
