@@ -1,0 +1,42 @@
+{
+  "status": "UNAPPROVED_UNEXECUTED",
+  "execution_authorized": false,
+  "baseline": "0bf3f6da728798c113f0d6da84fb19c983705573",
+  "phase_allowance_seconds": {
+    "parent_setup": 5,
+    "sdk_startup": 15,
+    "capture_non_snapshot_work": 135,
+    "snapshot_label_persistence": 10,
+    "completion_capsule": 5,
+    "sdk_shutdown": 15,
+    "child_reaping": 5
+  },
+  "hard_total_seconds": 190,
+  "phase_policy": "disjoint accounting allocations, not separately qualified phase deadlines; future launcher must enforce hard total including shutdown/reaping",
+  "unchanged_acquisition": {
+    "frames": 144,
+    "routes": 4,
+    "frames_per_route": 36,
+    "held_steps_per_frame": 4,
+    "resolution": [
+      320,
+      240
+    ],
+    "jpeg_quality": 95
+  },
+  "prior_layout_exposure": "ACCESSED_NOT_UNINSPECTED",
+  "prospective_content_policy": "existing seal preserved; no replacement/regeneration; old FAILs unchanged",
+  "performance_correction_selected": false,
+  "source_evidence": [
+    {
+      "path": "/home/favl/projects/navfm-research-planning/src/navfm/isaac/app.py",
+      "sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87",
+      "lines": "222-231"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/extscache/omni.replicator.core-1.12.27+107.3.3.lx64.r.cp311/omni/replicator/core/scripts/orchestrator.py",
+      "sha256": "c297093ae4100f5fc20f576f0b71d0dc4c765b2135f2a945764bbe63889a7c42",
+      "lines": "1502-1624 and 450-466"
+    }
+  ]
+}

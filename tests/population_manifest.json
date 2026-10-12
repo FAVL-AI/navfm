@@ -3588,7 +3588,14 @@
     "tests/test_prospective_timing_v1.py::test_launcher_is_known_only_and_never_admits_dataset": [],
     "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[LAUNCH_RETURN]": [],
     "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[POLL_RETURN]": [],
-    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[SIGKILL_REQUEST]": []
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[SIGKILL_REQUEST]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_complete_budget_remains_nonexecuting_proposal": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[authorize]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[missing_phase]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[wrong_total]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[bool_allowance]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[held_steps]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[uninspected]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3756,5 +3763,11 @@
     "added": 9,
     "total": 3036,
     "diagnostic": "NOT_RUN"
+  },
+  "prospective_budget_proposal_v1_update": {
+    "prior_retained": 3036,
+    "added": 7,
+    "total": 3043,
+    "status": "UNAPPROVED_UNEXECUTED"
   }
 }
