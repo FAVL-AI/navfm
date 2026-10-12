@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3085,
-      "sha256": "a09c8adff3b2f6d5332ab24a5e22a2146566b2b3a1672ac9d51c6d4248e2bd9c"
+      "count": 3086,
+      "sha256": "1fb8a400a42e22f9c6ebf5064c75f25a645bd09a560e06cf950ac8287a7294a8"
     },
     "hermetic": {
-      "count": 2880,
-      "sha256": "b1e26ccd5dbda0a0819d3a570b4e5b81a1c0d1bbac44670bb2b7f239354a0a52"
+      "count": 2881,
+      "sha256": "ecf649c75eec2e38989799013c6554d8d7715074687a1e7533fdd20dbd0813ce"
     },
     "resource_union": {
       "count": 140,
@@ -3643,7 +3643,8 @@
     "tests/test_native_provenance_diagnostic_v1.py::test_actual_child_exit_timeout_reap[True]": [],
     "tests/test_native_provenance_diagnostic_v1.py::test_cleanup_signal_error_cannot_bypass_reaping": [],
     "tests/test_native_provenance_diagnostic_v1.py::test_first_rejection_survives_distinct_final_rejection": [],
-    "tests/test_native_provenance_diagnostic_v1.py::test_rejection_path_mismatch_rejects_before_launch": []
+    "tests/test_native_provenance_diagnostic_v1.py::test_rejection_path_mismatch_rejects_before_launch": [],
+    "tests/test_vint_native_manifest_v2.py::test_original_verifier_exact_entry_and_all_three_rejections": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3843,5 +3844,11 @@
     "added": 7,
     "total": 3085,
     "status": "CPU_IMPORT_REJECTION_IDENTIFIED_NO_FORWARD"
+  },
+  "vint_native_manifest_v2_update": {
+    "prior_retained": 3085,
+    "added": 1,
+    "total": 3086,
+    "status": "CPU_CLOSURE_PASS_COMPONENT_NOT_RUN"
   }
 }
