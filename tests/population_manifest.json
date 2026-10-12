@@ -9,7 +9,7 @@
     "note": "Historical provisioned measurement for the original 777-node population. Current integration membership was collected separately as recorded in integration_population_update; this metadata does not claim the expanded population passed."
   },
   "required_marker": "upstream",
-  "expected_required_count": 43,
+  "expected_required_count": 44,
   "required_node_ids": [
     "tests/test_compat_harness.py::TestAValidFixturePasses::test_compliant_trajectory_passes_every_data_check",
     "tests/test_engineering_recording.py::test_sidecar_recording_is_consumed_by_pinned_official_loader[gnm]",
@@ -53,31 +53,32 @@
     "tests/test_upstream_module.py::test_metric_waypoint_spacing_reads_the_reference_constants",
     "tests/test_upstream_module.py::test_model_config_layers_vint_over_defaults",
     "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame",
-    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default"
+    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default",
+    "tests/test_vint_interface_v1.py::test_actual_native_preprocessing_context_and_normalization"
   ],
-  "required_node_ids_sha256": "5fcde8eca510886de122c5afee080b5fbc3bf5f2afa5ef2ee7bb483bcf498736",
+  "required_node_ids_sha256": "0808a5ffb8271d4366af20428f145e2128f2a28b353b4d3f68111141dc537188",
   "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3017,
-      "sha256": "90fbf15dcc1f8cf2e5fc8bf70f99876fbc6034a2f392eb43c6b445173ef52083"
+      "count": 3078,
+      "sha256": "5425872470eef5dcf8132d7cd1efc5bae91c59c11f9f2bfe76c9996fdc79a03b"
     },
     "hermetic": {
-      "count": 2814,
-      "sha256": "6ebd88bf9661b299329344b416c7f634f7bea86184a77d8e284cdb211dad2a9a"
+      "count": 2938,
+      "sha256": "d679b8d72e8a0f28855aed99b3dbb390902dbc1334207f29a83292886474b02a"
     },
     "resource_union": {
-      "count": 203,
-      "sha256": "02b43e53b3af5a03ba71c5e31e66d0f6a6c533c3a6ad3e25ce8cdcef5c159157"
+      "count": 140,
+      "sha256": "4b12d214bc42728f630e513423a96981011ce230845ed8f54251c1f2b57720c6"
     },
     "upstream": {
-      "count": 43,
-      "sha256": "5fcde8eca510886de122c5afee080b5fbc3bf5f2afa5ef2ee7bb483bcf498736"
+      "count": 44,
+      "sha256": "0808a5ffb8271d4366af20428f145e2128f2a28b353b4d3f68111141dc537188"
     },
     "torch": {
-      "count": 68,
-      "sha256": "0daaff4e48b8873ab00ff54faca5f2b07e788ecafbd3a7068a2d0fef8a0748e7"
+      "count": 70,
+      "sha256": "7b5a0c5393de93b986ed33c7c01ba6045f7820555661ff73fe614e38686cb8a9"
     },
     "plot": {
       "count": 1,
@@ -3620,7 +3621,22 @@
     "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[artifact]": [],
     "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[registry]": [],
     "tests/test_prospective_scoring_v2.py::test_scoring_persistence_overrun_invalidates_completed_marker": [],
-    "tests/test_prospective_scoring_v2.py::test_completed_scoring_stage_requires_bound_output_and_artifacts": []
+    "tests/test_prospective_scoring_v2.py::test_completed_scoring_stage_requires_bound_output_and_artifacts": [],
+    "tests/test_vint_interface_v1.py::test_native_five_physical_xy_not_second_cumsum": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[context]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[angle_config]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[horizon]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[heading_zero]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[batch]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[nonfinite]": [],
+    "tests/test_vint_interface_v1.py::test_actual_native_preprocessing_context_and_normalization": [
+      "upstream",
+      "torch"
+    ],
+    "tests/test_vint_interface_v1.py::test_actual_strict_checkpoint_failure_and_eval_rng_fence": [
+      "torch"
+    ],
+    "tests/test_vint_interface_v1.py::test_component_150_second_finalization_overrun_is_fail_closed": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3806,5 +3822,13 @@
     "added": 13,
     "total": 3068,
     "status": "PREPARATION_NOT_RUN"
+  },
+  "vint_interface_v1_update": {
+    "prior_retained": 3068,
+    "added": 10,
+    "total": 3078,
+    "status": "COMPONENT_NOT_RUN",
+    "new_torch_nodes": 2,
+    "new_upstream_nodes": 1
   }
 }
