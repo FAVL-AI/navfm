@@ -1,0 +1,17 @@
+# Native fixed graph continuation review v2
+
+Owner: Frank Asante Van Laarhoven <frankleroyvan@gmail.com>
+
+Review date: 2026-10-12. Branch: `agent/research-three-model-plan`; inspected baseline: `05812ef7e33fa721fb0add89017b03d85c1bb452`.
+
+The bounded review accepts the [continuation protocol](NATIVE_RAVEL_GRAPH_CONTINUATION_PROTOCOL_V2.md) for one fresh graph attempt after a clean source freeze. It does not reopen the source audit or repeat the completed CPU constructor validation. No relevant skill-retrieval tool was available; the existing frozen source, validation and graph contracts govern this integration review.
+
+Readback independently checked every manifest-bound file: production module, graph configuration, canonical policy, CPU validation configuration, and the actual CPU result, partial ledger, parent status and attempt record. The first four byte digests also match the corresponding file contents at qualified freeze `63b482203f24cbd6cfda707073e2763ee6851b4a`. The production graph module and relevant source-loader/supervisor helpers have no changes since that revision. Thus this continuation adds proof admission and dispatch, not another constructor implementation or changed graph algorithm.
+
+The new admission gate requires the actual CPU qualification's successful parent outcome, matching freeze/configuration, zero inference, all 251 parameters plus one buffer in byte equality, four actual-load negative cases and eight preceding authenticity/binding/predicate refusals. It checks immutable evidence hashes as well as the reported semantics. It then invokes the unchanged production graph function, with no extra CPU validation batch. Ordinary SuperPoint and guarded canonical LightGlue construction for the graph attempt remains part of the authorized matching path.
+
+The eight admitted reference identities and numeric order, cached descriptor provenance, native `num_clusters=1`, flat/L2, weighted edges, RANSAC and pruning rules remain unchanged. The limits remain 28 unordered pairs, 56 SuperPoint forwards, 28 LightGlue forwards, zero visual-place encoder forwards, a 180-second supervised worker and 360-second outer launcher. The 16 MiB output limit remains an acceptance condition rather than a filesystem quota. The existing observation path continues to distinguish technical exceptions from legitimate zero matches; neither absence of edges nor disconnected components permits parameter changes, reference reselection or synthetic connecting edges.
+
+Nineteen focused tests and Ruff are reported passing, and a non-model check consumed the actual qualified evidence successfully. This review itself only inspected code and metadata/bindings; it performed no constructor validation, matching, encoder inference or graph attempt. Earlier failed attempts remain intact. The new measured attempt must use a fresh external directory and retain partial/failure/timeout evidence without automatic retry. Raw matrices, node maps, images, descriptors and weights remain outside Git.
+
+Record the resulting node/edge/component counts, candidate exclusions, match rejections, technical failures and resource use separately. A successful result would qualify this explicitly nondefault fixed-mode construction on these eight development references only. It would not establish adaptive/default RAVEL reproduction, navigation, arrival reliability, physical stopping or generalization. Review edits are complete before the continuation freeze.

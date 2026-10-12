@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3192,
-      "sha256": "448cec35bb2b00c59bc4485fb28f6a249b2708c19ca94c1b4ce4b78260044805"
+      "count": 3201,
+      "sha256": "2cf9846f91436b060aa42a152af14a6c1a8c8ffe22231659e8d1c5245e86de54"
     },
     "hermetic": {
-      "count": 2987,
-      "sha256": "11b9114ee71983e246f103b5b4fbfd2295391b239f6cf7826fc9359d8b2efa8c"
+      "count": 2996,
+      "sha256": "3412f860de34068cf9d5ca90fe56e8e959e835bc3b8dd02f5bfeea6832ef41c8"
     },
     "resource_union": {
       "count": 205,
@@ -3750,7 +3750,16 @@
     "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[forwards]": [],
     "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[GPU_calls]": [],
     "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[constructor_attempts]": [],
-    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[worker_cpu_wall_s]": []
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[worker_cpu_wall_s]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[stale_freeze]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[timeout]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[unreaped]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[missing_negative]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[missing_parity]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_modified_CPU_proof_bytes_are_rejected_before_semantic_admission": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[references]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[native_mode]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[caps]": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4034,5 +4043,12 @@
     "resource_owners_changed": false,
     "external_CPU_probe_owner": "explicit six-constructor native/canonical CPU validation command with authenticated local source/assets",
     "scope": "No forwards/GPU/graph; derived negative mappings are explicit validation-only fixtures after authenticated input, never replacement checkpoint files."
+  },
+  "ravel_graph_continuation_v2_update": {
+    "old_nodes_preserved": 3192,
+    "added_hermetic_nodes": 9,
+    "total_count": 3201,
+    "resource_owners_changed": false,
+    "scope": "CPU proof consumption/data-binding guards only; native recorded graph is a separate explicit resource-owning command."
   }
 }
