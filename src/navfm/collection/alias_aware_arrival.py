@@ -1,11 +1,17 @@
-"""Offline-ready alias-aware arrival features and probability calibration.
+"""Detached alias-aware arrival features and probability calibration.
 
 This module is a candidate research component. It is not wired into a
-navigation or simulator launcher. Inputs are RGB/reference similarity rows;
-pose, graph, controller, and contact state are deliberately outside the API.
+navigation or simulator launcher. Its legacy camera-only features and the
+goal-region feature variant are both detached. The latter requires explicitly
+annotated reference poses and is not supported by the current deployment
+contract; evaluator poses must not be exported as deployment metadata.
+
 Calibration consumes offline ground-truth-labeled development rows in memory
 and does not choose the decision threshold, alias-margin floor, terminal
-window, or dwell rule. Probability quality still requires disjoint evaluation.
+window, or dwell rule. Probability quality still requires real calibration and
+independent assessment. The decision config exposes both the legacy hard
+margin veto and a probability-only alternative for controlled comparison;
+neither rule is selected as superior by this module.
 """
 
 from __future__ import annotations
@@ -361,12 +367,13 @@ def fit_logistic_calibrator(
 
 @dataclass(frozen=True)
 class ArrivalDecisionConfig:
-    """Explicit, externally selected decision settings for later evaluation."""
+    """Explicit decision settings; caller must choose whether margin vetoes."""
 
     probability_threshold: float
     alias_margin_floor: float
     dwell_seconds: float
     maximum_observation_gap_seconds: float
+    alias_margin_veto: bool
 
     def __post_init__(self) -> None:
         values = (
@@ -377,6 +384,8 @@ class ArrivalDecisionConfig:
         )
         if any(not math.isfinite(float(value)) for value in values):
             raise ValueError("decision settings must be finite")
+        if not isinstance(self.alias_margin_veto, bool):
+            raise ValueError("alias_margin_veto must be an explicit boolean")
         if not 0.0 < self.probability_threshold < 1.0:
             raise ValueError("probability threshold must lie strictly between 0 and 1")
         if self.dwell_seconds <= 0 or self.maximum_observation_gap_seconds <= 0:
@@ -404,7 +413,11 @@ class ArrivalDecisionState:
         calibrated_probability: float,
         alias_margin: float,
     ) -> dict[str, float | bool | None]:
-        """Update using simulation-time stamps and candidate features only."""
+        """Update using simulation-time stamps and candidate features only.
+
+        The margin floor gates eligibility only when ``alias_margin_veto`` is
+        true. Probability thresholding and dwell-state transitions are shared.
+        """
 
         timestamp = float(timestamp_seconds)
         probability = float(calibrated_probability)
@@ -421,9 +434,8 @@ class ArrivalDecisionState:
                 self.candidate_since = None
         self.last_timestamp = timestamp
 
-        eligible = (
-            probability >= self.config.probability_threshold
-            and margin >= self.config.alias_margin_floor
+        eligible = probability >= self.config.probability_threshold and (
+            not self.config.alias_margin_veto or margin >= self.config.alias_margin_floor
         )
         if not self.latched:
             if eligible:

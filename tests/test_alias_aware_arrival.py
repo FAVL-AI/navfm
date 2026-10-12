@@ -395,7 +395,7 @@ def test_constant_calibration_labels_are_not_implicitly_accepted() -> None:
         fit_logistic_calibrator(_calibration_rows(), l2=0.2, max_iterations=0)
 
 
-def _config(**changes: float) -> ArrivalDecisionConfig:
+def _config(*, alias_margin_veto: bool = True, **changes: float) -> ArrivalDecisionConfig:
     values = {
         "probability_threshold": 0.8,
         "alias_margin_floor": 0.2,
@@ -403,7 +403,106 @@ def _config(**changes: float) -> ArrivalDecisionConfig:
         "maximum_observation_gap_seconds": 0.5,
     }
     values.update(changes)
-    return ArrivalDecisionConfig(**values)
+    return ArrivalDecisionConfig(**values, alias_margin_veto=alias_margin_veto)
+
+
+def _history_for_scores(scores: tuple[float, ...]) -> list[list[float]]:
+    """Create a synthetic four-frame similarity matrix with known ordered scores."""
+
+    return [
+        [scores[min(index + history_index, len(scores) - 1)] for index in range(len(scores))]
+        for history_index in range(4)
+    ]
+
+
+def _run_synthetic_decision(
+    history: list[list[float]], *, alias_margin_veto: bool
+) -> tuple[float, float, list[dict[str, float | bool | None]], ArrivalDecisionState]:
+    features = arrival_features(history, terminal_reference_window=1)
+    # Fixed synthetic coefficients isolate the decision-rule difference. This
+    # map is not fitted or evidence of calibrated probabilities.
+    calibrator = LogisticArrivalCalibrator(
+        mean_terminal=0.0,
+        scale_terminal=1.0,
+        mean_margin=0.0,
+        scale_margin=1.0,
+        intercept=1.0,
+        terminal_coefficient=1.0,
+        margin_coefficient=0.0,
+        source_group_count=0,
+        source_rows=0,
+    )
+    probability = calibrator.probability(features.terminal_score, features.alias_margin)
+    state = ArrivalDecisionState(_config(alias_margin_veto=alias_margin_veto))
+    outputs = [
+        state.update(
+            timestamp_seconds=timestamp,
+            calibrated_probability=probability,
+            alias_margin=features.alias_margin,
+        )
+        for timestamp in (0.0, 0.5, 1.0)
+    ]
+    return probability, features.alias_margin, outputs, state
+
+
+def test_synthetic_decision_rule_comparison_preserves_dwell_and_reset() -> None:
+    # A geometrically valid near-goal query matches a nonterminal reference
+    # more strongly: the camera-only terminal margin is negative.
+    near_goal = _history_for_scores((0.2, 0.2, 0.2, 0.2, 0.9, 0.2, 0.2, 0.6))
+    assert ordered_similarity_scores(near_goal) == pytest.approx(
+        (0.2, 0.2, 0.2, 0.2, 0.9, 0.2, 0.2, 0.6)
+    )
+    strict_p, strict_margin, strict_rows, _ = _run_synthetic_decision(
+        near_goal, alias_margin_veto=True
+    )
+    plain_p, plain_margin, plain_rows, plain_state = _run_synthetic_decision(
+        near_goal, alias_margin_veto=False
+    )
+    assert strict_p == pytest.approx(plain_p)
+    assert strict_p >= 0.8
+    assert strict_margin == plain_margin == pytest.approx(-0.3)
+    assert all(row["eligible"] is False for row in strict_rows)
+    assert strict_rows[-1]["latched_arrival"] is False
+    assert all(row["eligible"] is True for row in plain_rows)
+    assert [row["latched_arrival"] for row in plain_rows] == [False, False, True]
+
+    # A distant terminal lookalike with a strong terminal score and positive
+    # margin passes both rules. The no-veto rule does not solve this failure.
+    distant_lookalike = _history_for_scores((0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.65, 0.95))
+    assert ordered_similarity_scores(distant_lookalike) == pytest.approx(
+        (0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.65, 0.95)
+    )
+    lookalike_a = _run_synthetic_decision(distant_lookalike, alias_margin_veto=True)
+    lookalike_b = _run_synthetic_decision(distant_lookalike, alias_margin_veto=False)
+    assert lookalike_a[0] == pytest.approx(lookalike_b[0])
+    assert lookalike_a[0] >= 0.8
+    assert lookalike_a[1] == lookalike_b[1] == pytest.approx(0.3)
+    assert lookalike_a[2][-1]["latched_arrival"] is True
+    assert lookalike_b[2][-1]["latched_arrival"] is True
+
+    # Distinct geometric labels attached to identical visual input produce
+    # identical decisions: neither camera-only rule can infer the label.
+    same_visual_cases = {"near_goal": True, "distant_wrong_location": False}
+    assert set(same_visual_cases.values()) == {False, True}
+    for veto in (True, False):
+        paired = [
+            _run_synthetic_decision(near_goal, alias_margin_veto=veto)[2]
+            for _label in same_visual_cases.values()
+        ]
+        assert paired[0] == paired[1]
+
+    # Reset semantics are shared: the probability-only rule clears its latch
+    # and must accumulate the full dwell again.
+    plain_state.reset()
+    assert plain_state.latched is False
+    assert plain_state.candidate_since is None
+    restarted = plain_state.update(
+        timestamp_seconds=10.0,
+        calibrated_probability=plain_p,
+        alias_margin=plain_margin,
+    )
+    assert restarted["candidate_since_seconds"] == 10.0
+    assert restarted["latched_arrival"] is False
 
 
 def test_dwell_requires_continuous_eligible_observations() -> None:
@@ -503,6 +602,17 @@ def test_decision_rejects_nonfinite_or_out_of_range_inputs(kwargs) -> None:
 def test_decision_config_rejects_invalid_explicit_settings(changes: dict[str, float]) -> None:
     with pytest.raises(ValueError):
         _config(**changes)
+
+
+def test_decision_config_requires_boolean_margin_policy() -> None:
+    with pytest.raises(ValueError, match="alias_margin_veto"):
+        ArrivalDecisionConfig(
+            probability_threshold=0.8,
+            alias_margin_floor=0.2,
+            dwell_seconds=1.0,
+            maximum_observation_gap_seconds=0.5,
+            alias_margin_veto=1,  # type: ignore[arg-type]
+        )
 
 
 def test_thresholds_and_terminal_window_are_never_implicitly_fitted() -> None:
