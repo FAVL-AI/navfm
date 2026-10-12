@@ -123,14 +123,50 @@ def main():
     parser.add_argument("--freeze", required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--worker", action="store_true")
+    parser.add_argument(
+        "--lifecycle-test-case",
+        choices=[
+            "success",
+            "preflight_reject",
+            "worker_fail",
+            "timeout",
+            "write_failure",
+            "populated_directory",
+        ],
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument("--lifecycle-worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     cfg = json.loads(CONFIG.read_text())
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    if head != args.freeze or subprocess.check_output(["git", "status", "--porcelain"], text=True):
+    technical = args.lifecycle_test_case is not None
+    if technical and (args.worker or os.environ.get("CUDA_VISIBLE_DEVICES") != ""):
+        raise ValueError("technical lifecycle entry requires CUDA hidden and forbids graph worker")
+    if args.lifecycle_worker and not technical:
+        raise ValueError("harmless child requires explicit technical enum")
+    if head != args.freeze or (
+        not technical and subprocess.check_output(["git", "status", "--porcelain"], text=True)
+    ):
         raise ValueError("exact clean freeze required")
     if cfg["status"] != "FROZEN_NATIVE_FIXED_GRAPH_CONTINUATION_V2":
         raise ValueError("continuation must be frozen")
     folder = args.out.parent
+    if args.lifecycle_worker:
+        if args.lifecycle_test_case == "timeout":
+            time.sleep(2)
+        if args.lifecycle_test_case == "worker_fail":
+            write_json(
+                folder / "worker_status.json", dict(status="FAIL_TECHNICAL_WORKER", freeze=head)
+            )
+            raise SystemExit(7)
+        write_json(
+            args.out,
+            dict(status="PASS_LAUNCHER_LIFECYCLE_ONLY", freeze=head, model_calls=0, forwards=0),
+        )
+        write_json(
+            folder / "worker_status.json", dict(status="PASS_LAUNCHER_LIFECYCLE_ONLY", freeze=head)
+        )
+        return
     if args.worker:
         started = time.monotonic()
         sys.addaudithook(reject_python_network)
@@ -176,24 +212,63 @@ def main():
             )
             raise SystemExit(1) from None
         return
+    if folder.exists():
+        refusal = folder.with_name(folder.name + ".refusal.json")
+        write_json(
+            refusal,
+            dict(
+                status="FAIL_POPULATED_DIRECTORY_REFUSED",
+                freeze=head,
+                worker_started=False,
+                exit_code=None,
+                timeout=None,
+                reaped=None,
+            ),
+        )
+        raise SystemExit(1)
     folder.mkdir(parents=True, exist_ok=False)
-    write_json(
-        folder / "attempt.json",
-        dict(
-            status="PREFLIGHT_STARTED",
-            freeze=head,
-            configuration_sha256=hashlib.sha256(CONFIG.read_bytes()).hexdigest(),
-        ),
-    )
     try:
+        write_json(
+            folder / "attempt.json",
+            dict(
+                status="PREFLIGHT_STARTED",
+                freeze=head,
+                configuration_sha256=hashlib.sha256(CONFIG.read_bytes()).hexdigest(),
+            ),
+        )
+        if args.lifecycle_test_case == "preflight_reject":
+            raise ValueError("explicit technical preflight rejection")
         graph = consume_constructor_proof(cfg)
+        if args.lifecycle_test_case == "write_failure":
+            write_json(folder / "worker_start.json", dict(status="CONFLICT_TECHNICAL_FIXTURE"))
+        write_json(
+            folder / "worker_start.json",
+            dict(
+                status="LAUNCH_REQUESTED",
+                freeze=head,
+                caps=graph["caps"],
+                qualified_constructor_freeze=QUALIFIED_FREEZE,
+            ),
+        )
+        with (folder / "worker.log").open("x") as log:
+            command = [sys.executable, __file__, "--freeze", head, "--out", str(args.out)]
+            if technical:
+                command += ["--lifecycle-worker", "--lifecycle-test-case", args.lifecycle_test_case]
+            else:
+                command += ["--worker"]
+            outcome = supervise_worker(
+                command,
+                log,
+                0.1 if args.lifecycle_test_case == "timeout" else graph["caps"]["whole_worker_s"],
+            )
+            outcome["worker_started"] = outcome["reaped"] or outcome["exit_code"] is not None
     except BaseException as exc:
         outcome = dict(
             status="FAIL",
             freeze=head,
             exit_code=None,
-            timeout=False,
-            reaped=False,
+            timeout=None,
+            reaped=None,
             worker_started=False,
             exception_type=type(exc).__name__,
             reason=str(exc)[:500],
@@ -201,38 +276,29 @@ def main():
         write_json(folder / "parent_status.json", outcome)
         print(json.dumps(outcome))
         raise SystemExit(1) from None
-    write_json(
-        folder / "attempt.json",
-        dict(
-            status="STARTED",
-            freeze=head,
-            configuration_sha256=hashlib.sha256(CONFIG.read_bytes()).hexdigest(),
-            caps=graph["caps"],
-            qualified_constructor_freeze=QUALIFIED_FREEZE,
-        ),
-    )
-    with (folder / "worker.log").open("x") as log:
-        outcome = supervise_worker(
-            [sys.executable, __file__, "--worker", "--freeze", head, "--out", str(args.out)],
-            log,
-            graph["caps"]["whole_worker_s"],
-        )
     valid = args.out.exists() and (folder / "worker_status.json").exists()
     if valid:
         valid = (
             json.loads((folder / "worker_status.json").read_text())
-            == dict(status="PASS", freeze=head)
+            == dict(status="PASS_LAUNCHER_LIFECYCLE_ONLY" if technical else "PASS", freeze=head)
             and json.loads(args.out.read_text()).get("freeze") == head
+            and json.loads(args.out.read_text()).get("status")
+            == ("PASS_LAUNCHER_LIFECYCLE_ONLY" if technical else "PASS_NATIVE_FIXED_GRAPH_ONLY")
         )
     valid = (
         valid
         and sum(p.stat().st_size for p in folder.iterdir() if p.is_file())
         <= graph["caps"]["raw_output_acceptance_bytes"]
     )
-    outcome.update(status="PASS" if accept_worker_outcome(outcome, valid) else "FAIL", freeze=head)
+    outcome.update(
+        status=("PASS_LAUNCHER_LIFECYCLE_ONLY" if technical else "PASS")
+        if accept_worker_outcome(outcome, valid)
+        else "FAIL",
+        freeze=head,
+    )
     write_json(folder / "parent_status.json", outcome)
     print(json.dumps(outcome))
-    raise SystemExit(0 if outcome["status"] == "PASS" else 1)
+    raise SystemExit(0 if accept_worker_outcome(outcome, valid) else 1)
 
 
 if __name__ == "__main__":

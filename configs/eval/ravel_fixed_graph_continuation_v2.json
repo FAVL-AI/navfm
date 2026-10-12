@@ -36,6 +36,7 @@
       "sha256": "08bd89b95b7dd87a5867b7612287951a0d96260af2cc50dade6a997592d88b3e"
     }
   },
-  "fresh_result_directory": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v2-01",
-  "scope": "Consume existing constructor proof only; same native graph path/modes/input/resource budget; no extra CPU constructor validation or encoder repeat."
+  "fresh_result_directory": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01",
+  "scope": "Consume existing constructor proof only; same native graph path/modes/input/resource budget; no extra CPU constructor validation or encoder repeat.",
+  "launcher_lifecycle_version": "IMMUTABLE_RECORD_LIFECYCLE_V3"
 }

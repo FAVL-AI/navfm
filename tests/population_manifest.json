@@ -4050,5 +4050,12 @@
     "total_count": 3201,
     "resource_owners_changed": false,
     "scope": "CPU proof consumption/data-binding guards only; native recorded graph is a separate explicit resource-owning command."
+  },
+  "ravel_launcher_lifecycle_v3_check": {
+    "pytest_nodes_changed": false,
+    "total_count": 3201,
+    "resource_owners_changed": false,
+    "external_CPU_cases": 6,
+    "owner": "explicit CPU-only actual CLI lifecycle check command; no historical archive or hermetic model ownership implied"
   }
 }
