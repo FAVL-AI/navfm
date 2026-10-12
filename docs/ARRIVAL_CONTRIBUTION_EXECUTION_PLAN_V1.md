@@ -225,13 +225,16 @@ env -u PYTHONPATH PATH=/home/favl/navfm-runtime-evidence/pr2-ci-hermetic-2026101
 ```
 
 Ruff PASS; mypy PASS across 89 source files; full pytest **47 failures**.
-`NAVFM_UPSTREAM` was not supplied by this command and is unset in the checked
-shell. This was a no-Torch development environment, not an admitted upstream
-or resource-owner proof. Failures classify as:
+`NAVFM_UPSTREAM` was not supplied by this command and was unset in the checked
+shell. Later source inspection established that clearing `PYTHONPATH` let the
+external environment's editable installation import the separate engineering
+worktree. This run therefore did not bind every imported implementation to
+this checkout and is not an admissible current-branch validation or resource
+owner proof. Its actual failed outcomes are retained below. Failures classify as:
 
 | Count | Actual failure category |
 | --- | --- |
-| 14 | `test_arm_lifecycle.py`: `execute_arm()` rejects the test's `environment_capture` keyword; an applicable source/API contract mismatch |
+| 14 | `test_arm_lifecycle.py`: imported foreign-worktree `execute_arm()` rejects `environment_capture`; this checkout already implements the keyword and REAL-mode fixture refusal |
 | 2 | `test_check_test_population.py`: existing upstream expectation is 42/old digest while the unchanged upstream manifest is 44/current digest; a software pin mismatch |
 | 4 | Missing immutable V1 archive / three required historical capture files |
 | 1 | Missing required alternate interpreter resource |
@@ -240,9 +243,60 @@ or resource-owner proof. Failures classify as:
 These are actual failed checks, not a green suite or a blanket environmental
 excuse. The newly added test file has no failures. No baseline full-suite rerun
 was performed, so this audit does not claim a measured before/after proof for
-all 47. Existing source/API and upstream-pin discrepancies remain unresolved;
+all 47. The foreign-source/API contamination and stale test expectation were subsequently
+addressed by the software repair below;
 no unrelated implementation, historical evidence or gate was changed. The
 initial focused invocation also failed during inherited ROS plugin import
 (`lark` absent); clearing `PYTHONPATH` then produced the focused PASS above.
 External verification logs/reports remain outside the repository. No simulator,
 training, collection, benchmark scoring or real robot actuation was executed.
+
+## Scoped software repair, 2026-10-12
+
+Inspection at baseline `ebe50c04cdc004737fca8c2b31e9a2c59f0df08b` proves this
+checkout already implements `environment_capture` and refuses fixture capture
+in REAL mode before output creation. The earlier external no-Torch environment
+instead imported `/home/favl/projects/navfm-engineering-recording/src/navfm`,
+whose different API lacks that keyword. No lifecycle implementation is changed.
+The Makefile's `test` and `test-upstream` commands now explicitly bind
+`PYTHONPATH` to this checkout's absolute `src`, replacing inherited ROS paths
+and any foreign editable installation for these commands and their children.
+CI's local editable-install behavior remains unchanged.
+
+The existing upstream manifest's 44 required node IDs derive digest
+`0808a5ffb8271d4366af20428f145e2128f2a28b353b4d3f68111141dc537188`.
+The test's stale 42-node expectation and old digest are corrected to that
+existing pin. Same-count substitution, dropped-node and added-node controls
+remain intact. No test node, population membership, resource owner or
+historical manifest/capture changes in this repair.
+
+With explicit local source and
+`NAVFM_UPSTREAM=/home/favl/projects/navfm/third_party/visualnav-transformer`,
+all **26 lifecycle and TestPin controls PASS**. The existing patched upstream
+clone reports base commit `dca79815b704e5aa9c6bdc3082351f9e3b2848c2`; its
+patches are not edited or requalified here. These targeted software controls
+do not claim an executed 44-node upstream compatibility proof.
+
+One justified full software rerun used:
+
+```sh
+env PATH=/home/favl/navfm-runtime-evidence/pr2-ci-hermetic-20261010-02/venv/bin:$PATH NAVFM_UPSTREAM=/home/favl/projects/navfm/third_party/visualnav-transformer make verify
+```
+
+Makefile source binding was inspected directly: the imported lifecycle module
+resolves to this worktree and its callable exposes the fixture keyword.
+Ruff PASS and mypy PASS across 89 source files. Full pytest has **29 failures**:
+24 missing-dependency failures (Torch, diffusers, transformers or matplotlib,
+including dependency-masked negative controls), four absent immutable archive/
+capture failures, and one absent alternate interpreter. All lifecycle and
+upstream-pin tests pass in that rerun; the compatibility fixture and missing
+upstream-path failures also disappear with the declared clone. The suite is
+still FAIL, not merge-ready or a resource-owner proof. No missing prerequisite
+is replaced with a fabricated record or a weakened assertion. Raw outputs
+remain external at `/tmp/navfm-arrival-software-repair-full.txt`.
+
+The scientific proposal stays UNFROZEN and BLOCKED. These software repairs
+supply no plant/contact/controller qualification, independent test custody,
+80-layout feasibility, or training/collection/runtime authorization. A smaller
+DEV feasibility proposal is the next preparation milestone, after this repair
+boundary is reviewed.
