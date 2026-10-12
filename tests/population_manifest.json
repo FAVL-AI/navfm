@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3125,
-      "sha256": "5ab3e412095aa822d9107d0034607382119b915f002626b03c5e12abbbd5b986"
+      "count": 3149,
+      "sha256": "f90533c728f2902df9864f878e4c65f9c729880b2ff7b0800ac6982ec66d33e1"
     },
     "hermetic": {
-      "count": 2920,
-      "sha256": "8e9e3c99655c2cef2acde9f95714977eec9fbeeb1fdafa066a4df0b288a33e71"
+      "count": 2944,
+      "sha256": "8fced8237b33039b9c4607fd46472280c0ba20efcf76b9d967ef34022fb40354"
     },
     "resource_union": {
       "count": 205,
@@ -3683,7 +3683,31 @@
     "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[first_block-outcome_based_retuning_or_early_success-True]": [],
     "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[population-test_budget_authorization-True]": [],
     "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-episode_process_wall_cap_s-nan]": [],
-    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-total_wall_GPU_hours_cap-50]": []
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-total_wall_GPU_hours_cap-50]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-0-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1-0.5]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1-nan]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1.0-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-2-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-True-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[wrong-1-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_admitted_native_floating_dtype_is_preserved[float32]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_admitted_native_floating_dtype_is_preserved[float64]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_correct_acquisition_and_budget_exhaustion": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[duplicate_id]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[empty_id]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[hash_shape]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[integer_dtype]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[negative_graph]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[nonfinite]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[shape]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[unnormalized]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_native_constants_cannot_be_silently_tuned": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_source_tampering_rejected_before_any_ast_execution": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[launch_error]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[nonzero]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[timeout]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supported_and_unsupported_goal_identity_do_not_force_nearest_node": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3914,5 +3938,13 @@
     "total": 3125,
     "owner": "ordinary-hermetic",
     "status": "PREPARATION_ONLY_RUNTIME_NOT_RUN"
+  },
+  "stop_interface_qualification_v1_update": {
+    "prior_retained": 3125,
+    "added": 24,
+    "total": 3149,
+    "owner": "ordinary-hermetic",
+    "native_parity_owner": "separate_frozen_synthetic_source_cache_probe",
+    "status": "24_HERMETIC_GUARDS_PASS_NATIVE_PROBE_NOT_RUN"
   }
 }
