@@ -1,6 +1,6 @@
 # Static-arrival camera qualification continuation v2
 
-**Status: prospective amendment; review required; not executed.** The v1 qualification FAIL, its consumed registry, evidence, frame schedule and camera criteria remain unchanged. This continuation uses a separate v2 registry and a new external attempt directory. No Isaac process or camera capture ran during preparation.
+**At freeze:** prospective amendment; review required; not executed. **Current status:** bounded review was completed before the single authorized attempt; its outcome is documented in [STATIC_ARRIVAL_CAMERA_QUALIFICATION_RESULTS_V2.md](STATIC_ARRIVAL_CAMERA_QUALIFICATION_RESULTS_V2.md). The v1 qualification FAIL, its consumed registry, evidence, frame schedule and camera criteria remain unchanged. This continuation used a separate v2 registry and a new external attempt directory. No Isaac process or camera capture ran during preparation.
 
 ## Source finding and decision
 
