@@ -1,0 +1,47 @@
+{
+  "schema": "static_arrival_startup_diagnostic_v1",
+  "purpose": "startup_and_close_only",
+  "runtime": {
+    "python": "/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python",
+    "python_sha256": "2cfeb15bca9b4483886e787a5a0f7b86f44e1644ac45b003957e2211ac1c748a",
+    "isaacsim_distribution_version": "5.1.0.0",
+    "hub_mode": "disabled",
+    "cwd": "/home/favl/projects/navfm-research-planning"
+  },
+  "application": {
+    "headless": true,
+    "renderer": "RayTracedLighting",
+    "resolution": [320, 240],
+    "sim_hz": 16,
+    "rt_subframes": 1,
+    "physics_substeps": 1,
+    "warmup_frames": 8,
+    "dlss_quality": true,
+    "seed": 0,
+    "scene_or_capture_work": false
+  },
+  "budget": {
+    "child_execution_seconds": 30.0,
+    "cleanup_reserve_seconds": 10.0,
+    "total_seconds": 40.0,
+    "deadline_includes": "spawn through normal close and child exit",
+    "cleanup_includes": "termination requests, child reap, evidence verification and terminal record"
+  },
+  "evidence": {
+    "root": "/home/favl/navfm-runtime-evidence/static-arrival-startup-diagnostic-v1",
+    "attempt": "attempt-01",
+    "registry": "/home/favl/navfm-runtime-evidence/static-arrival-startup-diagnostic-v1/registry",
+    "one_shot": true,
+    "artifacts_external": true
+  },
+  "source_bindings": [
+    {
+      "path": "src/navfm/isaac/app.py",
+      "sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87"
+    },
+    {
+      "path": "scripts/static_arrival_startup_worker_v1.py",
+      "sha256": "adf3f4c90ed64f431ff424514ad321e240bdaa6d733d41d5d4da2f40a473100d"
+    }
+  ]
+}
