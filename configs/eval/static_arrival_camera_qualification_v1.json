@@ -1,0 +1,219 @@
+{
+  "budget": {
+    "capture_and_child_exit_allowance_seconds": 90.0,
+    "deadline_clock": "parent monotonic clock; starts at runner entry and is checked again after finalization",
+    "does_not_establish_full_family_feasibility": true,
+    "measured": false,
+    "reap_reserve_seconds": 10.0,
+    "scope": "one complete qualification process, from runner entry through capture, child shutdown, reap, verification, and qualification finalization",
+    "status": "PROPOSED_FOR_APPROVAL_NOT_MEASURED",
+    "verification_and_finalization_reserve_seconds": 20.0,
+    "whole_process_cap_seconds": 120.0
+  },
+  "camera": {
+    "axes": "world; +X forward, +Z up",
+    "camera_height_m": 0.55,
+    "capture_cadence_target_hz": 4,
+    "forward_offset_m": 0.2,
+    "height_px": 240,
+    "held_sim_steps_per_capture": 4,
+    "horizontal_fov_deg": 68.0,
+    "quaternion_order": "WXYZ",
+    "rgb_channels": 3,
+    "sim_hz": 16,
+    "timestamp_policy": "record actual values; require strict acquisition-order increase; never infer time from frame index",
+    "timestamp_source": "native rendering_time and rendering_frame from same cloned frame snapshot",
+    "warmup_sim_steps": 8,
+    "width_px": 320
+  },
+  "evidence": {
+    "dataset_admission": false,
+    "one_attempt_only": true,
+    "registry": "~/navfm-runtime-evidence/static-arrival-camera-qualification-v1/registry",
+    "retain_partial_frames_and_readbacks": true,
+    "root": "~/navfm-runtime-evidence/static-arrival-camera-qualification-v1"
+  },
+  "fixture": {
+    "exposure_note": "scene specification is already exposed; this qualification creates new technical captures which are excluded from all scheduled fit, threshold-selection, and assessment episodes",
+    "geometry_sha256": "67a1dd46d3aceb85be6f467504490a54484d53efb04ebd4f9f02a323cff6b984",
+    "identity": "legacy_corridor_scene_0",
+    "partitions": false,
+    "scene_index": 0,
+    "source": "the explicitly bound F0 scene geometry in the already-published v2 schedule",
+    "wall_half_width_m": 2.0
+  },
+  "held_sim_steps_per_capture": 4,
+  "lighting": {
+    "distant_intensity": 1500.0,
+    "distant_light_count": 1,
+    "distant_rotation_xyz_deg": [
+      -45.0,
+      30.0,
+      0.0
+    ],
+    "dome_intensity": 800.0,
+    "per_episode_variation": "none",
+    "source": "existing option1 training collector"
+  },
+  "overlap_audit": {
+    "exact_body_pose_overlap": [],
+    "planned_episode_identity_overlap": [],
+    "scene_specification_overlap": [
+      "legacy_corridor_scene_0/F0"
+    ]
+  },
+  "population": {
+    "frames": 8,
+    "queries": 5,
+    "references": 3
+  },
+  "purpose": "technical_camera_path_qualification_only",
+  "runtime": {
+    "bootstrap_compatibility_branch": [
+      5,
+      0
+    ],
+    "isaacsim_distribution_version": "5.1.0.0",
+    "worker_python": "/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python",
+    "worker_python_sha256": "2cfeb15bca9b4483886e787a5a0f7b86f44e1644ac45b003957e2211ac1c748a"
+  },
+  "schedule": {
+    "capture_order": "all three reference views, then five query views",
+    "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+    "labels": "none; no evaluator labels or query ground truth are written or supplied to capture code",
+    "pose_semantics": "eight separately authored static camera poses; transitions are not a continuous-motion trajectory",
+    "queries": [
+      {
+        "body_pose_xy_yaw_rad": [
+          2.05,
+          0.33,
+          0.07
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_query_00",
+        "role": "query"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          2.39,
+          0.33,
+          0.17
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_query_01",
+        "role": "query"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          2.73,
+          0.33,
+          0.27
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_query_02",
+        "role": "query"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          3.07,
+          0.33,
+          -0.03
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_query_03",
+        "role": "query"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          3.41,
+          0.33,
+          0.07
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_query_04",
+        "role": "query"
+      }
+    ],
+    "references": [
+      {
+        "body_pose_xy_yaw_rad": [
+          1.03,
+          0.33,
+          0.07
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_reference_00",
+        "role": "reference"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          1.37,
+          0.33,
+          0.07
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_reference_01",
+        "role": "reference"
+      },
+      {
+        "body_pose_xy_yaw_rad": [
+          1.71,
+          0.33,
+          0.07
+        ],
+        "episode_id": "camera_qualification_v1_legacy_corridor_scene_0",
+        "image_id": "camera_qualification_v1_reference_02",
+        "role": "reference"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "source_bindings": [
+    {
+      "path": "src/navfm/collection/scene_layouts.py",
+      "sha256": "c8ceab6abcad9b218abf27d691e0a3da4523d5aefe554e4f6e4687aa236da0ad"
+    },
+    {
+      "path": "src/navfm/isaac/app.py",
+      "sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87"
+    },
+    {
+      "path": "src/navfm/collection/static_arrival_capture.py",
+      "sha256": "6782f3efaf097686414f442c22b8877728872303d02ee15260c13c7a72408d09"
+    },
+    {
+      "path": "src/navfm/collection/static_arrival_camera_qualification.py",
+      "sha256": "d326d17fe8aa39acc6659dec192191bb3730f18cafc86c77dd77e6d45f6c8ed8"
+    },
+    {
+      "path": "scripts/static_arrival_capture_worker_v1.py",
+      "sha256": "6b6fa9ae636ba377d3ba53cafb95911d601dafc86d4577fdfca01821b80782b1"
+    },
+    {
+      "path": "scripts/static_arrival_camera_qualification_worker_v1.py",
+      "sha256": "29b2a45df2da7248fba87f73d2d12ce6057c9aff97e89efee330524b53362269"
+    },
+    {
+      "path": "scripts/static_arrival_camera_qualification_v1.py",
+      "sha256": "2c17301ec2f0769666836cfe7d8b641a011a16a57086dce04eb9ba90532bc986"
+    },
+    {
+      "path": "scripts/prospective_data_contracts_v1.py",
+      "sha256": "e822816ba66ca8c72697b5930d2e323f778b4024323f3af4190b0d7a3ae5ae1a"
+    },
+    {
+      "path": "scripts/development_qualification_contracts_v1.py",
+      "sha256": "356cfbc0f571bdae1a421a12ea82103919e0f4c17c09d5f4c2e198236a34d8f4"
+    },
+    {
+      "path": "scripts/offline_evaluation_contracts_v1.py",
+      "sha256": "4aba2507f3ada502efec5fc26c40a5dbfbe2051260cf2bc4ea7c6cde45a660f5"
+    },
+    {
+      "path": "configs/eval/static_arrival_training_acquisition_v2.json",
+      "sha256": "20c2b23abeb4350b2aa8c2bccff90c5e29d229a409c7ba1a90ab528f4daea2f0"
+    }
+  ],
+  "status": "PREPARED_FOR_APPROVAL",
+  "warmup_sim_steps": 8
+}
