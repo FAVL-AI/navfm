@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import sys
 import time
 from pathlib import Path
@@ -23,7 +24,11 @@ from navfm.collection.static_arrival_capture import canonical_sha256 as content_
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=("success", "failure", "hang"), default="success")
+    parser.add_argument(
+        "--mode",
+        choices=("success", "failure", "hang", "no_close_return", "capsule_failure"),
+        default="success",
+    )
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--parent-nonce", required=True)
@@ -36,6 +41,9 @@ def main() -> None:
     if args.mode == "failure":
         raise SystemExit(7)
     worker_input = json.loads(args.input.read_text())
+    if worker_input.get("shutdown_contract"):
+        assert os.environ.get("OMNICLIENT_HUB_MODE") == "disabled"
+        assert Path.cwd() == ROOT
     frame_rows = []
     image_root = args.out / "policy_inputs" / "images"
     metadata_root = args.out / "capture_metadata"
@@ -94,11 +102,12 @@ def main() -> None:
                 sort_keys=True,
             )
         )
+    shutdown_contract = worker_input.get("shutdown_contract")
     report = {
         "schema": "static_arrival_camera_qualification_v1",
-        "status": "PASS",
+        "status": "MEASUREMENTS_COMPLETE" if shutdown_contract else "PASS",
         "qualification_only": True,
-        "shutdown_returned": True,
+        "shutdown_returned": not bool(shutdown_contract),
         "bootstrap_compatibility_branch": [5, 0],
         "isaacsim_distribution_version": worker_input["expected_isaacsim_version"],
         "family": "TECHNICAL",
@@ -108,7 +117,40 @@ def main() -> None:
         "worker_input_sha256": content_sha(worker_input),
         "frames": frame_rows,
     }
+    if shutdown_contract:
+        report["shutdown_contract"] = shutdown_contract
+        report["launch_observation"] = {
+            "child_cwd": str(ROOT.resolve()),
+            "child_hub_mode": os.environ.get("OMNICLIENT_HUB_MODE"),
+            "simulation_app_fast_shutdown": False,
+        }
     (args.out / "capture_report.json").write_text(json.dumps(report, sort_keys=True))
+    if shutdown_contract:
+        artifacts = {}
+        expected_ids = [row["image_id"] for row in frame_rows]
+        for image_id in expected_ids:
+            for relative in (
+                f"capture_metadata/{image_id}.json",
+                f"policy_inputs/images/{image_id}.jpg",
+            ):
+                artifacts[relative] = hashlib.sha256((args.out / relative).read_bytes()).hexdigest()
+        capsule = {
+            "schema": "static_arrival_camera_measurement_capsule_v2",
+            "measurement_status": "COMPLETE_BEFORE_SHUTDOWN",
+            "schedule_sha256": worker_input["schedule_sha256"],
+            "source_bindings_sha256": worker_input["source_bindings_sha256"],
+            "worker_input_sha256": content_sha(worker_input),
+            "frames": frame_rows,
+            "frames_sha256": content_sha(frame_rows),
+            "artifacts": artifacts,
+        }
+        if args.mode != "capsule_failure":
+            (args.out / "measurement_complete.json").write_text(json.dumps(capsule, sort_keys=True))
+        if args.mode == "no_close_return":
+            return
+        report["status"] = "PASS"
+        report["shutdown_returned"] = True
+        (args.out / "capture_report.json").write_text(json.dumps(report, sort_keys=True))
 
 
 if __name__ == "__main__":
