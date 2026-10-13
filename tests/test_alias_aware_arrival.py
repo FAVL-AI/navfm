@@ -5,6 +5,7 @@ from __future__ import annotations
 import inspect
 import math
 from dataclasses import fields
+from hashlib import sha256
 
 import pytest
 
@@ -14,6 +15,7 @@ from navfm.collection.alias_aware_arrival import (
     CalibrationRow,
     LogisticArrivalCalibrator,
     arrival_features,
+    descriptor_history_similarity,
     fit_logistic_calibrator,
     goal_region_features,
     ordered_similarity_scores,
@@ -48,6 +50,91 @@ def test_ordered_scores_follow_history_and_reference_order() -> None:
     ]
 
     assert ordered_similarity_scores(history) == pytest.approx((15.0, 15.25, 15.75, 16.5, 17.5))
+
+
+def test_descriptor_adapter_normalizes_and_preserves_history_and_reference_order() -> None:
+    similarities = descriptor_history_similarity(
+        [[3.0, 0.0], [0.0, 5.0], [-2.0, 0.0], [0.0, -4.0]],
+        [[2.0, 0.0], [0.0, 7.0], [-3.0, 0.0]],
+        history_image_ids=("q0", "q1", "q2", "q3"),
+        reference_image_ids=("r0", "r1", "r2"),
+        history_content_sha256=tuple(sha256(f"q{i}".encode()).hexdigest() for i in range(4)),
+        reference_content_sha256=tuple(sha256(f"r{i}".encode()).hexdigest() for i in range(3)),
+    )
+
+    expected = ((1.0, 0.0, -1.0), (0.0, 1.0, 0.0), (-1.0, 0.0, 1.0), (0.0, -1.0, 0.0))
+    for actual_row, expected_row in zip(similarities, expected, strict=True):
+        assert actual_row == pytest.approx(expected_row)
+    assert len(similarities) == 4
+    assert all(len(row) == 3 for row in similarities)
+
+
+@pytest.mark.parametrize(
+    ("history", "references", "history_ids", "reference_ids"),
+    [
+        ([[1.0, 0.0]] * 3, [[1.0, 0.0], [0.0, 1.0]], ("a", "b", "c"), ("r0", "r1")),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 1.0]], ("a", "b", "c", "d"), ("r0",)),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 1.0]], ("a", "b", "c"), ("r0", "r1")),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 1.0]], ("a", "b", "c", "d"), ("r0", "r1", "r2")),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]], ("a", "b", "c", "d"), ("r0", "r1")),
+        (
+            [[1.0, 0.0]] * 3 + [[float("nan"), 0.0]],
+            [[1.0, 0.0], [0.0, 1.0]],
+            ("a", "b", "c", "d"),
+            ("r0", "r1"),
+        ),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [float("inf"), 0.0]], ("a", "b", "c", "d"), ("r0", "r1")),
+        (
+            [[1.0, 0.0]] * 3 + [[0.0, 0.0]],
+            [[1.0, 0.0], [0.0, 1.0]],
+            ("a", "b", "c", "d"),
+            ("r0", "r1"),
+        ),
+        (
+            [[1.0, 0.0]] * 3 + [[1e308, 0.0]],
+            [[1.0, 0.0], [0.0, 1.0]],
+            ("a", "b", "c", "d"),
+            ("r0", "r1"),
+        ),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 0.0]], ("a", "b", "c", "d"), ("r0", "r1")),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 1.0]], ("same", "b", "c", "d"), ("same", "r1")),
+        ([[1.0, 0.0]] * 4, [[1.0, 0.0], [0.0, 1.0]], ("a", "a", "c", "d"), ("r0", "r1")),
+    ],
+)
+def test_descriptor_adapter_rejects_invalid_shapes_values_or_identities(
+    history, references, history_ids, reference_ids
+) -> None:
+    with pytest.raises(ValueError):
+        descriptor_history_similarity(
+            history,
+            references,
+            history_image_ids=history_ids,
+            reference_image_ids=reference_ids,
+            history_content_sha256=tuple(
+                sha256(value.encode()).hexdigest() for value in history_ids
+            ),
+            reference_content_sha256=tuple(
+                sha256(value.encode()).hexdigest() for value in reference_ids
+            ),
+        )
+
+
+def test_descriptor_adapter_rejects_identical_bytes_with_different_record_ids() -> None:
+    shared = sha256(b"same captured bytes").hexdigest()
+    with pytest.raises(ValueError, match="reference image identity"):
+        descriptor_history_similarity(
+            [[1.0, 0.0]] * 4,
+            [[1.0, 0.0], [0.0, 1.0]],
+            history_image_ids=("q0", "q1", "q2", "q3"),
+            reference_image_ids=("r0", "r1"),
+            history_content_sha256=(
+                shared,
+                sha256(b"q1").hexdigest(),
+                sha256(b"q2").hexdigest(),
+                sha256(b"q3").hexdigest(),
+            ),
+            reference_content_sha256=(shared.upper(), sha256(b"r1").hexdigest()),
+        )
 
 
 def test_alias_margin_excludes_the_explicit_terminal_window() -> None:

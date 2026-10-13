@@ -20,6 +20,85 @@ import math
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 
+import numpy as np
+
+
+def descriptor_history_similarity(
+    history_descriptors: Sequence[Sequence[float]],
+    reference_descriptors: Sequence[Sequence[float]],
+    *,
+    history_image_ids: Sequence[str],
+    reference_image_ids: Sequence[str],
+    history_content_sha256: Sequence[str],
+    reference_content_sha256: Sequence[str],
+) -> tuple[tuple[float, ...], ...]:
+    """Convert four ordered MegaLoc descriptors to cosine-similarity rows.
+
+    The history is newest-first (``I[t]`` through ``I[t-3]``); reference
+    descriptors remain in caller-provided route order. Descriptors are
+    defensively L2-normalized, then their dot products form the ``4 x N``
+    matrix consumed by :func:`ordered_similarity_scores`. Query/reference
+    image identity overlap is rejected so a self-match cannot enter silently.
+
+    This adapter defines score mechanics only. It does not authenticate the
+    encoder/checkpoint or establish useful visual discrimination.
+    """
+
+    history_ids = tuple(history_image_ids)
+    reference_ids = tuple(reference_image_ids)
+    history_hashes = tuple(history_content_sha256)
+    reference_hashes = tuple(reference_content_sha256)
+    try:
+        history = np.asarray(history_descriptors, dtype=np.float64)
+        references = np.asarray(reference_descriptors, dtype=np.float64)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("descriptors must be rectangular numeric arrays") from exc
+    if history.ndim != 2 or history.shape[0] != 4 or history.shape[1] == 0:
+        raise ValueError("history descriptors must have shape (4, D), D > 0")
+    if references.ndim != 2 or references.shape[0] < 2 or references.shape[1] == 0:
+        raise ValueError("reference descriptors must have shape (N, D), N >= 2, D > 0")
+    if history.shape[1] != references.shape[1]:
+        raise ValueError("history and reference descriptor widths must match")
+    if len(history_ids) != 4 or len(reference_ids) != references.shape[0]:
+        raise ValueError("image identities must align with descriptor rows")
+    if len(history_hashes) != 4 or len(reference_hashes) != references.shape[0]:
+        raise ValueError("content hashes must align with descriptor rows")
+    if any(not isinstance(value, str) or not value for value in (*history_ids, *reference_ids)):
+        raise ValueError("image identities must be non-empty strings")
+    if len(set(history_ids)) != 4 or len(set(reference_ids)) != len(reference_ids):
+        raise ValueError("history and reference image identities must be unique")
+    all_hashes = (*history_hashes, *reference_hashes)
+    if any(
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(char not in "0123456789abcdef" for char in value.lower())
+        for value in all_hashes
+    ):
+        raise ValueError("image content hashes must be SHA-256 hex digests")
+    if set(history_ids).intersection(reference_ids) or set(
+        value.lower() for value in history_hashes
+    ).intersection(value.lower() for value in reference_hashes):
+        raise ValueError("query history must not contain a reference image identity")
+    if not np.isfinite(history).all() or not np.isfinite(references).all():
+        raise ValueError("descriptors must be finite")
+
+    with np.errstate(over="ignore", invalid="ignore"):
+        history_norms = np.linalg.norm(history, axis=1, keepdims=True)
+        reference_norms = np.linalg.norm(references, axis=1, keepdims=True)
+    if (
+        not np.isfinite(history_norms).all()
+        or not np.isfinite(reference_norms).all()
+        or np.any(history_norms == 0.0)
+        or np.any(reference_norms == 0.0)
+    ):
+        raise ValueError("descriptor norms must be finite and non-zero")
+    history = history / history_norms
+    references = references / reference_norms
+    similarities = np.clip(history @ references.T, -1.0, 1.0)
+    if not np.isfinite(similarities).all():
+        raise ValueError("cosine similarities must be finite")
+    return tuple(tuple(float(value) for value in row) for row in similarities)
+
 
 @dataclass(frozen=True)
 class ArrivalFeatures:
