@@ -1,0 +1,22 @@
+{
+  "version": "RAVEL_LAUNCHER_LIFECYCLE_V3",
+  "scope": "Explicit CPU-only technical enum entry in same real CLI parent; not graph admission",
+  "cases": [
+    "success",
+    "preflight_reject",
+    "worker_fail",
+    "timeout",
+    "write_failure",
+    "populated_directory"
+  ],
+  "total_cpu_wall_cap_s": 30,
+  "per_CLI_wall_cap_s": 5,
+  "technical_timeout_child_cap_s": 0.1,
+  "model_calls": 0,
+  "forwards": 0,
+  "GPU_calls": 0,
+  "production_worker_cap_s": 180,
+  "production_parent_cap_s": 360,
+  "test_output_status": "PASS_LAUNCHER_LIFECYCLE_ONLY",
+  "owner": "explicit check_ravel_launcher_lifecycle_v3.py command using existing authenticated proof metadata and isolated Python environment"
+}

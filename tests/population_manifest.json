@@ -9,7 +9,7 @@
     "note": "Historical provisioned measurement for the original 777-node population. Current integration membership was collected separately as recorded in integration_population_update; this metadata does not claim the expanded population passed."
   },
   "required_marker": "upstream",
-  "expected_required_count": 42,
+  "expected_required_count": 44,
   "required_node_ids": [
     "tests/test_compat_harness.py::TestAValidFixturePasses::test_compliant_trajectory_passes_every_data_check",
     "tests/test_engineering_recording.py::test_sidecar_recording_is_consumed_by_pinned_official_loader[gnm]",
@@ -19,6 +19,7 @@
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_contradicting_batch_size_is_refused_by_name",
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_contradicting_population_seed_is_refused",
     "tests/test_gate_controls.py::TestDeclarationEnforcement::test_undeclared_model_seed_is_refused",
+    "tests/test_native_adaptation_smoke_v1.py::test_nomad_native_nonclipped_delta_normalization_roundtrip",
     "tests/test_r6_harness.py::TestTheHarnessDoesNotSmuggleInR7::test_nomad_evaluation_path_is_not_enabled_by_this_harness",
     "tests/test_rng_domains.py::TestCausalContract::test_eval_seed_varies_population_only",
     "tests/test_rng_domains.py::TestCausalContract::test_model_seed_varies_weights_only",
@@ -52,31 +53,32 @@
     "tests/test_upstream_module.py::test_metric_waypoint_spacing_reads_the_reference_constants",
     "tests/test_upstream_module.py::test_model_config_layers_vint_over_defaults",
     "tests/test_upstream_module.py::test_reference_transform_is_applied_per_frame",
-    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default"
+    "tests/test_upstream_module.py::test_unregistered_dataset_is_an_error_not_a_default",
+    "tests/test_vint_interface_v1.py::test_actual_native_preprocessing_context_and_normalization"
   ],
-  "required_node_ids_sha256": "4c22c174801548a193de34aa5a9b32ff42bfe0a4c733ee722fd4f05d161ba07c",
+  "required_node_ids_sha256": "0808a5ffb8271d4366af20428f145e2128f2a28b353b4d3f68111141dc537188",
   "upstream_commit": "dca79815b704e5aa9c6bdc3082351f9e3b2848c2",
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 2815,
-      "sha256": "ac5108fdc543ce6190c406a31b5cf38ef623e7c90b2ac65fc915396b27245816"
+      "count": 3213,
+      "sha256": "064ec621efc9a1e9817e94c0720fc36b7ab0da7155b3d2f5393b485d1d744f3f"
     },
     "hermetic": {
-      "count": 2690,
-      "sha256": "1d3b095bb5e3ad53a1ce3bf30f59c66fe9d4c33b71fc1d206fcf924460131f9a"
+      "count": 3008,
+      "sha256": "47b9a151f41eda7961748f54a19d409d6163838109f7ae7e57dd442187506a4b"
     },
     "resource_union": {
-      "count": 125,
-      "sha256": "2224586d2edfcb835b25d837e9fec5a22e4038abb2def919f758a83e51eb24e0"
+      "count": 205,
+      "sha256": "56deff74da8a778a81c9c5a3f3d84afddb3591f94be2ce367757a71d5ca2e2e4"
     },
     "upstream": {
-      "count": 42,
-      "sha256": "4c22c174801548a193de34aa5a9b32ff42bfe0a4c733ee722fd4f05d161ba07c"
+      "count": 44,
+      "sha256": "0808a5ffb8271d4366af20428f145e2128f2a28b353b4d3f68111141dc537188"
     },
     "torch": {
-      "count": 55,
-      "sha256": "6768762641e6f38c8cc1b12a751a0a0ebb60e38d95f3c25544160582bd6dbb3f"
+      "count": 70,
+      "sha256": "7b5a0c5393de93b986ed33c7c01ba6045f7820555661ff73fe614e38686cb8a9"
     },
     "plot": {
       "count": 1,
@@ -3206,7 +3208,570 @@
     "tests/test_yaw_rate_tracker.py::test_zero_command_clears_integral_and_output_is_bounded": [],
     "tests/test_resource_ci.py::test_sole_maintainer_requires_explicit_mode_and_retains_branch_guard": [],
     "tests/test_resource_ci.py::test_approval_mode_rejects_unknown_and_misrepresented_review": [],
-    "tests/test_resource_ci.py::test_security_environment_reads_explicit_mode_and_reports_reduced_assurance": []
+    "tests/test_resource_ci.py::test_security_environment_reads_explicit_mode_and_reports_reduced_assurance": [],
+    "tests/test_development_qualification_v1.py::test_first_declared_launch": [],
+    "tests/test_development_qualification_v1.py::test_wrong_first_launch[compat-vint-adapted]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_wrong_first_launch[unknown]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_failed_previous_halts[FAIL]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_failed_previous_halts[TIMEOUT]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_incomplete_previous_halts": [],
+    "tests/test_development_qualification_v1.py::test_duplicate_launch_rejected": [],
+    "tests/test_development_qualification_v1.py::test_valid_initial_pair": [],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[pose-value0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[pose-value1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[history_length-5]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_initial_guard_detects_drift[counters-value3]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_rgb_mismatch_halts[2.5001]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_rgb_mismatch_halts[nan]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_nonfinite_pose_rejected[pose0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_nonfinite_pose_rejected[pose1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_unknown_ledger_record_rejected": [],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_report_crossbinding[change2]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_prior_freeze_mismatch": [],
+    "tests/test_development_qualification_v1.py::test_changed_chain_bytes_refused": [],
+    "tests/test_development_qualification_v1.py::test_cuda_absence_refused_before_collector": [],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[nan-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1.0-inf]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[True-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_invalid_clocks_rejected[1.03-1.0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure0]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure1]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_cancel_or_timeout_kills_child_group[failure2]": [
+      "parametrize"
+    ],
+    "tests/test_development_qualification_v1.py::test_unadmitted_controller_blocks_pair_before_output": [],
+    "tests/test_imu_controller_boundary_v1.py::test_valid_local_gyro": [],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value0-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value1-1.0-/wrong/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value2-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value3-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value4-1.0-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_guard_keeps_evidence[value5-inf-/body/imu]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_duplicate_time_refused": [],
+    "tests/test_imu_controller_boundary_v1.py::test_collector_replaces_only_controller_measurement": [],
+    "tests/test_imu_controller_boundary_v1.py::test_probe_finite_fixed_schedule_and_setup": [],
+    "tests/test_imu_controller_boundary_v1.py::test_launcher_supplies_cwd_and_preserves_failure": [],
+    "tests/test_imu_controller_boundary_v1.py::test_callback_latches_stops_and_raises_outside_native_boundary": [],
+    "tests/test_imu_controller_boundary_v1.py::test_probe_stopped_tail_has_zero_wheels_not_active_braking": [],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_evaluation_outside_scoring_window_is_refused[0]": [
+      "parametrize"
+    ],
+    "tests/test_imu_controller_boundary_v1.py::test_invalid_evaluation_outside_scoring_window_is_refused[1199]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v2.py::test_authenticated_source_import": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_changed_dependency_refused_before_execution": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_undeclared_diffusion_import_refused": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_preloaded_namespace_refused": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_lifecycle_fsync_and_sequence": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_lifecycle_transformation_preserves_physics": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_stage_markers_exact_boundary": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_loaded_dependency_origin_is_authenticated": [],
+    "tests/test_targeted_qualification_repairs_v2.py::test_embedded_torch_module_requires_exact_authenticated_parent_identity": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_initialization_order_and_preserved_commands": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_changed_initialization_boundary_is_refused": [],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[foreign_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_alias_requires_exact_object_and_authenticated_binary[wrong_object]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[early_invalid]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[boundary_invalid]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_readiness_preserves_early_invalid_but_blocks_boundary[boundary_stale]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[nan]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[inf]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v3.py::test_nonfinite_readiness_evidence_retained_without_validation_relaxation[-inf]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[wrong_member]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[altered_source]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_vf_authentication[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_diagnostics_v4.py::test_all_loaded_rejections_preserved": [],
+    "tests/test_targeted_diagnostics_v4.py::test_initialization_only_preserves_predicates_before_guard": [],
+    "tests/test_targeted_diagnostics_v4.py::test_partial_initialization_state_is_saved_before_rejection": [],
+    "tests/test_targeted_diagnostics_v4_1.py::test_shared_freeze_keys_and_upstream_identity_preserved": [],
+    "tests/test_dependency_import_audit_v5.py::test_manifest_index_once_file_digest_once_all_objects_retained": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[changed_method]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_original]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_export]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_descriptor]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_legacy_name_alone_no_longer_admitted[torch.ops]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_legacy_name_alone_no_longer_admitted[torch.classes]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_stopped_physical_authoring_precedes_sensor_and_preserves_guard": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_descriptor_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_backend_wrapper_inherited_code_original_export_and_binary[wrong_method_slot]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_source_binding_uses_native_sensor_after_selected_start": [],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[wrong_freeze]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[failed]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[duplicate]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_rejects_invalid_prior[unknown]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_admission_keeps_fixed_abba_order": [],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_zero_or_wrong_sign_cannot_pass[0]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_zero_or_wrong_sign_cannot_pass[-0.005]": [
+      "parametrize"
+    ],
+    "tests/test_matched_navigation_v2.py::test_small_yaw_exact_response_and_uncovered_exposure": [],
+    "tests/test_matched_navigation_v2.py::test_nonfinite_tracking_rejected": [],
+    "tests/test_matched_navigation_v2.py::test_stop_uses_predecision_pose_not_postcapture": [],
+    "tests/test_matched_navigation_v2.py::test_contacts_support_fixture_and_unknown": [],
+    "tests/test_matched_navigation_v2.py::test_native_startup_order_and_no_live_teleport": [],
+    "tests/test_matched_navigation_v2.py::test_zero_command_reads_native_sensor_once_without_pi_update": [],
+    "tests/test_matched_navigation_v2.py::test_first_decision_stop_does_not_receive_tail_goal_visit_or_tracking": [],
+    "tests/test_matched_navigation_v2.py::test_prior_png_gate_artifact_mutation_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_exact_and_rounding_join": [],
+    "tests/test_controller_alignment_v1.py::test_no_lag_search": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_native_retained": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_evaluation_retained": [],
+    "tests/test_controller_alignment_v1.py::test_unmatched_retained": [],
+    "tests/test_controller_alignment_v1.py::test_units_signed_integrals": [],
+    "tests/test_controller_alignment_v1.py::test_nonfinite_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_cross_boundary_acquisition_not_consumption": [],
+    "tests/test_controller_alignment_v1.py::test_wrong_frame_rejected": [],
+    "tests/test_controller_alignment_v1.py::test_duplicate_groups_and_ambiguous_evaluation": [],
+    "tests/test_controller_alignment_v1.py::test_partial_matched_window_statistics": [],
+    "tests/test_controller_telemetry_v1.py::test_transform_preserves_native_read_and_schedule": [],
+    "tests/test_controller_telemetry_v1.py::test_boundary_drift_rejected": [],
+    "tests/test_controller_telemetry_v1.py::test_schema_and_nonfinite_rejected": [],
+    "tests/test_controller_telemetry_v1.py::test_derived_flags_not_state_mutation": [],
+    "tests/test_controller_telemetry_v1.py::test_partial_failure_artifacts_bound": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_finite_balanced_schedule_and_conditioning": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_transform_native_read_and_shared_conditioning": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_drift_failclosed": [],
+    "tests/test_controller_plant_diagnostic_v1.py::test_reset_only_at_target_and_observed_before_after": [],
+    "tests/test_controller_plant_reduction_v1.py::test_metadata_separately_validated_numeric_payload_preserved": [],
+    "tests/test_controller_plant_reduction_v1.py::test_nonfinite_numeric_not_rescued_by_metadata_separation": [],
+    "tests/test_controller_plant_reduction_v1.py::test_metadata_and_command_tampering_rejected": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_saved_nested_schema_reduces_without_reclassifying": [],
+    "tests/test_controller_plant_reduction_v1.py::test_typed_metadata_rejects_bool_integer_alias": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[clock]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[order]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[freeze]": [],
+    "tests/test_controller_plant_reduction_v1.py::test_complete_fixture_integrity_rejects[missing_artifact]": [],
+    "tests/test_solver_position_candidate_v1.py::test_single_preinitialize_factor_no_schedule_change": [],
+    "tests/test_solver_position_candidate_v1.py::test_single_property_write_and_clamp_rejection": [],
+    "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.play()]": [],
+    "tests/test_solver_position_candidate_v1.py::test_boundary_drift_rejected[sim.initialize_physics()\\nsim.initialize_physics()]": [],
+    "tests/test_solver_position_candidate_v1.py::test_helper_import_bound_inside_separate_setup_exec": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_fixed_schedule": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_actual_setup_namespace": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_nested_pose_clearance": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_contact_empty_and_actual_vector_impulse": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_transform_compiles_actual_source": [],
+    "tests/test_actuator_contact_diagnostic_v1.py::test_unapplied_gravity_authored_explicitly": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_common_metric_uses_same_five_physical_steps_and_masks": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_eval_preserves_state_modes_and_rng": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[batchnorm]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[ema]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_development_fence_detects_actual_mutations[optimizer]": [
+      "parametrize",
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_history_anchor_leak_rejected_even_training_goal": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_launcher_has_exact_watchdog_and_source_frozen_contract": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_native_context_and_label_endpoints_are_explicit": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_nomad_native_nonclipped_delta_normalization_roundtrip": [
+      "torch",
+      "upstream"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_nonadmitted_history_and_boolean_time_rejected": [],
+    "tests/test_native_adaptation_smoke_v1.py::test_positive_and_negative_development_goal_leak_rejected[False]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_positive_and_negative_development_goal_leak_rejected[True]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_resume_restores_real_optimizer_and_rejects_missing_model_key": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_complete_rng_optimizer_scheduler_ema_restore_controls": [
+      "torch"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_independent_second_smoke_uses_shared_integrity_not_model_outcome[FAIL]": [
+      "parametrize"
+    ],
+    "tests/test_native_adaptation_smoke_v1.py::test_independent_second_smoke_uses_shared_integrity_not_model_outcome[PASS]": [
+      "parametrize"
+    ],
+    "tests/test_native_dependency_closure_v2.py::test_duplicate_module_file_hash_once": [],
+    "tests/test_native_dependency_closure_v2.py::test_exact_generated_remote_identity_and_tamper": [],
+    "tests/test_native_dependency_closure_v2.py::test_foreign_origin_and_tamper_rejected": [],
+    "tests/test_native_dependency_closure_v2.py::test_preflight_contract_binds_runtime_and_data": [],
+    "tests/test_native_dependency_closure_v2.py::test_unique_package_traversal_and_fresh_rehash": [],
+    "tests/test_native_ema_integration_v3.py::test_native_shadow_counter_and_serialized_next_update": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_only_two_lookup_nodes_change": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_source_hash_tamper_rejected": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_loaded_api_code_tamper_rejected": [
+      "torch"
+    ],
+    "tests/test_native_ema_integration_v3.py::test_loaded_native_math_tamper_rejected": [
+      "torch"
+    ],
+    "tests/test_native_multiseed_v1.py::test_ceiling_no_extension_and_exact_run_population": [],
+    "tests/test_native_multiseed_v1.py::test_catalog_full_anchors_and_negative_partition_fence": [],
+    "tests/test_native_multiseed_v1.py::test_sampler_cycles_and_resume_identity_without_native_rng": [],
+    "tests/test_native_multiseed_v1.py::test_selection_uses_development_not_train_latest_tie": [],
+    "tests/test_native_multiseed_v1.py::test_failed_reservation_consumed_and_shared_failure_blocks": [],
+    "tests/test_native_multiseed_v1.py::test_checkpoint_cuda_shadow_continuation_and_device_rejection": [],
+    "tests/test_native_multiseed_v1.py::test_completed_transaction_durable_before_checkpoint_failure": [],
+    "tests/test_offline_evaluation_v1.py::test_pair_partition_and_full_label_horizon": [],
+    "tests/test_offline_evaluation_v1.py::test_coupled_draw_identity": [],
+    "tests/test_offline_evaluation_v1.py::test_physical_units_and_negative_denominator": [],
+    "tests/test_offline_evaluation_v1.py::test_nonfinite_draw_retained_not_best_sample": [],
+    "tests/test_offline_evaluation_v1.py::test_expected_draw_metric_not_oracle_minimum": [],
+    "tests/test_offline_evaluation_v1.py::test_timing_rejects_unsynchronized_invalid_interval": [],
+    "tests/test_offline_evaluation_v1.py::test_malformed_action_and_distance_retained_invalid": [],
+    "tests/test_offline_evaluation_v1.py::test_exception_mid_pair_preserves_attempts": [],
+    "tests/test_offline_evaluation_v1.py::test_missing_draw_pair_and_duplicate_population": [],
+    "tests/test_offline_evaluation_v1.py::test_atomic_snapshot_interrupted_replace_preserves_prior": [],
+    "tests/test_prospective_data_v1.py::test_known_fixture_recipe_horizon_and_no_route_object_overlap": [],
+    "tests/test_prospective_data_v1.py::test_seal_content_and_contamination_stop": [],
+    "tests/test_prospective_data_v1.py::test_clock_pose_shape_prevents_stale_reordered_capture": [],
+    "tests/test_prospective_data_v1.py::test_raw_prediction_retained_without_changing_metric_inputs": [],
+    "tests/test_prospective_data_v1.py::test_native_reference_time_and_held_interval": [],
+    "tests/test_prospective_data_v1.py::test_float32_offset_and_reverse_qualification_coverage": [],
+    "tests/test_prospective_data_v1.py::test_failed_camera_candidate_fields_are_jsonsafe_before_guard": [],
+    "tests/test_prospective_finalization_v2.py::test_capsule_is_atomic_before_nonreturning_context_exit": [],
+    "tests/test_prospective_finalization_v2.py::test_snapshot_failure_cannot_admit_completed_frames": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[1-False-True]": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-True-True]": [],
+    "tests/test_prospective_finalization_v2.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-False-False]": [],
+    "tests/test_prospective_finalization_v2.py::test_original_source_transform_only_inserts_snapshot_call": [],
+    "tests/test_prospective_finalization_v2.py::test_capsule_wrong_source_or_unverified_exit_zero_rejected": [],
+    "tests/test_prospective_finalization_v2.py::test_explicit_post_shutdown_failure_never_admits_exit_zero": [],
+    "tests/test_prospective_collection_v1.py::test_capsule_is_atomic_before_nonreturning_context_exit": [],
+    "tests/test_prospective_collection_v1.py::test_snapshot_failure_cannot_admit_completed_frames": [],
+    "tests/test_prospective_collection_v1.py::test_abnormal_exit_timeout_or_unreaped_never_admits[1-False-True]": [],
+    "tests/test_prospective_collection_v1.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-True-True]": [],
+    "tests/test_prospective_collection_v1.py::test_abnormal_exit_timeout_or_unreaped_never_admits[0-False-False]": [],
+    "tests/test_prospective_collection_v1.py::test_original_source_transform_only_inserts_snapshot_call": [],
+    "tests/test_prospective_collection_v1.py::test_capsule_wrong_source_or_unverified_exit_zero_rejected": [],
+    "tests/test_prospective_collection_v1.py::test_explicit_post_shutdown_failure_never_admits_exit_zero": [],
+    "tests/test_prospective_collection_v1.py::test_collection_population_tamper_rejected": [],
+    "tests/test_prospective_collection_v1.py::test_wrong_qualification_identity_rejected": [],
+    "tests/test_prospective_timing_v1.py::test_actual_transform_reverses_to_unchanged_capture": [],
+    "tests/test_prospective_timing_v1.py::test_native_call_executes_once_and_failure_event_survives": [],
+    "tests/test_prospective_timing_v1.py::test_shutdown_nonreturn_retains_close_entry": [],
+    "tests/test_prospective_timing_v1.py::test_append_order_and_clock_anchors": [],
+    "tests/test_prospective_timing_v1.py::test_source_drift_rejected": [],
+    "tests/test_prospective_timing_v1.py::test_launcher_is_known_only_and_never_admits_dataset": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[LAUNCH_RETURN]": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[POLL_RETURN]": [],
+    "tests/test_prospective_timing_v1.py::test_parent_logging_failure_cannot_orphan_child[SIGKILL_REQUEST]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_complete_budget_remains_nonexecuting_proposal": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[authorize]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[missing_phase]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[wrong_total]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[bool_allowance]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[held_steps]": [],
+    "tests/test_prospective_budget_proposal_v1.py::test_actual_budget_and_exposure_faults_rejected[uninspected]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_actual_execution_and_cleanup_deadlines": [],
+    "tests/test_prospective_collection_budget_v2.py::test_pending_approval_has_no_execution_authority": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[nan]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[inf]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[-1]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_bad_monotonic_clock_cannot_extend_budget[True]": [],
+    "tests/test_prospective_collection_budget_v2.py::test_existing_capsule_admission_counts_and_process_guards_unchanged": [],
+    "tests/test_prospective_collection_budget_v2.py::test_continuation_reuses_exact_capture_and_has_no_scorer": [],
+    "tests/test_prospective_collection_budget_v2.py::test_registry_write_failure_invalidates_output_pass": [],
+    "tests/test_prospective_collection_budget_v2.py::test_deadline_crossed_during_persistence_cannot_leave_admission": [],
+    "tests/test_prospective_collection_budget_v2.py::test_cancellation_after_admission_is_fail_closed": [],
+    "tests/test_prospective_collection_budget_v2.py::test_completed_final_transaction_verifies_and_rejects_drift": [],
+    "tests/test_prospective_scoring_v2.py::test_completed_dataset_bind_and_fixed_population": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[wrong_source]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[wrong_dataset]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[marker]": [],
+    "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[artifact]": [],
+    "tests/test_prospective_scoring_v2.py::test_invalid_raw_draw_survives_metric_exception_and_partial_snapshot": [],
+    "tests/test_prospective_scoring_v2.py::test_atomic_failure_preserves_prior_raw_draw": [],
+    "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[ledger]": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[artifact]": [],
+    "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[registry]": [],
+    "tests/test_prospective_scoring_v2.py::test_scoring_persistence_overrun_invalidates_completed_marker": [],
+    "tests/test_prospective_scoring_v2.py::test_completed_scoring_stage_requires_bound_output_and_artifacts": [],
+    "tests/test_vint_interface_v1.py::test_native_five_physical_xy_not_second_cumsum": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[context]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[angle_config]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[horizon]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[heading_zero]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[batch]": [],
+    "tests/test_vint_interface_v1.py::test_native_interface_faults_rejected[nonfinite]": [],
+    "tests/test_vint_interface_v1.py::test_actual_native_preprocessing_context_and_normalization": [
+      "upstream",
+      "torch"
+    ],
+    "tests/test_vint_interface_v1.py::test_actual_strict_checkpoint_failure_and_eval_rng_fence": [
+      "torch"
+    ],
+    "tests/test_vint_interface_v1.py::test_component_150_second_finalization_overrun_is_fail_closed": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_first_rejection_category_and_atomic_evidence[False]": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_first_rejection_category_and_atomic_evidence[True]": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_actual_child_exit_timeout_reap[False]": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_actual_child_exit_timeout_reap[True]": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_cleanup_signal_error_cannot_bypass_reaping": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_first_rejection_survives_distinct_final_rejection": [],
+    "tests/test_native_provenance_diagnostic_v1.py::test_rejection_path_mismatch_rejects_before_launch": [],
+    "tests/test_vint_native_manifest_v2.py::test_original_verifier_exact_entry_and_all_three_rejections": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_viNT_raw_heading_and_xy_metric_no_second_cumsum": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_vint_fixed_population_missing_pair_null": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_qualified_binding_tamper_and_role_drift": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_reused_worker_qualified_forward_binding": [],
+    "tests/test_prospective_vint_scoring_v1.py::test_transformed_native_load_trust_release_only": [],
+    "tests/test_arrival_design_contracts_v1.py::test_absent_subject_and_unknown_field_fail": [],
+    "tests/test_arrival_design_contracts_v1.py::test_boolean_numeric_schema_confusion_fails[runtime_authorized-0]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_boolean_numeric_schema_confusion_fails[schema_version-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_changed_on_disk_design_cannot_self_certify": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0.15-0]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[0.15-inf]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[True-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_invalid_planning_assumptions_fail[nan-0.05]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_layout_sensitivity_and_resource_envelope": [],
+    "tests/test_arrival_design_contracts_v1.py::test_more_layout_variance_or_smaller_effect_gap_needs_more_layouts": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[None-runtime_authorized-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[comparison-seed_aggregation-best_test_seed]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[comparison-test_tuning-True]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[gates-illumination_authorization-AUTHORIZED]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[gates-motion_qualification-PASS]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[method-cadence_hz-3]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[metrics-oracle-ground_truth_policy_stop]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-denominator-successful_attempts_only]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-human_reviewer-same_custodian]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-test_access-SEALED_BY_SELF]": [],
+    "tests/test_arrival_design_contracts_v1.py::test_unsupported_amendments_cannot_silently_pass[population-unit-frame]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_changed_on_disk_draft_cannot_self_certify": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_finite_slot_budget_preserves_first_block_and_control_distinction": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[None-runtime_authorized-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[backbone-seeds-value2]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[controls-unsupported_interface-FORCE_GOAL_INDEX_ZERO]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[fairness-comparator_fallback-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[fairness-photometric_or_cadence_perturbation-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[first_block-included_in_total-False]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[first_block-outcome_based_retuning_or_early_success-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[population-test_budget_authorization-True]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-episode_process_wall_cap_s-nan]": [],
+    "tests/test_arrival_dev_feasibility_contracts_v1.py::test_semantic_refusals_precede_source_binding[resources-total_wall_GPU_hours_cap-50]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-0-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1-0.5]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1-nan]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-1.0-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-2-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[episode-True-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_acquisition_order_and_identity_are_not_interchangeable[wrong-1-0.25]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_admitted_native_floating_dtype_is_preserved[float32]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_admitted_native_floating_dtype_is_preserved[float64]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_correct_acquisition_and_budget_exhaustion": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[duplicate_id]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[empty_id]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[hash_shape]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[integer_dtype]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[negative_graph]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[nonfinite]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[shape]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_invalid_reference_contract_fails[unnormalized]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_native_constants_cannot_be_silently_tuned": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_source_tampering_rejected_before_any_ast_execution": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[launch_error]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[nonzero]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supervisor_preserves_actual_exit_timeout_and_reaping[timeout]": [],
+    "tests/test_pinned_stop_interfaces_v1.py::test_supported_and_unsupported_goal_identity_do_not_force_nearest_node": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[DEV_selection]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[finalization]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_completed_admitted_DEV_metadata_guards_are_not_hash_only[image_binding]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_fixed_admitted_sequence_and_native_graph_gap": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_immutable_record_or_weight_tampering_refused": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_episodes_are_independent": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[1]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[publication2]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_publication_does_not_accept_implicit_truthiness[true]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_mock_stop_latch_absence_cancel_and_reset_are_separate_from_native_publication": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[extra_forwards]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[fitting]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[graph_claim]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[navigation]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_scope_or_selected_sequence_cannot_drift[reselection]": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_worker_python_network_refusal_is_enforced_in_isolated_process": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_missing_globals_before_source_access": [],
+    "tests/test_recorded_rgb_stop_v1.py::test_native_rgb_loader_rejects_globals_outside_frozen_allowlist": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[num_clusters-2]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[tau-1.0]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[radius-4.0]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[index_type-hnsw]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_fixed_mode_rejects_unreviewed_selection[disable_ransac-True]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[pairs]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_budget_cannot_expand_implicitly[whole_worker_s]": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_duplicate_reference_identity_is_rejected": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_native_graph_reference_order_cannot_be_reselected": [],
+    "tests/test_ravel_fixed_graph_v1.py::test_parent_timeout_vetoes_zero_exit_and_valid_evidence": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_checkpoint_diagnostics_separate_shapes_parameters_buffers_and_unused_keys": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_diagnostics_preserve_existing_parameter_and_unexpected_key_guard": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[forwards]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[GPU_calls]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[constructor_attempts]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_cpu_checkpoint_budget_rejects_implicit_expansion[worker_cpu_wall_s]": [],
+    "tests/test_ravel_checkpoint_diagnostic_v1.py::test_superpoint_evidence_cannot_complete_targeted_lightglue_diagnosis": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[source]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[asset]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_rejects_any_changed_binding[config]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_legacy_transport_cannot_expand_unused_key_removal": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[forwards]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[GPU_calls]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[constructor_attempts]": [],
+    "tests/test_ravel_checkpoint_validation_v2.py::test_canonical_cpu_validation_cannot_expand_budget[worker_cpu_wall_s]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[stale_freeze]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[timeout]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[unreaped]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[missing_negative]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_constructor_proof_semantics_refuse_stale_or_incomplete_evidence[missing_parity]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_modified_CPU_proof_bytes_are_rejected_before_semantic_admission": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[references]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[native_mode]": [],
+    "tests/test_ravel_graph_continuation_v2.py::test_changed_graph_inputs_parameters_or_budget_break_qualified_binding[caps]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_admitted_numeric_order": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[reorder]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[duplicate]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[dtype]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[asymmetric]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[diagonal]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_invalid_map_rejected[negative]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[goal]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[query]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[resets]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[budget]": [],
+    "tests/test_saved_graph_ulvn_v1.py::test_stale_episode_rejects_before_native_state": []
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -3257,5 +3822,260 @@
     "total_count": 2815,
     "owner": "hermetic ordinary and resource-validation legs",
     "status": "Approved amendment; focused validation only, no complete owner execution claim."
+  },
+  "development_qualification_v1_update": {
+    "prior_nodes": 2815,
+    "new_hermetic_nodes": 32,
+    "total_nodes": 2847,
+    "all_prior_retained": true
+  },
+  "imu_controller_v1_update": {
+    "prior_nodes": 2847,
+    "new_hermetic_nodes": 15,
+    "total_nodes": 2862,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v2_update": {
+    "prior_nodes": 2862,
+    "new_hermetic_nodes": 9,
+    "total_nodes": 2871,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v3_update": {
+    "prior_nodes": 2871,
+    "new_hermetic_nodes": 12,
+    "total_nodes": 2883,
+    "all_prior_retained": true
+  },
+  "targeted_diagnostics_v4_update": {
+    "prior_nodes": 2883,
+    "new_hermetic_nodes": 7,
+    "total_nodes": 2890,
+    "all_prior_retained": true
+  },
+  "targeted_diagnostics_v4_1_update": {
+    "prior_nodes": 2890,
+    "new_hermetic_nodes": 1,
+    "total_nodes": 2891,
+    "all_prior_retained": true
+  },
+  "dependency_import_audit_v5_update": {
+    "prior_nodes": 2891,
+    "new_hermetic_nodes": 1,
+    "total_nodes": 2892,
+    "all_prior_retained": true
+  },
+  "targeted_qualification_v6_update": {
+    "prior_nodes": 2892,
+    "new_hermetic_nodes": 11,
+    "total_nodes": 2903,
+    "all_prior_retained": true
+  },
+  "matched_navigation_v2_update": {
+    "prior_nodes": 2903,
+    "new_hermetic_nodes": 16,
+    "total_nodes": 2919,
+    "all_prior_retained": true
+  },
+  "actuator_contact_diagnostic_v1_update": {
+    "prior_nodes": 2953,
+    "new_hermetic_nodes": 6,
+    "total_nodes": 2959,
+    "all_prior_retained": true
+  },
+  "native_adaptation_smoke_v1_update": {
+    "prior_nodes": 2959,
+    "new_nodes": 16,
+    "total_nodes": 2975,
+    "all_prior_retained": true,
+    "focused_passed": 16,
+    "execution_scope": "CPU controls only; no model smoke yet"
+  },
+  "native_dependency_v2_update": {
+    "prior_total": 2975,
+    "added_nodes": 5,
+    "total": 2980,
+    "all_prior_retained": true,
+    "focused_tests": "5 CPU controls passed; no whole-population execution claim"
+  },
+  "native_ema_v3_update": {
+    "prior_population_retained": 2980,
+    "added_nodes": 5,
+    "total": 2985,
+    "validation": "Five focused controls pass; full CPU closure and actual native EMA control PASS. No GPU outcome yet."
+  },
+  "native_multiseed_v1_update": {
+    "prior_retained": 2985,
+    "added": 7,
+    "total": 2992,
+    "execution": "NOT_RUN"
+  },
+  "offline_evaluation_v1_update": {
+    "prior_retained": 2992,
+    "added": 10,
+    "total": 3002,
+    "scoring": "NOT_RUN"
+  },
+  "prospective_data_v1_update": {
+    "prior_retained": 3002,
+    "added": 7,
+    "total": 3009,
+    "collection_scoring": "NOT_RUN"
+  },
+  "prospective_finalization_v2_update": {
+    "prior_retained": 3009,
+    "added": 8,
+    "total": 3017,
+    "qualification": "NOT_RUN"
+  },
+  "prospective_collection_v1_update": {
+    "prior_retained": 3017,
+    "added": 10,
+    "total": 3027,
+    "collection": "NOT_RUN"
+  },
+  "prospective_timing_v1_update": {
+    "prior_retained": 3027,
+    "added": 9,
+    "total": 3036,
+    "diagnostic": "NOT_RUN"
+  },
+  "prospective_budget_proposal_v1_update": {
+    "prior_retained": 3036,
+    "added": 7,
+    "total": 3043,
+    "status": "UNAPPROVED_UNEXECUTED"
+  },
+  "prospective_collection_budget_v2_update": {
+    "prior_retained": 3043,
+    "added": 12,
+    "total": 3055,
+    "status": "PREPARATION_PENDING_USER_APPROVAL_NOT_RUN"
+  },
+  "prospective_scoring_v2_update": {
+    "prior_retained": 3055,
+    "added": 13,
+    "total": 3068,
+    "status": "PREPARATION_NOT_RUN"
+  },
+  "vint_interface_v1_update": {
+    "prior_retained": 3068,
+    "added": 10,
+    "total": 3078,
+    "status": "COMPONENT_NOT_RUN",
+    "new_torch_nodes": 2,
+    "new_upstream_nodes": 1
+  },
+  "vint_provenance_diagnostic_v1_update": {
+    "prior_retained": 3078,
+    "added": 7,
+    "total": 3085,
+    "status": "CPU_IMPORT_REJECTION_IDENTIFIED_NO_FORWARD"
+  },
+  "vint_native_manifest_v2_update": {
+    "prior_retained": 3085,
+    "added": 1,
+    "total": 3086,
+    "status": "CPU_CLOSURE_PASS_COMPONENT_NOT_RUN"
+  },
+  "prospective_vint_scoring_v1_update": {
+    "prior_retained": 3086,
+    "added": 5,
+    "total": 3091,
+    "status": "PREPARATION_ONLY_SCORING_NOT_RUN"
+  },
+  "arrival_contribution_design_v1_update": {
+    "prior_retained": 3091,
+    "added": 22,
+    "total": 3113,
+    "owner": "ordinary-hermetic",
+    "status": "DESIGN_ONLY_22_SOFTWARE_CONTROLS_PASS_RUNTIME_NOT_RUN",
+    "resource_union_correction": {
+      "prior_stale_count": 140,
+      "unchanged_derived_membership_count": 205,
+      "reason": "mechanical_aggregate_digest_repin_no_node_marker_or_owner_change"
+    }
+  },
+  "arrival_dev_feasibility_design_v1_update": {
+    "prior_retained": 3113,
+    "added": 12,
+    "total": 3125,
+    "owner": "ordinary-hermetic",
+    "status": "PREPARATION_ONLY_RUNTIME_NOT_RUN"
+  },
+  "stop_interface_qualification_v1_update": {
+    "prior_retained": 3125,
+    "added": 24,
+    "total": 3149,
+    "owner": "ordinary-hermetic",
+    "native_parity_owner": "separate_frozen_synthetic_source_cache_probe",
+    "status": "24_HERMETIC_GUARDS_PASS_NATIVE_PROBE_NOT_RUN"
+  },
+  "recorded_rgb_stop_v1_update": {
+    "prior_retained": 3149,
+    "added": 16,
+    "total": 3165,
+    "owner": "ordinary-hermetic",
+    "positive_replay_owner": "separate_frozen_recorded_RGB_GPU_probe",
+    "status": "16_HERMETIC_GUARDS_PASS_ENCODER_REPLAY_NOT_RUN"
+  },
+  "rgb_source_closure_v2_update": {
+    "previous_nodes_preserved": 3165,
+    "added_hermetic_nodes": 2,
+    "total_count": 3167,
+    "external_cpu_qualification_owner": "explicit recorded-RGB source-closure qualification command; not an archive-owned pytest test",
+    "scope": "No encoder or model execution; external pinned source and native dependency environment required only by separate CPU probe."
+  },
+  "ravel_fixed_graph_v1_update": {
+    "old_nodes_preserved": 3167,
+    "added_hermetic_nodes": 9,
+    "total_count": 3176,
+    "resource_owners_changed": false,
+    "separate_CPU_probe_owner": "explicit native RAVEL source-closure command with authenticated external source and isolated overlay",
+    "qualification_scope": "CPU synthetic component boundaries only; prospective native fixed-mode recorded graph requires separate frozen measured attempt."
+  },
+  "ravel_parent_timeout_gate_update": {
+    "old_nodes_preserved": 3176,
+    "added_hermetic_nodes": 1,
+    "total_count": 3177,
+    "resource_owners_changed": false
+  },
+  "ravel_checkpoint_diagnostic_v1_update": {
+    "old_nodes_preserved": 3177,
+    "added_hermetic_nodes": 7,
+    "total_count": 3184,
+    "resource_owners_changed": false,
+    "external_probe_owner": "explicit CPU matcher-constructor diagnostic command, existing authenticated source/weights and isolated overlay",
+    "scope": "No forward, graph, calibration or GPU; keys/shapes/diagnostic evidence external only."
+  },
+  "ravel_checkpoint_validation_v2_update": {
+    "old_nodes_preserved": 3184,
+    "added_hermetic_nodes": 8,
+    "total_count": 3192,
+    "resource_owners_changed": false,
+    "external_CPU_probe_owner": "explicit six-constructor native/canonical CPU validation command with authenticated local source/assets",
+    "scope": "No forwards/GPU/graph; derived negative mappings are explicit validation-only fixtures after authenticated input, never replacement checkpoint files."
+  },
+  "ravel_graph_continuation_v2_update": {
+    "old_nodes_preserved": 3192,
+    "added_hermetic_nodes": 9,
+    "total_count": 3201,
+    "resource_owners_changed": false,
+    "scope": "CPU proof consumption/data-binding guards only; native recorded graph is a separate explicit resource-owning command."
+  },
+  "ravel_launcher_lifecycle_v3_check": {
+    "pytest_nodes_changed": false,
+    "total_count": 3201,
+    "resource_owners_changed": false,
+    "external_CPU_cases": 6,
+    "owner": "explicit CPU-only actual CLI lifecycle check command; no historical archive or hermetic model ownership implied"
+  },
+  "saved_graph_ulvn_v1_update": {
+    "old_nodes_preserved": 3201,
+    "added_hermetic_nodes": 12,
+    "total_count": 3213,
+    "resource_owners_changed": false,
+    "external_CPU_replay_owner": "explicit frozen saved-graph/native-component replay command; authenticated external arrays and source required only there",
+    "scope": "Hermetic map/selection/stale-state guards; no model or graph replay during pytest."
   }
 }

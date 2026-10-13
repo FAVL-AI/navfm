@@ -1,0 +1,193 @@
+{
+  "version": "RAVEL_FIXED_NATIVE_GRAPH_V1",
+  "status": "FROZEN_NATIVE_FIXED_GRAPH_V1",
+  "native_commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+  "sources": {
+    "build_matrix": {
+      "path": "RAVEL/scripts/build_matrix.py",
+      "bytes": 12806,
+      "sha256": "a2f4492fcef88887ed14742d38311d30415ecbf2334b091fd78179381b870c40",
+      "git_blob_sha1": "6ff3f8b3cb7fc714ac2d28505c77ddb4b60cfac0",
+      "api_blob_sha1": "6ff3f8b3cb7fc714ac2d28505c77ddb4b60cfac0",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/build_matrix.py"
+    },
+    "analyze_parameters": {
+      "path": "RAVEL/scripts/analyze_parameters.py",
+      "bytes": 30940,
+      "sha256": "11915ed9543c5bae746bcf2b763781bf53a95b832385c5c69ff62afa37784214",
+      "git_blob_sha1": "f15203aec1857db4ec324ad63ff0744ff7b23baa",
+      "api_blob_sha1": "f15203aec1857db4ec324ad63ff0744ff7b23baa",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/analyze_parameters.py"
+    },
+    "prune_topomap_nx": {
+      "path": "RAVEL/scripts/prune_topomap_nx.py",
+      "bytes": 9908,
+      "sha256": "7fa4369cb93cce3a7825b2b9c6844dd34194ad98326e4545d8897737c60c2a9d",
+      "git_blob_sha1": "81793d6a0f84b3660d6a0c42ff8990abf8e0b59a",
+      "api_blob_sha1": "81793d6a0f84b3660d6a0c42ff8990abf8e0b59a",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/prune_topomap_nx.py"
+    },
+    "build_index": {
+      "path": "RAVEL/scripts/build_index.py",
+      "bytes": 7397,
+      "sha256": "f68106b6e610f5a77725f15fb19b978669f39a56cfafbba708946f084d617916",
+      "git_blob_sha1": "db643d1b12cdf3add3f746ebf7009e28a8e721e0",
+      "api_blob_sha1": "db643d1b12cdf3add3f746ebf7009e28a8e721e0",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/build_index.py"
+    },
+    "run_mapping_pipeline": {
+      "path": "scripts/run_mapping_pipeline.py",
+      "bytes": 5314,
+      "sha256": "cafad15a46eb943ad54cd99fa9e3f7f24d6cdc17b15c6ad4c15ce93b4062bda2",
+      "git_blob_sha1": "5df7b11bffafd6f684cd746a703507798ba0d830",
+      "api_blob_sha1": "5df7b11bffafd6f684cd746a703507798ba0d830",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/scripts/run_mapping_pipeline.py"
+    },
+    "lightglue": {
+      "path": "RAVEL/scripts/lightglue/lightglue.py",
+      "bytes": 26288,
+      "sha256": "165c616338933ede6177af73c42009b8d7afcf94b8aef9db310d8866cfc76317",
+      "git_blob_sha1": "7bf7dd9e345b8eb6d7868c7b64e8ea5238021e49",
+      "api_blob_sha1": "7bf7dd9e345b8eb6d7868c7b64e8ea5238021e49",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/lightglue/lightglue.py"
+    },
+    "superpoint": {
+      "path": "RAVEL/scripts/lightglue/superpoint.py",
+      "bytes": 6631,
+      "sha256": "401a5e55ef156368ed2e709b2fc782d0f4ce8fb5221d6eb1f8d27cb07901c00a",
+      "git_blob_sha1": "35ee2e8d4595e36fbdac38f97b2327a699819540",
+      "api_blob_sha1": "35ee2e8d4595e36fbdac38f97b2327a699819540",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/lightglue/superpoint.py"
+    },
+    "utils": {
+      "path": "RAVEL/scripts/lightglue/utils.py",
+      "bytes": 5510,
+      "sha256": "c6d9260656a24d826128b68c95d0b7798106d04f4244a77f3b1856573f58e690",
+      "git_blob_sha1": "d1c1ab2e94716b1c54191a6ed5d01023036836c1",
+      "api_blob_sha1": "d1c1ab2e94716b1c54191a6ed5d01023036836c1",
+      "match": true,
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/RAVEL/scripts/lightglue/utils.py"
+    }
+  },
+  "source_metadata_path": "/home/favl/navfm-source-evidence/ravel-fixed-source-20261012-01/metadata_verification.json",
+  "source_metadata_sha256": "0fb3ef8318d2b736b05b53c01489d7f17ab54d38c977f6df2339408b4daf6edf",
+  "weights": {
+    "superpoint_v1.pth": {
+      "name": "superpoint_v1.pth",
+      "url": "https://github.com/cvg/LightGlue/releases/download/v0.1_arxiv/superpoint_v1.pth",
+      "start_elapsed_s": 8.330680429935455e-07,
+      "bytes": 5206086,
+      "sha256": "52b6708629640ca883673b5d5c097c4ddad37d8048b33f09c8ca0d69db12c40e",
+      "status": "RETRIEVED_UNCERTIFIED_HASH",
+      "end_elapsed_s": 0.6729967971332371,
+      "local_path": "/home/favl/navfm-source-evidence/ravel-fixed-assets-20261012-01/superpoint_v1.pth"
+    },
+    "superpoint_lightglue.pth": {
+      "name": "superpoint_lightglue.pth",
+      "url": "https://github.com/cvg/LightGlue/releases/download/v0.1_arxiv/superpoint_lightglue.pth",
+      "start_elapsed_s": 0.6734435418620706,
+      "bytes": 47500279,
+      "sha256": "6ff7040d0a497fc6639337946d7538dae07428c18f77a067a0b5a960e7cc551a",
+      "status": "RETRIEVED_UNCERTIFIED_HASH",
+      "end_elapsed_s": 2.8153642541728914,
+      "local_path": "/home/favl/navfm-source-evidence/ravel-fixed-assets-20261012-01/superpoint_lightglue.pth"
+    }
+  },
+  "references": [
+    {
+      "frame": 0,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/0.jpg",
+      "sha256": "b702d640f2100f15ab5b1dd75ed5237862d8957ee002f087ec7639eccee62f47"
+    },
+    {
+      "frame": 4,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/4.jpg",
+      "sha256": "43daa7f910813a78abbfec7405a683e551968c31e0a10780fb623ce898eefae3"
+    },
+    {
+      "frame": 8,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/8.jpg",
+      "sha256": "6a599b87e2c48afcddcc430450109d32f3cad4f50088eecf73492a19d4738c0f"
+    },
+    {
+      "frame": 12,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/12.jpg",
+      "sha256": "6e9ee98ceee873b148d244e9c3fa2422a1a6aef44a85928a6e51260a49c62b68"
+    },
+    {
+      "frame": 16,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/16.jpg",
+      "sha256": "c44d6bcc0ad03141b873f433b26687c5341cb5ea20395cb58befa9223386327a"
+    },
+    {
+      "frame": 20,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/20.jpg",
+      "sha256": "3226e31c1d1d459321ae9b46de5d5a6a5b6ee06b8f23e1c60bc3cccaa74c0ccf"
+    },
+    {
+      "frame": 24,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/24.jpg",
+      "sha256": "f30de4deaac4770fa2b2b841b45733167feb4a0aa1c30022409c16551addf695"
+    },
+    {
+      "frame": 28,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/28.jpg",
+      "sha256": "3ba22b7868ec666b9121b7fec7ffe4bf47bcd5fa1bf05fecd9790c00ebcaa1ea"
+    }
+  ],
+  "admission": {
+    "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/admission.json",
+    "sha256": "a2ff0041d89c5b1d84bb65c10c05e317a3037642efdd62cd8b25eed86a0177a8"
+  },
+  "finalization": {
+    "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/finalization_complete.json",
+    "sha256": "402c3e6f8bb7e6a6ee30fea1cb68c339954a68e74e7361523d377d06beec734d"
+  },
+  "descriptor_path": "/home/favl/navfm-runtime-evidence/recorded-rgb-stop-v2-01/descriptors.npz",
+  "descriptor_sha256": "e93c50d1a952882cc2444d9d48df536db7876aed9025d6e67c3e97c6389ae16a",
+  "descriptor_origin_freeze": "b466f026286e04e350dfc89bb743ed3c550ce69d",
+  "native_mode": {
+    "num_clusters": 1,
+    "tau": 0.0,
+    "radius": 2.0,
+    "index_type": "flat",
+    "metric": "l2",
+    "binary_matrix": false,
+    "disable_ransac": false,
+    "num_threads": 1,
+    "add_back_threshold": 300
+  },
+  "caps": {
+    "nodes": 8,
+    "pairs": 28,
+    "superpoint_forwards": 56,
+    "lightglue_forwards": 28,
+    "global_encoder_forwards": 0,
+    "whole_worker_s": 180,
+    "parent_wall_s": 360,
+    "raw_output_acceptance_bytes": 16777216
+  },
+  "runtime": {
+    "overlay": "/home/favl/navfm-source-evidence/ravel-fixed-assets-20261012-01/venv/bin/python",
+    "faiss-cpu": "1.8.0.post1",
+    "scikit-learn": "1.5.2",
+    "kornia": "0.7.3",
+    "kornia_rs": "0.1.9",
+    "joblib": "1.4.2",
+    "threadpoolctl": "3.5.0",
+    "torch": "2.7.0+cu128",
+    "numpy": "1.26.4",
+    "scipy": "1.15.3"
+  },
+  "descriptor_origin_result": {
+    "path": "/home/favl/navfm-runtime-evidence/recorded-rgb-stop-v2-01/result.json",
+    "sha256": "e78b4bd84173ca90da76d13c02d3925d94ec64f177341b28b0e4629d165ac293"
+  }
+}

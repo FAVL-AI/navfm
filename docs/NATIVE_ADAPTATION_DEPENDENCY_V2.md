@@ -1,0 +1,29 @@
+# Native adaptation dependency closure v2
+
+Status: reviewed dependency/config source freeze; GPU smokes NOTRUN at freeze. This amendment preserves the v1 source freeze, original Isaac environment and failed GNM attempt. It changes only the native-training dependency environment and its attestation/preflight; objectives, batches, split fences, optimizer/scheduler/EMA/RNG/reload semantics and six-update/150-second budgets remain those in [v1](NATIVE_ADAPTATION_SMOKE_V1.md).
+
+The worker interpreter is `/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python`, a Python 3.11.15 venv inheriting the original Isaac site packages. Only two packages are installed locally with `--no-index --no-deps`; no original package is uninstalled:
+
+| Package | Exact wheel SHA256 | Justification |
+|---|---|---|
+| LMDB 1.7.5, CP311 x86_64 manylinux | `716c93d170be22630e2e560c67081f80095b951b32de032a876b9c20dff8cc07` | Authentic upstream `train/train_environment.yml:27` requires unversioned LMDB. [PyPI metadata](https://pypi.org/pypi/lmdb/1.7.5/json) supplies the ABI-specific wheel identity; compatibility is validated by actual imports, not assumed from its version. |
+| NumPy 1.26.4, CP311 x86_64 manylinux | `666dbfb6ec68962c033a450943ded891bed2d54e6755e35e5835d63f4f6931d5` | Inherited 1.26.0 could not read the admitted pickles' `numpy._core` references. [Primary release notes](https://github.com/numpy/numpy/blob/v1.26.4/doc/source/release/1.26.1-notes.rst) document the compatibility stubs; the [exact wheel](https://pypi.org/pypi/numpy/1.26.4/json) contains them. No NumPy 2.x ABI change, aliases or data rewrite. |
+
+The external wheel/provenance files, venv configuration, complete import-file snapshot and successful CPU report are hash-pinned in `configs/train/native_adaptation_smoke_v2.json`. The existing selected Torch/diffusers strict object authenticator remains unchanged. A fresh per-attestation native file-origin/hash check supplements it before and after training; actual source files, including later imports within admitted package trees, must belong to the snapshot. Original dependency files retain their original hashes and are rechecked by the launcher. This is a source-attested inherited environment, not filesystem-enforced read-only installation.
+
+CPU preparation preserved two failures: the first 60-second capture timed out because the new snapshot loop traversed the same package root for every imported module; it was corrected to unique roots and a per-call file digest cache. The corrected second capture completed all imports but all four batches failed under NumPy 1.26.0. After the explicit patch, capture03 passed: 16 declared imports (both native dataset/loader/trainer paths, model modules, diffusion construction imports, strict loader), four CPU fixed batches, 23 authenticated upstream modules, 1364 selected dependency objects and 3769 file-backed native module records. The refreshed snapshot contains 10877 files. No model, checkpoint loading, optimizer, CUDA call or corpus cache was constructed by this CPU preflight. CUDA visibility was empty; tensors stayed CPU. Both failures remain external, not overwritten.
+
+Five focused controls pass: duplicate module file hashes once; duplicate package traversal plus fresh subsequent rehash; foreign-origin/tamper rejection; runtime/data/source input-hash contract binding; exact generated-module origin/content/export/code rejection. No broad suite was repeated. The prior 16 implementation controls remain the reviewed v1 evidence.
+
+Validation-only proof04 rejected a legitimate process-specific PyTorch generated-file path. The pinned `torch.distributed.nn.jit.instantiator` creates `_remote_module_non_scriptable.py`; authenticated `api.remote_module` exports its exact module object. The sole exception binds the exact module name, frozen generated-content SHA, three persistent generator/template/export source hashes, the current generator directory, exact exported object identity and compiled function slots. Foreign names/content/parents/exports/code reject; there is no general temporary-file exemption. Proof04 remains FAIL externally.
+
+The final validation-only CPU proof05 passed the exact worker interpreter and final fixed source/config hashes (`--capture-manifest` omitted). Its report is consumed as a config-pinned input before GPU execution. The launcher binds all consumed input path+SHA records, runtime/data contract and both-model identities; only the proof report's own input hash is excluded from the digest to avoid self-reference. A same-path source/data SHA change invalidates an earlier proof. Configuration status changes are descriptive only. The manifest and consumed report remain committed-config inputs; partial failures and phase events remain external.
+
+GPU commands from the exact clean committed freeze, output root fresh:
+
+```sh
+/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python scripts/run_native_adaptation_smoke_v2.py --freeze FULL_COMMIT --model gnm --out /home/favl/navfm-training-evidence/native-adaptation-smoke-v2-01
+/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python scripts/run_native_adaptation_smoke_v2.py --freeze FULL_COMMIT --model nomad --out /home/favl/navfm-training-evidence/native-adaptation-smoke-v2-01
+```
+
+Each worker has exactly six updates and a 150-second child watchdog. The second independent smoke requires normal child reaping, same freeze, prior artifact hashes and complete shared pre/post provenance; a model-specific scientific FAIL alone does not cancel it. No automatic retry or long training. Development remains eval/no_grad without optimizer/EMA/stat updates; NoMaD release EMA initializes raw and EMA shadows, selected deployment is EMA, and strict saved-state/RNG reload is required. All checkpoints and logs stay external.

@@ -1,0 +1,13 @@
+# Prospective collection continuation v1
+
+Status: REVIEWED SOURCE FREEZE / collection NOT RUN. Branch `agent/research-three-model-plan`, baseline `39466853beb42f21d4d082ae1c4bd36af9198ce6`. This collection-only continuation consumes the exact verified qualification at source `3954fb8daf1de1d2a991a7df20a1effe93bdcba1`; ledger/capsule identity and all recorded measurement artifacts must verify before acquisition.
+
+The original capture source, 36 held poses per route, camera criteria, native rational frame timestamps, same-snapshot pixels, float32-aware pose checks and 120-second whole-process cap remain unchanged. The only acquisition insertion persists completion before SDK shutdown. The collection capsule binds exactly four sealed route IDs ×36 ordered ticks, all 144 PASS dispositions, 144 JPEG hashes, four label-pickle hashes and the specification hash. Parent verifies bytes and requires actual child exit 0/no timeout/reaping, with an explicit terminal FAIL veto, before writing DATASET admission. SDK cleanup remains independently unobserved.
+
+The existing private seal is decoded only inside the authorized collection launcher, validated against the original generation freeze and recipe, and chained through the unchanged private finalization addendum. No seed regeneration, layout replacement, post-inspection adjustment, or old failed-registry mutation is permitted. No seed/geometry values or private commitment hashes are printed or copied to public documents. Raw specification, images, labels, failed readbacks and capsules remain external. The new external registry consumes one attempt; failure/timeout preserves evidence without retry. This is a fresh two-layout kinematic offline pilot, not an independently sealed benchmark or physical navigation dataset.
+
+```sh
+PYTHONPATH=src NAVFM_UPSTREAM=/home/favl/navfm-runtime-evidence/option1-expanded-admitted-20261007-01/upstream /home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python scripts/run_prospective_collection_v1.py --freeze FULL_REVIEWED_COMMIT --out /home/favl/navfm-training-evidence/prospective-collection-v1-01
+```
+
+Commit boundary: three versioned collection scripts, config, this protocol, focused tests and population manifest. Ten focused controls cover wrong qualification identity, ordered population tampering, image/source drift, snapshot failure and independent verified-capsule abnormal-exit/timeout/unreaped outcomes. Validation uses CPU tests/Ruff and source/input metadata preflight before the single authorized collection. No model scoring, training, robot, or navigation process launches. The data admission labels the routes development-only and binds all retained dataset files; scoring requires a separate versioned continuation.

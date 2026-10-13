@@ -1,0 +1,35 @@
+# M3 Pro loaded-plant specification v1
+
+Status: source audit complete; core geometry extraction NOT VALIDATED; executable correction NOT READY. No simulator, model, hardware actuation, parameter sweep or new qualification ran. Existing assets, failed records and thresholds remain unchanged.
+
+The [parameter ledger](../configs/robots/m3pro_loaded_plant_spec_v1.json) classifies every listed value as MANUFACTURER, MEASURED, ASSUMED or UNKNOWN, with units, frame, applicability and source. MEASURED has zero entries. Manufacturer nominal diameter is not measured effective rolling radius. Recorded simulation values are distinguished from physical provenance; their successful readback does not authenticate the real robot.
+
+## Source audit
+
+| ID | Source and exact identification | Finding / applicability |
+|---|---|---|
+| S1 | [Official M3 Pro product page](https://category.yahboom.net/products/rosmaster-m3-pro); [official README at commit 015d065d61069584532778a7ffa9362deb8e9429](https://github.com/YahboomTechnology/ROSMASTER-M3PRO/blob/015d065d61069584532778a7ffa9362deb8e9429/README.md), SHA256 `58c4db3dcb459c435ff5edae4ea91d751a7cd30b68630e3d8b7fa47a53766ab9` | Manufacturer states four 80 mm mecanum wheels and rear-wheel pendulum suspension. Exact roller/contact mechanics and configured inertials are not established. |
+| S2 | [Official tutorial](https://www.yahboom.net/study/ROSMASTER-M3PRO) and [pinned annex](https://github.com/YahboomTechnology/ROSMASTER-M3PRO/blob/015d065d61069584532778a7ffa9362deb8e9429/Annex_Download_Link.txt), annex SHA256 `081f182b3da16197b6639f3f3e376a4062b891b21382d0d567b85ea8aee99772` | Current repository tree has 593 entries, including courses/PDFs, but no CAD/URDF geometry blobs. The older README-only description is stale. The tutorial links external CAD and code bundles. |
+| S3 | [Manufacturer-linked CAD folder](https://drive.google.com/drive/folders/1h3XF3F35dB8ZMyHR0PDMXYXPyI2LbfiS), file ID `1FF0BK2RmOKguLVwzlIU-Gv7O8d1jm36m`, `ROSMASTER-M3Pro.x_t`, 189,763,420 bytes, observed SHA256 `e4b803dde6439d2705a044c368abf3b27a3587cbb58660311ee230b35ee110ee` | Complete manufacturer-distributed CAD candidate is available externally. Header says FORMAT=text and date 2025-08-07. Units, assembly scale, hardware revision, detailed geometry and contact/joint interpretation are not decoded or validated. No manufacturer checksum was supplied. |
+| S4 | [Manufacturer-linked code folder](https://drive.google.com/drive/folders/1Tg8UuTXjvQzF8f8O72lfyZo8z5MkiNBw), file ID `1T7162Q61Glxgw0H-yIfD0LpvIDieOfTg`, `ros2_ws.zip`, 36,100,902 bytes, observed SHA256 `0c3e33aa2a551caba424aba88199496d46b0a0f32b56587e0bbfabc10cb16619` | Archive listed without executing contents. Description models are Muto/Muto_robot1/Muto_robot2: 23 links, 18 revolute joints, six articulated base branches. Their M3 Pro identity is unverified; none supplies admitted M3 Pro parameters. `Muto.urdf` SHA256 `fbfb9edd0a5cf173ef99c4f608eb4583180d4583d56faa18461c11e6a3e00352`. |
+| S5 | Existing local URDF `assets/robots/yahboom_m3_pro/yahboom_m3pro.urdf`, SHA256 `88ff08da82961ff3c331467afa0922729961425e04772c5ed038058cc0e1a732`; copied upstream SHA256 `5043529da206a36054ddc3e0170cd199fda9c68cf0d5b68cdddcda525ad760c2` | Provisional box/cylinder geometry and assumed inertials; no roller joints or rear-pendulum model. Legacy comments saying VERIFIED/product-spec/no invented dimensions and approximately 30% tracking error are unsupported assertions, not evidence. Preserved unchanged. |
+| S6 | Existing physics USD SHA256 `0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b` | Immutable simulation asset, not a calibrated physical twin. |
+| S7 | Builder and recorded two-arm diagnostic at source `159053cfe1c3834cb5a63c3e7497b7a92b2e0ae5`; [accepted result](ACTUATOR_CONTACT_DIAGNOSTIC_V1_RESULT.md) | Four sphere contacts, acceleration drives, unchanged 32/1 TGS. Unloaded wheel tracking versus grounded reversal motivates examining loaded representation; it does not identify a unique repair. |
+
+The original CAD intake stopped at its 90-second cap, preserving 162,594,816 partial bytes (SHA256 `33bebed8e3f2aaba1955c979f77d79f1b2b28e7f186989a325995412c042792f`). One bounded range continuation returned HTTP 206 with exact range and stable Last-Modified; the complete file was combined separately. Original partial/failure records remain intact. The two source bundles total exactly 225,864,322 bytes (225.9 MB decimal / 215.4 MiB); no 1.21 GB bundle was fetched.
+
+No format-capable CAD decoder is configured in the inspected environment: FreeCAD executable and FreeCAD/cadquery/OCP/OCC Python modules were not found. No dependency was installed. This is an extraction-tool limitation, not absence of manufacturer CAD. Text header inspection does not establish Parasolid units, roller axes or assembly dimensions.
+
+## Minimum defensible candidate
+
+First decode S3 with a suitable trusted tool and export traceable units, assembly transforms, hub centres/axes, roller profile/count/placements/handedness and rear-pendulum pivot/linkage. Check exact M3 Pro configuration and nominal 80 mm scale before using numbers. CAD solids alone do not prove passive joint mobility/resistance, mass, material or contact coefficients.
+
+An exploratory contact candidate may retain explicitly unfitted assumed mass/drive/contact values; all fields need not be physically measured first. Core rolling geometry and frame/sign correspondence cannot be invented. Missing dynamics remain limitations, and such a candidate is not a physically calibrated M3 Pro model. Any candidate must declare one intended factor, preserve other parameters and pass a fresh unchanged 16-command qualification and the previously required fresh reproduction/admission protocol before matched ViNT evaluation.
+
+A local consistency issue is recorded rather than silently repaired: radius changed from .048 to .040 m while wheel inertia remains [.000094,.000173,.000094] kg m². A .15 kg, .025 m wide solid cylinder at radius .04 m would give [.0000678125,.00012,.0000678125], but both the cylinder approximation and mass are assumptions; this arithmetic is not evidence for a physical corrective intervention.
+
+No executable correction is selected. The [single consolidated checklist](M3PRO_MEASUREMENT_CHECKLIST_V1.md) prioritizes CAD extraction, then only missing fields. The explicitly simplified navigation-simulator alternative has not been selected. Grounded motion qualification and navigation remain blocked.
+
+Raw source files, archives and CAD remain external at `/home/favl/navfm-runtime-evidence/m3pro-loaded-plant-source-audit-v1-01`. Source manifest SHA256 `52bd504d6332afbe7e66f8b7070cfc89f2c94cdb0943bfa853cc5a22a87318c0` binds intake evidence. No source archive, mesh or CAD is committed.
+
+Preparation review disposition: NOT READY is supported; torque–speed curve units and preservation of the fresh reproduction/admission protocol are clarified. Validation checked JSON status/unit/frame consistency, relative links, source artifact hashes and diff integrity; no software suite or runtime qualification was repeated.

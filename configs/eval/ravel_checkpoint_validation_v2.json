@@ -1,0 +1,36 @@
+{
+  "version": "RAVEL_CPU_CANONICAL_VALIDATION_V2",
+  "status": "FROZEN_CPU_CHECKPOINT_VALIDATION_V2",
+  "graph_config_sha256": "651bfafc9dd70d3697fc41e14f3b873adc969ba1143a2f225ae6b136b8af61f8",
+  "canonical_policy_sha256": "8478c7d92453199edf79bc649f6e434f2dc1e17bcc83cbeab256354946cc8a52",
+  "caps": {
+    "worker_cpu_wall_s": 60,
+    "parent_wall_s": 120,
+    "raw_bytes": 16777216,
+    "constructor_attempts": 6,
+    "forwards": 0,
+    "GPU_calls": 0
+  },
+  "result_directory": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-validation-v2-01",
+  "positive_cases": [
+    "raw_native_oracle",
+    "canonical_guarded"
+  ],
+  "actual_constructor_negatives": [
+    "missing_parameter",
+    "unknown_extra",
+    "wrong_shape",
+    "remap_collision"
+  ],
+  "preconstructor_controls": [
+    "missing_asset",
+    "tampered_asset",
+    "wrong_source",
+    "wrong_asset",
+    "wrong_config",
+    "legacy_shape",
+    "legacy_dtype",
+    "legacy_nonfinite"
+  ],
+  "derived_controls": "Only explicit CPU validation after authenticated source/checkpoint input; no checkpoint file or recorded checksum rewriting."
+}

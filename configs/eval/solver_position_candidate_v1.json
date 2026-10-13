@@ -1,0 +1,49 @@
+{
+  "python": "/home/favl/miniforge3/envs/isaac/bin/python",
+  "robot": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+  "upstream": "/home/favl/navfm-runtime-evidence/option1-admitted-20261007-02/upstream",
+  "telemetry_source_sha256": {
+    "scripts/controller_telemetry_v1.py": "ec7b2d8f74e326bb65d8ab1472321979f28326468b8e5defef2d05c6020338e8",
+    "scripts/prepare_controller_telemetry_v1.py": "85387a1382eea74b8895c739d34df73e85f161ee69b266ba3691065d99404843",
+    "scripts/run_controller_telemetry_v1.py": "092f76e8be4375c691798b906c7c1108a70b617e9538a9d859c87e7bcd488174",
+    "scripts/imu_coverage_base_v2.py": "182f216f941ab22b13b4ae8c135b4871a16013372760b62244e8f8874cc6ba9f",
+    "scripts/qualify_imu_coverage_v2.py": "cdd8b0419f2e95eb99570b621dbb0ba953d9b6c681117110c03e1bf03b5ca976",
+    "src/navfm/collection/yaw_rate_tracker.py": "a06373e7d5bf3f91b31032cfd2648bb927dbca7e5ba2b78a648d9000475f6378",
+    "scripts/solver_position_candidate_v1.py": "f42e8821aa825dfa48125745de317ca98332b30b13cf9b61a3db705dee2fa9c2",
+    "scripts/prepare_solver_position_candidate_v1.py": "031b7c5e8afb5753c4b951d896f7582dc5f795b5bc28af67a53b3a4e8105e237",
+    "scripts/run_solver_position_candidate_v1.py": "47beb87c7e6c3c09ef81da8aad1304f797ad9d53ec9591dc8c04e838cc18e51c",
+    "scripts/qualify_articulated_control.py": "baba268c9685f23996f1898e60b38deb1286a517c7f63289be154e30270fe341",
+    "scripts/imu_lifecycle_v6.py": "041ae50294bb2fd889bc991af7fb4f502e7f1d17cbcf814a0c36432818fa1823",
+    "scripts/matched_navigation_contracts_v2.py": "df7c071d89577b481c18d8d0d063983591c7c6104decf393f75e3b16407d2cfe",
+    "scripts/imu_controller_boundary_v1.py": "abeff97638cb1c91863a716b42951db6dc05b34590f37bdf2aed62673624d57e"
+  },
+  "scope": "One prospective32-to64 position-iteration discriminator; original16commands1200ticks120s; no navigation",
+  "inputs": [
+    {
+      "path": "/home/favl/projects/navfm/assets/robots/yahboom_m3_pro/yahboom_m3pro_physics.usd",
+      "sha256": "0ba6ca5df86d2b8d7d631a25be1eeb57b66c28516e599a02486a14233971cb1b",
+      "size": 11625
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.sensors.physics/isaacsim/sensors/physics/impl/imu_sensor.py",
+      "sha256": "4429fda4f770872092c51c7ee095348366b9b4cbf953738a0c7643bee8486267"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/xform_prim.py",
+      "sha256": "df60f2fa629a5876dca529b46609f56c743612ea6f018fd2c4c2cafdbd5f8fd2"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py",
+      "sha256": "65901a45bd1852c0e126581ed2bb75105b6e221128e24f2202d138c822b119a5"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.api/isaacsim/core/api/physics_context/physics_context.py",
+      "sha256": "7486ec315d2525bdef6e1cef294d67d419511e3367e7f40001a8324e2b6a7751"
+    },
+    {
+      "path": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/extscache/omni.usd.schema.physx-107.3.26+107.3.3.lx64.r.cp311.u353/plugins/PhysxSchema/resources/generatedSchema.usda",
+      "sha256": "d2dd1873e165d280ac302f2b2e6e95cc5c4c1f72580478492990ea0f711e00f8"
+    }
+  ],
+  "upstream_files": []
+}

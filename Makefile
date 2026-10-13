@@ -7,10 +7,10 @@ install:  ## editable install with dev extras
 	pip install -e ".[dev]"
 
 test:  ## unit tests (no GPU, no Isaac Sim)
-	python -m pytest -q
+	PYTHONPATH="$(CURDIR)/src" python -m pytest -q
 
 test-upstream:  ## + the reference-loader compatibility proof
-	NAVFM_UPSTREAM=third_party/visualnav-transformer python -m pytest -q
+	PYTHONPATH="$(CURDIR)/src" NAVFM_UPSTREAM=third_party/visualnav-transformer python -m pytest -q
 
 lint:  ## ruff
 	ruff check src tests scripts

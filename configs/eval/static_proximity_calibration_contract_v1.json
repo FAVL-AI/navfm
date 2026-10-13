@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "name": "static_proximity_calibration_contract_v1",
+  "status": "PREPARATION_ONLY_BLOCKED",
+  "runtime_authorized": false,
+  "research_target": {
+    "name": "requested_goal_geometric_proximity",
+    "definition": "1 iff Euclidean XY distance from query pose to the requested goal image capture position is <= 0.5 metres; otherwise 0",
+    "distance_frame": "within one authenticated trajectory coordinate frame only",
+    "radius_m": 0.5,
+    "authority": "configs/eval/arrival_measures_v1.json",
+    "not_equivalent_to": [
+      "successful_arrival",
+      "correct_STOP",
+      "settled_motion",
+      "collision_free_completion",
+      "safe_to_stop"
+    ]
+  },
+  "bound_evidence": {
+    "preparation_head": "29e6a0945471aced61f0eb63adf125694ed4f59a",
+    "geometry_report": "docs/ARRIVAL_TRAINING_GEOMETRY_AUDIT_V1.md",
+    "geometry_reported_pairs": 50632,
+    "geometry_pairs_are_independent_n": false,
+    "training_admission_sha256": "e7938615e2f9fc40f7f5f664b834c7c92127dc78005a129f850ddcef52e487f3",
+    "training_dataset_content_sha256": "7e2b3738c3026e9e170d1a635d3172e92767428ec577bdb85a9b64501f02cbc3",
+    "split": {
+      "path": "configs/splits/arrival_split_v2.json",
+      "sha256": "f09cb892a6ade892a0fc67943c91a41dbbf3a4c2aea98d33aeda67a3e9458fef"
+    },
+    "measure_definition": {
+      "path": "configs/eval/arrival_measures_v1.json",
+      "sha256": "082e34b10f8af411cb65bb5d72172c13d17f9430e7309c54c280f1bdfa11258e"
+    },
+    "candidate_component": {
+      "path": "src/navfm/collection/alias_aware_arrival.py",
+      "sha256": "ee294ff3d9ac8d8e1ceba935f3e2d42fb3508dae21598dffaa01f7c3700a453f"
+    }
+  },
+  "sampling_contract": {
+    "deployment_relation": "live query images compared against a separately acquired, ordered prior reference chain and an explicitly requested terminal reference",
+    "current_training_records_eligible_for_deployment_calibration": false,
+    "query_reference_coordinate_alignment": "required and currently unavailable across separate traversals",
+    "same_identity_exclusion": [
+      "exclude identical (trajectory_id, frame_index) query/reference pairs",
+      "exclude query/reference files with identical authenticated image-byte hashes"
+    ],
+    "near_duplicate_policy": "audit and report; do not silently remove spatially close observations because they may be valid positive proximity examples",
+    "time_window_exclusion": "unavailable; admitted training records have no timestamps, so no seconds-based cutoff is permitted",
+    "goal_sampling": "must be fixed against a deployment-faithful reference-bank specification before any descriptor extraction; no eligible bank is currently bound"
+  },
+  "candidate_feature_contract": {
+    "source": "src/navfm/collection/alias_aware_arrival.py",
+    "input": "exactly four time-ordered query-history rows by N ordered reference-node similarity values, all finite, with node identities bound",
+    "ordered_score": "S(j) = mean over k=0..3 of similarity[k][max(0,j-k)]",
+    "features": [
+      "terminal_score = S(last_requested_terminal_node)",
+      "alias_margin = terminal_score - max(S(j)) over nodes before the explicit terminal reference window"
+    ],
+    "terminal_reference_window": null,
+    "window_status": "UNRESOLVED; must be determined from an authenticated deployment reference-chain contract, not fitted against exposed pilot or future evaluation outcomes",
+    "known_semantic_caveat": "a nonterminal node may itself be within the 0.5 m positive region; its score cannot be treated as a negative label, and the margin is only a candidate predictor to compare against terminal_score alone",
+    "encoder_checkpoint_preprocessing_similarity_scale": null,
+    "encoder_status": "UNRESOLVED; no provenance-qualified pairwise similarity encoder/checkpoint contract is established by the existing fixed RAVEL graph or native PlaceNav/ULVN interface qualifications"
+  },
+  "groups_and_exposure": {
+    "unit_for_partitioning": "layout group, with source trajectory and all frames/references/duplicates kept together",
+    "fit_groups": null,
+    "threshold_selection_groups": null,
+    "assessment_groups": null,
+    "reason": "no defensible disjoint allocation exists in the current admitted data: the adapted encoder has seen training records, existing development/retired-test groups are exposed and have documented appearance overlap, and specified future held-out layouts are uncollected and forbidden for calibration",
+    "exposed_pilot_eligible": false,
+    "future_heldout_eligible": false,
+    "group_independence_claim": "not established"
+  },
+  "comparison_and_measurement": {
+    "comparator_1": "constant training-group prevalence baseline",
+    "comparator_2": "terminal_score-only logistic probability map using the same fit groups and weighting",
+    "candidate": "two-feature logistic probability map using terminal_score and alias_margin, same groups and weighting",
+    "weighting": "each episode contributes equal total fitting weight; this does not make episodes or layouts independent",
+    "primary_probability_metrics": [
+      "Brier score",
+      "log loss",
+      "calibration intercept and slope"
+    ],
+    "secondary_ranking_metrics": [
+      "AUROC",
+      "average precision"
+    ],
+    "threshold_metrics": [
+      "false proximity declaration rate",
+      "missed geometric proximity rate"
+    ],
+    "threshold_operating_point": null,
+    "threshold_status": "BLOCKED; no downstream false-stop/missed-arrival trade-off or qualified motion policy supplies an operating criterion",
+    "alias_hard_coverage": "NOT ESTABLISHED; geometry-only records and current metadata cannot establish visually confusing wrong-location examples"
+  },
+  "budgets": {
+    "this_preparation_inference_calls": 0,
+    "this_preparation_feature_rows": 0,
+    "this_preparation_fit_attempts": 0,
+    "this_preparation_threshold_searches": 0,
+    "this_preparation_collection_runs": 0,
+    "this_preparation_navigation_runs": 0,
+    "this_preparation_gpu_hours": 0,
+    "future_feature_extraction_cap": null,
+    "future_fit_attempt_cap": null,
+    "future_budget_status": "NOT SET: eligible groups, encoder/checkpoint, reference-bank contract and operating criterion are unresolved; assigning a resource cap now would not define a valid experiment"
+  },
+  "execution_gates": [
+    "authenticate a deployment-faithful ordered query/reference acquisition and alignment contract",
+    "select and authenticate encoder source, checkpoint, preprocessing and similarity scale",
+    "freeze terminal reference window and missing/invalid-score handling",
+    "identify permitted layout-disjoint fit, threshold-selection and assessment groups before feature extraction",
+    "define an operational probability/threshold objective without calling geometric proximity successful arrival or safe STOP",
+    "independently establish whether visually confusing wrong-location examples are represented",
+    "obtain a separate finite resource decision and protocol review"
+  ],
+  "prohibited_inputs": [
+    "exposed development and retired-test outcomes",
+    "accessed pilot outcomes and labels",
+    "future held-out layout geometry or evaluation outcomes",
+    "live ground-truth pose, depth, simulator state or controller/contact feedback"
+  ]
+}

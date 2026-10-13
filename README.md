@@ -1,397 +1,158 @@
 # NavFM
 
-**Evidence-governed reproduction, data-contract validation, and simulator
-admissibility for visual robot navigation.**
+**Reproducible visual-navigation research: model fidelity, arrival decisions, and simulator qualification.**
 
-NavFM is a doctoral research repository studying whether published
-visual-navigation systems can be reproduced faithfully, whether newly collected
-robot trajectories preserve the data semantics those systems require, and whether
-a simulator is physically trustworthy enough to support subsequent experiments.
+NavFM is a doctoral research codebase for camera-only, image-goal navigation. It studies released GNM, ViNT, and NoMaD systems, develops detached arrival-decision candidates, and qualifies the measurement and simulation paths needed to evaluate them responsibly.
 
-It targets three published navigation models — **GNM** (General Navigation
-Model), **ViNT** (Visual Navigation Transformer) and **NoMaD** (Goal-Masked
-Diffusion Policies for Navigation and Exploration) — together with an Isaac Sim
-digital twin of the Yahboom ROSMASTER M3 Pro.
+**Research status — 13 October 2026**: the three-model offline pilot is complete. Recorded comparator integration is qualified within its tested scope. Independent navigation performance, improved stopping, sim-to-real transfer, and state-of-the-art performance remain unestablished. This is a research artifact, not a certified robot-control product or a completed publication benchmark.
 
-The contribution is not a new navigation architecture. It is an evidence trail:
-fixed data contracts, model-path reproduction, controlled evaluations,
-simulator-admissibility tests, negative results, contradictions, failure
-analyses, and explicit claim boundaries.
+[Results and limitations](#evidence-and-current-status) · [Reproduction](#reproduction-and-validation) · [Research design](#research-design) · [Artifact map](#repository-map) · [Citation](#citation-and-licensing)
 
 ---
 
-## Abstract
+## Research overview
 
-A visual-navigation experiment can complete successfully while changing what the
-experiment means. A checkpoint may load without all parameters executing; a loss
-may be finite while optimising the wrong objective; a scene may render correctly
-while missing floor collision; a physics query may return a plausible hit while
-interrogating the wrong object; and a non-empty sample may still be too small or
-too biased to support a scene-level claim.
+A successful execution is not sufficient evidence of a valid navigation experiment. Model loading, parameter use, data semantics, metric definitions, simulator behavior, and process admission must each be checked. NavFM retains immutable source and input identities, finite execution budgets, negative controls, complete outcome populations, and failed attempts alongside successful measurements.
 
-NavFM treats these as research problems rather than implementation details. The
-programme establishes a reproducible path from published model release to
-model-ready trajectory data and then to physics-valid simulation. The method is
-**evidence gating**: a claim is admitted only after its measurement is live,
-causally relevant, reproducible, and bound to immutable provenance.
+The current scientific question is whether an arrival rule can reduce wrong-location voluntary stops while preserving collision-free completion and bounded task time, against a strong stopping comparator using the same navigator and information budget. Temporal belief, alias features, and dwell logic are candidate mechanisms; their combination is not established as novel.
 
-## Research questions
-
-1. **Model reproduction** — can the released GNM, ViNT and NoMaD implementations
-   load, execute their official training computations, backpropagate and update
-   parameters under a controlled environment?
-2. **Data compatibility** — can new robot trajectories be represented in the same
-   model-ready format without changing the semantics the released loaders expect?
-3. **Evaluation reproducibility** — can a frozen ViNT evaluation be repeated on a
-   fixed population with explicit dataset, checkpoint, batch and metric
-   provenance?
-4. **Simulator admissibility** — before collecting training data, does the chosen
-   Isaac Sim world provide trustworthy support surfaces, blocking geometry,
-   target-specific physics behaviour and a valid robot-camera viewpoint?
-5. **Measurement validity** — when two evidence channels disagree, is the defect
-   in the asset, the runtime representation, the sampling policy, or the
-   measurement instrument?
+The [contribution review](docs/ARRIVAL_CONTRIBUTION_REVIEW_V1.md) and [execution design](docs/ARRIVAL_CONTRIBUTION_EXECUTION_PLAN_V1.md) document the hypothesis, related-work boundary, comparators, statistical assumptions, and unresolved prerequisites.
 
 ---
 
-## Current verified results
+## Evidence and current status
 
-### 1. Option 1 data contract is implemented
-
-```
-trajectory_x/
-├── 0.jpg
-├── 1.jpg
-├── ...
-├── T.jpg
-└── traj_data.pkl
-    ├── position   # numeric array, shape [T, 2]
-    └── yaw        # numeric array, shape [T]
-```
-
-`position[t] = [x, y]` is the robot position for image `t`; `yaw[t]` its heading.
-Raw simulator records, ROS bags and HDF5 remain provenance sources and are
-converted before model use. A 40-frame pilot yields `0.jpg … 39.jpg`,
-`position [40, 2]`, `yaw [40]`.
-
-The same trajectory produced **30 GNM, 30 ViNT and 29 NoMaD** samples. The NoMaD
-count follows from its own context/horizon window (`[3, 32)` against `[5, 35)`)
-and is expected, not missing data — derived in
-`gates/forensics/SAMPLE_COUNT_AND_DEAD_WEIGHT.md`.
-
-### 2. GO Stanford loader incompatibility traced and corrected
-
-The released corpus contains 3,696 trajectories with valid directory structure,
-but `position` and `yaw` stored as object-type arrays of arrays where the loader
-expects direct numerical arrays. The correction changes representation only, at a
-fixed NumPy version, and is treated as a compatibility repair rather than new
-data.
-
-### 3. Three-model train-path reproduction
-
-| Model | Valid samples | Training-loss smoke | Non-zero gradients | Parameters changed | Result |
-|---|---:|---:|---:|---:|---|
-| GNM | 30 | 0.104939 | 324 / 326 | 326 / 326 | PASS |
-| ViNT | 30 | 0.084481 | 486 / 504 | 488 / 504 | PASS |
-| NoMaD | 29 | 0.036361 | 628 / 644 | 628 / 644 | PASS |
-
-All losses finite; repeated execution under the frozen repeatability check gave a
-maximum absolute difference of `0.00e+00`.
-
-These values show each released training path is **executable under the checked
-data contract**. Losses are not compared across models — GNM, ViNT and NoMaD
-optimise different objectives — and are not claims of relative quality or of
-reproducing any paper's benchmark.
-
-### 4. Controlled ViNT evaluation on frozen pairs
-
-| Quantity | Value |
-|---|---|
-| Frozen GO Stanford pairs | 41,872 |
-| Strict total loss | 0.18026807678384063 |
-| Historical comparison value | 0.17398 |
-| Ratio | 1.036143 |
-
-Recorded as corroborative reproduction evidence. Not a claim of superiority,
-exact replication, or a matched three-model benchmark.
-
-### 5. Checkpoint loading is not evidence of parameter use
-
-A parameter-execution audit found loaded checkpoint elements that never executed
-in the tested upstream graphs: **ViNT 19.21%**, **NoMaD 17.59%**. The unused
-paths trace to classification heads read only for shape metadata and an orphaned
-transformer prototype submodule. This is not checkpoint corruption; it is a
-narrower methodological point:
-
-> **Loaded is not executed; executed is not differentiated; differentiated is not
-> updated.**
-
----
-
-## Simulator and robot evidence
-
-### Yahboom digital twin
-
-| Quantity | Measured value |
-|---|---|
-| Collision-envelope length | 0.235 m |
-| Collision-envelope width | 0.195 m |
-| Collision-envelope height | 0.280 m |
-| Circumscribed planar radius | 0.152 m |
-
-Measured from the robot's own collider set, not assumed. The navigation camera is
-mounted on the raised top arm; external simulator views are evidence views only.
-
-### Scene collision coverage: authored state
-
-Support surfaces and blocking structures are audited separately because their
-absence has **opposite causal meanings**: missing blocker collision manufactures
-false free space, missing support collision manufactures false non-navigability.
-An aggregate over both destroys the distinction that decides the answer.
-
-| Scene | Support collision | Blocking collision | Interpretation |
-|---|---:|---:|---|
-| Office | 5.6% of 36 | 100% of 285 | Systematic authored support defect established |
-| Hospital | 82.0% of 128 | 100% of 1,066 | Strongest authored candidate; behavioural status pending |
-| Warehouse | 30.6% of 36 | 100% of 106 | Structural significance unresolved |
-
-Authored-state evidence only. These percentages do not establish admissibility,
-and their spatial structure — *which* surfaces are missing — remains the
-load-bearing open question.
-
-### Dense-scene physics finding
-
-The original Hospital blocker audit classified 8/8 targets geometrically
-reachable, yet only 3/8 probes hit the declared target; five hit structurally
-distinct objects. A short-range local isolation diagnostic then showed 4 of those
-5 targets *were* causally hittable from an alternative local direction. The fifth
-(`wrong_1`) remains unresolved.
-
-Structural inspection falsified the convenient explanation that the returned
-prims were alternative names for the same object: they shared no collision owner,
-rigid body or prototype. The supported finding is:
-
-> **Geometric reachability is not causal targetability.**
-
-A probe can point toward the correct target region while a different object
-becomes the physical cause of the observation. The measurement chain was
-consequently refined to:
-
-```
-GEOMETRIC_REACHABILITY → CAUSAL_TARGETABILITY → QUERY
-    → IDENTITY → INVARIANCE → REPRESENTATIVENESS → SCENE VERDICT
-```
-
-### Latest Hospital remeasurement: NO_EVIDENCE
-
-```
-support:   fired 8, reachable 7, not_targetable 7, probative_population -1
-blocking:  fired 8, reachable 8, not_targetable 8, probative_population  0
-```
-
-A negative population is impossible; it arose from subtracting counts drawn from
-different probe populations, invalidating the representativeness calculation. A
-second defect surfaced simultaneously: the audit generated a **two-direction**
-blocker intervention policy while the isolation diagnostic used a **four-face
-±X/±Y** policy. Two tools claimed one behavioural contract while asking different
-physical questions.
-
-Required corrections and their current state:
-
-| Correction | Status |
-|---|---|
-| Probe-identity accounting — populations from explicit ID sets, never subtraction | **Done** (`src/navfm/population.py`) |
-| Contract-owned candidate generation — one finite policy, consumed by both tools | **Outstanding** |
-| Representativeness before contents — disqualify thin samples before judging them | **Done** |
-
-> **No candidate scene can be validly measured until the policy defect is
-> closed.** This is not "Hospital nearly passing". While the diagnostic and the
-> audit run different physical experiments under one contract label, no
-> behavioural result about Hospital, Office or Warehouse is admissible.
-
----
-
-## Failure-driven methodology
-
-Failed measurements are preserved, because several of the strongest findings came
-from tests that initially appeared to pass.
-
-| Failure | Why the initial result was unsafe | Resulting rule |
+| Workstream | Recorded result | Scope and evidence |
 |---|---|---|
-| GO Stanford object arrays | Valid structure still failed tensor conversion | Lossless numeric correction with provenance |
-| Finite loss, wrong objective | A hand-written loss passes while changing training semantics | Use official model-specific losses; record loss provenance |
-| Filesystem asset closure | All referenced files existed while materials rendered wrongly | Independent runtime resolver plus render validation |
-| Shared repair and verifier | A repair and its checker shared one traversal defect | Verify repairs with an independent oracle |
-| Null execution read as zero | "0 errors" can mean the audit never ran | MeasurementEnvelope: liveness + value + provenance |
-| Scene-level DomeLight inference | Scene metadata labelled pixels without pixel evidence | Positive per-pixel evidence; HDR observability |
-| AABB free-space selection | Dense mesh bounds erased genuine navigable space | PhysX footprint scene queries |
-| Generic collision hit | `hit > 0` passed when the wrong collider answered | Exact causal target identity required |
-| First-N sampling | Blocking geometry starved support probes entirely | Role-stratified independent sampling |
-| Shared-origin long rays | Different target labels, one physical intervention | Target-local probing; invariance review |
-| Geometric reachability | Target region reachable while competing geometry answered | Pre-query causal-targetability stage |
-| 1/8 reachable sample | A correct result on a tiny subset read as a scene verdict | Representativeness gate before contents |
-| Negative probative population | Counts subtracted across different populations | Probe-ID populations; disjoint terminal dispositions |
-| Diagnostic/audit policy mismatch | One contract label, two physical interventions | Candidate policy becomes contract-owned provenance |
+| Three-model offline pilot | 768 valid retained outcomes across 12 fixed checkpoint roles | 32 pairs, four routes, two already accessed layouts; [consolidated report](docs/PROSPECTIVE_THREE_MODEL_CONSOLIDATION_V1.md). Not 768 independent samples. |
+| Recorded RGB-to-belief integration | 32 encoder forwards completed | Tested reference/query path and mock STOP only; [report](docs/RECORDED_RGB_STOP_RESULT_V2.md). |
+| LightGlue checkpoint transport | 251 parameters and one buffer matched the native construction bitwise | Exact authenticated legacy-key transport; [CPU qualification](docs/RAVEL_CANONICAL_TRANSPORT_RESULT_V2.md). |
+| Native fixed-mode graph construction | 28 pairs, zero technical failures; 28 edges pruned to 7, all eight nodes connected | Construction on fixed recorded references; no topology-accuracy or navigability claim; [report](docs/NATIVE_RAVEL_FIXED_GRAPH_RESULT_V3.md). |
+| Saved-graph ULVN integration | 16 updates across two fresh-state episodes; two arrival publications and two mock STOPs | Cached descriptors, native belief/routing, software cancellation; [report](docs/SAVED_GRAPH_ULVN_REPLAY_RESULT_V1.md). |
+| Arrival-rule candidates | 66 focused synthetic tests passed in consolidation | Explicit hard-veto versus no-veto policy; neither empirically superior nor calibrated; [comparison](docs/ALIAS_AWARE_DECISION_RULE_COMPARISON_V1.md). |
+| Camera qualification v2 | Eight frames and 16 image/metadata hashes verified; overall FAIL | Child exceeded its execution allowance after close returned; no admission; [report](docs/STATIC_ARRIVAL_CAMERA_QUALIFICATION_RESULTS_V2.md). |
+| Signal-free teardown diagnostic | Worker returned; process survived until deadline SIGTERM | Cause and complete SDK cleanup unresolved; [report](docs/STATIC_ARRIVAL_POST_CLOSE_SIGNAL_FREE_RESULTS_V2.md), [upstream issue #877](https://github.com/isaac-sim/IsaacSim/issues/877). |
+| Physical apparatus and navigation | Blocked | CAD, loaded motion, actual STOP, contact filtering and other admission gates; [readiness record](docs/SIMULATION_APPARATUS_READINESS_V1.md). |
 
-## Measurement semantics
+These are historical, source-bound results, not assertions that every check passes on a fresh machine. Raw evidence is held externally; compact reports identify the measured scope and artifact hashes.
 
-A measurement is admitted only when its execution is live and its provenance
-present:
+### Offline pilot: results with counter-evidence
 
-```
-NOT_RUN · RUN_FAILED · RUN_LIVE_NO_MEASUREMENT · MEASURED_ZERO · MEASURED_NONZERO
-```
+Average displacement error (ADE; metres) below is descriptive. Adapted values retain all three preselected seeds, 0/11/22. Each system is compared with its own released checkpoint.
 
-A reported zero is a conclusion only after liveness is established; missing
-evidence is never silently converted into a negative result. The same principle
-applies to target-specific physics:
+| System | Released ADE | Adapted mean ADE | Adapted seed range |
+|---|---|---|---|
+| GNM | 0.030442 | 0.014369 | 0.011849–0.017128 |
+| ViNT | 0.079904 | 0.020137 | 0.019134–0.022018 |
+| NoMaD | 0.059792 | 0.009970 | 0.007176–0.012481 |
 
-```
-probe ran  ≠  target was interrogated  ≠  target caused the observation
-           ≠  sample represents the scene
-```
+**Counter-evidence**: ViNT positive temporal-distance error worsened for every adapted seed despite improved waypoint errors. The complete report retains endpoint metrics, route cells, dispersion, and paired differences.
+
+**Comparability limits**: adaptation procedures and exposure differ; GNM/ViNT use raw weights while NoMaD uses EMA weights. GNM/ViNT produce one draw per pair and NoMaD four. Capture/training cadence differs. Latency scopes differ: ViNT includes its state/RNG fence, and NoMaD includes native decode/transfers. These timings are not a matched pure-forward speed benchmark or an Orin deployment estimate. No best seed is selected from these results.
 
 ---
 
-## Current research status
+## Research design
 
-| Workstream | Status |
+The proposed joint target is at least a five-percentage-point reduction in wrong-location stops, while ruling out more than five points of completion loss and five seconds of added restricted task time. These are prospective criteria, not achieved effects. Layout-level independence, comparator fidelity, calibration isolation, and feasible resource requirements must be established before confirmatory evaluation.
+
+| Stage | Established work | Remaining question |
+|---|---|---|
+| Hypothesis and design | Arrival endpoint, matched comparator plan, explicit claim boundaries | Does the candidate improve the joint outcome? |
+| Initial measurements | Offline pilot and bounded component qualifications | Do component results transfer to closed-loop behavior? |
+| Failures and refinement | Retained source-loading, launcher, motion and teardown failures; tested narrow repairs | Which outstanding apparatus conditions can be qualified? |
+| Method development | Synthetic hard-veto/no-veto counterexamples and annotated-map variant | Can deployment-available inputs discriminate distant lookalikes? |
+| Further experiments | Development acquisition proposal and conditional feasibility design | Inputs, calibration protocol, apparatus and budgets remain gated. |
+| Conclusion | Measurement and software behavior are documented | Novelty, independent generalisation and improved stopping remain untested. |
+
+The [development feasibility protocol](docs/ARRIVAL_DEV_FEASIBILITY_EXECUTION_V1.md) is separate from the [static acquisition proposal](docs/STATIC_ARRIVAL_RULE_DEVELOPMENT_ACQUISITION_V1.md). Neither is authorized by this README. The 80-layout study and 2,000-GPU-hour ceiling remain unapproved; the five-family acquisition budget remains unapproved.
+
+---
+
+## Data and inference boundaries
+
+- The admitted training-record inventory covers 31 trajectories. Indexed position/yaw arrays support geometric proximity in documented coordinates; timestamps and successful-arrival outcomes are absent from those inspected records. See the [schema inventory](docs/ARRIVAL_TRAIN_RECORD_SCHEMA_INVENTORY_V1.md).
+- The frozen 0.5 m goal-image region is a geometric label, not evidence of settling, collision-free completion or physical STOP.
+- Accessed development routes and pilot outcomes cannot become independent confirmatory evidence. The accessed pilot remains excluded from calibration.
+- Episode-balanced fitting does not create independent layouts. Repeated frames, routes, draws and seeds must retain their actual statistical roles.
+- Query ground truth must not enter inference. The goal-region feature requires deployment-available reference annotations; the current bank does not supply them. See the [pose-availability boundary](docs/GOAL_REGION_REFERENCE_POSE_AVAILABILITY_V1.md).
+- Identical visual features with different geometric labels remain indistinguishable to the tested rules. Synthetic tests do not prove perceptual discrimination.
+
+---
+
+## Reproduction and validation
+
+The package declares Python 3.10 or newer; ordinary CI targets Python 3.10–3.12. Isaac, model, archive and alternate-interpreter workloads have separate pinned environments and prerequisites. Installing the package does not provision or authorize those workloads.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+
+# Focused, synthetic-only arrival-component checks.
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src \
+  python -m pytest -q tests/test_alias_aware_arrival.py
+
+# Repository-wide static checks.
+ruff check src tests scripts
+mypy
+```
+
+For the ordinary resource-excluded test population, follow [ci.yml](.github/workflows/ci.yml), including its population ownership gate. The [population manifest](tests/population_manifest.json) assigns resource-dependent tests to their declared owners; excluding them is not evidence that they passed. `make verify` runs the broader suite and can fail when required resources are unavailable.
+
+The last reported workstation-wide verification retained 29 prerequisite failures: 24 dependency failures, four missing archives and one unavailable interpreter. The consolidation check passed 66 arrival-component tests, repository-wide Ruff and mypy (92 source files) on Python 3.12. PR #3 still has failing CI checks, including resource-contract and resource-approval gates; these local checks do not supersede them. Consult current CI separately from historical reports. See [reproduction guidance](docs/REPRODUCTION.md), [data contract](docs/DATA_CONTRACT.md), and Makefile.
+
+Do not run historical one-shot launcher commands as generic examples. They bind exact commits, external inputs, registries and attempt directories; consumed slots remain consumed. No renderer, encoder, fitting, scoring, collection or navigation run is launched by the commands above.
+
+---
+
+## Evidence and admission
+
+Every measured report should distinguish:
+1. Task measurements and completeness.
+2. Artifact integrity and provenance.
+3. Observed shutdown-call behavior and independently established cleanup evidence.
+4. Actual process exit, timeout, signals and reaping.
+
+A report on disk is not proof of clean process exit. A timeout or forced termination remains a failure under its frozen admission contract. Neither API wording nor a returned close() proves full SDK cleanup. A prospective disposable-worker design would require its own contract and validation; it does not retrospectively admit failed captures.
+
+---
+
+## Repository map
+
+| Path | Purpose |
 |---|---|
-| Option 1 data contract | Verified |
-| GO Stanford numerical compatibility correction | Verified |
-| GNM / ViNT / NoMaD train-path reproduction | Verified |
-| ViNT frozen-pair controlled evaluation | Completed, corroborative only |
-| Yahboom digital twin and robot-camera data path | Verified for pilot collection |
-| Office authored physics representation | Support defect established |
-| Hospital authored physics representation | Measured; behavioural evidence pending |
-| Warehouse authored physics representation | Measured; structural significance pending |
-| Dense-scene causal-targetability concept | Supported by isolation diagnostic |
-| Behavioural measurement instrument | **Incomplete — candidate policy not contract-owned** |
-| Latest Hospital behavioural remeasurement | NO_EVIDENCE |
-| `wrong_1` Hospital isolation case | UNRESOLVED |
-| Canonical Isaac scene | NONE |
-| New training-data admission | BLOCKED |
+| `src/navfm` | Data validation, collection contracts, model interfaces and research components |
+| `scripts` | Preparation, qualification, replay and reporting entry points |
+| `configs` | Versioned inputs, splits, policies and execution bounds |
+| `tests` | Synthetic, integration and explicitly resource-owned checks |
+| `docs` | Protocols, reviews, measured results and limitations |
+| `gates` | Earlier reproduction, compatibility and simulator evidence records |
+| `.github/workflows` | CI and resource-validation ownership |
 
-## Claim boundaries
+Earlier findings remain available in the [pre-consolidation README](https://github.com/FAVL-AI/navfm/blob/1de79941552717e5740be75295567d7c9b6513bb/README.md). Its dated workstream statuses are historical, not the current project summary.
 
-**Supported:**
+---
 
-- the Option 1 trajectory structure is compatible with the checked released model
-  paths;
-- GNM, ViNT and NoMaD complete controlled training-path smoke executions under
-  that structure;
-- the frozen ViNT pair evaluation has been executed with explicit provenance;
-- simulator physics requires separate authored-state, runtime,
-  causal-targetability and representativeness checks;
-- several plausible-looking measurement procedures were experimentally shown to
-  answer the wrong question.
+## Publication and contribution policy
 
-**Not claimed:**
+This repository supports preparation of an auditable research artifact; it is not presented as an accepted paper, a complete independently reproducible dataset release, or a SOTA result. Public code and compact reports do not replace access to the external evidence needed to repeat resource-dependent experiments.
 
-- that GNM, ViNT or NoMaD paper benchmark numbers have been reproduced;
-- that the three smoke losses are comparable;
-- that any candidate Isaac scene is the canonical training world;
-- that any behavioural scene measurement is currently admissible;
-- that the current simulation pilots are admitted training data;
-- that a sim-to-real performance improvement has been demonstrated;
-- that a new navigation architecture or foundation model is introduced.
+Changes should state the scientific question, exact input/source identities, expected behavior, validation performed, failures and claim limits. Preserve frozen protocols and original failures. Keep weights, recordings, CAD, credentials and raw runtime evidence out of Git. External assets retain their own licensing and access conditions. Do not weaken admission criteria to obtain a passing label.
 
-## Evidence organisation
+Local teardown investigation is closed as an unresolved, upstream-reported milestone. Runtime probes remain paused; issue #877 stays open for maintainer triage. Camera qualification, physical navigation gates and acquisition approvals remain unchanged.
 
-The repository uses evidence-first artefacts rather than relying on narrative
-summaries alone. Every path below was verified to exist at the commit that
-introduced this document; where a planned artefact has not yet been generated it
-is listed as pending rather than cited as though it existed.
+---
 
-```
-gates/
-├── compatibility/       # model-path and data-contract evidence
-├── forensics/           # defects, contradictions, correction ledgers
-├── reproduction/        # controlled reproduction evidence
-└── scenes/              # scene, collision, targetability and measurement gates
-```
+## Citation and licensing
 
-**Model reproduction and data contract**
+Maintained by Frank Asante Van Laarhoven, School of Computing, Newcastle University.
 
-- `gates/compatibility/THREE_MODEL_TRAIN_PATH_MATRIX.md` — 18 contracts × 3 models
-- `gates/compatibility/{gnm,vint,nomad}_training_contract.json`
-- `gates/compatibility/{gnm,vint,nomad}_backward_optimizer_smoke.json`
-- `gates/compatibility/{gnm,vint,nomad}_sample_population.json`
-- `gates/forensics/SAMPLE_COUNT_AND_DEAD_WEIGHT.md` — the 30/30/29 derivation and
-  the unexecuted-parameter census
-- `gates/forensics/training_path_crosswalk.json` — file, function and line range
-  for every element of each model's official training path
+Use [CITATION.cff](CITATION.cff) and include the exact commit and relevant result report when citing this software. No paper DOI or publication acceptance is asserted. Project code is licensed under MIT; third-party code, datasets, pretrained weights and manufacturer assets are not relicensed by this repository.
 
-**Defects, contradictions and corrections**
+Primary navigation implementations and publications are documented through the [Visual Navigation Transformer reference implementation](https://github.com/robodhruv/visualnav-transformer):
+- Shah et al. GNM: A General Navigation Model to Drive Any Robot. ICRA 2023.
+- Shah et al. ViNT: A Foundation Model for Visual Navigation. CoRL 2023.
+- Sridhar et al. NoMaD: Goal Masked Diffusion Policies for Navigation and Exploration. ICRA 2024.
 
-- `gates/forensics/COMPATIBILITY_AND_DECISION_LEDGER.md` — causal ledger
-- `gates/forensics/compatibility_decision_ledger.jsonl` — machine-readable form
-
-**Simulator physics and measurement instrument**
-
-- `gates/scenes/collision_probe_contract.json` — parent contract `480d9f07`
-- `gates/scenes/collision_probe_contract_amendments.jsonl` — effective contract
-  `24bf0a8c`, causal-targetability amendment
-- `gates/scenes/collision_probe_regression_results.json` — 9 sparse regressions
-- `gates/scenes/dense_targetability_regression_results.json` — 5 dense regressions
-- `gates/scenes/physx_fixture_results.json` — footprint-oracle known answers
-- `gates/scenes/physx_scene_query_capabilities.json` — measured robot footprint
-
-**Scene admissibility**
-
-- `gates/scenes/{office,hospital,warehouse}_collision_coverage_audit.json`
-- `gates/scenes/hospital_blocker_contradiction_original.json` — frozen eight probes
-- `gates/scenes/hospital_contradiction_hypotheses.json` — predeclared hypotheses
-- `gates/scenes/hospital_isolation_diagnosis.json` — isolation diagnostic
-- `gates/scenes/RENDER_VALIDITY_MATRIX.md`
-- `gates/scenes/SCENE_MANIFEST.json`, `SCENE_ELIGIBILITY.json`
-
-**Pending rendered summaries.** The following are planned human-readable
-renderings of evidence that already exists in machine-readable form. They are
-named here as outstanding work, not cited as results:
-`COLLISION_COVERAGE_COMPARISON.md`, `COLLISION_PROBE_REGRESSION_MATRIX.md`,
-`DENSE_TARGETABILITY_REGRESSION_MATRIX.md`, `HOSPITAL_BLOCKER_CONTRADICTION.md`,
-`HOSPITAL_BLOCKER_ISOLATION_MATRIX.md`.
-
-Where an artefact has been superseded, the old evidence is retained and the
-change is recorded as an append-only amendment rather than silently overwritten.
-
-## Reproducibility rules
-
-1. Freeze expected answers before implementing the mechanism they test.
-2. Preserve original preregistrations; corrections are append-only amendments.
-3. A repair must be verified by an oracle independent of the discovery and repair
-   mechanism.
-4. A fixture passes only if the intended causal mechanism produced the expected
-   result.
-5. A metric is reported only when all required inputs exist and the evaluation
-   actually ran.
-6. Candidate-scene assets remain read-only during admissibility audits unless an
-   explicit asset-authoring decision is made.
-7. No training-data admission claim precedes the relevant scene, data and
-   experiment-design gates.
-
-## Researcher
-
-Frank Asante Van Laarhoven is a PhD researcher in Computer Science at Newcastle
-University, working on reproducible embodied navigation, camera-only stopping
-reliability, simulator-to-real validation and deployment-time safety for mobile
-robots. NavFM is maintained as a research evidence repository: results, failed
-hypotheses, contradictions and corrective iterations are preserved so later
-claims can be traced to the measurements that support them.
-
-## Primary reference implementation
-
-Reproduced against the published Visual Navigation Transformer implementation:
-<https://github.com/robodhruv/visualnav-transformer>
-
-- D. Shah et al., *GNM: A General Navigation Model to Drive Any Robot*, ICRA 2023.
-- D. Shah et al., *ViNT: A Foundation Model for Visual Navigation*, CoRL 2023.
-- A. Sridhar et al., *NoMaD: Goal Masked Diffusion Policies for Navigation and
-  Exploration*, ICRA 2024.
-
-## Citation
-
-This repository documents ongoing doctoral research. If citing the software or
-evidence repository before a formal paper release, use `CITATION.cff` and state
-the exact commit used.
+For arrival comparators and the novelty assessment, use the source-linked [literature review](docs/ARRIVAL_CONTRIBUTION_REVIEW_V1.md).

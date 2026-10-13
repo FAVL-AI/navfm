@@ -1,0 +1,532 @@
+{
+  "schema_version": 1,
+  "scope": "NONEXECUTABLE provenance specification; no plant candidate admitted",
+  "variant": "User-declared Yahboom ROSMASTER M3 Pro, Jetson Orin NX 16 GB; actual hardware configuration not inspected",
+  "coordinate_contract": "Simulation x-forward,y-left,z-up; official CAD units/frame/assembly scale not validated",
+  "physically_measured_values": 0,
+  "baseline_commit": "850e92a7d831be0e3b2d4cf4a12805671a356363",
+  "parameters": [
+    {
+      "parameter": "wheel_count",
+      "value": 4,
+      "unit": "count",
+      "frame": "robot",
+      "provenance_status": "MANUFACTURER",
+      "source": "S1",
+      "note": ""
+    },
+    {
+      "parameter": "nominal_wheel_outer_diameter",
+      "value": 0.08,
+      "unit": "m",
+      "frame": "wheel",
+      "provenance_status": "MANUFACTURER",
+      "source": "S1",
+      "note": "Nominal 80 mm product specification, not loaded rolling-radius measurement."
+    },
+    {
+      "parameter": "nominal_wheel_radius",
+      "value": 0.04,
+      "unit": "m",
+      "frame": "wheel",
+      "provenance_status": "MANUFACTURER",
+      "source": "S1",
+      "note": "Derived as nominal diameter/2; effective rolling radius remains unknown."
+    },
+    {
+      "parameter": "effective_loaded_rolling_radius",
+      "value": null,
+      "unit": "m",
+      "frame": "each wheel",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "wheelbase",
+      "value": 0.155,
+      "unit": "m",
+      "frame": "base_link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": "Legacy product-spec/VERIFIED comments are unsupported provenance."
+    },
+    {
+      "parameter": "track_width",
+      "value": 0.17,
+      "unit": "m",
+      "frame": "base_link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "wheel_width",
+      "value": 0.025,
+      "unit": "m",
+      "frame": "wheel",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "hub_centres_relative_base_link",
+      "value": [
+        [
+          0.0775,
+          0.085,
+          0
+        ],
+        [
+          0.0775,
+          -0.085,
+          0
+        ],
+        [
+          -0.0775,
+          0.085,
+          0
+        ],
+        [
+          -0.0775,
+          -0.085,
+          0
+        ]
+      ],
+      "unit": "m",
+      "frame": "base_link, FL/FR/RL/RR",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "hub_rotation_axes",
+      "value": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ],
+      "unit": "unit vector",
+      "frame": "local joint frame, FL/FR/RL/RR",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": "Observed simulation convention; not verified physical motor polarity."
+    },
+    {
+      "parameter": "roller_count",
+      "value": null,
+      "unit": "count",
+      "frame": "each wheel",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "roller_profile",
+      "value": null,
+      "unit": "geometry",
+      "frame": "roller local",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "roller_radius",
+      "value": null,
+      "unit": "m",
+      "frame": "roller local",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "roller_axes",
+      "value": null,
+      "unit": "unit vector",
+      "frame": "each hub/roller local",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "roller_placements",
+      "value": null,
+      "unit": "m/rad",
+      "frame": "each hub/roller local",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "wheel_handedness",
+      "value": null,
+      "unit": "classification",
+      "frame": "FL/FR/RL/RR",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": "Official CAD available but not decoded/validated."
+    },
+    {
+      "parameter": "rear_pendulum_present",
+      "value": true,
+      "unit": "boolean",
+      "frame": "rear chassis",
+      "provenance_status": "MANUFACTURER",
+      "source": "S1",
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_pivot",
+      "value": null,
+      "unit": "m/rad",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_linkage",
+      "value": null,
+      "unit": "geometry",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_travel",
+      "value": null,
+      "unit": "rad",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_stiffness",
+      "value": null,
+      "unit": "N m/rad",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_damping",
+      "value": null,
+      "unit": "N m s/rad",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "rear_pendulum_friction",
+      "value": null,
+      "unit": "N m",
+      "frame": "rear chassis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "base_box_dimensions",
+      "value": [
+        0.29,
+        0.235,
+        0.08
+      ],
+      "unit": "m",
+      "frame": "base_link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "base_component_mass",
+      "value": 1.8,
+      "unit": "kg",
+      "frame": "base_link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "wheel_component_mass",
+      "value": [
+        0.15,
+        0.15,
+        0.15,
+        0.15
+      ],
+      "unit": "kg",
+      "frame": "FL/FR/RL/RR",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "other_URDF_component_masses",
+      "value": {
+        "lidar_link": 0.17,
+        "camera_link": 0.05,
+        "top_arm_mount": 0.08,
+        "imu_link": 0.001
+      },
+      "unit": "kg",
+      "frame": "named link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": "These do not establish complete battery/arm/sensor payload masses."
+    },
+    {
+      "parameter": "base_COM",
+      "value": [
+        0,
+        0,
+        0.04
+      ],
+      "unit": "m",
+      "frame": "base_link",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "wheel_COM",
+      "value": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "unit": "m",
+      "frame": "each wheel local",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "base_inertia_diagonal",
+      "value": [
+        0.009,
+        0.014,
+        0.021
+      ],
+      "unit": "kg m^2",
+      "frame": "base_link inertial frame",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": ""
+    },
+    {
+      "parameter": "wheel_inertia_diagonal",
+      "value": [
+        9.4e-05,
+        0.000173,
+        9.4e-05
+      ],
+      "unit": "kg m^2",
+      "frame": "wheel inertial frame",
+      "provenance_status": "ASSUMED",
+      "source": "S5",
+      "note": "Legacy .048 m cylinder values retained after radius changed to .04 m; not measured mecanum inertias."
+    },
+    {
+      "parameter": "loaded_total_mass",
+      "value": null,
+      "unit": "kg",
+      "frame": "complete configured robot",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "loaded_COM",
+      "value": null,
+      "unit": "m",
+      "frame": "base_link",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "loaded_inertia",
+      "value": null,
+      "unit": "kg m^2",
+      "frame": "declared inertial frame",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "floor_tire_static_friction",
+      "value": null,
+      "unit": "dimensionless",
+      "frame": "declared contact pair",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "floor_tire_dynamic_friction",
+      "value": null,
+      "unit": "dimensionless",
+      "frame": "declared contact pair",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "contact_restitution",
+      "value": null,
+      "unit": "dimensionless",
+      "frame": "declared contact pair",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "roller_bearing_resistance",
+      "value": null,
+      "unit": "N m",
+      "frame": "roller axis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "wheel_rolling_resistance",
+      "value": null,
+      "unit": "N m",
+      "frame": "hub axis",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "physical_motor_polarity_mapping",
+      "value": null,
+      "unit": "mapping",
+      "frame": "FL/FR/RL/RR",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "motor_torque_speed_limit",
+      "value": null,
+      "unit": "curve/pairs: torque [N m], angular speed [rad/s]",
+      "frame": "motor shaft",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "motor_command_latency",
+      "value": null,
+      "unit": "s",
+      "frame": "command to actuation",
+      "provenance_status": "UNKNOWN",
+      "source": null,
+      "note": ""
+    },
+    {
+      "parameter": "active_proxy_colliders",
+      "value": {
+        "type": "sphere",
+        "count": 4,
+        "radius_m": 0.04
+      },
+      "unit": {
+        "type": "enum",
+        "count": "count",
+        "radius_m": "m"
+      },
+      "frame": "wheel local",
+      "provenance_status": "ASSUMED",
+      "source": "S7",
+      "note": "Runtime construction is observed; physical roller equivalence is not."
+    },
+    {
+      "parameter": "simulation_drive",
+      "value": {
+        "type": "acceleration",
+        "stiffness": 0,
+        "damping": 1000,
+        "max_force": 3.4028234663852886e+38
+      },
+      "unit": {
+        "type": "enum",
+        "stiffness": "s^-2, acceleration-drive gain",
+        "damping": "s^-1, acceleration-drive gain",
+        "max_force": "API angular force-limit value; not a calibrated motor torque"
+      },
+      "frame": "wheel joint Y",
+      "provenance_status": "ASSUMED",
+      "source": "S6/S7",
+      "note": "Chosen simulation drive, not measured physical actuator model."
+    },
+    {
+      "parameter": "simulation_solver",
+      "value": {
+        "type": "TGS",
+        "position_iterations": 32,
+        "velocity_iterations": 1,
+        "physics_dt_s": 0.008333333333333333
+      },
+      "unit": {
+        "type": "enum",
+        "position_iterations": "count",
+        "velocity_iterations": "count",
+        "physics_dt_s": "s"
+      },
+      "frame": "physics scene",
+      "provenance_status": "ASSUMED",
+      "source": "S7",
+      "note": "Preserved original numerical contract, not a physical parameter."
+    }
+  ],
+  "sources": {
+    "S1": "Official product page and pinned official repository README",
+    "S2": "Official repository/tutor annex links",
+    "S3": "Manufacturer-distributed ROSMASTER-M3Pro.x_t complete file, geometry unextracted",
+    "S4": "Manufacturer-hosted ros2_ws.zip; Muto models excluded as unverified M3 Pro variant",
+    "S5": "Existing provisional local URDF; not manufacturer geometry",
+    "S6": "Existing imported physics USD; immutable assumed asset",
+    "S7": "Frozen qualification builder and recorded diagnostic at159053c"
+  }
+}

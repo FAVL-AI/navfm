@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_SYNTHETIC_COMPONENT_PROTOCOL_V1",
+  "scope": "SYNTHETIC_COMPONENT_QUALIFICATION_ONLY",
+  "navigation_authorized": false,
+  "sources": {
+    "placenav": {
+      "belief": {
+        "repo": "lasuomela/PlaceNav",
+        "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+        "path": "src/placenav/place_recognition/bayesian_querier.py",
+        "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/place_recognition/bayesian_querier.py",
+        "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/src/placenav/place_recognition/bayesian_querier.py",
+        "bytes": 4339,
+        "sha256": "633313be0665694d7ac5e95f5f6965e624245c83a44693bf1df4cfcc5569f5bc",
+        "git_blob_sha1": "3fecb1a19128a672bce73fe8def2a7468969787d",
+        "api_git_blob_sha1": "3fecb1a19128a672bce73fe8def2a7468969787d",
+        "git_blob_verified": true
+      },
+      "terminal": {
+        "repo": "lasuomela/PlaceNav",
+        "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+        "path": "src/placenav/navigate.py",
+        "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/navigate.py",
+        "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/src/placenav/navigate.py",
+        "bytes": 15112,
+        "sha256": "9d026407dd9eb05bcf802794a7ff69e62a5d0a06d3a3a3d5ec18d8cd2c3c94b6",
+        "git_blob_sha1": "f98da5d1b6de9437cf720630a6e0c49354364c10",
+        "api_git_blob_sha1": "f98da5d1b6de9437cf720630a6e0c49354364c10",
+        "git_blob_verified": true
+      }
+    },
+    "ulvn": {
+      "belief": {
+        "repo": "hren20/ulvn",
+        "commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+        "path": "BPL & BASS/bass.py",
+        "url": "https://raw.githubusercontent.com/hren20/ulvn/e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5/BPL%20%26%20BASS/bass.py",
+        "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/BPL & BASS/bass.py",
+        "bytes": 37237,
+        "sha256": "1dfaa83a55c16741a818c30c9cbb9c9b1839e8fc868b6493e23bd0c9322601c3",
+        "git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+        "api_git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+        "git_blob_verified": true
+      },
+      "terminal": {
+        "repo": "hren20/ulvn",
+        "commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+        "path": "BPL & BASS/bass.py",
+        "url": "https://raw.githubusercontent.com/hren20/ulvn/e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5/BPL%20%26%20BASS/bass.py",
+        "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/BPL & BASS/bass.py",
+        "bytes": 37237,
+        "sha256": "1dfaa83a55c16741a818c30c9cbb9c9b1839e8fc868b6493e23bd0c9322601c3",
+        "git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+        "api_git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+        "git_blob_verified": true
+      }
+    }
+  },
+  "native_constants": {
+    "placenav": {
+      "delta": 10,
+      "window_lower": -1,
+      "window_upper": 2,
+      "source": "pinned_released_parser_defaults_forwarded_in_navigate.py"
+    },
+    "ulvn": {
+      "delta": 5,
+      "max_steps": 3,
+      "n_ahead": 2,
+      "source": "pinned_ROS_bass.py_not_different_ulvn_core"
+    }
+  },
+  "limits": {
+    "max_reference_nodes": 32,
+    "max_descriptor_width": 32,
+    "max_observations": 16,
+    "probe_wall_seconds": 30,
+    "probe_GPU_calls": 0,
+    "probe_total_native_match_calls_cap": 192,
+    "probe_output_bytes_cap": 131072,
+    "parent_total_wall_seconds": 35,
+    "probe_cpu_seconds": 30
+  },
+  "descriptor_pipeline": "NOT_QUALIFIED_SYNTHETIC_IO_ONLY",
+  "native_full_program_execution": "NOT_RUN_AST_DEFINITIONS_ONLY",
+  "controller_STOP": "BLOCKED_EXPLICIT_ADAPTATION",
+  "graph_information": "same_weighted_reference_graph_and_order_available_to_all_arms_no_live_pose",
+  "cad_motion_contact": "BLOCKED",
+  "test_geometry": "UNACCESSED_UNCHANGED",
+  "fixed_navigator_checkpoint_metadata": [
+    {
+      "role": "selected",
+      "seed": 0,
+      "path": "/home/favl/navfm-training-evidence/native-multiseed-v1-nomad-seed0-01/nomad/update_00236/deployment_weights.pth",
+      "sha256": "7a6eaa288071a4925f25180385c4cf32430894e068017358d75528d7aaa89ba9"
+    },
+    {
+      "role": "selected",
+      "seed": 11,
+      "path": "/home/favl/navfm-training-evidence/native-multiseed-v1-nomad-seed11-01/nomad/update_00236/deployment_weights.pth",
+      "sha256": "8bb36d3ca1f206bc93635f28358ef948370e462731d2b67b6e15416d6b7872d7"
+    },
+    {
+      "role": "selected",
+      "seed": 22,
+      "path": "/home/favl/navfm-training-evidence/native-multiseed-v1-nomad-seed22-01/nomad/update_01180/deployment_weights.pth",
+      "sha256": "4d5e534ecd8056dde1679399702d20225b710811e6a326b5638fbf436e76c723"
+    }
+  ],
+  "navigator_weights_inference": "NOT_LOADED_NOT_RUN",
+  "provenance_auxiliary": [
+    {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/parser.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/parser.py",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/src/placenav/parser.py",
+      "bytes": 4793,
+      "sha256": "b7d35f0d5e94e2827d0364416eeeed4c7dd4d3fc819367643cedde6cdc45fbf2",
+      "git_blob_sha1": "ad7944bbb48f159f3d88802262f4f96a9839e81e",
+      "api_git_blob_sha1": "ad7944bbb48f159f3d88802262f4f96a9839e81e",
+      "git_blob_verified": true
+    },
+    {
+      "repo": "hren20/ulvn",
+      "commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+      "path": "BPL & BASS/local_planner.py",
+      "url": "https://raw.githubusercontent.com/hren20/ulvn/e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5/BPL%20%26%20BASS/local_planner.py",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/BPL & BASS/local_planner.py",
+      "bytes": 9846,
+      "sha256": "dc6702efe1ef30719bdeecb50a8fd1afe2718ba81282f0849c78d89898a1a6c9",
+      "git_blob_sha1": "2d32cdc7fe24c23186eb8ef97757ab28a7ebc0f3",
+      "api_git_blob_sha1": "2d32cdc7fe24c23186eb8ef97757ab28a7ebc0f3",
+      "git_blob_verified": true
+    },
+    {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/LICENSE",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/LICENSE",
+      "bytes": 1130,
+      "sha256": "02faa77c68f5b023e0fd103176f2009aae67895d12b44a84672ca18508dcb094",
+      "git_blob_sha1": "e8df92aed5b1f36f0db3bd0a7e59a397a6b9806e",
+      "api_git_blob_sha1": "e8df92aed5b1f36f0db3bd0a7e59a397a6b9806e",
+      "git_blob_verified": true
+    },
+    {
+      "repo": "hren20/ulvn",
+      "commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/hren20/ulvn/e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5/LICENSE",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/LICENSE",
+      "bytes": 1069,
+      "sha256": "ab7d633a229fb5d79075cd643f18f99a426bfd4b6caa2f6d4c34ad3d2088066c",
+      "git_blob_sha1": "eefc932f717dfce8b55048db0a93d8b23c56f8a6",
+      "api_git_blob_sha1": "eefc932f717dfce8b55048db0a93d8b23c56f8a6",
+      "git_blob_verified": true
+    },
+    {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/config/robots.yaml",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/config/robots.yaml",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/src/config/robots.yaml",
+      "bytes": 536,
+      "sha256": "5279bfa5efa19e05551b9fe1bb114f13070077b5bad23f93fff513363b3af80c",
+      "git_blob_sha1": "a79d7c7bfbbec63bf8061cd6c2def0d7e3248cc5",
+      "api_git_blob_sha1": "a79d7c7bfbbec63bf8061cd6c2def0d7e3248cc5",
+      "git_blob_verified": true
+    },
+    {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/pd_controller.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/pd_controller.py",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/placenav/src/placenav/pd_controller.py",
+      "bytes": 4034,
+      "sha256": "d873d3bee08e9601ae6fc7d87a226d2ffbad60a764e86bebc924229e30fc0187",
+      "git_blob_sha1": "b829ee90ddcc6dc1961ad052b360a5babc16eafc",
+      "api_git_blob_sha1": "b829ee90ddcc6dc1961ad052b360a5babc16eafc",
+      "git_blob_verified": true
+    }
+  ],
+  "licensing": "MIT upstream notices preserved externally; no native source vendored",
+  "checkpoint_hash_check": "ALL_THREE_PRIOR_SELECTED_DIGESTS_MATCH_HASH_ONLY_NO_DESERIALIZATION",
+  "qualification_owner": "explicit_frozen_technical_probe_with_authenticated_external_source_cache_not_historical_archive_CI_owner",
+  "native_cadence_hz": {
+    "placenav": 5,
+    "ulvn": 30
+  },
+  "adapter_cadence_hz": 4,
+  "descriptor_domain": "native_float32_or_float64_preserved_query_and_reference_same_dtype_normalized_finite_no_conversion",
+  "None_subgoal": "stored_latch_preserved_no_native_publication_no_STOP_proposal",
+  "normalization_guard": "no_renormalization;sum_tolerance=max(1e-12,8*dtype_eps*N);oracle_parity_exact_same_dtype"
+}

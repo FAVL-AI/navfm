@@ -1,0 +1,42 @@
+{
+  "version": "RAVEL_FIXED_GRAPH_CONTINUATION_V2",
+  "status": "FROZEN_NATIVE_FIXED_GRAPH_CONTINUATION_V2",
+  "qualified_freeze": "63b482203f24cbd6cfda707073e2763ee6851b4a",
+  "production_code": {
+    "path": "/home/favl/projects/navfm-research-planning/scripts/ravel_fixed_graph_v1.py",
+    "sha256": "eb6c5da17d4366c26a833a3b54641b54a413e540d88c617c8e3ffddeb6e88d94"
+  },
+  "graph_config": {
+    "path": "/home/favl/projects/navfm-research-planning/configs/eval/ravel_fixed_graph_v1.json",
+    "sha256": "651bfafc9dd70d3697fc41e14f3b873adc969ba1143a2f225ae6b136b8af61f8"
+  },
+  "canonical_policy": {
+    "path": "/home/favl/projects/navfm-research-planning/configs/eval/ravel_lightglue_transport_v2.json",
+    "sha256": "8478c7d92453199edf79bc649f6e434f2dc1e17bcc83cbeab256354946cc8a52"
+  },
+  "CPU_validation_config": {
+    "path": "/home/favl/projects/navfm-research-planning/configs/eval/ravel_checkpoint_validation_v2.json",
+    "sha256": "b443c0a88f8df05cc836aa6faf774091ffa33b8756fc45007e03f607f59325f0"
+  },
+  "proof": {
+    "result": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-validation-v2-01/result.json",
+      "sha256": "1bbf596f07ca3e6d85be47eececbd2a8f39b9b042c2974d3795350c4786b5426"
+    },
+    "parent_status": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-validation-v2-01/parent_status.json",
+      "sha256": "2296f43f68ed3d167dab1e747d347f0fc70da473d0fcb1c538f0691c2e9fde6b"
+    },
+    "attempt": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-validation-v2-01/attempt.json",
+      "sha256": "41e3a882387c5640e452e88d5d6e8137b23331c6cb060beed8c83eacc37f10b4"
+    },
+    "partial": {
+      "path": "/home/favl/navfm-runtime-evidence/ravel-checkpoint-validation-v2-01/partial.jsonl",
+      "sha256": "08bd89b95b7dd87a5867b7612287951a0d96260af2cc50dade6a997592d88b3e"
+    }
+  },
+  "fresh_result_directory": "/home/favl/navfm-runtime-evidence/ravel-fixed-graph-v3-01",
+  "scope": "Consume existing constructor proof only; same native graph path/modes/input/resource budget; no extra CPU constructor validation or encoder repeat.",
+  "launcher_lifecycle_version": "IMMUTABLE_RECORD_LIFECYCLE_V3"
+}

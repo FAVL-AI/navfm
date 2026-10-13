@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_RECORDED_RGB_REFERENCE_MOCK_PROTOCOL_V1",
+  "navigation_authorized": false,
+  "threshold_fitting": false,
+  "graph_status": "FIXED_CHAIN_ADAPTATION_NATIVE_RAVEL_BLOCKED",
+  "trajectory": "prospective_v1_layout0_route0",
+  "admission": {
+    "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/admission.json",
+    "sha256": "a2ff0041d89c5b1d84bb65c10c05e317a3037642efdd62cd8b25eed86a0177a8"
+  },
+  "references": [
+    {
+      "frame": 0,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/0.jpg",
+      "sha256": "b702d640f2100f15ab5b1dd75ed5237862d8957ee002f087ec7639eccee62f47"
+    },
+    {
+      "frame": 4,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/4.jpg",
+      "sha256": "43daa7f910813a78abbfec7405a683e551968c31e0a10780fb623ce898eefae3"
+    },
+    {
+      "frame": 8,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/8.jpg",
+      "sha256": "6a599b87e2c48afcddcc430450109d32f3cad4f50088eecf73492a19d4738c0f"
+    },
+    {
+      "frame": 12,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/12.jpg",
+      "sha256": "6e9ee98ceee873b148d244e9c3fa2422a1a6aef44a85928a6e51260a49c62b68"
+    },
+    {
+      "frame": 16,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/16.jpg",
+      "sha256": "c44d6bcc0ad03141b873f433b26687c5341cb5ea20395cb58befa9223386327a"
+    },
+    {
+      "frame": 20,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/20.jpg",
+      "sha256": "3226e31c1d1d459321ae9b46de5d5a6a5b6ee06b8f23e1c60bc3cccaa74c0ccf"
+    },
+    {
+      "frame": 24,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/24.jpg",
+      "sha256": "f30de4deaac4770fa2b2b841b45733167feb4a0aa1c30022409c16551addf695"
+    },
+    {
+      "frame": 28,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/28.jpg",
+      "sha256": "3ba22b7868ec666b9121b7fec7ffe4bf47bcd5fa1bf05fecd9790c00ebcaa1ea"
+    }
+  ],
+  "queries": [
+    {
+      "frame": 1,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/1.jpg",
+      "sha256": "7abf9e4115517b1b66d8eb80b8e7fd1183a9f3d4eba1bdb2bd54457f4a8d236a"
+    },
+    {
+      "frame": 5,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/5.jpg",
+      "sha256": "7a7dbd9005f7bf31b225463abb67469eb54e6f2e1320a2b6cc218c0f529c2719"
+    },
+    {
+      "frame": 9,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/9.jpg",
+      "sha256": "37ab89c36bdd1525f8a647e199cda995505dd38a56fd18e61ea5046b567010c9"
+    },
+    {
+      "frame": 13,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/13.jpg",
+      "sha256": "e3bed714386328578be15dbe016a2bdfc6e51569cff314062b40b2092d9ec9de"
+    },
+    {
+      "frame": 17,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/17.jpg",
+      "sha256": "c697170b00ddda34c33f35e2f9296cfef40583c8404a2b8fc9aa5ae0c4636c0d"
+    },
+    {
+      "frame": 21,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/21.jpg",
+      "sha256": "4dfaf57ce2d4fe6d59f4def0bad2646b22026b28b1d706cba6b4d9a672c71db8"
+    },
+    {
+      "frame": 25,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/25.jpg",
+      "sha256": "5d3f2adc692db7ba85015696e085e66272d4007335f98920457944e6441ab295"
+    },
+    {
+      "frame": 29,
+      "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data/prospective_v1_layout0_route0/29.jpg",
+      "sha256": "a06e41b7ed2605c4ad3759b62df0e857b1c90509115e750c5764b0f4bd4b2097"
+    }
+  ],
+  "max_encoder_forwards": 32,
+  "GPU_reserved_wall_cap_s": 120,
+  "wall_cap_s": 300,
+  "raw_output_byte_cap": 16777216,
+  "runtime": {
+    "python": "/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python",
+    "torch": "2.7.0+cu128",
+    "torchvision": "0.22.0+cu128",
+    "cv2": "4.10.0",
+    "numpy": "1.26.4",
+    "pillow": "11.3.0",
+    "safetensors": "0.7.0"
+  },
+  "weights": {
+    "placenav": {
+      "path": "/home/favl/navfm-source-evidence/recorded-rgb-assets-20261012-01/efficientnet_85x85.pth",
+      "sha256": "36751d751cf70820e8ea0d1da7873e58194c8e35cfc29ad323ba58b50d021867",
+      "bytes": 18952687,
+      "provenance": "RETRIEVED_UNCERTIFIED_HASH"
+    },
+    "ulvn": {
+      "path": "/home/favl/navfm-source-evidence/recorded-rgb-assets-20261012-01/model.safetensors",
+      "sha256": "d4f9f2bcb60018f91eb6a8e061ed054fd55654e10c2569cf13841ea986ffb4f8",
+      "bytes": 914577436,
+      "provenance": "VERIFIED_EXPECTED_LFS_HASH"
+    }
+  },
+  "encoder_sources": {
+    "cos_layers": {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/models/pr_models/cosplace_model/layers.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/models/pr_models/cosplace_model/layers.py",
+      "local_path": "/home/favl/navfm-source-evidence/recorded-rgb-contracts-20261012-01/placenav/src/placenav/models/pr_models/cosplace_model/layers.py",
+      "bytes": 1018,
+      "sha256": "43b2ce827ad5a40f98988f07e9f310cf941f2f285673a39a1fb5f653648e0317",
+      "git_blob_sha1": "cc2513d2da73c7b95c46c9548cdb8eaf8a30a171",
+      "git_blob_verified": true
+    },
+    "cos_network": {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/models/pr_models/cosplace_model/cosplace_network.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/models/pr_models/cosplace_model/cosplace_network.py",
+      "local_path": "/home/favl/navfm-source-evidence/recorded-rgb-contracts-20261012-01/placenav/src/placenav/models/pr_models/cosplace_model/cosplace_network.py",
+      "bytes": 5182,
+      "sha256": "d8632566492926030dc87954aeb4ce5acc6353ea1b9c7fd94d31c29c56d003d7",
+      "git_blob_sha1": "1d6511825c0d563d00d85693825554c54e51463a",
+      "git_blob_verified": true
+    },
+    "cos_base": {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/models/pr_models/base_model.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/models/pr_models/base_model.py",
+      "local_path": "/home/favl/navfm-source-evidence/recorded-rgb-contracts-20261012-01/placenav/src/placenav/models/pr_models/base_model.py",
+      "bytes": 1681,
+      "sha256": "591c318c4da30dcbc2ece1e5921be1eeac7b73d82419d14afd785c54c62dec43",
+      "git_blob_sha1": "2ca243fbab2b7794eac9cb57e2c1407094b9c6f6",
+      "git_blob_verified": true
+    },
+    "cos_wrapper": {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/models/pr_models/cosplace.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/models/pr_models/cosplace.py",
+      "local_path": "/home/favl/navfm-source-evidence/recorded-rgb-contracts-20261012-01/placenav/src/placenav/models/pr_models/cosplace.py",
+      "bytes": 884,
+      "sha256": "738c153fdcefe60eb8cb432db8b9bbfed13f31721ded1bab06a520f13f020043",
+      "git_blob_sha1": "b9fb85b752b74664fc01240a75e5cb499bc3804e",
+      "git_blob_verified": true
+    },
+    "cos_utils": {
+      "repo": "lasuomela/PlaceNav",
+      "commit": "1720be0146355999ce669d92a5655f02d80d6a45",
+      "path": "src/placenav/utils.py",
+      "url": "https://raw.githubusercontent.com/lasuomela/PlaceNav/1720be0146355999ce669d92a5655f02d80d6a45/src/placenav/utils.py",
+      "local_path": "/home/favl/navfm-source-evidence/recorded-rgb-contracts-20261012-01/placenav/src/placenav/utils.py",
+      "bytes": 4648,
+      "sha256": "62fa8175a9984563f4df3ce076f02eb4778f59f1ce39c556953f105e8bc96615",
+      "git_blob_sha1": "fe282dcd0b56556e2cae5bd0b1b437de635362d0",
+      "git_blob_verified": true
+    },
+    "megaloc": {
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/dependency_source/megaloc-5fe0dd697c4a70ba3e23607f6716ab3c606b16db/megaloc_model.py",
+      "sha256": "e3a66ae823abbbbc5e7975c649419a33036400eaa9fa5a955dd97eaa37f46c75",
+      "commit": "5fe0dd697c4a70ba3e23607f6716ab3c606b16db"
+    },
+    "ulvn_ros": {
+      "repo": "hren20/ulvn",
+      "commit": "e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5",
+      "path": "BPL & BASS/bass.py",
+      "url": "https://raw.githubusercontent.com/hren20/ulvn/e2f47fe3e2757a1ebdc041f4364dddd26a19f9f5/BPL%20%26%20BASS/bass.py",
+      "local_path": "/home/favl/navfm-source-evidence/stopping-comparators-20261012-01/ulvn/BPL & BASS/bass.py",
+      "bytes": 37237,
+      "sha256": "1dfaa83a55c16741a818c30c9cbb9c9b1839e8fc868b6493e23bd0c9322601c3",
+      "git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+      "api_git_blob_sha1": "592c1206c94cf9e8a4c8f75a13c1c3896513a43a",
+      "git_blob_verified": true
+    }
+  },
+  "recorded_clock": "processed_admitted_RGB_manifest_has_frame_order_no_per_image_timestamps;prior_nominal_capture_spacing_about_one_third_s_is_not_relabelled;virtual4Hz_adapter_clock_separate",
+  "goal": "reference_frame28 identity only_no_groundtruth_labels;cached_ULVN_reference_feature_plus_native_MyVPR_normalization_plus_native_BASS_normalization",
+  "unsupported_goal": "REJECT_NO_FORCED_NODE",
+  "encoding_determinism": "NOT_TESTED_RESET_REPLAY_CACHES_DESCRIPTORS",
+  "controller_STOP": "MOCK_ONLY_LATCH_CANCEL_RESET_NOT_NATIVE_ULVN_ACTUATOR",
+  "dataset_root": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/data",
+  "finalization": {
+    "path": "/home/favl/navfm-training-evidence/prospective-collection-v2-01/finalization_complete.json",
+    "sha256": "402c3e6f8bb7e6a6ee30fea1cb68c339954a68e74e7361523d377d06beec734d"
+  },
+  "network_guard": "worker_Python_socket_connect_and_DNS_audit_refusal;not_OS_network_sandbox;native_hub_download_constructors_not_called",
+  "GPU_cap_enforcement": "entire_worker_kill_wait_deadline120s_including_loading_and_CPUwork_conservative_reserved_GPU_time",
+  "raw_output_cap_enforcement": "parent_acceptance_cap_NOT_filesystem_quota;fixed_descriptor_shape_limits_nominal_payload"
+}

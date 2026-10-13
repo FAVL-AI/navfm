@@ -1,0 +1,27 @@
+# Measured corrective qualification v6
+
+REVIEWED, NOT RUN. Preserve every earlier freeze and failure. Two independently admitted once-only qualifications: native IMU controller first, 120-second wall watchdog/1200 ticks; NoMaD alone, 150 seconds. No extra simulator preflight: within the same frozen IMU process, initialization integrity and the final two zero-command warmup readings must pass before original tracking commands. No automatic retry, training, live navigation, held-out/illumination or robot episode.
+
+## Measured initialization failure and repair
+
+Diagnostic source 2b33a88 recorded [-3,0,.06]/identity on a valid physics handle after teleport, [0,0,0]/identity through USD fallback after STOP, and approximately [-1.939e-6,-6.974e-9,5.632e-9] on restarted physics. The finite predicate passed, XY failed and yaw passed. This is failure to retain the selected initialized pose across backend/reset transition, not physical traversal or a sensor-performance measurement.
+
+V6 captures original USD prim paths and resolved physical root paths. While STOPPED, a fresh XFormPrim authors the actual single resolved rigid-body root to [-3,0,robot.config.spawn_height=.06]/identity; readback becomes the explicit initialization reference. Installed XFormPrim set/get_world_poses accept usd=True (lines711/611), and reset_xform_properties=False avoids constructor normalization. The original pre-STOP teleport zeroes root velocities; after PLAY/articulation initialization, root velocity is explicitly initialized to zero. Full poses/backend/clock states and finite/XY/yaw predicates remain fsynced before the unchanged 1e-6 m/rad guard. Ground truth is used only to initialize and evaluate, never as gyro/controller feedback. The existing 120 zero-command startup ticks remain fixed; raw readings are preserved and ticks 118/119 must be valid, finite, fresh and increasing before active commands. Original tracking commands, gains, limits, stop and 120-second watchdog are unchanged. Native readiness/tracking remain unqualified until this attempt passes.
+
+## Completed import inventory and finite wrapper closure
+
+CPU-only source f257dee completed its unchanged 60-second cap: 1266 selected objects, no import errors, 1279 durable progress records. Three backend wrappers were unclassified: CudnnModule, MkldnnModule and QuantizedEngine. Actual VF class methods matched pinned torch/_VF.py, exported identity matched, and vf was the exact authenticated _C._VariableFunctions member. Legacy torch.ops/classes name exemptions were recorded but did not authenticate their code. Prior 60-second v4 timeout remains unchanged; the linear audit established completion after indexing once, not its previous exact blocking phase.
+
+V6 admits only the six observed wrapper names/classes. It compiles authenticated source to code objects without executing module/class bodies, compares actual class and inherited methods/property/descriptor methods, requires exact exported/class-definition/wrapped-original globals identity, and binds descriptor getters/setters and VF underlying member to the authenticated _C binary. Backend PropModule and ContextProp inheritance are included. Ops/classes require source-defined instance/class identity; no legacy name-only bypass remains. Unknown wrapper, foreign binary, changed method, wrong original/export and wrong descriptor reject. Manifest map/file digests are cached within one pass only; pre-native and finally post-native checks each create fresh maps/caches and the ledger hash-binds complete provenance. No ambient path or package upgrade.
+
+The actual CPU audit and initialization trace, plus installed XFormPrim source, are input-hash pinned in both configurations. Raw records remain external. CPU coverage is the recorded imports only; native pre/post attestation still rejects any new unsupported shape. Runtime source/checkpoint/geometry/sampling settings remain unchanged. Native compatibility is not navigation evidence.
+
+## Commands after reviewed named freeze
+
+Use /home/favl/navfm-runtime-evidence/pr2-ci-hermetic-20261010-02/venv/bin/python scripts/run_imu_controller_v6.py --freeze EXACT_COMMIT --out /home/favl/navfm-runtime-evidence/imu-controller-v6-01. After separate continuation, use the same interpreter with scripts/run_nomad_compatibility_v6.py --freeze EXACT_COMMIT --out /home/favl/navfm-runtime-evidence/nomad-compatibility-v6-01. Any integrity failure halts its contract. No further process is implied.
+
+## Exact-slot review and import-only admission
+
+The final pure checks passed all 11 controls, including rejection of a valid binary member in the wrong descriptor getter slot and an authentic method substituted into an undeclared class attribute. Class/MRO, method/property slots and descriptor member names are bound to authenticated source definitions. The first test invocation failed during ambient ROS plugin loading (missing lark), before product tests; the clean environment invocation passed.
+
+Before either native qualification, run the existing all-object CPU audit through the v6 guard, once under its unchanged 60-second cap with CUDA hidden and no model or simulator construction: `scripts/run_dependency_import_audit_v6.py --freeze EXACT_COMMIT --stage imports --out /home/favl/navfm-runtime-evidence/dependency-import-audit-v6-01` using the same parent interpreter. Every loaded selected object and rejection is retained. An import/audit failure stops native NoMaD admission; no retry is implied.
