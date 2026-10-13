@@ -7,7 +7,7 @@ The reduced startup-and-close path progressed through all worker stages:
 | Event | Seconds from first child event |
 |---|---:|
 | Worker entry | 0.020 |
-| `SimulationApp` constructor returned | 0.025 |
+| `IsaacApp` wrapper constructor returned | 0.025 |
 | `start()` returned | 5.756 |
 | `close()` returned | 35.810 |
 | Final report persisted | 35.819 |
@@ -17,6 +17,10 @@ The reduced startup-and-close path progressed through all worker stages:
 | Child reaped, return code `−15` | 60.167 |
 
 The process therefore remained alive for about 24.18 seconds after worker main returned, until deadline cleanup. No diagnostic signals, debugger, background sampler, scene, or camera were used. The observation reproduces a natural-exit problem in this reduced startup-and-close process, but does not identify whether Python shutdown or native teardown kept it alive. It does not establish why the earlier camera run timed out. The 30.05-second `close()` duration is recorded separately from the post-worker-return interval.
+
+**Event-label clarification:** the 0.025-second event is the lightweight project `IsaacApp.__init__` wrapper return. It is not the SDK `SimulationApp.__init__` return. The SDK constructor is called inside `IsaacApp.start()`; this run did not bracket that call separately. This is a documentation correction only. The external event stream and its hash are unchanged.
+
+**Stage-scope clarification:** the worker authored no scene or camera. The pinned SDK defaults `create_new_stage=True`, so `SimulationApp` creates its default empty stage during startup. No task-specific USD scene or robot was loaded.
 
 The worker's final report records startup and close returning, no scene/camera/frames, and SDK cleanup as `NOT_INDEPENDENTLY_OBSERVED`. The supervisor terminal record and separate registry terminal record agree: `PROCESS_ALIVE_AT_CHILD_DEADLINE`, `timed_out=true`, `child_reaped=true`, `dataset_admission=false`. The two prior camera qualification FAILs and the signal-interrupted v1 diagnostic remain unchanged. No retry or camera qualification followed.
 
