@@ -1,0 +1,58 @@
+{
+  "evidence": {
+    "attempt": "attempt-01",
+    "registry": "/home/favl/navfm-runtime-evidence/static-arrival-post-close-diagnostic-v2/registry",
+    "root": "/home/favl/navfm-runtime-evidence/static-arrival-post-close-diagnostic-v2"
+  },
+  "observation": {
+    "background_sampler": false,
+    "capture_frames": false,
+    "child_deadline_seconds": 60.0,
+    "construct_camera": false,
+    "construct_scene": false,
+    "dataset_admission": false,
+    "debugger_attachment": false,
+    "lifecycle_markers": [
+      "worker_entry",
+      "application_constructor_enter_return",
+      "application_start_enter_return",
+      "close_enter_return",
+      "final_report_write_enter_return",
+      "worker_main_returned"
+    ],
+    "parent_exit_observation": "passive_poll_only",
+    "termination_reap_reserve_seconds": 10.0,
+    "trace_signals": false
+  },
+  "purpose": "startup_and_close_natural_exit_observation_only",
+  "runtime": {
+    "child_hub_mode": "disabled",
+    "child_working_directory": "/home/favl/projects/navfm-research-planning",
+    "fast_shutdown": false,
+    "isaacsim_version": "5.1.0.0",
+    "python": "/home/favl/navfm-training-evidence/native-dependency-closure-v2/venv/bin/python",
+    "python_sha256": "2cfeb15bca9b4483886e787a5a0f7b86f44e1644ac45b003957e2211ac1c748a",
+    "python_version": "3.11.15",
+    "simulation_app_source": "/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py",
+    "simulation_app_source_sha256": "7cbaa6f00e935a6f14bf1c28ec0db089fd924e931f3b0deee07a822f9b7d0090"
+  },
+  "schema": "static_arrival_post_close_signal_free_v2",
+  "source_bindings": [
+    {
+      "path": "scripts/static_arrival_post_close_signal_free_v2.py",
+      "sha256": "3b820bf0739b831b2b140aef895997d19794b6c32d0fdc7a3fc34ef1c2abed6a"
+    },
+    {
+      "path": "scripts/static_arrival_post_close_worker_v2.py",
+      "sha256": "c45a3f6776c2083c722c9b09a563becb340f37a7a804e3ea5d65ca14c80a0281"
+    },
+    {
+      "path": "scripts/static_arrival_post_close_bootstrap_v1.py",
+      "sha256": "7a6c0cd80a45edfc4baa7bf397525779af34be28e7f509228c395daf112f8bf4"
+    },
+    {
+      "path": "src/navfm/isaac/app.py",
+      "sha256": "27a94026c4b6a370971a34f5e7d7ee8674aebcf4aa97e2c96299d62df6694b87"
+    }
+  ]
+}
