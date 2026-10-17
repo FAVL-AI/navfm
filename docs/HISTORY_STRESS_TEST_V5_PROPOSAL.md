@@ -73,9 +73,22 @@ an extreme input intervention.
 - **How this was established.** From the code, the record names and status fields only. The
   pilot's sealed specification was not opened.
 - **Other exclusions:**
-  - the donors are `split: dev`;
-  - they are absent from the checkpoint's 31 training trajectories, all of them expansion
-    layouts (`navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/training_subset/traj_names.txt`);
+  - the donors are `split: dev`. `configs/splits/arrival_split_v2.json` lists `s_bend_run_0000/0001`
+    under development, which permits diagnosis but never held-out reporting. The junction query
+    routes are retired from confirmatory use (diagnostic only), consistent with v4 and v5's
+    diagnostic framing;
+  - they are absent from the checkpoint's 31 training trajectories
+    (`navfm-training-evidence/option1-arrival-n31-e20-seed0-20261009-01/training_subset/traj_names.txt`):
+    25 expansion-layout trajectories (`layout5`–`layout9`) and 6 legacy routes (`straight`,
+    `left` and `right` runs, two each). None is `s_bend` or `junction`. *(Correction: an
+    earlier draft called all 31 expansion layouts.)*
+  - **Partial appearance aliasing (disclosed).** `configs/splits/arrival_split_v2.json` and
+    `docs/ARRIVAL_RESEARCH_DECISION.md` record that training scene 8 shares the `scene % 5`
+    appearance parameters (floor colour, obstacle offset) with the donor scene 3, and that
+    training scene 9 shares them with the query scene 4. The partition layouts differ, so the
+    overlap is partial. Neither the H4 donor frames nor the queries are therefore
+    appearance-disjoint from training. This does not affect eligibility, but it limits how
+    out-of-distribution H4 is.
   - held-out groups are not collected.
 
   Absence from training is noted, but on its own it did not settle eligibility.

@@ -59,3 +59,14 @@ The full table is in `…/history-positive-control-v5-prep-20261017/review_trigg
 
 **Verdict:** READY FOR EXECUTION APPROVAL, per the reviewer, once R3 was fixed, which is done.
 NOT FROZEN, NOT APPROVED. The round-2 fixes have not been re-reviewed.
+
+## Closure check at 4b92919 (final hashes)
+- **CLOSED:** R3 (the reason assertion discriminates), T2 (the same-filename attack is refused
+  only by the own-episode binding), P3 logic (honest attempts are not refused), F-1, V-1.
+- **Minor, non-blocking:** of P3's branches, only the stress-equals-H0 branch is tested.
+- **D2 factual error, now corrected.** The training list is 25 expansion-layout trajectories plus
+  6 legacy routes, not 31 expansion layouts. The partial appearance aliasing is now disclosed:
+  training scene 8 with donor scene 3, and training scene 9 with query scene 4.
+- **Donor eligibility:** ELIGIBLE under every exposure exclusion: the accessed pilot, sealed
+  held-out groups, the training list, and the development split, which permits diagnosis.
+- **Verdict:** ready for execution approval, with the D2 wording fixed. Not approved.
