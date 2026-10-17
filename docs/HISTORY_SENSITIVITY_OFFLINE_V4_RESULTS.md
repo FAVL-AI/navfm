@@ -5,6 +5,12 @@
 diagnostic of the requested-goal check's score. It does **not** measure stopping, and it does
 not by itself explain the closed-loop stopping failures.
 
+> **Headline.** None of the tested history substitutions changed the replayed gate decision;
+> the largest score change was 0.0016. **Replay did not reproduce one logged gate decision:**
+> `C_verify/junction_run_0000/k034` was logged at 7.653 (accept) but replays at 7.819 (reject).
+> This is despite the median replay gap of 0.044 meeting its prospective criterion. Replay
+> agreement is therefore not complete at the gate, even though it is close at the median.
+
 Raw evidence is external:
 - `$NAVFM_EVIDENCE_ROOT/history-sensitivity-offline-v4-attempt-01/` holds the attempt records
   and per-call results;
@@ -85,7 +91,7 @@ The unrelated failures were not repaired.
 - **Per-episode median gaps:** C j0 +0.052, C j1 −0.004, D j0 +0.036, D j1 +0.006.
 - **The prospective criterion (median |gap| ≤ 0.085) is met.** As declared, this does **not**
   establish deployment equivalence.
-- **Gate agreement at 7.745:** 71 of 72.
+- **Gate agreement at 7.745: 71 of 72. One logged decision is not reproduced** (see the headline).
   - One disagreement: `C_verify/junction_run_0000/k034`, logged 7.653 (accept) vs replay 7.819
     (reject).
 
@@ -123,9 +129,12 @@ The unrelated failures were not repaired.
 - **No arm is a positive control for the history channel.** None uses, for example, frames from
   an unrelated location or blank frames. So this run does not show that the score *can* respond
   to history.
-- What it does show is that the score is computed precisely (identical-input repeats are
-  bit-identical) and responds to the current image: H0 scores across queries range from 4.81 to
-  16.22.
+- What it does show:
+  - The tested identical-input controls are repeatable: the 12 repeat triples are
+    bit-identical.
+  - H0 scores vary across queries from 4.81 to 16.22. Between queries, however, the current
+    image, its pose, the history and the reference window all change together, so this spread
+    does not isolate any single input.
 
 ### What this establishes
 On these 72 recorded in-region queries, in the replay regime, replacing the five preceding
@@ -140,25 +149,33 @@ region.
 The model received the substituted frames, which the trigger-6 review checked:
 - all five history slots differ from H0 by hash in every H1, H2 and H3 call;
 - all six frames reach the encoder in chronological order;
-- with the batch fixed and the repeats bit-identical, every non-zero Δ reflects a real input
-  difference.
+- with the batch fixed, the identical-input repeat controls were bit-identical. Those controls
+  show the computation is repeatable; they do not show that every non-zero Δ is free of numerical
+  effects. Different inputs can follow different numerical paths, and a Δ of about 1e-4 is in
+  the same range as the batch-composition effects (N_batch ≤ 0.0076).
 
 ### What it does not establish
 - **That history is irrelevant to deployment.** The deployed inputs were live arrays rather than
   JPEGs, and the library environment is inferred.
 - **Sensitivity to larger history perturbations.** No positive control was run.
-- **The source of the large decision-to-decision changes in the logged score.** Those changes
-  are most plausibly attributable to the current image and its pose. That is an **INFERENCE**
-  and was not tested: this run did not vary the query image with the history held fixed.
-  Interactions between the current image and history, and the gap between replay and
-  deployment, remain alternatives.
+- **The source of the large decision-to-decision changes in the logged score.** Between
+  consecutive logged decisions, several inputs change together: the current image, its pose and
+  heading, five of the six history frames, the reference window, and the variant's control
+  state. This run held the current image fixed and varied only history, so it **does not
+  isolate** the current image, the heading or any other input as the cause. Interactions between
+  inputs, and the gap between replay and deployment, also remain possible.
 - **Improved stopping, calibration or remedies.** Nor does it establish any generalisation
   beyond two routes, one checkpoint and these exposed episodes.
 
 ### Implication for H0/H1 (RECOMMENDATION, not a result)
-History substitution at these magnitudes is unlikely to explain the requested-goal check's
-rejection of in-region frames on these inputs. The next diagnostic question should target the current-view and heading
-dependence of the score. The heading-capture study is still blocked by camera qualification.
+This is a negative result that narrows the history explanation. For these inputs, history
+substitution at these magnitudes is unlikely to explain the requested-goal check's rejection of
+in-region frames. It does not establish that history is generally irrelevant. A bounded history
+positive control has been prepared but not executed (see
+`docs/HISTORY_SENSITIVITY_POSITIVE_CONTROL_V5_PROPOSAL.md`).
+
+How the current view and heading drive the score is a separate question, which this run did not
+isolate. The heading-capture study is still blocked by camera qualification.
 
 ## Trigger-6 review (finding of an absent effect)
 - An independent read-only review recomputed every number from `results.jsonl`, the manifest
