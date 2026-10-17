@@ -32,12 +32,21 @@ import threading
 import time
 import traceback
 
+# Production manifests, keyed by sha256. Each pins its exact call population; acceptance
+# requires exactly that many calls. v4 is the executed history-substitution diagnostic; v5 is
+# the history positive control (prepared, not approved).
+PROFILES = {
+    "391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7": dict(
+        name="v4_history_substitution", calls=306,
+        calls_by_arm={"H0_real": 96, "H1_repeated_static": 72, "H3_own_history_shifted5": 72,
+                      "H2_posematched_other_variant": 50, "CTRL_goal_only": 12,
+                      "CTRL_reversed_node_rows": 4}),
+    "b58cf90a97f562e7cd4353112e0c47810310f8e57805194d98b9207ec0330d61": dict(
+        name="v5_history_positive_control", calls=184,
+        calls_by_arm={"H0_real": 96, "H4_unrelated_location_positive_control": 72,
+                      "CTRL_goal_only": 12, "CTRL_reversed_node_rows": 4}),
+}
 PINNED = dict(
-    manifest_sha256="391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7",
-    calls=306,
-    calls_by_arm={"H0_real": 96, "H1_repeated_static": 72, "H3_own_history_shifted5": 72,
-                  "H2_posematched_other_variant": 50, "CTRL_goal_only": 12,
-                  "CTRL_reversed_node_rows": 4},
     checkpoint_sha256="c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
     hard_forward_cap=320,
     wall_limit_s=600.0,
@@ -56,8 +65,15 @@ def evidence():
 EPISODES = [f"cmp-{v}-trunc-20261009-01/{r}" for r in ("junction_run_0000", "junction_run_0001")
             for v in ("C_verify", "D_both")]
 SNAPSHOT_EPISODE = EPISODES[0]
+# History donors for the positive control: same variant, s_bend route with the same index
+# (scene 3), decisions 10-14. They supply history frames only, never queries.
+DONOR_EPISODES = [f"cmp-{v}-trunc-20261009-01/s_bend_run_{r}" for r in ("0000", "0001")
+                  for v in ("C_verify", "D_both")]
+DONOR_DECISIONS = range(10, 15)
+ARM_H4 = "H4_unrelated_location_positive_control"
 THRESHOLD = 7.745
-ARMS_PAIRED = ("H1_repeated_static", "H3_own_history_shifted5", "H2_posematched_other_variant")
+ARMS_PAIRED = ("H1_repeated_static", "H3_own_history_shifted5", "H2_posematched_other_variant",
+               ARM_H4)
 # Statements copied from the deployed RGBTopomapBaseline.step (source_snapshot cd55771c...,
 # lines 219-225). The worker refuses to run unless the staged file contains them verbatim.
 DEPLOYED_ASSEMBLY = [
@@ -158,20 +174,26 @@ def allocator_within_cap(stats, cap_bytes):
 def episode_of(path):
     rel = os.path.relpath(path, evidence())
     parts = rel.split(os.sep)
-    if len(parts) != 4 or parts[2] != "trajectory" or f"{parts[0]}/{parts[1]}" not in EPISODES:
+    if len(parts) != 4 or parts[2] != "trajectory" or f"{parts[0]}/{parts[1]}" not in (*EPISODES, *DONOR_EPISODES):
         raise Abort("MALFORMED_INPUT", f"observation outside the four episodes: {path}")
     return f"{parts[0]}/{parts[1]}", parts[3]
 
 
 def load_episodes():
     eps = {}
-    for e in EPISODES:
+    for e in (*EPISODES, *DONOR_EPISODES):
         m = _read_json(f"{evidence()}/{e}/runtime_manifest.json")
         eps[e] = m
     return eps
 
 
-def check_manifest(man, mode):
+def profile_for(manifest_sha256):
+    if manifest_sha256 not in PROFILES:
+        raise Abort("HASH_MISMATCH", "manifest is not a pinned production manifest")
+    return PROFILES[manifest_sha256]
+
+
+def check_manifest(man, mode, manifest_sha256=None):
     calls, queries = man.get("calls"), man.get("queries")
     if not isinstance(calls, list) or not isinstance(queries, list) or not calls:
         raise Abort("MALFORMED_INPUT", "manifest lacks calls/queries")
@@ -191,8 +213,10 @@ def check_manifest(man, mode):
     count = {}
     for c in calls:
         count[c["arm"]] = count.get(c["arm"], 0) + 1
-    if mode == "PRODUCTION" and (len(calls) != PINNED["calls"] or count != PINNED["calls_by_arm"]):
-        raise Abort("POPULATION", f"{len(calls)} calls {count}")
+    if mode == "PRODUCTION":
+        prof = profile_for(manifest_sha256)
+        if len(calls) != prof["calls"] or count != prof["calls_by_arm"]:
+            raise Abort("POPULATION", f"{len(calls)} calls {count}")
     qids = [q["query_id"] for q in queries]
     if len(set(qids)) != len(qids):
         raise Abort("MALFORMED_INPUT", "duplicate query ids")
@@ -222,7 +246,7 @@ def check_manifest(man, mode):
             raise Abort("PAIRING", f"repeat {c['call_id']} differs from H0 repeat 0")
         if arm == "H1_repeated_static" and c["obs"] != [ref["obs"][-1]] * 6:
             raise Abort("PAIRING", f"call {c['call_id']} is not the query repeated")
-        if arm in ("H3_own_history_shifted5", "H2_posematched_other_variant") \
+        if arm in ("H3_own_history_shifted5", "H2_posematched_other_variant", ARM_H4) \
                 and c["obs"][:5] == ref["obs"][:5]:
             raise Abort("PAIRING", f"call {c['call_id']} does not substitute history")
         if arm == "CTRL_goal_only" and (c["obs"] != ref["obs"] or c["batch_rows"] != [ref["batch_rows"][-1]]):
@@ -255,6 +279,8 @@ def check_against_episodes(man, eps):
     for c in man["calls"]:
         q = qmap[c["query_id"]]
         e = f"cmp-{q['variant']}-trunc-20261009-01/{q['route']}"
+        if e not in EPISODES:
+            raise Abort("POPULATION", f"{q['query_id']} is not from a declared query episode")
         m, k = eps[e], q["k"]
         if m["inference"][k]["requested_goal_distance"] != q["logged_requested_goal_distance"]:
             raise Abort("POPULATION", f"{q['query_id']} logged score differs from the episode")
@@ -284,6 +310,11 @@ def check_against_episodes(man, eps):
             want_names, want_eps = query * 6, [e] * 6
         elif c["arm"] == "H3_own_history_shifted5":
             want_names, want_eps = frames(e, range(k - 10, k - 5)) + query, [e] * 6
+        elif c["arm"] == ARM_H4:
+            donor = f"cmp-{q['variant']}-trunc-20261009-01/s_bend_run_{q['route'][-4:]}"
+            if eps[donor]["route"]["scene"] != "s_bend" or eps[donor]["route"]["split"] != "dev":
+                raise Abort("POPULATION", f"{donor} is not a dev s_bend episode")
+            want_names, want_eps = frames(donor, DONOR_DECISIONS) + query, [donor] * 5 + [e]
         else:
             if not q.get("match"):
                 raise Abort("POPULATION", f"call {c['call_id']} is H2 for a query without a match")
@@ -427,13 +458,13 @@ def worker(attempt):
         raw = _read_bytes(plan["manifest"])
         if sha_bytes(raw) != plan["manifest_sha256"]:
             raise Abort("HASH_MISMATCH", "manifest")
-        if mode == "PRODUCTION" and plan["manifest_sha256"] != PINNED["manifest_sha256"]:
-            raise Abort("HASH_MISMATCH", "manifest is not the pinned v3 manifest")
+        if mode == "PRODUCTION":
+            profile_for(plan["manifest_sha256"])
         try:
             man = json.loads(raw)
         except ValueError as exc:
             raise Abort("MALFORMED_INPUT", f"manifest JSON: {exc}") from exc
-        check_manifest(man, mode)
+        check_manifest(man, mode, plan["manifest_sha256"])
         eps = load_episodes()
         (ckpt_path, ckpt_sha), digests, config = check_against_episodes(man, eps)
         if ckpt_sha != PINNED["checkpoint_sha256"]:
@@ -547,12 +578,15 @@ def worker(attempt):
                 mem = memory_stats(torch, cuda)
                 if cuda and not allocator_within_cap(mem, PINNED["gpu_allocator_cap_bytes"]):
                     raise Abort("GPU_ALLOCATOR_CAP", mem)
+                obs_tensor_sha256 = sha_bytes(obs.detach().cpu().contiguous().numpy().tobytes())
+                goals_tensor_sha256 = sha_bytes(goals.detach().cpu().contiguous().numpy().tobytes())
                 rec = dict(call_id=c["call_id"], query_id=c["query_id"], arm=c["arm"],
                            repeat=c["repeat"], goal_row_index=c["goal_row_index"],
                            score=float(d_all[c["goal_row_index"]]), d_all=d_all.tolist(),
                            obs_sha256=[f["sha256"] for f in c["obs"]],
                            batch_sha256=[f["sha256"] for f in c["batch_rows"]],
-                           forward_s=dt, memory=mem)
+                           obs_tensor_sha256=obs_tensor_sha256,
+                           goals_tensor_sha256=goals_tensor_sha256, forward_s=dt, memory=mem)
                 out.write(json.dumps(rec, sort_keys=True) + "\n")
                 out.flush()
                 os.fsync(out.fileno())
@@ -636,16 +670,16 @@ def supervise(args):
         if args.backend != "vint" or args.wall_limit_s is not None or args.test_sampler_cmd:
             print("production mode accepts no backend, wall-limit or sampler override")
             return 2
-        if args.manifest_sha256 != PINNED["manifest_sha256"]:
-            print("production mode requires the pinned v3 manifest digest")
+        if args.manifest_sha256 not in PROFILES:
+            print("production mode requires a pinned production manifest digest")
             return 2
     elif args.backend == "vint":
         print("test mode requires a substitute backend")
         return 2
     wall = PINNED["wall_limit_s"] if args.wall_limit_s is None else args.wall_limit_s
     evidence_root = os.path.abspath(args.evidence_root)
-    if not all(os.path.isfile(os.path.join(evidence_root, e, "runtime_manifest.json")) for e in EPISODES):
-        print(f"evidence root lacks the four episode records: {evidence_root}")
+    if not all(os.path.isfile(os.path.join(evidence_root, e, "runtime_manifest.json")) for e in (*EPISODES, *DONOR_EPISODES)):
+        print(f"evidence root lacks the episode records: {evidence_root}")
         return 2
     attempt = os.path.abspath(args.attempt_dir)
     try:
@@ -802,7 +836,7 @@ def admit(attempt, accept_test=False, expected_runner_sha256=None):
     if plan["mode"] != "PRODUCTION" and not accept_test:
         bad.append("TEST attempt")
     if plan["mode"] == "PRODUCTION" and (plan["backend"] != "vint"
-                                        or plan["manifest_sha256"] != PINNED["manifest_sha256"]):
+                                        or plan["manifest_sha256"] not in PROFILES):
         bad.append("production attempt not pinned")
     raw = _read_bytes(plan["manifest"])
     if sha_bytes(raw) != plan["manifest_sha256"]:
@@ -813,8 +847,10 @@ def admit(attempt, accept_test=False, expected_runner_sha256=None):
             raise TypeError("calls is not a list")
     except (ValueError, KeyError, TypeError) as exc:
         return False, [*bad, f"manifest unreadable: {exc}"]
-    if plan["mode"] == "PRODUCTION" and len(calls) != PINNED["calls"]:
-        bad.append(f"{len(calls)} manifest calls; acceptance requires exactly {PINNED['calls']}")
+    if plan["mode"] == "PRODUCTION" and plan["manifest_sha256"] in PROFILES \
+            and len(calls) != PROFILES[plan["manifest_sha256"]]["calls"]:
+        want = PROFILES[plan["manifest_sha256"]]["calls"]
+        bad.append(f"{len(calls)} manifest calls; acceptance requires exactly {want}")
     rpath = os.path.join(attempt, "results.jsonl")
     if not os.path.exists(rpath):
         return False, [*bad, "no results"]
@@ -990,7 +1026,39 @@ def analyse_records(man, res, mode):
         dict(pair=list(key), directions=v, value=sum(v.values()) / len(v), mutual=len(v) == 2)
         for key, v in sorted(pairs.items())]
     out["arms"] = arms
+    if any(r["arm"] == ARM_H4 for r in res):
+        out["positive_control_criterion"] = positive_control_criterion(
+            arms[ARM_H4]["per_call"], out["numerical"]["N_batch"], ref)
     return out
+
+
+V4_HISTORY_MAX_ABS_DELTA = 0.0016  # published v4 result (docs/HISTORY_SENSITIVITY_OFFLINE_V4_RESULTS.md)
+NEGLIGIBLE_RATIO = 0.01  # median |delta| below 1% of the pooled reference scale is negligible
+
+
+def positive_control_criterion(per_call, n_batch, ref):
+    """The v5 rule fixed before execution.
+
+    Detectable: the median |delta| of H4 exceeds the bound, and so does the median in at least
+    3 of the 4 episodes. Bound = max(v4 history max |delta|, this run's max |N_batch|).
+    Magnitude tier: a detectable response whose median |delta| is below 1% of the pooled
+    reference scale is reported as detectable but negligible."""
+    bound = max([V4_HISTORY_MAX_ABS_DELTA, *[abs(v) for v in n_batch.values()]])
+    overall = _q([abs(p["delta"]) for p in per_call], .5)
+    episodes = {}
+    for p in per_call:
+        episodes.setdefault(p["episode"], []).append(abs(p["delta"]))
+    ep_medians = {e: _q(v, .5) for e, v in sorted(episodes.items())}
+    n_above = sum(m > bound for m in ep_medians.values())
+    detectable = overall is not None and overall > bound and n_above >= 3
+    ratio = overall / ref["pooled"]["median"] if overall is not None else None
+    tier = ("not_detectable" if not detectable else
+            "detectable_but_negligible" if ratio < NEGLIGIBLE_RATIO else "detectable")
+    return dict(bound=bound, median_abs_delta=overall, episode_median_abs_delta=ep_medians,
+                episodes_above_bound=n_above, detectable=detectable,
+                ratio_to_pooled_reference=ratio, tier=tier,
+                rule="median |delta_H4| > max(0.0016, max |N_batch|) overall and in >= 3 of 4 "
+                     "episodes; negligible if median |delta| < 1% of the pooled reference scale")
 
 
 # --------------------------------------------------------------------------- cli
