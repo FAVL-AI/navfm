@@ -34,17 +34,18 @@ import traceback
 
 # Production manifests, keyed by sha256. Each pins its exact call population; acceptance
 # requires exactly that many calls. v4 is the executed history-substitution diagnostic; v5 is
-# the history positive control (prepared, not approved).
+# the history stress test (prepared, not approved; not a validated positive control).
 PROFILES = {
     "391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7": dict(
         name="v4_history_substitution", calls=306,
         calls_by_arm={"H0_real": 96, "H1_repeated_static": 72, "H3_own_history_shifted5": 72,
                       "H2_posematched_other_variant": 50, "CTRL_goal_only": 12,
                       "CTRL_reversed_node_rows": 4}),
-    "b58cf90a97f562e7cd4353112e0c47810310f8e57805194d98b9207ec0330d61": dict(
-        name="v5_history_positive_control", calls=184,
-        calls_by_arm={"H0_real": 96, "H4_unrelated_location_positive_control": 72,
-                      "CTRL_goal_only": 12, "CTRL_reversed_node_rows": 4}),
+    "294e726d193b46d4ffa6dbb0bae6e479b4f76383ed735d7f1032173fc93418c7": dict(
+        name="v5_history_stress_test", calls=256,
+        calls_by_arm={"H0_real": 96, "H4_other_scene_history": 72,
+                      "H5_uniform_synthetic_history": 72, "CTRL_goal_only": 12,
+                      "CTRL_reversed_node_rows": 4}),
 }
 PINNED = dict(
     checkpoint_sha256="c7686983099080649dde0eaf79575149c26239321e23cf96788b3dd25b0d5d7c",
@@ -65,15 +66,23 @@ def evidence():
 EPISODES = [f"cmp-{v}-trunc-20261009-01/{r}" for r in ("junction_run_0000", "junction_run_0001")
             for v in ("C_verify", "D_both")]
 SNAPSHOT_EPISODE = EPISODES[0]
-# History donors for the positive control: same variant, s_bend route with the same index
+# History donors for the H4 stress arm: same variant, s_bend route with the same index
 # (scene 3), decisions 10-14. They supply history frames only, never queries.
 DONOR_EPISODES = [f"cmp-{v}-trunc-20261009-01/s_bend_run_{r}" for r in ("0000", "0001")
                   for v in ("C_verify", "D_both")]
 DONOR_DECISIONS = range(10, 15)
-ARM_H4 = "H4_unrelated_location_positive_control"
+ARM_H4 = "H4_other_scene_history"
+ARM_H5 = "H5_uniform_synthetic_history"
+STRESS_ARMS = (ARM_H4, ARM_H5)
+# Synthetic, out-of-distribution history frame for H5, fixed before any inference: a C-contiguous
+# uint8 array of shape (240, 320, 3) with every value 128 (the 8-bit midpoint), the size of the
+# stored query images. It is built here and checked against this pinned digest of its bytes.
+SYNTHETIC_FRAME = {"path": "synthetic:uniform_rgb128_h240_w320_uint8",
+                   "sha256": "06d4819637d1c753371096aae289b573bbfcb238abd672521369dbc9dc376469"}
+SYNTHETIC_SHAPE, SYNTHETIC_VALUE = (240, 320, 3), 128
 THRESHOLD = 7.745
 ARMS_PAIRED = ("H1_repeated_static", "H3_own_history_shifted5", "H2_posematched_other_variant",
-               ARM_H4)
+               ARM_H4, ARM_H5)
 # Statements copied from the deployed RGBTopomapBaseline.step (source_snapshot cd55771c...,
 # lines 219-225). The worker refuses to run unless the staged file contains them verbatim.
 DEPLOYED_ASSEMBLY = [
@@ -246,7 +255,7 @@ def check_manifest(man, mode, manifest_sha256=None):
             raise Abort("PAIRING", f"repeat {c['call_id']} differs from H0 repeat 0")
         if arm == "H1_repeated_static" and c["obs"] != [ref["obs"][-1]] * 6:
             raise Abort("PAIRING", f"call {c['call_id']} is not the query repeated")
-        if arm in ("H3_own_history_shifted5", "H2_posematched_other_variant", ARM_H4) \
+        if arm in ("H3_own_history_shifted5", "H2_posematched_other_variant", *STRESS_ARMS) \
                 and c["obs"][:5] == ref["obs"][:5]:
             raise Abort("PAIRING", f"call {c['call_id']} does not substitute history")
         if arm == "CTRL_goal_only" and (c["obs"] != ref["obs"] or c["batch_rows"] != [ref["batch_rows"][-1]]):
@@ -298,11 +307,17 @@ def check_against_episodes(man, eps):
         if rows != want:
             raise Abort("POPULATION", f"call {c['call_id']} batch rows differ from the episode window")
         for f in c["obs"]:
+            if f["path"].startswith("synthetic:"):
+                if f != SYNTHETIC_FRAME:
+                    raise Abort("HASH_MISMATCH", f"call {c['call_id']} undeclared synthetic frame")
+                continue
             oe, name = episode_of(f["path"])
             if eps[oe]["file_sha256"].get(name) != f["sha256"]:
                 raise Abort("HASH_MISMATCH", f"call {c['call_id']} {f['path']} vs episode record")
-        names = [os.path.basename(f["path"]) for f in c["obs"]]
-        own = [episode_of(f["path"])[0] for f in c["obs"]]
+        names = [f["path"] if f["path"].startswith("synthetic:") else os.path.basename(f["path"])
+                 for f in c["obs"]]
+        own = ["synthetic" if f["path"].startswith("synthetic:") else episode_of(f["path"])[0]
+               for f in c["obs"]]
         query = frames(e, [k])
         if c["arm"] in ("H0_real", "CTRL_goal_only", "CTRL_reversed_node_rows"):
             want_names, want_eps = frames(e, range(k - 5, k)) + query, [e] * 6
@@ -310,6 +325,8 @@ def check_against_episodes(man, eps):
             want_names, want_eps = query * 6, [e] * 6
         elif c["arm"] == "H3_own_history_shifted5":
             want_names, want_eps = frames(e, range(k - 10, k - 5)) + query, [e] * 6
+        elif c["arm"] == ARM_H5:
+            want_names, want_eps = [SYNTHETIC_FRAME["path"]] * 5 + query, ["synthetic"] * 5 + [e]
         elif c["arm"] == ARM_H4:
             donor = f"cmp-{q['variant']}-trunc-20261009-01/s_bend_run_{q['route'][-4:]}"
             if eps[donor]["route"]["scene"] != "s_bend" or eps[donor]["route"]["split"] != "dev":
@@ -327,7 +344,20 @@ def check_against_episodes(man, eps):
     return ck.pop(), digests[0], configs[0]
 
 
+def synthetic_frame_bytes():
+    import numpy as np
+
+    return np.full(SYNTHETIC_SHAPE, SYNTHETIC_VALUE, dtype=np.uint8).tobytes()
+
+
 def read_verified(f):
+    if f["path"].startswith("synthetic:"):
+        if f != SYNTHETIC_FRAME:
+            raise Abort("HASH_MISMATCH", f"undeclared synthetic frame {f['path']}")
+        data = synthetic_frame_bytes()
+        if sha_bytes(data) != SYNTHETIC_FRAME["sha256"]:
+            raise Abort("HASH_MISMATCH", "synthetic frame bytes differ from the pinned digest")
+        return data
     with open(f["path"], "rb") as fh:
         data = fh.read()
     if sha_bytes(data) != f["sha256"]:
@@ -339,6 +369,8 @@ def decode(data, path):
     import numpy as np
     from PIL import Image
 
+    if path == SYNTHETIC_FRAME["path"]:
+        return np.frombuffer(data, dtype=np.uint8).reshape(SYNTHETIC_SHAPE)
     try:
         img = Image.open(io.BytesIO(data))
         img.load()
@@ -876,6 +908,7 @@ def admit(attempt, accept_test=False, expected_runner_sha256=None):
             bad.append(f"result {i} does not match call {c['call_id']}")
     if wt.get("forwards_listed") != len(calls) or wt.get("forwards_hooked") != len(calls):
         bad.append("forward counters differ from the call count")
+    bad += tensor_digest_problems(lines)
     for name in ("preflight.json", "environment.json", "model_load.json"):
         if load(name) is None:
             bad.append(f"missing {name}")
@@ -904,6 +937,31 @@ def admit(attempt, accept_test=False, expected_runner_sha256=None):
         }
         bad += [k for k, v in checks.items() if v]
     return not bad, bad
+
+
+def tensor_digest_problems(lines):
+    """Check the digests of the tensors actually fed to the model: H0 repeats must be
+    identical, and every history-substitution or stress arm must differ from its H0 repeat 0."""
+    try:
+        recs = [json.loads(x) for x in lines if x.strip()]
+    except ValueError:
+        return []  # unreadable lines are already refused
+    if not recs or any("obs_tensor_sha256" not in r for r in recs):
+        return ["results lack tensor digests"]
+    h0 = {r["query_id"]: r for r in recs if r["arm"] == "H0_real" and r["repeat"] == 0}
+    out = []
+    for r in recs:
+        ref = h0.get(r["query_id"])
+        if ref is None:
+            continue
+        same_obs = r["obs_tensor_sha256"] == ref["obs_tensor_sha256"]
+        if r["arm"] == "H0_real" and not same_obs:
+            out.append(f"H0 repeat tensor differs for {r['query_id']}")
+        if r["arm"] in ARMS_PAIRED and same_obs:
+            out.append(f"{r['arm']} tensor equals H0 for {r['query_id']}")
+        if r["arm"] in (*ARMS_PAIRED, "H0_real") and r["goals_tensor_sha256"] != ref["goals_tensor_sha256"]:
+            out.append(f"{r['arm']} goal tensor differs from H0 for {r['query_id']}")
+    return out
 
 
 def record_hashes(attempt):
@@ -1026,9 +1084,11 @@ def analyse_records(man, res, mode):
         dict(pair=list(key), directions=v, value=sum(v.values()) / len(v), mutual=len(v) == 2)
         for key, v in sorted(pairs.items())]
     out["arms"] = arms
-    if any(r["arm"] == ARM_H4 for r in res):
-        out["positive_control_criterion"] = positive_control_criterion(
-            arms[ARM_H4]["per_call"], out["numerical"]["N_batch"], ref)
+    present = [a for a in STRESS_ARMS if any(r["arm"] == a for r in res)]
+    if present:
+        out["stress_response_criteria"] = {
+            a: stress_response_criterion(arms[a]["per_call"], out["numerical"]["N_batch"], ref)
+            for a in present}
     return out
 
 
@@ -1036,10 +1096,10 @@ V4_HISTORY_MAX_ABS_DELTA = 0.0016  # published v4 result (docs/HISTORY_SENSITIVI
 NEGLIGIBLE_RATIO = 0.01  # median |delta| below 1% of the pooled reference scale is negligible
 
 
-def positive_control_criterion(per_call, n_batch, ref):
-    """The v5 rule fixed before execution.
+def stress_response_criterion(per_call, n_batch, ref):
+    """The v5 rule fixed before execution, applied to each stress arm (H4, H5) separately.
 
-    Detectable: the median |delta| of H4 exceeds the bound, and so does the median in at least
+    Detectable: the arm's median |delta| exceeds the bound, and so does the median in at least
     3 of the 4 episodes. Bound = max(v4 history max |delta|, this run's max |N_batch|).
     Magnitude tier: a detectable response whose median |delta| is below 1% of the pooled
     reference scale is reported as detectable but negligible."""
@@ -1057,7 +1117,7 @@ def positive_control_criterion(per_call, n_batch, ref):
     return dict(bound=bound, median_abs_delta=overall, episode_median_abs_delta=ep_medians,
                 episodes_above_bound=n_above, detectable=detectable,
                 ratio_to_pooled_reference=ratio, tier=tier,
-                rule="median |delta_H4| > max(0.0016, max |N_batch|) overall and in >= 3 of 4 "
+                rule="median |delta| > max(0.0016, max |N_batch|) overall and in >= 3 of 4 "
                      "episodes; negligible if median |delta| < 1% of the pooled reference scale")
 
 

@@ -171,8 +171,8 @@ The model received the substituted frames, which the trigger-6 review checked:
 This is a negative result that narrows the history explanation. For these inputs, history
 substitution at these magnitudes is unlikely to explain the requested-goal check's rejection of
 in-region frames. It does not establish that history is generally irrelevant. A bounded history
-positive control has been prepared but not executed (see
-`docs/HISTORY_SENSITIVITY_POSITIVE_CONTROL_V5_PROPOSAL.md`).
+stress test (not a validated positive control) has been prepared but not executed (see
+`docs/HISTORY_STRESS_TEST_V5_PROPOSAL.md`).
 
 How the current view and heading drive the score is a separate question, which this run did not
 isolate. The heading-capture study is still blocked by camera qualification.

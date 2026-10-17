@@ -34,3 +34,28 @@ Runner `dcd208d1…` and tests `ec1734f6…`: 51 tests, 51 passed, 0 failures, 0
 
 ## Verdict
 **NOT FROZEN. NOT APPROVED.** Blocked on the C1 decision.
+
+## Round 2: the H5 synthetic arm and the round-1 fixes (v5 renamed "history stress test"; 256 calls)
+The full table is in `…/history-positive-control-v5-prep-20261017/review_trigger4_v5_round2.md`.
+
+**Confirmed:**
+- the H5 binding: an undeclared token is refused; the array is rebuilt and hash-checked; no
+  synthetic frame can pass as a real one, or the reverse;
+- the deployed preprocessing path and its arithmetic;
+- the 256-call manifest, derived exactly from v3;
+- D2: accessed-pilot eligibility is sound and no exclusion was relaxed;
+- the required framing.
+
+**Fixed:**
+- R3: the test now asserts the reason;
+- T2: the same-filename attack test;
+- P3: tensor-digest checks in admission;
+- F-1: wording;
+- V-1: the static-history limitation;
+- D2: the training-list citation.
+
+**Tests:** runner `288b6cf7…` and tests `c9c54203…`: 57 tests, 57 passed, 0 failures, 0 errors,
+0 skipped (JUnit XML).
+
+**Verdict:** READY FOR EXECUTION APPROVAL, per the reviewer, once R3 was fixed, which is done.
+NOT FROZEN, NOT APPROVED. The round-2 fixes have not been re-reviewed.

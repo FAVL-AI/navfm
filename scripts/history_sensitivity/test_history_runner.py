@@ -5,7 +5,7 @@ the read-only preflight and before any model construction.
 
 Run (both environment variables are required; nothing is inferred):
   CUDA_VISIBLE_DEVICES= NAVFM_EVIDENCE_ROOT=<runtime-evidence root> HSR_MANIFEST_V5=<path to
-  history_call_manifest_v5_pc.json> HSR_MANIFEST=<path to
+  history_call_manifest_v5_stress.json> HSR_MANIFEST=<path to
   history_call_manifest_v3.json> <isaac env python> -m pytest -q -p no:cacheprovider test_history_runner.py
 """
 import copy
@@ -35,7 +35,7 @@ EVIDENCE_ROOT = os.environ["NAVFM_EVIDENCE_ROOT"]
 MANIFEST = os.environ["HSR_MANIFEST"]
 MANIFEST_SHA = "391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7"
 MANIFEST_V5 = os.environ["HSR_MANIFEST_V5"]
-MANIFEST_V5_SHA = "b58cf90a97f562e7cd4353112e0c47810310f8e57805194d98b9207ec0330d61"
+MANIFEST_V5_SHA = "294e726d193b46d4ffa6dbb0bae6e479b4f76383ed735d7f1032173fc93418c7"
 ROOT = os.path.join(os.environ.get("HSR_TEST_OUTPUT_ROOT", HERE), "test_attempts")
 assert os.environ.get("CUDA_VISIBLE_DEVICES") == "", "run the tests with CUDA_VISIBLE_DEVICES="
 assert hr.sha_file(MANIFEST) == MANIFEST_SHA, "HSR_MANIFEST is not the pinned v3 manifest"
@@ -704,7 +704,7 @@ def test_evidence_root_required_and_checked(tmp_path):
 
 
 
-# --------------------------------------------------------------------------- v5 positive control
+# --------------------------------------------------------------------------- v5 history stress test
 @pytest.fixture(scope="module")
 def complete_v5():
     p, attempt = run(manifest=MANIFEST_V5, sha=MANIFEST_V5_SHA, sub="Ok")
@@ -714,11 +714,13 @@ def complete_v5():
 
 def test_v5_completion_admission_and_analysis(complete_v5):
     wt = terminal(complete_v5, "worker")
-    assert wt["forwards_listed"] == wt["forwards_hooked"] == 184
+    assert wt["forwards_listed"] == wt["forwards_hooked"] == 256
     assert hr.admit(complete_v5, accept_test=True) == (True, [])
     out = hr.analyse(complete_v5, accept_test=True)
-    h4 = out["arms"][hr.ARM_H4]
-    assert len(h4["per_call"]) == 72 and h4["summary"]["junction_run_0000"]["n"] == 38
+    for arm in hr.STRESS_ARMS:
+        a = out["arms"][arm]
+        assert len(a["per_call"]) == 72 and a["summary"]["junction_run_0000"]["n"] == 38
+    assert set(out["stress_response_criteria"]) == set(hr.STRESS_ARMS)
     assert out["numerical"]["repeat_triples"] == 12 and len(out["replay_agreement"]["per_query"]) == 72
     # every H4 call used the five declared donor frames of its s_bend episode plus the query
     man = _read_json(MANIFEST_V5)
@@ -726,12 +728,14 @@ def test_v5_completion_admission_and_analysis(complete_v5):
         if c["arm"] == hr.ARM_H4:
             assert all("/s_bend_run_" in f["path"] for f in c["obs"][:5])
             assert "/junction_run_" in c["obs"][5]["path"]
+        if c["arm"] == hr.ARM_H5:
+            assert c["obs"][:5] == [hr.SYNTHETIC_FRAME] * 5 and "/junction_run_" in c["obs"][5]["path"]
     # P3: the tensors fed to the model differ between H4 and H0, and repeats are identical
     recs = [json.loads(x) for x in results(complete_v5)]
     by = {(r["query_id"], r["arm"], r["repeat"]): r for r in recs}
     for (qid, arm, _rep), r in by.items():
         h0 = by[(qid, "H0_real", 0)]
-        if arm == hr.ARM_H4:
+        if arm in hr.STRESS_ARMS:
             assert r["obs_tensor_sha256"] != h0["obs_tensor_sha256"]
             assert r["goals_tensor_sha256"] == h0["goals_tensor_sha256"]
         if arm == "H0_real":
@@ -775,7 +779,7 @@ def test_v5_donor_from_undeclared_episode_refused():
 def test_v5_production_preflight_without_cuda():
     _p, a = run(manifest=MANIFEST_V5, sha=MANIFEST_V5_SHA, test=False)
     pre = _read_json(os.path.join(a, "preflight.json"))
-    assert pre["status"] == "PASS" and pre["calls"] == 184
+    assert pre["status"] == "PASS" and pre["calls"] == 256
     wt = terminal(a, "worker")
     assert wt["reason"] == "NO_CUDA" and wt["forwards_hooked"] == 0
     assert not os.path.exists(os.path.join(a, "model_load.json")) and results(a) == []
@@ -804,7 +808,7 @@ def test_v5_donor_frame_in_h0_slot_refused():
 
     def edit(m):
         # Swap consistently in every call sharing this H0 history (repeats and controls), so the
-        # pairing checks pass and only the own-episode binding can refuse it.
+        # pairing checks pass; the frame-name and own-episode checks then refuse it.
         c = next(c for c in m["calls"] if c["arm"] == "H0_real" and c["query_id"].startswith("D_both/"))
         route = c["query_id"].split("/")[1]
         old = copy.deepcopy(c["obs"])
@@ -825,6 +829,7 @@ def test_query_from_donor_episode_refused():
     path, sha = tampered_manifest(edit, MANIFEST_V5)
     _p, a = run(manifest=path, sha=sha)
     assert_no_model(a, "POPULATION")
+    assert "not from a declared query episode" in terminal(a, "worker")["detail"]
 
 
 def _pc_records(deltas_by_episode):
@@ -834,18 +839,104 @@ def _pc_records(deltas_by_episode):
     return out
 
 
-def test_positive_control_criterion_met_not_met_and_negligible():
+def test_stress_response_criterion_met_not_met_and_negligible():
     ref = {"pooled": {"median": 1.0}}
     eps = ["C_verify/junction_run_0000", "C_verify/junction_run_0001", "D_both/junction_run_0000",
            "D_both/junction_run_0001"]
     nb = {"q1": 0.004, "q2": -0.0076}
-    met = hr.positive_control_criterion(_pc_records({e: [0.5, -0.6, 0.7] for e in eps}), nb, ref)
+    met = hr.stress_response_criterion(_pc_records({e: [0.5, -0.6, 0.7] for e in eps}), nb, ref)
     assert met["bound"] == pytest.approx(0.0076) and met["detectable"] and met["tier"] == "detectable"
     assert met["episodes_above_bound"] == 4
-    two = hr.positive_control_criterion(
+    two = hr.stress_response_criterion(
         _pc_records({eps[0]: [0.5], eps[1]: [0.5], eps[2]: [0.001], eps[3]: [0.001]}), nb, ref)
     assert not two["detectable"] and two["tier"] == "not_detectable" and two["episodes_above_bound"] == 2
-    small = hr.positive_control_criterion(_pc_records({e: [0.008, -0.009] for e in eps}), nb, ref)
+    small = hr.stress_response_criterion(_pc_records({e: [0.008, -0.009] for e in eps}), nb, ref)
     assert small["detectable"] and small["tier"] == "detectable_but_negligible"
-    low_nb = hr.positive_control_criterion(_pc_records({e: [0.0015] for e in eps}), {"q": 0.0001}, ref)
+    low_nb = hr.stress_response_criterion(_pc_records({e: [0.0015] for e in eps}), {"q": 0.0001}, ref)
     assert low_nb["bound"] == pytest.approx(0.0016) and not low_nb["detectable"]
+
+
+def test_synthetic_frame_is_the_declared_uniform_array():
+    import numpy as np
+
+    data = hr.read_verified(dict(hr.SYNTHETIC_FRAME))
+    arr = hr.decode(data, hr.SYNTHETIC_FRAME["path"])
+    assert arr.shape == (240, 320, 3) and arr.dtype == np.uint8 and (arr == 128).all()
+    assert hr.sha_bytes(data) == hr.SYNTHETIC_FRAME["sha256"]
+    with pytest.raises(hr.Abort):
+        hr.read_verified({"path": "synthetic:uniform_rgb127_h240_w320_uint8", "sha256": hr.SYNTHETIC_FRAME["sha256"]})
+
+
+def test_undeclared_synthetic_frame_refused():
+    def edit(m):
+        c = next(c for c in m["calls"] if c["arm"] == hr.ARM_H5)
+        c["obs"][0] = {"path": "synthetic:uniform_rgb127_h240_w320_uint8", "sha256": "1" * 64}
+    path, sha = tampered_manifest(edit, MANIFEST_V5)
+    _p, a = run(manifest=path, sha=sha)
+    assert_no_model(a, "HASH_MISMATCH")
+
+
+def test_h5_with_a_real_frame_refused():
+    def edit(m):
+        c = next(c for c in m["calls"] if c["arm"] == hr.ARM_H5)
+        h0 = next(x for x in m["calls"] if x["query_id"] == c["query_id"] and x["arm"] == "H0_real")
+        c["obs"][4] = copy.deepcopy(h0["obs"][4])
+    path, sha = tampered_manifest(edit, MANIFEST_V5)
+    _p, a = run(manifest=path, sha=sha)
+    assert_no_model(a, "POPULATION")
+
+
+def test_synthetic_frame_in_h0_slot_refused():
+    def edit(m):
+        c = next(c for c in m["calls"] if c["arm"] == "H0_real")
+        old = copy.deepcopy(c["obs"])
+        new = copy.deepcopy(old)
+        new[0] = dict(hr.SYNTHETIC_FRAME)
+        for x in m["calls"]:
+            if x["query_id"] == c["query_id"] and x["obs"] == old:
+                x["obs"] = copy.deepcopy(new)
+    path, sha = tampered_manifest(edit, MANIFEST_V5)
+    _p, a = run(manifest=path, sha=sha)
+    assert_no_model(a, "POPULATION")
+
+
+def test_donor_frame_with_the_expected_h0_filename_refused():
+    """A hash-correct donor frame whose file name equals the expected H0 frame name passes the
+    name check, so only the own-episode binding can refuse it."""
+    eps = hr.load_episodes()
+
+    def edit(m):
+        for c in m["calls"]:
+            if c["arm"] != "H0_real" or not c["query_id"].startswith("C_verify/junction_run_0000/"):
+                continue
+            name = os.path.basename(c["obs"][0]["path"])
+            donor = "cmp-C_verify-trunc-20261009-01/s_bend_run_0000"
+            if name not in eps[donor]["file_sha256"]:
+                continue
+            old = copy.deepcopy(c["obs"])
+            new = copy.deepcopy(old)
+            new[0] = {"path": f"{EVIDENCE_ROOT}/{donor}/trajectory/{name}", "sha256": eps[donor]["file_sha256"][name]}
+            for x in m["calls"]:
+                if x["query_id"] == c["query_id"] and x["obs"] == old:
+                    x["obs"] = copy.deepcopy(new)
+            return
+        raise AssertionError("no H0 frame name present in the donor episode")
+    path, sha = tampered_manifest(edit, MANIFEST_V5)
+    _p, a = run(manifest=path, sha=sha)
+    assert_no_model(a, "POPULATION")
+    assert "history frames differ from the arm definition" in terminal(a, "worker")["detail"]
+
+
+def test_admission_checks_tensor_digests(complete_v5):
+    a = _copy(complete_v5)
+    lines = results(a)
+    recs = [json.loads(x) for x in lines]
+    h0 = next(r for r in recs if r["arm"] == "H0_real" and r["repeat"] == 0)
+    for i, r in enumerate(recs):
+        if r["query_id"] == h0["query_id"] and r["arm"] == hr.ARM_H5:
+            r["obs_tensor_sha256"] = h0["obs_tensor_sha256"]
+            lines[i] = json.dumps(r, sort_keys=True)
+    _write_text(os.path.join(a, "results.jsonl"), "\n".join(lines) + "\n")
+    ok, reasons = hr.admit(a, accept_test=True)
+    assert not ok and f"{hr.ARM_H5} tensor equals H0 for {h0['query_id']}" in reasons
+    assert hr.tensor_digest_problems(results(complete_v5)) == []
