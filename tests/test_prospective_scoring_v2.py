@@ -121,6 +121,7 @@ def test_atomic_failure_preserves_prior_raw_draw(tmp_path, monkeypatch):
     assert json.loads(path.read_text()) == prior
 
 
+@pytest.mark.archive  # reads the immutable native-source-closure evidence named in the config
 def test_added_project_sources_are_attested_without_model_imports(tmp_path):
     from types import ModuleType
 

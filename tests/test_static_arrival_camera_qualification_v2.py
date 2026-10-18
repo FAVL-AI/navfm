@@ -6,6 +6,9 @@ from pathlib import Path
 
 import pytest
 
+# Every test reaches build_qualification(), which requires the bound Isaac worker interpreter.
+pytestmark = pytest.mark.isaac_host
+
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))

@@ -6,6 +6,9 @@ from pathlib import Path
 
 import pytest
 
+# build_config() hashes the workstation worker interpreter and installed Isaac sources.
+pytestmark = pytest.mark.isaac_host
+
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 

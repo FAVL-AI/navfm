@@ -405,6 +405,72 @@ class TestSchemaAndCli:
         assert cps.main([str(report), "--mode", cps.ORDINARY, "--manifest", str(manifest)]) == 1
 
 
+# ------------------------------- only resource markers decide ownership (CI repair)
+
+
+def _mixed_pop() -> dict[str, list[str]]:
+    return {
+        **_pop(),
+        "tests/h.py::param[0]": ["parametrize"],
+        "tests/h.py::near_miss": ["isaac-host", "slow"],
+        "tests/i.py::f[0]": ["isaac_host", "parametrize"],
+    }
+
+
+MIXED_HERMETIC = [*HERMETIC, "tests/h.py::param[0]", "tests/h.py::near_miss"]
+MIXED_ISAAC = ["tests/i.py::f[0]"]
+
+
+def _mixed_manifest() -> dict[str, Any]:
+    manifest = _sets_manifest(population=_mixed_pop())
+    manifest["job_ownership"] = {**manifest["job_ownership"], "isaac_host": "workstation"}
+    return manifest
+
+
+class TestOnlyResourceMarkersDecideOwnership:
+    def test_unrelated_and_near_miss_marks_leave_a_node_hermetic(self) -> None:
+        sets = cps.sets_from(_mixed_pop())
+        assert set(MIXED_HERMETIC) == sets["hermetic"]
+        assert "tests/h.py::param[0]" not in sets["resource_union"]
+        assert "tests/h.py::near_miss" not in sets["resource_union"]
+
+    def test_a_resource_marker_still_counts_beside_an_unrelated_mark(self) -> None:
+        sets = cps.sets_from(_mixed_pop())
+        assert set(MIXED_ISAAC) <= sets["isaac_host"] <= sets["resource_union"]
+        assert not set(MIXED_ISAAC) & sets["hermetic"]
+
+    def test_the_hermetic_leg_passes_when_it_runs_unrelated_mark_nodes(self) -> None:
+        report = _sets_report(MIXED_HERMETIC, [*RESOURCE, *MIXED_ISAAC])
+        assert cps.check(report, _mixed_manifest(), cps.ORDINARY, VERSIONS) == []
+
+    @pytest.mark.parametrize("node", ["tests/h.py::param[0]", "tests/h.py::near_miss"])
+    def test_an_unrelated_mark_cannot_excuse_deselection_from_the_hermetic_leg(self, node: str) -> None:
+        executed = [n for n in MIXED_HERMETIC if n != node]
+        report = _sets_report(executed, [*RESOURCE, *MIXED_ISAAC, node])
+        failures = "\n".join(cps.check(report, _mixed_manifest(), cps.ORDINARY))
+        assert "deselected outside the pinned resource population" in failures and node in failures
+
+    def test_a_resource_node_executed_by_the_hermetic_leg_fails(self) -> None:
+        report = _sets_report([*MIXED_HERMETIC, *MIXED_ISAAC], RESOURCE)
+        failures = "\n".join(cps.check(report, _mixed_manifest(), cps.ORDINARY))
+        assert "tests/i.py::f[0]" in failures and "extra" in failures
+
+    def test_a_resource_node_missing_from_its_owner_job_fails(self) -> None:
+        report = _sets_report(MIXED_HERMETIC, [*RESOURCE, *MIXED_ISAAC])
+        failures = "\n".join(cps.check(report, _mixed_manifest(), cps.OWNER, job_id="workstation"))
+        assert "tests/i.py::f[0]" in failures
+
+    def test_a_missing_marker_lands_the_node_in_the_hermetic_set(self) -> None:
+        """A resource test that lost its marker is pinned hermetic, so the hermetic
+        leg must execute it; deselecting it there is refused, never tolerated."""
+        population = _mixed_pop()
+        population["tests/i.py::f[0]"] = ["parametrize"]
+        manifest = _sets_manifest(population=population)
+        report = _sets_report(MIXED_HERMETIC, [*RESOURCE, *MIXED_ISAAC])
+        failures = "\n".join(cps.check(report, manifest, cps.ORDINARY))
+        assert "tests/i.py::f[0]" in failures
+
+
 # ------------------------------------------- go_stanford corpus ownership (Repair 6)
 
 CORPUS_NODE = "tests/c.py::TestReleasedGoStanfordCorpus::test_released_records_convert"
