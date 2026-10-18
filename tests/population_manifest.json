@@ -61,12 +61,12 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3351,
-      "sha256": "be3c8bf0a4d5d7b934fad7febcd20db02a5abeb7f9431d5fb79dad9d2c616dc2"
+      "count": 3362,
+      "sha256": "7aa757d62e4b84af6856ccd30452ff0254c3976062c6a89a34b718bb61a2ffc6"
     },
     "hermetic": {
-      "count": 3175,
-      "sha256": "c7e79a81b251671127f3932dae7a14fc232a52abfa8fe0d13394bb6fd7c3ca44"
+      "count": 3186,
+      "sha256": "3fb09af956cbc07b6acaed95f3fbc417dae556c9d972f57ed7e9506e60dbc43f"
     },
     "resource_union": {
       "count": 176,
@@ -4092,7 +4092,34 @@
       "parametrize"
     ],
     "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_the_hermetic_leg_passes_when_it_runs_unrelated_mark_nodes": [],
-    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_unrelated_and_near_miss_marks_leave_a_node_hermetic": []
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_unrelated_and_near_miss_marks_leave_a_node_hermetic": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_derived_names_equal_the_compilers_qualnames_on_every_version": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_derived_names_equal_the_interpreters_names_across_real_sources": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_the_public_entry_point_uses_co_qualname_when_present": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[changed_method]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_descriptor]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_descriptor_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_export]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_method_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_original]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4403,7 +4430,7 @@
     "prior_retained": 3213,
     "added_previously_unpinned_nodes": 130,
     "added_checker_negative_controls": 8,
-    "total_count": 3351,
+    "total_count": 3362,
     "marker_changes": {
       "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": {
         "from": [],
@@ -4425,7 +4452,9 @@
     "reconciliation": "Each added node id equals one of the 130 extras named by the hosted owner population gate (run 38987049797, job upstream-compat) and was collected at this revision; the only other additions are the 8 checker negative controls. No node was removed.",
     "checker_semantics_change": "Only resource markers move a node out of the hermetic population; 65 parametrize-only nodes return to the hermetic set (hermetic recomputes from 3008 under the previous rule to 3073 on the prior population).",
     "resource_owners_changed": true,
-    "not_owned_by_this_repair": "Six torch-marked nodes, in tests/test_native_ema_integration_v3.py (5) and tests/test_native_adaptation_smoke_v1.py (1), bind workstation files by absolute path and still fail in hosted upstream-compat; no job currently owns torch together with a workstation resource.",
-    "status": "HOSTED_CI_PENDING; RESOURCE_NODES_NOT_RUN"
+    "status": "HOSTED_CI_PENDING; RESOURCE_NODES_NOT_RUN",
+    "added_v7_compatibility_nodes": 11,
+    "v7_compatibility": "scripts/authenticate_torch_wrappers_v7.py is v6 with a version-correct qualified name so the wrapper authentication runs on Python 3.10; v6 and every config pinning its digest are unchanged. The existing v6 wrapper test uses v6 on 3.11+ and v7 on 3.10; 8 equivalence nodes compare v6 and v7 outcomes and 3 oracle nodes check the derivation against the interpreter on 3.10, 3.11 and 3.12.",
+    "torch_workstation_nodes_resolved": "The six torch-marked nodes previously listed as not owned now run in hosted upstream-compat: they bind the running interpreter's diffusers/transformers (pinned to the qualified 0.29.2 / 4.57.6 with huggingface_hub 0.36.2) and the pinned upstream clone, whose train_utils.py equals the sha256 the frozen smoke config records."
   }
 }

@@ -17,6 +17,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 
 sys.path.insert(0, str(ROOT / "src"))
+# The parent test puts scripts/ on its own sys.path, which a subprocess does not inherit.
+sys.path.insert(0, str(ROOT / "scripts"))
 from prospective_data_contracts_v1 import float32_position  # noqa: E402
 
 from navfm.collection.static_arrival_capture import canonical_sha256 as content_sha  # noqa: E402

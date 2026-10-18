@@ -158,13 +158,21 @@ def test_common_metric_uses_same_five_physical_steps_and_masks():
 @pytest.mark.torch
 @pytest.mark.upstream
 def test_nomad_native_nonclipped_delta_normalization_roundtrip(monkeypatch):
+    import hashlib
+    import json
+    import os
+
     import numpy as np
     import torch
 
-    cfg = __import__("json").loads(
-        (ROOT / "configs/train/native_adaptation_smoke_v1.json").read_text()
-    )
-    source = Path(cfg["upstream"]) / "train/vint_train/training/train_utils.py"
+    cfg = json.loads((ROOT / "configs/train/native_adaptation_smoke_v1.json").read_text())
+    relative = "train/vint_train/training/train_utils.py"
+    # The frozen config names the archived upstream copy the smoke run used; the pinned
+    # clone (NAVFM_UPSTREAM, set by the upstream owner job) carries the same file. Either
+    # way the bytes must equal the sha256 the config records for it.
+    source = Path(os.environ.get("NAVFM_UPSTREAM") or cfg["upstream"]) / relative
+    recorded = [row["sha256"] for row in _rows_with_path(cfg, relative)]
+    assert recorded and set(recorded) == {hashlib.sha256(source.read_bytes()).hexdigest()}
     tree = ast.parse(source.read_text())
     selected = [
         n
@@ -192,6 +200,17 @@ def test_nomad_native_nonclipped_delta_normalization_roundtrip(monkeypatch):
     assert torch.allclose(module.get_action(norm), actions, atol=1e-5, rtol=0)
     with pytest.raises(ValueError, match="roundtrip"):
         normalized_actions(actions * float("nan"))
+
+
+def _rows_with_path(node, relative):
+    if isinstance(node, dict):
+        if node.get("path") == relative and "sha256" in node:
+            yield node
+        for value in node.values():
+            yield from _rows_with_path(value, relative)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _rows_with_path(value, relative)
 
 
 def test_launcher_has_exact_watchdog_and_source_frozen_contract():

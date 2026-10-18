@@ -10,24 +10,76 @@ from types import SimpleNamespace
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+import authenticate_torch_wrappers_v6 as wrappers_v6
+import authenticate_torch_wrappers_v7 as wrappers_v7
 from authenticate_torch_wrappers_v6 import authenticate_wrapped_module
 from imu_lifecycle_v6 import instrument_initialization, instrument_probe
 
+FAILURES = [
+    None,
+    "altered_binary",
+    "changed_method",
+    "wrong_original",
+    "wrong_export",
+    "wrong_descriptor",
+    "wrong_descriptor_slot",
+    "wrong_method_slot",
+]
 
-@pytest.mark.parametrize(
-    "failure",
-    [
-        None,
-        "altered_binary",
-        "changed_method",
-        "wrong_original",
-        "wrong_export",
-        "wrong_descriptor",
-        "wrong_descriptor_slot",
-        "wrong_method_slot",
-    ],
-)
+
+@pytest.mark.parametrize("failure", FAILURES)
 def test_backend_wrapper_inherited_code_original_export_and_binary(tmp_path, failure):
+    # The frozen v6 reads co_qualname, which Python 3.10 lacks; v7 is v6 with a
+    # version-correct qualified name. test_v7_matches_frozen_v6_outcome proves the two
+    # agree wherever v6 can run.
+    authenticate = (
+        authenticate_wrapped_module if sys.version_info >= (3, 11) else wrappers_v7.authenticate_wrapped_module
+    )
+    wrapper, modules, approved = _backend_case(tmp_path, failure)
+    if failure:
+        with pytest.raises(ImportError):
+            authenticate("torch.backends.cudnn", wrapper, modules, approved, {})
+    else:
+        result = authenticate("torch.backends.cudnn", wrapper, modules, approved, {})
+        assert any(x["qualname"] == "PropModule.__getattr__" for x in result["methods"])
+        assert "ContextProp" in result["descriptors"]
+
+
+def _outcome(authenticate, case):
+    wrapper, modules, approved = case
+    try:
+        return ("result", authenticate("torch.backends.cudnn", wrapper, modules, approved, {}))
+    except ImportError as exc:
+        return ("ImportError", str(exc))
+
+
+@pytest.mark.parametrize("failure", FAILURES)
+def test_v7_matches_frozen_v6_outcome(tmp_path, failure):
+    v7 = _outcome(wrappers_v7.authenticate_wrapped_module, _backend_case(tmp_path / "v7", failure))
+    if sys.version_info >= (3, 11):
+        v6 = _outcome(wrappers_v6.authenticate_wrapped_module, _backend_case(tmp_path / "v6", failure))
+        assert _comparable(v6) == _comparable(v7)
+    else:
+        # v6 is frozen and 3.11-only: wherever it reaches the qualified-name comparison
+        # it fails on the missing attribute, never by accepting.
+        try:
+            v6 = _outcome(wrappers_v6.authenticate_wrapped_module, _backend_case(tmp_path / "v6", failure))
+        except AttributeError as exc:
+            assert "co_qualname" in str(exc)
+        else:
+            assert _comparable(v6) == _comparable(v7)
+    assert (v7[0] == "result") == (failure is None)
+
+
+def _comparable(outcome):
+    kind, value = outcome
+    if kind == "result":
+        return kind, [(m["qualname"], Path(m["source"]).name) for m in value["methods"]], value["descriptors"]
+    return outcome
+
+
+def _backend_case(tmp_path, failure):
+    tmp_path.mkdir(parents=True, exist_ok=True)
     source = tmp_path / "backend.py"
     source.write_text("""class ContextProp:
     def __init__(self,getter,setter):self.getter=getter;self.setter=setter
@@ -75,13 +127,7 @@ class CudnnModule(PropModule):
         vars(cls)["enabled"].getter = native.setter
     if failure == "wrong_descriptor":
         vars(cls)["enabled"].getter = object()
-    if failure:
-        with pytest.raises(ImportError):
-            authenticate_wrapped_module("torch.backends.cudnn", wrapper, modules, approved, {})
-    else:
-        result = authenticate_wrapped_module("torch.backends.cudnn", wrapper, modules, approved, {})
-        assert any(x["qualname"] == "PropModule.__getattr__" for x in result["methods"])
-        assert "ContextProp" in result["descriptors"]
+    return wrapper, modules, approved
 
 
 @pytest.mark.parametrize("name", ["torch.ops", "torch.classes"])
