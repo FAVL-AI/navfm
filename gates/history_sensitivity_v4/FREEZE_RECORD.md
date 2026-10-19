@@ -1,0 +1,88 @@
+# Freeze record: offline history-sensitivity diagnostic v4 (CANDIDATE)
+
+**Status: freeze candidate.** GPU execution is NOT approved. Nothing in this record is a model
+output.
+
+## In the repository (this commit)
+| Path | sha256 |
+|---|---|
+| `scripts/history_sensitivity/history_runner.py` | `add0bd46662dde2d1da6ca784f88c48e5ea5b2186ca01d46e8996582b5a0e022` |
+| `scripts/history_sensitivity/test_history_runner.py` | `ff0de11bf82d6ceb2ca5bb8909cabe86d894ee825aba6d89b94cadb008bbbfa6` |
+| `scripts/history_sensitivity/history_substitutes.py` | `fa56cdd57aab5b47851670703ce19e412211a817f5265de51b5703f52d09aa21` |
+| `gates/history_sensitivity_v4/build_history_manifest_v3.py` (verbatim; contains its original absolute evidence path) | `a4fdb50df200e4cd5a865e4058c42ab9bd16c025fe44e865e926b4814ad78317` |
+
+Protocol: `docs/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V4.md` (sanitised).
+Review record: `gates/redteam/trigger4-history-sensitivity-runner-2026-10-17.md`.
+
+## External evidence (not committed)
+Location: `$NAVFM_EVIDENCE_ROOT/history-sensitivity-offline-v4-freeze-20261017/`.
+
+It holds:
+- the raw call manifests v1–v3;
+- every builder, protocol, runner and test version (`scratchpad_history/`);
+- the test logs and JUnit XML, with environment records and tested-source digests;
+- the three runner review reports (`reviews/`);
+- the pre-commit repository verification (`commit_verification/`). It shows that the 30
+  `make verify` test failures are identical at the clean base `1de7994`.
+
+`SHA256SUMS` sha256: `4008102d0122c2d135dc80f7a1cebe3cd3535ea5c0ae1bfcca2bae27fdc79bf8`.
+Its contents, relative to that directory:
+
+```
+c1fcf8cb3bcfb6cf0d70f50239116bb465317b9be98390e928a9e8e2a408c9bb  ./commit_verification/base_1de7994_failed_files.log
+85119f5e5b43136156dc5b40eb700f252513b0d0d8f7872ad65a8becc8e9555a  ./commit_verification/make_verify_branch.log
+3a989fabc4664dcbe8535826091bc0658e511f086240c7663b8b60760f223ab3  ./commit_verification/README.md
+f210deed3c00af1a75f7960070fcb21b322b3e11a2d5e09ba86d1c0b5261b05a  ./commit_verification/verify_failed_base.txt
+f210deed3c00af1a75f7960070fcb21b322b3e11a2d5e09ba86d1c0b5261b05a  ./commit_verification/verify_failed_branch.txt
+391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7  ./history_call_manifest_v3.json
+8ed0b05e607b5f9d8262df76f63cd7642df8f6d9902d002f7b08d74cbc63c25e  ./reviews/README.md
+461327f03344ea0138671d6a2e8dabb9dfbba56777d1b6e13ac0399e137ff48b  ./reviews/runner_round1_0768c1ed.md
+10efe17a162aca714772ab1f5ba1d9b60b1d4022dcad50f75dd6a86722e14147  ./reviews/runner_round2_e569af13.md
+6ad25299c2de6338ecce0b3ca6c507bf33b974c71b686d7eeb0568c25ab50419  ./reviews/runner_round3_add0bd46.md
+b2710cc593ea1deba493eb68c8acbc9a2731e0feac7106e69a768e6fec3fe113  ./scratchpad_history/build_history_manifest.py
+677f7c23aca9144be056d69b69a3f84d90308c8e6ce8922f8f7c436dcfc690be  ./scratchpad_history/build_history_manifest_v2.py
+a4fdb50df200e4cd5a865e4058c42ab9bd16c025fe44e865e926b4814ad78317  ./scratchpad_history/build_history_manifest_v3.py
+261e7b1a421e3bf9bf2c7c2406b0ed2ba7b80c126dd0733de37574801291e5bb  ./scratchpad_history/h0_viewpoint_strata.py
+52eacc5c15fd2fecea0d9a2c64f625e2aea4f01f1e4c1f7142c1a7394d094d8a  ./scratchpad_history/h0_viewpoint_strata_v2.py
+73282cb2e56ccfefbccce8c2e0d39654fcaceaa7858ad565a1f3e3cf0b634c08  ./scratchpad_history/history_call_manifest_v1.json
+e72b033603207af2fbc04917e3f1667d9d880f247bf34b25b22e1e42c7e3bccf  ./scratchpad_history/history_call_manifest_v2.json
+391c2f02a944cd46f3683f53e4979041b34bad9060f035cf779fd283781ccfa7  ./scratchpad_history/history_call_manifest_v3.json
+51a9124449169d55997ee1714643f68e303153a432671901bf2fe5a96c9fbe82  ./scratchpad_history/history_runner_pre_lint_evroot.py
+458cd5087db36f90d3315fa2fcb2a92c2bf949ab0ca052fe0bf9c5c0ab09dd38  ./scratchpad_history/history_runner_pre_review_r0.py
+add0bd46662dde2d1da6ca784f88c48e5ea5b2186ca01d46e8996582b5a0e022  ./scratchpad_history/history_runner.py
+0768c1ed70ed0038e6a34c75098d5129c80035260610adc05c1437889985421b  ./scratchpad_history/history_runner_reviewed_r1.py
+e569af137224ab48f03a90c02e14344e5a2c2876a7660989f1cdbc4682f7d51b  ./scratchpad_history/history_runner_reviewed_r2.py
+a3801351363599005cd868c58c19d8312b94376edd612c87031ec41b9012d333  ./scratchpad_history/history_runner_tested_run3.py
+a9c2a416a0d3124fe5633981de22aabd8f98aa476ccf976e3cd60a410176b0c9  ./scratchpad_history/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V1_CANDIDATE.md
+bd9d17ca61b545ab9509f05519f1eea48d5f9a2e6657c3d80f63e0e5516207ca  ./scratchpad_history/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V2_CANDIDATE.md
+29451a5c1c4426899b8cd873df72c632be60be8878dc8b7d8ae9504f8352cd3a  ./scratchpad_history/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V3_CANDIDATE.md
+8de164bbceab0fefc3fd9f0538971fbbb71c9851f349cddef76963a8b5000d24  ./scratchpad_history/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V4_CANDIDATE.md
+5709a2caf790f834efe54a86590cada9facb59e6f15e51867e0e2eaaaeba17a0  ./scratchpad_history/HISTORY_SENSITIVITY_OFFLINE_PROTOCOL_V4_DRAFT_PRE_REVIEW.md
+fa56cdd57aab5b47851670703ce19e412211a817f5265de51b5703f52d09aa21  ./scratchpad_history/history_substitutes.py
+fa56cdd57aab5b47851670703ce19e412211a817f5265de51b5703f52d09aa21  ./scratchpad_history/history_substitutes_tested_run3.py
+1ffb83e289b99ca71698ccb06b95e35ed3a2bf6aca354684ebe996ffc8df24c1  ./scratchpad_history/STATIC_ARRIVAL_ACQUISITION_AMENDMENT_A1_DRAFT.md
+1d0e183d655ebd19f096729e3366525cee1daca7fc0b6d79ef297d4c0cdc8a8a  ./scratchpad_history/tested_hashes_run1.txt
+811e4e480ce6cf8a96583ead8d11e7b8543f8c58ace7d1ca1a6167356ada25ac  ./scratchpad_history/tested_hashes_run2.txt
+296c72923e640017dca090bfae83b86737f853a596234197181df839f1fa905c  ./scratchpad_history/tested_hashes_run3.txt
+cafee9aef67fcc3ffd36db30385aea522cacd5fc60acea471eb043d5fa2ae6a3  ./scratchpad_history/test_history_runner_pre_lint_evroot.py
+ff0de11bf82d6ceb2ca5bb8909cabe86d894ee825aba6d89b94cadb008bbbfa6  ./scratchpad_history/test_history_runner.py
+0904e53da99bf3eae79add0b05b4862b50a36600a0d056ebdc57ddac2760a66d  ./scratchpad_history/test_history_runner_reviewed_r1.py
+7a9c8114fdb42abb4911e61f596041c4368901f8a4075808a31fac4018be8ad3  ./scratchpad_history/test_history_runner_reviewed_r2.py
+e0c31f6bd5ba025580015e97e20b0d5f81d885876e038bfca6a5486e25b98347  ./scratchpad_history/test_history_runner_tested_run3.py
+ab3de2e70db5bde32e2c83ad7f3ae50aebaa93988356cf991b6d6f3e74f3cb79  ./scratchpad_history/test_run1_FAILED_2.log
+ab3de2e70db5bde32e2c83ad7f3ae50aebaa93988356cf991b6d6f3e74f3cb79  ./scratchpad_history/test_run1.log
+22209d12d3b5b669e35cc512c50473be985daf9d038fd772b10ff4dfac1b6077  ./scratchpad_history/test_run2.log
+2e754fff4ad8dc9d8744703e4f25505311dc542bed163e33816b996f4d57504b  ./scratchpad_history/test_run3.log
+c5c02ba8a9652de6f6b5068889d7bae0099e6b3f7c0b33522dbd0ab4ea91b772  ./scratchpad_history/v3_build.log
+f5710e57a25c178e2cec095963ea818f27364c93eca72993722e742986dfd756  ./tested_sources_run4.sha256
+f5710e57a25c178e2cec095963ea818f27364c93eca72993722e742986dfd756  ./tested_sources_run5.sha256
+652388bd9fff35b128a904256843af7a17562cbae717cf4860decda057614c01  ./test_run4_environment.txt
+40bfd7a7390b8d8be80bdfd098b3be15463fbdd60872ab703a33f217f444dddc  ./test_run4.log
+f1798b731344805effb96456a3a7283e304e5e84f0e70cb07e09d3c6a424f6c7  ./test_run5_environment.txt
+973ce0687e28678f39afe02ed572ad6321e0b37a7772cd02bb05d937ac2680f2  ./test_run5_junit.xml
+d2dfeb38c65770318ba3f16a94b9ea90d3ff39e5994eb76a85af43fc4e5b9de8  ./test_run5.log
+```
+
+The 4.7 MB external directory holds no images and no checkpoints. The checkpoint
+(`c7686983…5d7c`) and the episode images stay in their original evidence directories. They are
+referenced by hash in the manifest and the episode records.
