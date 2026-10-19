@@ -45,6 +45,7 @@ def _worker_command(mode: str = "success") -> list[str]:
     ]
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_freeze_binds_exposed_scene_fixture_and_exact_eight_frame_order():
     config = build_qualification(ROOT)
     worker_input = build_worker_input(config)
@@ -78,6 +79,7 @@ def test_freeze_binds_exposed_scene_fixture_and_exact_eight_frame_order():
     assert config["runtime"]["isaacsim_distribution_version"] == "5.1.0.0"
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_source_bindings_are_exact_and_reject_modified_source():
     config = build_qualification(ROOT)
     verify_source_bindings(config, ROOT)
@@ -86,6 +88,7 @@ def test_source_bindings_are_exact_and_reject_modified_source():
         verify_source_bindings(config, ROOT)
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_harmless_subprocess_worker_passes_camera_evidence_contract(tmp_path: Path):
     config = build_qualification(ROOT)
     worker_input = build_worker_input(config)
@@ -116,6 +119,7 @@ def test_harmless_subprocess_worker_passes_camera_evidence_contract(tmp_path: Pa
         ("metadata", "same-snapshot metadata"),
     ],
 )
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_qualification_admission_rejects_timing_label_and_snapshot_drift(
     tmp_path: Path, mutate: str, message: str
 ):
@@ -148,6 +152,7 @@ def test_qualification_admission_rejects_timing_label_and_snapshot_drift(
         verify_capture(output, worker_input)
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_one_shot_registry_and_final_marker_bind_both_terminal_records(tmp_path: Path):
     config = build_qualification(ROOT)
     output = tmp_path / "evidence/one-shot"
@@ -185,6 +190,7 @@ def test_one_shot_registry_and_final_marker_bind_both_terminal_records(tmp_path:
         )
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_completion_marker_detects_capture_metadata_mutation(tmp_path: Path):
     config = build_qualification(ROOT)
     output = tmp_path / "evidence/one-shot"
@@ -208,6 +214,7 @@ def test_completion_marker_detects_capture_metadata_mutation(tmp_path: Path):
         )
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_one_shot_refuses_preexisting_output_directory(tmp_path: Path):
     config = build_qualification(ROOT)
     output = tmp_path / "evidence/existing"
@@ -225,6 +232,7 @@ def test_one_shot_refuses_preexisting_output_directory(tmp_path: Path):
     assert (output / "preserve.txt").read_text() == "existing"
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_worker_failure_is_preserved_with_exit_and_reap_status(tmp_path: Path):
     output = tmp_path / "failure"
     with pytest.raises(ValueError, match="worker failed"):
@@ -291,6 +299,7 @@ def test_failed_frame_diagnostics_preserve_requested_pose_readbacks_and_rgb(
     )
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_timeout_veto_kills_and_reaps_harmless_worker(tmp_path: Path):
     output = tmp_path / "timeout"
     with pytest.raises(TimeoutError, match="single deadline"):
@@ -308,6 +317,7 @@ def test_timeout_veto_kills_and_reaps_harmless_worker(tmp_path: Path):
     assert not (output / "qualification_complete.json").exists()
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_supervisor_terminates_and_reaps_after_wait_interruption(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -346,6 +356,7 @@ def test_supervisor_terminates_and_reaps_after_wait_interruption(
     assert terminal["status"] == "FAIL"
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_supervisor_falls_back_to_child_signal_when_process_group_signal_fails(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
@@ -388,6 +399,7 @@ def test_supervisor_falls_back_to_child_signal_when_process_group_signal_fails(
     assert terminal["child_reaped"] is True
 
 
+@pytest.mark.isaac_host  # build_qualification() requires the bound Isaac worker interpreter
 def test_finalization_marker_failure_revokes_qualification_pass(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):

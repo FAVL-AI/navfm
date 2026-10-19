@@ -135,7 +135,11 @@ jobs:
           # vint_train.training.train_utils -- the loss oracle -- imports the whole
           # visualisation stack transitively. headless opencv per docs/REPRODUCTION.md
           # (the pinned 4.6.0.66 has no wheels past 3.10).
-          pip install efficientnet_pytorch wandb prettytable diffusers opencv-python-headless
+          pip install efficientnet_pytorch wandb prettytable opencv-python-headless
+          # The native EMA integration was qualified against these exact versions (the
+          # workstation Isaac env); its tests authenticate the installed sources, so the
+          # owner job pins the same set. Upstream itself never imports transformers.
+          pip install diffusers==0.29.2 transformers==4.57.6 huggingface_hub==0.36.2
 
       - name: Record resource versions and upstream pin
         run: |

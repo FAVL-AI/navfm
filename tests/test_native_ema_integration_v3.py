@@ -12,7 +12,12 @@ import native_ema_integration_v3 as repair
 
 
 def binding():
-    root = Path("/home/favl/miniforge3/envs/isaac/lib/python3.11/site-packages")
+    # Bind the packages this interpreter actually imports. authenticated_ema_class checks
+    # each loaded module's file against this binding, so a fixed workstation path could only
+    # ever pass inside the workstation's Isaac interpreter.
+    import importlib.util
+
+    root = Path(importlib.util.find_spec("diffusers").origin).resolve().parents[1]
     return {
         role: {"path": str(root / path), "sha256": repair.sha(root / path)}
         for role, path in [

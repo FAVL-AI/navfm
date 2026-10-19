@@ -136,7 +136,11 @@ def validate_report(report: Any) -> None:
 
 def sets_from(population: dict[str, list[str]]) -> dict[str, set[str]]:
     total = set(population)
-    marked = {n for n, m in population.items() if m}
+    # Only a resource marker moves a node out of the hermetic population. The
+    # population report records every pytest mark, so ``parametrize`` (or any
+    # other ordinary mark) would otherwise pin a hermetic node as resource-owned
+    # and let it be deselected from every job.
+    marked = {n for n, m in population.items() if set(m) & set(RESOURCE_MARKERS)}
     return {
         "total": total,
         "hermetic": total - marked,

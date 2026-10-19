@@ -61,16 +61,16 @@
   "upstream_path": "third_party/visualnav-transformer",
   "digests": {
     "total": {
-      "count": 3213,
-      "sha256": "064ec621efc9a1e9817e94c0720fc36b7ab0da7155b3d2f5393b485d1d744f3f"
+      "count": 3362,
+      "sha256": "7aa757d62e4b84af6856ccd30452ff0254c3976062c6a89a34b718bb61a2ffc6"
     },
     "hermetic": {
-      "count": 3008,
-      "sha256": "47b9a151f41eda7961748f54a19d409d6163838109f7ae7e57dd442187506a4b"
+      "count": 3186,
+      "sha256": "3fb09af956cbc07b6acaed95f3fbc417dae556c9d972f57ed7e9506e60dbc43f"
     },
     "resource_union": {
-      "count": 205,
-      "sha256": "56deff74da8a778a81c9c5a3f3d84afddb3591f94be2ce367757a71d5ca2e2e4"
+      "count": 176,
+      "sha256": "de440f2653b1fbfcac7ee0af946910d09e15ade2eebce4799e3bbe0c7f9e6d87"
     },
     "upstream": {
       "count": 44,
@@ -85,12 +85,12 @@
       "sha256": "4aae920fd70fd03242edc1addd9a3c4bad6beb86f8093034b637e41a3778e268"
     },
     "isaac_host": {
-      "count": 44,
-      "sha256": "337023d3c3e3da50950ffad8665c5656d751e34f35e1d05f474e3851e682c573"
+      "count": 79,
+      "sha256": "0808d7ae02376cf016d5dea1d08c831712f96e1ce1b97c10666d1485a3090910"
     },
     "archive": {
-      "count": 4,
-      "sha256": "b7253f53a3440f0370eb47b91258fa7745885ccc3c63c31a5a79c6d32b1f9420"
+      "count": 5,
+      "sha256": "099db34fbb9785225eb7f6e124510a6e414902a65b700b063d1b4733d137cb67"
     },
     "alternate_python": {
       "count": 1,
@@ -3616,7 +3616,9 @@
     "tests/test_prospective_scoring_v2.py::test_wrong_dataset_transaction_or_artifact_rejected[artifact]": [],
     "tests/test_prospective_scoring_v2.py::test_invalid_raw_draw_survives_metric_exception_and_partial_snapshot": [],
     "tests/test_prospective_scoring_v2.py::test_atomic_failure_preserves_prior_raw_draw": [],
-    "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": [],
+    "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": [
+      "archive"
+    ],
     "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[ledger]": [],
     "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[artifact]": [],
     "tests/test_prospective_scoring_v2.py::test_actual_scoring_finalization_failure_cannot_admit_next_stage[registry]": [],
@@ -3771,7 +3773,353 @@
     "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[query]": [],
     "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[resets]": [],
     "tests/test_saved_graph_ulvn_v1.py::test_frozen_selection_rejected[budget]": [],
-    "tests/test_saved_graph_ulvn_v1.py::test_stale_episode_rejects_before_native_state": []
+    "tests/test_saved_graph_ulvn_v1.py::test_stale_episode_rejects_before_native_state": [],
+    "tests/test_alias_aware_arrival.py::test_alias_margin_excludes_the_explicit_terminal_window": [],
+    "tests/test_alias_aware_arrival.py::test_calibration_is_deterministic_for_identical_ordered_rows": [],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_degenerate_labels[rows0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_degenerate_labels[rows1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows2]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows3]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows4]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_calibration_rejects_invalid_row_contracts[rows5]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_constant_calibration_labels_are_not_implicitly_accepted": [],
+    "tests/test_alias_aware_arrival.py::test_constant_features_have_finite_scales_and_probabilities": [],
+    "tests/test_alias_aware_arrival.py::test_decision_config_rejects_invalid_explicit_settings[changes0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_config_rejects_invalid_explicit_settings[changes1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_config_rejects_invalid_explicit_settings[changes2]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_config_rejects_invalid_explicit_settings[changes3]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_config_rejects_invalid_explicit_settings[changes4]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_config_requires_boolean_margin_policy": [],
+    "tests/test_alias_aware_arrival.py::test_decision_rejects_nonfinite_or_out_of_range_inputs[kwargs0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_rejects_nonfinite_or_out_of_range_inputs[kwargs1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_rejects_nonfinite_or_out_of_range_inputs[kwargs2]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_decision_rejects_nonfinite_or_out_of_range_inputs[kwargs3]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_normalizes_and_preserves_history_and_reference_order": [],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_identical_bytes_with_different_record_ids": [],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history0-references0-history_ids0-reference_ids0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history1-references1-history_ids1-reference_ids1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history10-references10-history_ids10-reference_ids10]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history11-references11-history_ids11-reference_ids11]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history2-references2-history_ids2-reference_ids2]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history3-references3-history_ids3-reference_ids3]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history4-references4-history_ids4-reference_ids4]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history5-references5-history_ids5-reference_ids5]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history6-references6-history_ids6-reference_ids6]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history7-references7-history_ids7-reference_ids7]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history8-references8-history_ids8-reference_ids8]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_descriptor_adapter_rejects_invalid_shapes_values_or_identities[history9-references9-history_ids9-reference_ids9]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_distant_lookalike_can_defeat_both_feature_formulations": [],
+    "tests/test_alias_aware_arrival.py::test_duplicating_one_episode_frames_preserves_its_aggregate_influence": [],
+    "tests/test_alias_aware_arrival.py::test_dwell_requires_continuous_eligible_observations": [],
+    "tests/test_alias_aware_arrival.py::test_episode_balance_controls_feature_center_and_scale": [],
+    "tests/test_alias_aware_arrival.py::test_goal_region_contract_rejects_missing_or_ambiguous_membership[kwargs0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_goal_region_contract_rejects_missing_or_ambiguous_membership[kwargs1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_goal_region_contract_rejects_missing_or_ambiguous_membership[kwargs2]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_goal_region_contract_rejects_missing_or_ambiguous_membership[kwargs3]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_goal_region_pooling_accepts_stronger_valid_nonterminal_match": [],
+    "tests/test_alias_aware_arrival.py::test_goal_region_pooling_is_identity_bound_but_ordered_scores_are_not": [],
+    "tests/test_alias_aware_arrival.py::test_goal_region_support_uses_all_valid_goal_references": [],
+    "tests/test_alias_aware_arrival.py::test_ineligible_sample_cancels_dwell_and_latch_is_sticky_until_reset": [],
+    "tests/test_alias_aware_arrival.py::test_legacy_hard_margin_floor_vetoes_high_probability": [],
+    "tests/test_alias_aware_arrival.py::test_logistic_fit_can_learn_negative_margin_association": [],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_follow_history_and_reference_order": [],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history0-at least one]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history1-exactly four]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history2-at least two]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history3-equal length]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history4-finite]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_ordered_scores_reject_invalid_history[history5-finite]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_out_of_order_timestamp_rejects_without_mutating_state": [],
+    "tests/test_alias_aware_arrival.py::test_region_max_is_duplicate_score_invariant_but_chain_density_is_not": [],
+    "tests/test_alias_aware_arrival.py::test_reviewed_terminal_margin_counterexample_is_recovered_by_region_support": [],
+    "tests/test_alias_aware_arrival.py::test_synthetic_decision_rule_comparison_preserves_dwell_and_reset": [],
+    "tests/test_alias_aware_arrival.py::test_terminal_window_must_leave_an_earlier_distractor[-1]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_terminal_window_must_leave_an_earlier_distractor[0]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_terminal_window_must_leave_an_earlier_distractor[5]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_terminal_window_must_leave_an_earlier_distractor[6]": [
+      "parametrize"
+    ],
+    "tests/test_alias_aware_arrival.py::test_thresholds_and_terminal_window_are_never_implicitly_fitted": [],
+    "tests/test_arrival_training_geometry_v1.py::test_heading_difference_wraps_at_pi_boundary": [],
+    "tests/test_arrival_training_geometry_v1.py::test_invalid_shapes_and_nonfinite_inputs_reject[position0-yaw0]": [
+      "parametrize"
+    ],
+    "tests/test_arrival_training_geometry_v1.py::test_invalid_shapes_and_nonfinite_inputs_reject[position1-yaw1]": [
+      "parametrize"
+    ],
+    "tests/test_arrival_training_geometry_v1.py::test_invalid_shapes_and_nonfinite_inputs_reject[position2-yaw2]": [
+      "parametrize"
+    ],
+    "tests/test_arrival_training_geometry_v1.py::test_invalid_shapes_and_nonfinite_inputs_reject[position3-yaw3]": [
+      "parametrize"
+    ],
+    "tests/test_arrival_training_geometry_v1.py::test_invalid_shapes_and_nonfinite_inputs_reject[position4-yaw4]": [
+      "parametrize"
+    ],
+    "tests/test_arrival_training_geometry_v1.py::test_known_geometry_and_identity_preservation": [],
+    "tests/test_arrival_training_geometry_v1.py::test_wrapped_heading_rejects_nonfinite_input": [],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_completion_marker_detects_capture_metadata_mutation": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_failed_frame_diagnostics_preserve_requested_pose_readbacks_and_rgb": [],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_finalization_marker_failure_revokes_qualification_pass": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_freeze_binds_exposed_scene_fixture_and_exact_eight_frame_order": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_harmless_subprocess_worker_passes_camera_evidence_contract": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_one_shot_refuses_preexisting_output_directory": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_one_shot_registry_and_final_marker_bind_both_terminal_records": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_production_qualification_cli_requires_explicit_approval_and_exact_head": [],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_qualification_admission_rejects_timing_label_and_snapshot_drift[duplicate_time-not strictly ordered]": [
+      "isaac_host",
+      "parametrize"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_qualification_admission_rejects_timing_label_and_snapshot_drift[label-evaluator-only data]": [
+      "isaac_host",
+      "parametrize"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_qualification_admission_rejects_timing_label_and_snapshot_drift[metadata-same-snapshot metadata]": [
+      "isaac_host",
+      "parametrize"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_source_bindings_are_exact_and_reject_modified_source": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_supervisor_falls_back_to_child_signal_when_process_group_signal_fails": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_supervisor_terminates_and_reaps_after_wait_interruption": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_timeout_veto_kills_and_reaps_harmless_worker": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_worker_constructs_isaac_app_before_omni_imports": [],
+    "tests/test_static_arrival_camera_qualification_v1.py::test_worker_failure_is_preserved_with_exit_and_reap_status": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_abnormal_harmless_child_is_not_admitted": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_attempt_record_persistence_failure_is_retained_in_registry": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_complete_capsule_does_not_override_missing_close_return": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_deadline_crossed_during_final_verification_revokes_admission": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_final_marker_failure_revokes_terminal_pass": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_missing_measurement_capsule_vetoes_final_admission": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_production_capsule_write_failure_is_not_admitted": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_timeout_harmless_child_is_not_admitted": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_v2_freeze_preserves_camera_criteria_and_requires_graceful_close": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_camera_qualification_v2.py::test_v2_harmless_child_capsule_and_full_parent_transaction_pass": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_capture_v1.py::test_actual_launcher_supervisor_success_is_fixture_only_and_one_shot": [],
+    "tests/test_static_arrival_capture_v1.py::test_checked_schedule_matches_current_bound_source": [],
+    "tests/test_static_arrival_capture_v1.py::test_finalization_marker_failure_revokes_admission": [],
+    "tests/test_static_arrival_capture_v1.py::test_production_cli_refuses_preparation_schedule": [],
+    "tests/test_static_arrival_capture_v1.py::test_runtime_flag_alone_cannot_bypass_camera_qualification": [],
+    "tests/test_static_arrival_capture_v1.py::test_schedule_binds_population_roles_scenes_and_strata": [],
+    "tests/test_static_arrival_capture_v1.py::test_schedule_rejects_identity_exclusion_and_scene_drift[duplicate_episode]": [
+      "parametrize"
+    ],
+    "tests/test_static_arrival_capture_v1.py::test_schedule_rejects_identity_exclusion_and_scene_drift[duplicate_frame]": [
+      "parametrize"
+    ],
+    "tests/test_static_arrival_capture_v1.py::test_schedule_rejects_identity_exclusion_and_scene_drift[exclude]": [
+      "parametrize"
+    ],
+    "tests/test_static_arrival_capture_v1.py::test_schedule_rejects_identity_exclusion_and_scene_drift[scene]": [
+      "parametrize"
+    ],
+    "tests/test_static_arrival_capture_v1.py::test_source_manifest_requires_exact_bound_sources": [],
+    "tests/test_static_arrival_capture_v1.py::test_timeout_is_a_veto_and_child_is_reaped": [],
+    "tests/test_static_arrival_capture_v1.py::test_worker_failure_retains_partial_output_and_terminal_status": [],
+    "tests/test_static_arrival_capture_v1.py::test_worker_input_keeps_labels_out_and_binds_episode_identity": [],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_abnormal_harmless_child_exit_is_preserved": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_attempt_record_failure_prevents_child_start": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_config_binds_sources_and_declares_diagnostic_only_scope": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_fresh_output_is_required": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_harmless_bootstrap_and_worker_exit_are_recorded": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_diagnostic_v1.py::test_timeout_requests_termination_and_reaps_harmless_child": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_signal_free_v2.py::test_abnormal_child_exit_is_not_natural_success": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_signal_free_v2.py::test_deadline_cleanup_is_not_a_natural_exit": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_signal_free_v2.py::test_natural_exit_after_final_marker_is_observed_without_interference": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_signal_free_v2.py::test_populated_attempt_directory_is_refused": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_post_close_signal_free_v2.py::test_v2_config_disables_all_predeadline_instrumentation": [
+      "isaac_host"
+    ],
+    "tests/test_static_arrival_startup_diagnostic_v1.py::test_child_environment_pins_hub_without_mutating_parent": [],
+    "tests/test_static_arrival_startup_diagnostic_v1.py::test_supervisor_records_harmless_child_exit_and_reap": [],
+    "tests/test_static_arrival_startup_diagnostic_v1.py::test_supervisor_refuses_populated_output": [],
+    "tests/test_static_arrival_startup_diagnostic_v1.py::test_supervisor_times_out_signals_and_reaps_harmless_child": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_a_missing_marker_lands_the_node_in_the_hermetic_set": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_a_resource_marker_still_counts_beside_an_unrelated_mark": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_a_resource_node_executed_by_the_hermetic_leg_fails": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_a_resource_node_missing_from_its_owner_job_fails": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_an_unrelated_mark_cannot_excuse_deselection_from_the_hermetic_leg[tests/h.py::near_miss]": [
+      "parametrize"
+    ],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_an_unrelated_mark_cannot_excuse_deselection_from_the_hermetic_leg[tests/h.py::param[0]]": [
+      "parametrize"
+    ],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_the_hermetic_leg_passes_when_it_runs_unrelated_mark_nodes": [],
+    "tests/test_check_test_population.py::TestOnlyResourceMarkersDecideOwnership::test_unrelated_and_near_miss_marks_leave_a_node_hermetic": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_derived_names_equal_the_compilers_qualnames_on_every_version": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_derived_names_equal_the_interpreters_names_across_real_sources": [],
+    "tests/test_authenticate_torch_wrappers_v7.py::test_the_public_entry_point_uses_co_qualname_when_present": [],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[None]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[altered_binary]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[changed_method]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_descriptor]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_descriptor_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_export]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_method_slot]": [
+      "parametrize"
+    ],
+    "tests/test_targeted_qualification_repairs_v6.py::test_v7_matches_frozen_v6_outcome[wrong_original]": [
+      "parametrize"
+    ]
   },
   "job_ownership": {
     "upstream": "upstream-compat",
@@ -4077,5 +4425,36 @@
     "resource_owners_changed": false,
     "external_CPU_replay_owner": "explicit frozen saved-graph/native-component replay command; authenticated external arrays and source required only there",
     "scope": "Hermetic map/selection/stale-state guards; no model or graph replay during pytest."
+  },
+  "ci_population_repair_20261018_update": {
+    "prior_retained": 3213,
+    "added_previously_unpinned_nodes": 130,
+    "added_checker_negative_controls": 8,
+    "total_count": 3362,
+    "marker_changes": {
+      "tests/test_prospective_scoring_v2.py::test_added_project_sources_are_attested_without_model_imports": {
+        "from": [],
+        "to": [
+          "archive"
+        ]
+      }
+    },
+    "unpinned_node_sources": {
+      "tests/test_alias_aware_arrival.py": "66 hermetic; 34532d1 (2026-10-12)",
+      "tests/test_arrival_training_geometry_v1.py": "8 hermetic; 66e9b0a (2026-10-12)",
+      "tests/test_static_arrival_camera_qualification_v1.py": "14 isaac_host + 3 hermetic; 51a3390 (2026-10-13)",
+      "tests/test_static_arrival_camera_qualification_v2.py": "10 isaac_host; eac742e (2026-10-13)",
+      "tests/test_static_arrival_capture_v1.py": "14 hermetic; 49c8567 (2026-10-13)",
+      "tests/test_static_arrival_post_close_diagnostic_v1.py": "6 isaac_host; 7bf2fa9 (2026-10-13)",
+      "tests/test_static_arrival_post_close_signal_free_v2.py": "5 isaac_host; 1013457 (2026-10-13)",
+      "tests/test_static_arrival_startup_diagnostic_v1.py": "4 hermetic; 6d29722 (2026-10-13)"
+    },
+    "reconciliation": "Each added node id equals one of the 130 extras named by the hosted owner population gate (run 38987049797, job upstream-compat) and was collected at this revision; the only other additions are the 8 checker negative controls. No node was removed.",
+    "checker_semantics_change": "Only resource markers move a node out of the hermetic population; 65 parametrize-only nodes return to the hermetic set (hermetic recomputes from 3008 under the previous rule to 3073 on the prior population).",
+    "resource_owners_changed": true,
+    "status": "HOSTED_CI_PENDING; RESOURCE_NODES_NOT_RUN",
+    "added_v7_compatibility_nodes": 11,
+    "v7_compatibility": "scripts/authenticate_torch_wrappers_v7.py is v6 with a version-correct qualified name so the wrapper authentication runs on Python 3.10; v6 and every config pinning its digest are unchanged. The existing v6 wrapper test uses v6 on 3.11+ and v7 on 3.10; 8 equivalence nodes compare v6 and v7 outcomes and 3 oracle nodes check the derivation against the interpreter on 3.10, 3.11 and 3.12.",
+    "torch_workstation_nodes_resolved": "The six torch-marked nodes previously listed as not owned now run in hosted upstream-compat: they bind the running interpreter's diffusers/transformers (pinned to the qualified 0.29.2 / 4.57.6 with huggingface_hub 0.36.2) and the pinned upstream clone, whose train_utils.py equals the sha256 the frozen smoke config records."
   }
 }
